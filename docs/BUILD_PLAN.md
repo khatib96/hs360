@@ -5,6 +5,28 @@
 
 ---
 
+## Progress Overview
+
+| Phase | Status | Completed |
+|-------|--------|-----------|
+| **0 — Project Setup** | ✅ Done | 2026-05-16 |
+| 1 — Database Foundations | ⬜ Not started | — |
+| 2 — Authentication & Routing | ⬜ Not started | — |
+| 3 — Products & Inventory | ⬜ Not started | — |
+| 4 — Customers & CoA | ⬜ Not started | — |
+| 5 — Invoices & Vouchers | ⬜ Not started | — |
+| 6 — Contracts | ⬜ Not started | — |
+| 7 — Calendar | ⬜ Not started | — |
+| 8 — Mobile Field Ops | ⬜ Not started | — |
+| 9 — POS, Maintenance & HR | ⬜ Not started | — |
+| 10 — Reports | ⬜ Not started | — |
+| 11 — Communications | ⬜ Not started | — |
+| 12 — Polish & Production | ⬜ Not started | — |
+
+> Phase 0 details: `docs/PHASE_0_SETUP.md`
+
+---
+
 ## How to Use This Document
 
 Each phase has:
@@ -17,42 +39,42 @@ Don't skip ahead. The order matters. Each phase builds on the previous.
 
 ---
 
-## Phase 0 — Project Setup (≈ 1 week)
+## Phase 0 — Project Setup (≈ 1 week) ✅ **COMPLETE** (2026-05-16)
 
 ### Goal
 Have a working Flutter project, a Supabase project, and a basic CI workflow.
 
+> **Local-dev scope applied:** no cloud Supabase, no VPS, no paid services, no Drift/offline in Phase 0. See `docs/PHASE_0_SETUP.md`.
+
 ### Tasks
-1. Create the Flutter project: `flutter create --org com.hayatsecret --platforms windows,macos,android,ios hayat_secret`
-2. Set up project structure per `ARCHITECTURE.md` section 3
-3. Add dependencies to `pubspec.yaml`:
-   - `supabase_flutter`
-   - `flutter_riverpod`, `riverpod_annotation`
-   - `riverpod_generator`, `build_runner` (dev)
-   - `go_router`
-   - `decimal`
-   - `intl`
-   - `image_picker`
-   - `geolocator`
-   - `mobile_scanner`
-   - `drift`, `drift_flutter` (mobile cache)
-   - `logger`
-   - `lucide_icons`
-   - `printing`, `pdf`
-4. Create Supabase project (Pro tier for production, Free for dev)
-5. Configure environments: `.env.dev`, `.env.staging`, `.env.prod`
-6. Set up GitHub repo with two branches: `main`, `dev`
-7. Configure GitHub Actions: lint + format + test on PR
+- [x] **1.** Create Flutter project in repo root: `flutter create --org com.hs360 --platforms windows,android .` (docs preserved)
+- [x] **2.** Set up project structure per `ARCHITECTURE.md` section 3 (`lib/core`, `data`, `domain`, `features`, `shared`, `supabase/`, tests)
+- [x] **3.** Add Phase 0 dependencies to `pubspec.yaml`:
+  - [x] `supabase_flutter`, `flutter_riverpod`, `riverpod_annotation`, `riverpod_generator`, `build_runner`
+  - [x] `go_router`, `decimal`, `intl`, `flutter_localizations`
+  - [x] `image_picker`, `geolocator`, `mobile_scanner`, `logger`, `lucide_icons`
+  - [x] ~~`drift`, `drift_flutter`~~ — **deferred** (offline out of v1)
+  - [x] ~~`printing`, `pdf`~~ — **deferred** to later phases
+- [x] **3b.** App shell: theme (DESIGN_SYSTEM), GoRouter, ARB l10n (ar/en), dashboard placeholder, Supabase client with local env placeholders
+- [ ] **4.** Create Supabase project (cloud) — **deferred**; local CLI + Docker in Phase 1
+- [x] **4b.** Scaffold `supabase/migrations/` and `supabase/functions/` (`.gitkeep` only)
+- [x] **5.** Local env placeholders in `lib/core/config/env.dart` (not `.env` files yet)
+- [x] **6.** Git repo on `main` + remote `https://github.com/khatib96/hs360.git` (pushed)
+- [ ] **6b.** Second branch `dev` — **not created yet**
+- [ ] **7.** GitHub Actions CI — **deferred**
 
 ### Deliverables
-- Empty Flutter app that opens to a blank screen on Windows, Android, iOS
-- Supabase project accessible via dashboard
-- Cursor opens project and `.cursorrules` is in place
+- [x] Flutter app opens on Windows with HS360 dashboard (bilingual, RTL/LTR)
+- [x] Android platform scaffolded (not fully verified on device/emulator)
+- [x] `.cursor/rules/.cursorrules` in place
+- [x] `docs/PHASE_0_SETUP.md` runbook
+- [ ] Supabase cloud dashboard — **deferred** to Phase 1 (local stack first)
 
 ### Acceptance
-- `flutter run -d windows` opens the app
-- `flutter run -d android` opens on emulator
-- `flutter analyze` passes with zero warnings
+- [x] `flutter run -d windows` / `flutter build windows` — works
+- [ ] `flutter run -d android` on emulator — **not verified** in Phase 0 session
+- [x] `flutter analyze` — zero issues
+- [x] `flutter test` — passes
 
 ---
 
@@ -589,7 +611,7 @@ These are out of v1 scope but worth noting for the roadmap:
 
 | Phase | Duration | Cumulative |
 |-------|----------|------------|
-| 0 — Setup | 1 wk | 1 wk |
+| 0 — Setup ✅ | 1 wk | 1 wk |
 | 1 — DB | 2 wk | 3 wk |
 | 2 — Auth | 1 wk | 4 wk |
 | 3 — Products | 2 wk | 6 wk |

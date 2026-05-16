@@ -1,16 +1,20 @@
 # ai_memory.md — AI Collaboration Memory
 
-> Updated 2026-05-16 to document cross-tool AI context.
+> Updated 2026-05-16 (Phase 0 complete).
 > Keep this file short. It is for continuity between AI tools, not full project documentation.
 
 ---
 
 ## Current Project State
 
-- Workspace currently contains documentation only. No Flutter app, Supabase migrations, tests, or Git repository yet.
-- Canonical decisions are now tracked in `docs/CANONICAL_DECISIONS.md`.
-- Strict v1 scope is now tracked in `docs/MVP_SCOPE.md`.
-- Required stored function contracts are now tracked in `docs/RPC_SPEC.md`.
+- **Phase 0 complete** — Flutter app scaffold, Git repo, local dev placeholders only.
+- Repo: `https://github.com/khatib96/hs360.git` on branch `main` (commit `f6d51ef`).
+- App runs on Windows; Android platform scaffolded. `flutter analyze` clean; `flutter test` passes.
+- Supabase Flutter client wired to local placeholders (`127.0.0.1:54321`); init is non-fatal if stack is down.
+- **Supabase CLI not installed** — `supabase/migrations/` and `supabase/functions/` exist with `.gitkeep` only; no `config.toml`, no real migrations yet.
+- **Not started:** auth, RLS, migrations, Drift/offline, paid services, VPS, cloud Supabase.
+- Canonical docs: `docs/CANONICAL_DECISIONS.md`, `docs/MVP_SCOPE.md`, `docs/RPC_SPEC.md`.
+- Phase 0 runbook: `docs/PHASE_0_SETUP.md`.
 
 ---
 
@@ -33,30 +37,24 @@
 
 ## Last Session Summary
 
-Requested task:
+**Date:** 2026-05-16  
+**Task:** Phase 0 — local project setup only (no paid services, no cloud, no VPS).
 
-- Resolve critical conflicts in project documentation before implementation.
-- Add canonical decision, MVP scope, and RPC spec documents.
-- Add AI memory file for future AI-tool handoff.
+What was done:
 
-Files changed or added:
+- Environment verified: Flutter 3.41.6, Dart 3.11.4, Docker, Git; Supabase CLI absent.
+- `git init` on `main`, remote `origin` → GitHub; commit + push `Phase 0 project setup`.
+- `flutter create --org com.hs360 --platforms windows,android .` in repo root (docs preserved).
+- Dependencies per Phase 0 spec (no Drift/offline).
+- Folder structure under `lib/`, `supabase/`, `test/`, `integration_test/`.
+- Core app: Riverpod, GoRouter, theme (DESIGN_SYSTEM colors), ARB l10n (ar/en, RTL/LTR), dashboard placeholder, Supabase client placeholders.
+- `docs/PHASE_0_SETUP.md` added.
+- Verified: `pub get`, `dart format`, `analyze` (0 issues), `test` (1 passed), `build windows` succeeded.
 
-- `README.md`
-- `docs/DATABASE_SCHEMA.md`
-- `docs/SECURITY.md`
-- `docs/ARCHITECTURE.md`
-- `docs/DESIGN_SYSTEM.md`
-- `docs/PRODUCTS_DETAIL.md`
-- `docs/CONTRACTS_LOGIC.md`
-- `docs/PAYMENT_SYSTEM.md`
-- `docs/CUSTOMER_LEDGER.md`
-- `docs/FIELD_OPS.md`
-- `docs/PROJECT.md`
-- `docs/CANONICAL_DECISIONS.md`
-- `docs/MVP_SCOPE.md`
-- `docs/RPC_SPEC.md`
-- `ai_memory.md`
+Deferred intentionally (documented in `PHASE_0_SETUP.md`):
+
+- Supabase Cloud, VPS, domain, Resend, WhatsApp, store developer accounts, real auth/migrations, Drift, GitHub Actions CI.
 
 Next recommended step:
 
-- Start Phase 0 scaffolding after reviewing the updated phased roadmap.
+- **Phase 1 — Local database foundations:** install Supabase CLI, `supabase init` + local Docker stack, first migrations + RLS, connect app with `--dart-define` for local keys.
