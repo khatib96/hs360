@@ -12,7 +12,8 @@
 | **0 — Project Setup** | ✅ Done | 2026-05-16 |
 | **1A — Local Supabase Foundation** | ✅ Done | 2026-05-16 |
 | **1B — Core Business Schema** | ✅ Done | 2026-05-16 |
-| 1 — Database Foundations (1C–1D) | ⬜ In progress | — |
+| **1C — Functions, Views, Triggers, RLS** | ✅ Done | 2026-05-16 |
+| **1D — Seed and Verification** | ✅ Done | 2026-05-16 |
 | 2 — Authentication & Routing | ⬜ Not started | — |
 | 3 — Products & Inventory | ⬜ Not started | — |
 | 4 — Customers & CoA | ⬜ Not started | — |
@@ -177,50 +178,51 @@ Use `DATABASE_SCHEMA.md` section 21 as the source of truth for migration order:
 - [x] No migration ordering errors.
 - [x] Schema inspection matches `DATABASE_SCHEMA.md` (35 tables, 26 enums, 0 RLS).
 
-### Phase 1C — Functions, Views, Triggers, and RLS
+### Phase 1C — Functions, Views, Triggers, and RLS ✅ **COMPLETE** (2026-05-16)
 
 **Goal:** implement the database behavior and tenant isolation layer.
 
 **Tasks**
-- [ ] Add `027_functions.sql`.
-- [ ] Add `028_views.sql`, including security-invoker safe views.
-- [ ] Add `029_triggers.sql`.
-- [ ] Add `030_rls_policies.sql` from `SECURITY.md`.
+- [x] Add `027_functions.sql`.
+- [x] Add `028_views.sql`, including security-invoker safe views.
+- [x] Add `029_triggers.sql`.
+- [x] Add `030_rls_policies.sql` from `SECURITY.md`.
+- [x] Run `supabase db reset` and confirm verification SQL.
 
 **Deliverables**
-- Permission-aware RPC foundation.
-- Reporting/safe views.
-- Audit and business triggers.
-- RLS enabled on tenant-owned tables.
+- [x] Permission-aware RPC foundation (`get_my_permissions`, helpers).
+- [x] Safe views (`products_safe`, `contracts_safe`).
+- [x] Audit and safety triggers (narrow WHEN clauses; `user_permissions` grant/revoke).
+- [x] RLS enabled on all 35 public tables (~115 policies).
 
 **Acceptance**
-- Unauthenticated users cannot read tenant data.
-- Users only read/write rows for their tenant.
-- Permission-restricted operations are blocked without the needed permission.
+- [x] `supabase db reset` succeeds with 027–030 applied.
+- [x] RLS enabled count = 35; 115 policies, safe views, helper functions, and triggers present in catalog.
+- [x] Behavioral tests (manager vs user vs permissions) — verified in **Phase 1D** after seed.
 
-### Phase 1D — Seed and Verification
+### Phase 1D — Seed and Verification ✅ **COMPLETE** (2026-05-16)
 
 **Goal:** prove the database works with realistic test data.
 
 **Tasks**
-- [ ] Add `031_seed.sql`.
-- [ ] Create one tenant: `Hayat Secret`.
-- [ ] Create owner/manager test user.
-- [ ] Seed default permissions catalog.
-- [ ] Seed default KWD currency.
-- [ ] Seed chart of accounts, one warehouse, product groups, and sample employees.
-- [ ] Add SQL verification script for tenant isolation and permission checks.
+- [x] Add `031_seed.sql`.
+- [x] Create one tenant: `Hayat Secret` plus one second tenant for isolation tests.
+- [x] Create owner/manager test user plus zero-permission, product-permission, tenant-B, and field-agent users.
+- [x] Seed permissions catalog used by RLS policies and field-safe views.
+- [x] Seed default KWD currency.
+- [x] Seed chart of accounts, warehouses, product groups, sample employees, and products.
+- [x] Add SQL verification script for tenant isolation and permission checks.
 
 **Deliverables**
-- Working local test tenant.
-- Repeatable seed.
-- RLS verification script.
+- [x] Working local test tenant.
+- [x] Repeatable seed.
+- [x] RLS verification script: `supabase/tests/phase_1d_rls.sql`.
 
 **Acceptance**
-- `supabase db reset` creates a usable local test tenant.
-- A tenant user can query only their tenant's data.
-- A user without permission is blocked from restricted tables/actions.
-- A user with the required permission can perform the allowed read/write.
+- [x] `supabase db reset` creates a usable local test tenant.
+- [x] A tenant user can query only their tenant's data.
+- [x] A user without permission is blocked from restricted tables/actions.
+- [x] A user with the required permission can perform the allowed read/write.
 
 ---
 
