@@ -1,20 +1,22 @@
 # ai_memory.md — AI Collaboration Memory
 
-> Updated 2026-05-16 (Phase 0 complete).
+> Updated 2026-05-16 (Phase 1A complete).
 > Keep this file short. It is for continuity between AI tools, not full project documentation.
 
 ---
 
 ## Current Project State
 
-- **Phase 0 complete** — Flutter app scaffold, Git repo, local dev placeholders only.
-- Repo: `https://github.com/khatib96/hs360.git` on branch `main` (commit `f6d51ef`).
-- App runs on Windows; Android platform scaffolded. `flutter analyze` clean; `flutter test` passes.
-- Supabase Flutter client wired to local placeholders (`127.0.0.1:54321`); init is non-fatal if stack is down.
-- **Supabase CLI not installed** — `supabase/migrations/` and `supabase/functions/` exist with `.gitkeep` only; no `config.toml`, no real migrations yet.
-- **Not started:** auth, RLS, migrations, Drift/offline, paid services, VPS, cloud Supabase.
-- Canonical docs: `docs/CANONICAL_DECISIONS.md`, `docs/MVP_SCOPE.md`, `docs/RPC_SPEC.md`.
-- Phase 0 runbook: `docs/PHASE_0_SETUP.md`.
+- **Phase 0 complete** — Flutter scaffold on `main`.
+- **Phase 1A complete** — local Supabase via Docker + migrations `001`–`005`.
+- CLI: use `npx supabase` when `supabase` is not on PATH.
+- Local stack: `npx supabase start` / `db reset` / `status -o env`.
+- Foundation tables: `tenants`, `tenant_users`, `permissions`, `user_permissions`, `currencies`.
+- Helper functions: `current_tenant_id`, `current_account_type`, `is_manager`, `user_has_permission`, `tenant_default_currency`.
+- **26 public enums** (`user_account_type` in 002 + 25 in 003).
+- **No RLS yet** (Phase 1C). **No seed** (Phase 1D). **No 006+ tables** (Phase 1B).
+- Flutter: `SUPABASE_ANON_KEY` default is empty; use `scripts/run-local.ps1` or `--dart-define`.
+- Runbooks: `docs/PHASE_0_SETUP.md`, `docs/PHASE_1A_SETUP.md`.
 
 ---
 
@@ -38,23 +40,21 @@
 ## Last Session Summary
 
 **Date:** 2026-05-16  
-**Task:** Phase 0 — local project setup only (no paid services, no cloud, no VPS).
+**Task:** Phase 1A — local Supabase foundation only.
 
 What was done:
 
-- Environment verified: Flutter 3.41.6, Dart 3.11.4, Docker, Git; Supabase CLI absent.
-- `git init` on `main`, remote `origin` → GitHub; commit + push `Phase 0 project setup`.
-- `flutter create --org com.hs360 --platforms windows,android .` in repo root (docs preserved).
-- Dependencies per Phase 0 spec (no Drift/offline).
-- Folder structure under `lib/`, `supabase/`, `test/`, `integration_test/`.
-- Core app: Riverpod, GoRouter, theme (DESIGN_SYSTEM colors), ARB l10n (ar/en, RTL/LTR), dashboard placeholder, Supabase client placeholders.
-- `docs/PHASE_0_SETUP.md` added.
-- Verified: `pub get`, `dart format`, `analyze` (0 issues), `test` (1 passed), `build windows` succeeded.
+- `npx supabase init`; `config.toml` committed.
+- Migrations `001_extensions` through `005_currencies` from `DATABASE_SCHEMA.md`.
+- `npx supabase start` + `db reset` succeeded; enum count verified = 26.
+- `env.dart` anon default cleared; `supabase_client.dart` warns when key missing.
+- `scripts/run-local.ps1` reads keys from `supabase status -o env` at runtime.
+- `docs/PHASE_1A_SETUP.md`; `BUILD_PLAN.md` Phase 1A marked complete.
 
-Deferred intentionally (documented in `PHASE_0_SETUP.md`):
+Not done (by design):
 
-- Supabase Cloud, VPS, domain, Resend, WhatsApp, store developer accounts, real auth/migrations, Drift, GitHub Actions CI.
+- Phase 1B+ migrations, RLS (1C), seed (1D), cloud/VPS, functions implementation.
 
 Next recommended step:
 
-- **Phase 1 — Local database foundations:** install Supabase CLI, `supabase init` + local Docker stack, first migrations + RLS, connect app with `--dart-define` for local keys.
+- **Phase 1B — Core business schema:** migrations `006`–`026`.

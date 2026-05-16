@@ -3,7 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../config/env.dart';
 
-/// Wraps Supabase initialization for local dev placeholders only.
+/// Wraps Supabase initialization for local development.
 abstract final class SupabaseClientProvider {
   static final Logger _log = Logger(printer: PrettyPrinter(methodCount: 0));
 
@@ -16,10 +16,19 @@ abstract final class SupabaseClientProvider {
     return Supabase.instance.client;
   }
 
-  /// Initializes Supabase with local placeholder env. Does not block the app
-  /// if the local stack is not running yet.
+  /// Initializes Supabase when URL and anon key are provided via dart-define.
+  /// Does not block the app if the local stack is down or keys are missing.
   static Future<void> initialize() async {
     if (_initialized) return;
+
+    if (Env.supabaseAnonKey.isEmpty) {
+      _log.w(
+        'Supabase anon key missing. Run with:\n'
+        '  flutter run --dart-define=SUPABASE_ANON_KEY=<from supabase status -o env>\n'
+        'Or use scripts/run-local.ps1',
+      );
+      return;
+    }
 
     try {
       await Supabase.initialize(
@@ -30,7 +39,7 @@ abstract final class SupabaseClientProvider {
       _log.i('Supabase client configured for ${Env.supabaseUrl}');
     } catch (e, st) {
       _log.w(
-        'Supabase init skipped (local placeholder — start local stack later)',
+        'Supabase init skipped — is local stack running? (npx supabase start)',
         error: e,
         stackTrace: st,
       );

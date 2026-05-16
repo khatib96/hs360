@@ -5,9 +5,10 @@ abstract final class Env {
     defaultValue: 'http://127.0.0.1:54321',
   );
 
+  /// Pass at runtime from `npx supabase status -o env` (do not commit real keys).
   static const String supabaseAnonKey = String.fromEnvironment(
     'SUPABASE_ANON_KEY',
-    defaultValue: 'local-dev-anon-key-placeholder',
+    defaultValue: '',
   );
 
   static const String defaultLocale = 'ar';

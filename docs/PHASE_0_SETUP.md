@@ -117,4 +117,6 @@ integration_test/
 
 ## Next Step
 
-**Phase 1 — Local database foundations:** install Supabase CLI, add `supabase/config.toml`, first migrations, and connect the app to a local Docker-backed stack (still no cloud production).
+**Phase 1A is complete.** See [`docs/PHASE_1A_SETUP.md`](PHASE_1A_SETUP.md) for local Supabase commands.
+
+**Phase 1B — Core business schema:** migrations `006`–`026` per `DATABASE_SCHEMA.md`.

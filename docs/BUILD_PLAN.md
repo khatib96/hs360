@@ -10,7 +10,8 @@
 | Phase | Status | Completed |
 |-------|--------|-----------|
 | **0 — Project Setup** | ✅ Done | 2026-05-16 |
-| 1 — Database Foundations | ⬜ Not started | — |
+| **1A — Local Supabase Foundation** | ✅ Done | 2026-05-16 |
+| 1 — Database Foundations (1B–1D) | ⬜ In progress | — |
 | 2 — Authentication & Routing | ⬜ Not started | — |
 | 3 — Products & Inventory | ⬜ Not started | — |
 | 4 — Customers & CoA | ⬜ Not started | — |
@@ -81,49 +82,143 @@ Have a working Flutter project, a Supabase project, and a basic CI workflow.
 ## Phase 1 — Database Foundations (≈ 2 weeks)
 
 ### Goal
-All tables exist in Supabase with correct types, RLS, and a working test tenant.
+Create the local Supabase database foundation in controlled sub-phases: local stack, schema migrations, RLS, seed data, and verification. Phase 1 is database-first; it does not build production UI flows or real authentication screens.
 
-### Tasks
+### Canonical Migration Scope
+Use `DATABASE_SCHEMA.md` section 21 as the source of truth for migration order:
 
-**1.1 Migrations 001–015**
-Create migrations in `supabase/migrations/` per the order in `DATABASE_SCHEMA.md` section 21.
+```
+001_extensions.sql
+002_tenants.sql
+003_enums.sql
+004_permissions.sql
+005_currencies.sql
+006_tenant_settings.sql
+007_employees.sql
+008_commissions_salaries_advances.sql
+009_warehouses.sql
+010_chart_of_accounts.sql
+011_product_groups.sql
+012_products.sql
+013_product_units.sql
+014_maintenance.sql
+015_inventory.sql
+016_customers.sql
+017_suppliers.sql
+018_journal.sql
+019_invoices.sql
+020_vouchers.sql
+021_contracts.sql
+022_visits.sql
+023_quotations.sql
+024_calendar.sql
+025_notifications.sql
+026_audit_log.sql
+027_functions.sql
+028_views.sql
+029_triggers.sql
+030_rls_policies.sql
+031_seed.sql
+032_late_fks.sql, only if forward-reference FKs cannot be added earlier
+```
 
-For each migration:
-- Write SQL
-- Test locally with `supabase db reset`
-- Push to dev Supabase
-- Verify in dashboard
+### Phase 1A — Local Supabase Foundation ✅ **COMPLETE** (2026-05-16)
 
-**1.2 RLS Policies (migration 028)**
-Implement policies per `SECURITY.md` role matrix.
+**Goal:** the project has a working local Supabase stack and the first dependency-safe foundation migrations.
 
-**1.3 Test Tenant Seed**
-A SQL script that creates:
-- One tenant "Hayat Secret"
-- Owner user with email
-- Sample chart of accounts (full template)
-- One main warehouse
-- A few product groups (Devices, Oils, Perfumes)
-- Sample employee records
+> Runbook: `docs/PHASE_1A_SETUP.md`
 
-**1.4 RLS Verification Script**
-Write a SQL test script:
-- Log in as tenant A user → query products → only A's products
-- Log in as tenant B user → query → only B's
-- Log in as field agent → try to insert into `journal_entries` → blocked
-- Log in as a User with `audit_log.view` → try to read `audit_log` → success
-- etc.
+**Tasks**
+- [x] Install or verify Supabase CLI (`npx supabase` used when not on PATH).
+- [x] Run `supabase init` and commit generated local config.
+- [x] Run `supabase start` with Docker.
+- [x] Capture local `SUPABASE_URL` and `SUPABASE_ANON_KEY` (via `supabase status -o env`; not committed).
+- [x] Confirm Flutter can initialize Supabase using `--dart-define` / `scripts/run-local.ps1`.
+- [x] Add migrations:
+  - [x] `001_extensions.sql`
+  - [x] `002_tenants.sql`
+  - [x] `003_enums.sql`
+  - [x] `004_permissions.sql`
+  - [x] `005_currencies.sql`
+- [x] Run `supabase db reset`.
 
-### Deliverables
-- All tables created
-- RLS policies in place
-- Test tenant working
-- Cursor can run any query through the Supabase JS client
+**Deliverables**
+- `supabase/config.toml`
+- `supabase/migrations/001_extensions.sql`
+- `supabase/migrations/002_tenants.sql`
+- `supabase/migrations/003_enums.sql`
+- `supabase/migrations/004_permissions.sql`
+- `supabase/migrations/005_currencies.sql`
+- Documented local run command for Flutter with Supabase dart defines
 
-### Acceptance
-- A SQL query through `supabase.from('products').select()` returns only test tenant data
-- Trying as an unauthenticated user returns 0 rows
-- RLS verification script passes all checks
+**Acceptance**
+- `supabase status` returns local API, DB, Studio, and anon key.
+- `supabase db reset` succeeds.
+- Tables/types/functions from migrations 001–005 exist locally.
+- Flutter app starts with the real local anon key and does not use the placeholder key.
+
+### Phase 1B — Core Business Schema
+
+**Goal:** create the remaining business tables without RLS policies yet, in dependency order.
+
+**Tasks**
+- [ ] Add migrations `006`–`026`.
+- [ ] Add late FKs in-place where possible; otherwise use `032_late_fks.sql`.
+- [ ] Run `supabase db reset` after each logical group.
+
+**Deliverables**
+- All core tables exist locally.
+- Indexes and constraints from `DATABASE_SCHEMA.md` are present.
+
+**Acceptance**
+- Clean local reset from empty DB.
+- No migration ordering errors.
+- Schema inspection matches `DATABASE_SCHEMA.md`.
+
+### Phase 1C — Functions, Views, Triggers, and RLS
+
+**Goal:** implement the database behavior and tenant isolation layer.
+
+**Tasks**
+- [ ] Add `027_functions.sql`.
+- [ ] Add `028_views.sql`, including security-invoker safe views.
+- [ ] Add `029_triggers.sql`.
+- [ ] Add `030_rls_policies.sql` from `SECURITY.md`.
+
+**Deliverables**
+- Permission-aware RPC foundation.
+- Reporting/safe views.
+- Audit and business triggers.
+- RLS enabled on tenant-owned tables.
+
+**Acceptance**
+- Unauthenticated users cannot read tenant data.
+- Users only read/write rows for their tenant.
+- Permission-restricted operations are blocked without the needed permission.
+
+### Phase 1D — Seed and Verification
+
+**Goal:** prove the database works with realistic test data.
+
+**Tasks**
+- [ ] Add `031_seed.sql`.
+- [ ] Create one tenant: `Hayat Secret`.
+- [ ] Create owner/manager test user.
+- [ ] Seed default permissions catalog.
+- [ ] Seed default KWD currency.
+- [ ] Seed chart of accounts, one warehouse, product groups, and sample employees.
+- [ ] Add SQL verification script for tenant isolation and permission checks.
+
+**Deliverables**
+- Working local test tenant.
+- Repeatable seed.
+- RLS verification script.
+
+**Acceptance**
+- `supabase db reset` creates a usable local test tenant.
+- A tenant user can query only their tenant's data.
+- A user without permission is blocked from restricted tables/actions.
+- A user with the required permission can perform the allowed read/write.
 
 ---
 
