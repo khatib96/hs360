@@ -1,0 +1,11 @@
+{
+  "@@locale": "ar",
+  "appTitle": "HS360",
+  "dashboard": "لوحة التحكم",
+  "phaseZeroReady": "المرحلة 0 جاهزة — هيكل التطوير المحلي",
+  "language": "اللغة",
+  "languageArabic": "العربية",
+  "languageEnglish": "الإنجليزية",
+  "uiDirectionRtl": "اتجاه الواجهة: RTL",
+  "uiDirectionLtr": "اتجاه الواجهة: LTR"
+}

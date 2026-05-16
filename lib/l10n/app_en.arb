@@ -1,0 +1,23 @@
+{
+  "@@locale": "en",
+  "appTitle": "HS360",
+  "@appTitle": {
+    "description": "Application name"
+  },
+  "dashboard": "Dashboard",
+  "@dashboard": {
+    "description": "Dashboard screen title"
+  },
+  "phaseZeroReady": "Phase 0 ready — local development scaffold",
+  "@phaseZeroReady": {
+    "description": "Phase 0 status message on dashboard"
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Language switcher label"
+  },
+  "languageArabic": "Arabic",
+  "languageEnglish": "English",
+  "uiDirectionRtl": "UI direction: RTL",
+  "uiDirectionLtr": "UI direction: LTR"
+}
