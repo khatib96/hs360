@@ -11,7 +11,8 @@
 |-------|--------|-----------|
 | **0 — Project Setup** | ✅ Done | 2026-05-16 |
 | **1A — Local Supabase Foundation** | ✅ Done | 2026-05-16 |
-| 1 — Database Foundations (1B–1D) | ⬜ In progress | — |
+| **1B — Core Business Schema** | ✅ Done | 2026-05-16 |
+| 1 — Database Foundations (1C–1D) | ⬜ In progress | — |
 | 2 — Authentication & Routing | ⬜ Not started | — |
 | 3 — Products & Inventory | ⬜ Not started | — |
 | 4 — Customers & CoA | ⬜ Not started | — |
@@ -157,23 +158,24 @@ Use `DATABASE_SCHEMA.md` section 21 as the source of truth for migration order:
 - Tables/types/functions from migrations 001–005 exist locally.
 - Flutter app starts with the real local anon key and does not use the placeholder key.
 
-### Phase 1B — Core Business Schema
+### Phase 1B — Core Business Schema ✅ **COMPLETE** (2026-05-16)
 
 **Goal:** create the remaining business tables without RLS policies yet, in dependency order.
 
 **Tasks**
-- [ ] Add migrations `006`–`026`.
-- [ ] Add late FKs in-place where possible; otherwise use `032_late_fks.sql`.
-- [ ] Run `supabase db reset` after each logical group.
+- [x] Add migrations `006`–`026`.
+- [x] Add late FKs via `ALTER` in migrations 016, 019, 020, 021, 022 (no `032_late_fks.sql`).
+- [x] Run `supabase db reset` — all migrations apply cleanly.
 
 **Deliverables**
-- All core tables exist locally.
-- Indexes and constraints from `DATABASE_SCHEMA.md` are present.
+- [x] 30 new public tables (35 total with Phase 1A foundation).
+- [x] Indexes and constraints from `DATABASE_SCHEMA.md` are present.
+- [x] 12 named deferred FK constraints applied inline.
 
 **Acceptance**
-- Clean local reset from empty DB.
-- No migration ordering errors.
-- Schema inspection matches `DATABASE_SCHEMA.md`.
+- [x] Clean local reset from empty DB.
+- [x] No migration ordering errors.
+- [x] Schema inspection matches `DATABASE_SCHEMA.md` (35 tables, 26 enums, 0 RLS).
 
 ### Phase 1C — Functions, Views, Triggers, and RLS
 

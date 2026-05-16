@@ -1,6 +1,6 @@
 # ai_memory.md — AI Collaboration Memory
 
-> Updated 2026-05-16 (Phase 1A complete).
+> Updated 2026-05-16 (Phase 1B complete).
 > Keep this file short. It is for continuity between AI tools, not full project documentation.
 
 ---
@@ -8,14 +8,13 @@
 ## Current Project State
 
 - **Phase 0 complete** — Flutter scaffold on `main`.
-- **Phase 1A complete** — local Supabase via Docker + migrations `001`–`005`.
-- CLI: use `npx supabase` when `supabase` is not on PATH.
-- Local stack: `npx supabase start` / `db reset` / `status -o env`.
-- Foundation tables: `tenants`, `tenant_users`, `permissions`, `user_permissions`, `currencies`.
-- Helper functions: `current_tenant_id`, `current_account_type`, `is_manager`, `user_has_permission`, `tenant_default_currency`.
-- **26 public enums** (`user_account_type` in 002 + 25 in 003).
-- **No RLS yet** (Phase 1C). **No seed** (Phase 1D). **No 006+ tables** (Phase 1B).
-- Flutter: `SUPABASE_ANON_KEY` default is empty; use `scripts/run-local.ps1` or `--dart-define`.
+- **Phase 1A complete** — local Supabase + migrations `001`–`005`.
+- **Phase 1B complete** — migrations `006`–`026`; **35 public tables** (5 foundation + 30 business).
+- CLI: `npx supabase` when `supabase` is not on PATH.
+- **26 public enums** unchanged (`user_account_type` in 002 + 25 in 003).
+- **12 deferred FKs** added via `ALTER` in 016/019/020/021/022 (not `032_late_fks.sql`).
+- **No RLS** (Phase 1C). **No seed** (Phase 1D). **No 027+** migrations yet.
+- Flutter: `SUPABASE_ANON_KEY` empty default; `scripts/run-local.ps1`.
 - Runbooks: `docs/PHASE_0_SETUP.md`, `docs/PHASE_1A_SETUP.md`.
 
 ---
@@ -40,21 +39,19 @@
 ## Last Session Summary
 
 **Date:** 2026-05-16  
-**Task:** Phase 1A — local Supabase foundation only.
+**Task:** Phase 1B — core business schema (`006`–`026`).
 
 What was done:
 
-- `npx supabase init`; `config.toml` committed.
-- Migrations `001_extensions` through `005_currencies` from `DATABASE_SCHEMA.md`.
-- `npx supabase start` + `db reset` succeeded; enum count verified = 26.
-- `env.dart` anon default cleared; `supabase_client.dart` warns when key missing.
-- `scripts/run-local.ps1` reads keys from `supabase status -o env` at runtime.
-- `docs/PHASE_1A_SETUP.md`; `BUILD_PLAN.md` Phase 1A marked complete.
+- 21 migrations from `DATABASE_SCHEMA.md` sections 3–18.
+- Forward-reference FKs via named `ALTER` constraints (016, 019, 020, 021, 022).
+- `npx supabase db reset` succeeded; verified 35 tables, 26 enums, 12 deferred FKs, 0 RLS.
+- `BUILD_PLAN.md` Phase 1B marked complete.
 
 Not done (by design):
 
-- Phase 1B+ migrations, RLS (1C), seed (1D), cloud/VPS, functions implementation.
+- `027`–`031` (functions, views, triggers, RLS, seed), `032_late_fks.sql`, Flutter changes.
 
 Next recommended step:
 
-- **Phase 1B — Core business schema:** migrations `006`–`026`.
+- **Phase 1C** — `027_functions.sql`, `028_views.sql`, `029_triggers.sql`, `030_rls_policies.sql`.
