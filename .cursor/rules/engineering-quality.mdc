@@ -1,0 +1,93 @@
+---
+description: Engineering quality, file size, and maintainability rules for every phase
+globs:
+  - "**/*.dart"
+  - "**/*.sql"
+  - "**/*.md"
+alwaysApply: true
+---
+
+# Engineering Quality Rules
+
+These rules apply to every phase and every feature.
+
+## Prevent Large Files
+
+- Do not let a normal source file grow unchecked.
+- Review any file near 250 lines for possible extraction.
+- Split any file over 350 lines unless there is a strong reason not to.
+- A file over 500 lines requires an explicit explanation in the phase summary.
+- Prefer several focused files over one mixed-purpose file.
+
+## Keep Responsibilities Separate
+
+- Screens/widgets render UI only.
+- Controllers/providers own UI state and orchestration.
+- Repositories own Supabase/data calls.
+- Domain services own business rules and calculations.
+- Shared widgets hold reusable UI primitives.
+- Do not put routing, auth, permission loading, database calls, and UI layout in one file.
+
+## Feature Folder Shape
+
+Use feature folders for real app work:
+
+```text
+lib/features/<feature>/
+  data/
+  domain/
+  presentation/
+```
+
+Add subfolders only when they clarify ownership. Do not create empty architecture folders just for ceremony.
+
+## Routing And Providers
+
+- Keep `app_router.dart` small enough to scan.
+- Extract route names, guards, redirects, and refresh/listenable helpers when routing grows.
+- Do not put all providers for a feature in a single catch-all file.
+- Prefer focused files such as `auth_controller.dart`, `auth_state.dart`, `permission_controller.dart`, and `session_provider.dart`.
+
+## UI Reuse
+
+Reusable controls belong under `lib/shared/widgets/` or the local feature if only used there.
+
+Examples:
+- primary buttons
+- loading and empty states
+- error banners
+- app text fields
+- dashboard cards
+- permission-gated wrappers
+
+Do not duplicate the same button/card/loading/error component across screens.
+
+## Phase-End Review
+
+At the end of every phase, before marking it complete:
+
+1. Run a file-size scan.
+2. Identify files over 250 lines.
+3. Split files that mix unrelated responsibilities.
+4. Check for repeated widgets or repeated query logic.
+5. Confirm no UI file contains business rules or direct Supabase calls.
+6. Document any intentionally large file in the final phase summary.
+
+Suggested PowerShell scan:
+
+```powershell
+Get-ChildItem lib,supabase -Recurse -File |
+  Where-Object { $_.Extension -in '.dart','.sql' } |
+  ForEach-Object {
+    [pscustomobject]@{
+      Lines = (Get-Content $_.FullName | Measure-Object -Line).Lines
+      File = $_.FullName
+    }
+  } |
+  Where-Object { $_.Lines -gt 250 } |
+  Sort-Object Lines -Descending
+```
+
+## Do Not Postpone Cleanup Blindly
+
+If a file grows because of the current phase, address it in the same phase unless splitting would create real risk. If splitting is deferred, record exactly why and when it should be revisited.

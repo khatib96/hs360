@@ -16,6 +16,7 @@ Always read these docs before starting work in their respective areas:
 - Permissions/RLS → `docs/SECURITY.md`
 - UI styling → `docs/DESIGN_SYSTEM.md`
 - Phasing → `docs/BUILD_PLAN.md`
+- Maintainability and file splitting → `docs/ENGINEERING_QUALITY.md`
 
 ---
 
@@ -60,6 +61,8 @@ Always read these docs before starting work in their respective areas:
 ---
 
 ## Architecture Principles
+
+Also follow `.cursor/rules/engineering-quality.mdc` for file size, feature structure, and phase-end cleanup checks.
 
 ### Layer Discipline
 ```
