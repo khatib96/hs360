@@ -228,6 +228,8 @@ Use `DATABASE_SCHEMA.md` section 21 as the source of truth for migration order:
 
 ## Phase 2 — Authentication & Routing (≈ 1 week)
 
+> Runbook: `docs/PHASE_2_AUTH_ROUTING_PLAN.md`
+
 ### Goal
 Login screen works. After login, user is routed to the right place based on role.
 
