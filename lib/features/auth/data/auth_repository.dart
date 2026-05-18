@@ -119,34 +119,23 @@ class AuthRepository {
     if (user == null) return null;
 
     final session = client.auth.currentSession;
-    final Map<String, dynamic> claims = session != null
-        ? decodeJwtClaims(session.accessToken)
-        : const {};
+    // Best-effort decode for future M3 cross-check; DB profile is authoritative.
+    if (session != null) {
+      decodeJwtClaims(session.accessToken);
+    }
 
     final profile = await loadTenantUserProfile(user.id);
     final permissions = await loadMyPermissions();
 
-    final tenantId = _claimString(claims, 'tenant_id') ?? profile.tenantId;
-    final tenantUserId =
-        _claimString(claims, 'tenant_user_id') ?? profile.tenantUserId;
-    final accountType =
-        _claimString(claims, 'account_type') ?? profile.accountType;
-
     return AppSession(
       userId: user.id,
       email: user.email ?? '',
-      tenantId: tenantId,
-      tenantUserId: tenantUserId,
-      accountType: accountType,
+      tenantId: profile.tenantId,
+      tenantUserId: profile.tenantUserId,
+      accountType: profile.accountType,
       displayName: profile.displayName,
       preferredLocale: profile.preferredLocale,
       permissions: permissions,
     );
-  }
-
-  String? _claimString(Map<String, dynamic> claims, String key) {
-    final value = claims[key];
-    if (value == null) return null;
-    return value.toString();
   }
 }

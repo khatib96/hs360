@@ -20,7 +20,7 @@
 - **Triggers (029):** `audit_log_row` (narrow WHEN clauses), `user_permissions` insert/delete audit, `vouchers` insert/delete only, journal balance, last-manager + self-mod guards, `touch_updated_at` on 6 tables.
 - **Seed:** Hayat Secret tenant, Tenant B isolation tenant, 5 test users, 103 permissions, KWD currencies, CoA, warehouses, product groups, employees, products.
 - `get_my_permissions`: managers return `permissions: []`; clients must treat `is_manager=true` as full access.
-- Pending before M3/M4: in `AuthRepository.loadCurrentAppSession()`, DB `tenant_users` profile should remain authoritative for `tenantId`, `tenantUserId`, and `accountType`; JWT claims are best-effort diagnostics only.
+- Review fix complete: `AuthRepository.loadCurrentAppSession()` now uses DB `tenant_users` profile as authoritative for `tenantId`, `tenantUserId`, and `accountType`; JWT decode remains best-effort only.
 
 ---
 
@@ -67,5 +67,4 @@ Verification:
 
 Next recommended step:
 
-- Before M3/M4, fix `AuthRepository.loadCurrentAppSession()` so DB profile values override JWT claims for `tenantId`, `tenantUserId`, and `accountType`.
-- Then continue Phase 2 with M3 JWT hook or M4 auth UI, depending on chosen chunk order.
+- Continue Phase 2 with M3 JWT hook or M4 auth UI, depending on chosen chunk order.
