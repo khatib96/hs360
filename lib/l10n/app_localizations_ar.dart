@@ -12,12 +12,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appTitle => 'HS360';
 
   @override
-  String get brandName => 'hayat secret';
-
-  @override
-  String get brandTagline => 'mind, body, soul & beyond';
-
-  @override
   String get dashboard => 'لوحة التحكم';
 
   @override

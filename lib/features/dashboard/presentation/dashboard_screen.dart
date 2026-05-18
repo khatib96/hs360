@@ -60,11 +60,7 @@ class DashboardScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AppBrandMark(
-              title: l10n.appTitle,
-              brandName: l10n.brandName,
-              tagline: l10n.brandTagline,
-            ),
+            AppBrandMark(title: l10n.appTitle),
             const SizedBox(height: 24),
             Text(
               l10n.appTitle,

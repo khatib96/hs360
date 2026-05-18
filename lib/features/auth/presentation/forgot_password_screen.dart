@@ -101,11 +101,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      AppBrandMark(
-                        title: l10n.appTitle,
-                        brandName: l10n.brandName,
-                        tagline: l10n.brandTagline,
-                      ),
+                      AppBrandMark(title: l10n.appTitle),
                       const SizedBox(height: 32),
                       Text(
                         l10n.forgotPasswordTitle,

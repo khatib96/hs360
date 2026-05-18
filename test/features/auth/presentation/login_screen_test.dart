@@ -54,8 +54,10 @@ void main() {
     final signInButton = find.widgetWithText(FilledButton, l10n.signIn);
     expect(tester.widget<FilledButton>(signInButton).onPressed, isNotNull);
 
+    await tester.ensureVisible(signInButton);
+    await tester.pumpAndSettle();
     await tester.tap(signInButton);
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     expect(find.text(l10n.validationEmailRequired), findsOneWidget);
     expect(find.text(l10n.validationPasswordRequired), findsOneWidget);

@@ -104,18 +104,6 @@ abstract class AppLocalizations {
   /// **'HS360'**
   String get appTitle;
 
-  /// Brand wordmark
-  ///
-  /// In en, this message translates to:
-  /// **'hayat secret'**
-  String get brandName;
-
-  /// Brand tagline
-  ///
-  /// In en, this message translates to:
-  /// **'mind, body, soul & beyond'**
-  String get brandTagline;
-
   /// Dashboard screen title
   ///
   /// In en, this message translates to:

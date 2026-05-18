@@ -4,14 +4,6 @@
   "@appTitle": {
     "description": "Application name"
   },
-  "brandName": "hayat secret",
-  "@brandName": {
-    "description": "Brand wordmark"
-  },
-  "brandTagline": "mind, body, soul & beyond",
-  "@brandTagline": {
-    "description": "Brand tagline"
-  },
   "dashboard": "Dashboard",
   "@dashboard": {
     "description": "Dashboard screen title"
