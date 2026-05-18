@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 /// Brand colors from docs/DESIGN_SYSTEM.md
 abstract final class AppColors {
-  static const Color gold = Color(0xFFC9A961);
+  static const Color gold = Color(0xFFA86010);
   static const Color goldSoft = Color(0xFFE8D9B0);
   static const Color goldDeep = Color(0xFF9C8240);
   static const Color charcoal = Color(0xFF1A1A1A);

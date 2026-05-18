@@ -8,11 +8,7 @@ import 'supabase_client.dart';
 part 'supabase_providers.g.dart';
 
 /// Local Supabase configuration state for controlled UI when keys are missing.
-enum SupabaseConfigStatus {
-  missingAnonKey,
-  initFailed,
-  ready,
-}
+enum SupabaseConfigStatus { missingAnonKey, initFailed, ready }
 
 SupabaseConfigStatus resolveSupabaseConfigStatus() {
   if (Env.supabaseAnonKey.isEmpty) {

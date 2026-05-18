@@ -1,9 +1,7 @@
 /// Permission checks for the current session. Managers bypass all checks.
 class AppPermissions {
-  AppPermissions({
-    required this.isManager,
-    required Set<String> permissions,
-  }) : permissions = Set.unmodifiable(permissions);
+  AppPermissions({required this.isManager, required Set<String> permissions})
+    : permissions = Set.unmodifiable(permissions);
 
   final bool isManager;
   final Set<String> permissions;

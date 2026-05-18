@@ -104,6 +104,18 @@ abstract class AppLocalizations {
   /// **'HS360'**
   String get appTitle;
 
+  /// Brand wordmark
+  ///
+  /// In en, this message translates to:
+  /// **'hayat secret'**
+  String get brandName;
+
+  /// Brand tagline
+  ///
+  /// In en, this message translates to:
+  /// **'mind, body, soul & beyond'**
+  String get brandTagline;
+
   /// Dashboard screen title
   ///
   /// In en, this message translates to:
@@ -145,6 +157,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'UI direction: LTR'**
   String get uiDirectionLtr;
+
+  /// Login screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get loginTitle;
+
+  /// Login screen subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your account details to continue'**
+  String get loginSubtitle;
+
+  /// Email field label
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get emailLabel;
+
+  /// Password field label
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get passwordLabel;
+
+  /// Sign in button
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get signIn;
+
+  /// Link to forgot password screen
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password?'**
+  String get forgotPassword;
+
+  /// Forgot password submit button
+  ///
+  /// In en, this message translates to:
+  /// **'Send reset link'**
+  String get sendResetLink;
+
+  /// Return to login from forgot password
+  ///
+  /// In en, this message translates to:
+  /// **'Back to sign in'**
+  String get backToLogin;
+
+  /// Logout action
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get logout;
+
+  /// Loading state label
+  ///
+  /// In en, this message translates to:
+  /// **'Loading…'**
+  String get loading;
+
+  /// Retry action
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// Password visibility toggle show
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get showPassword;
+
+  /// Password visibility toggle hide
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get hidePassword;
+
+  /// Email required validation
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email'**
+  String get validationEmailRequired;
+
+  /// Email format validation
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address'**
+  String get validationEmailInvalid;
+
+  /// Password required validation
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password'**
+  String get validationPasswordRequired;
+
+  /// Invalid login credentials
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email or password'**
+  String get authErrorInvalidCredentials;
+
+  /// Network unavailable
+  ///
+  /// In en, this message translates to:
+  /// **'Could not connect. Check your network or local Supabase'**
+  String get authErrorNetworkUnavailable;
+
+  /// No tenant user
+  ///
+  /// In en, this message translates to:
+  /// **'No active tenant account is linked to this user'**
+  String get authErrorNoActiveTenantUser;
+
+  /// Inactive user
+  ///
+  /// In en, this message translates to:
+  /// **'This user account is inactive'**
+  String get authErrorUserInactive;
+
+  /// Supabase not configured
+  ///
+  /// In en, this message translates to:
+  /// **'Supabase is not configured'**
+  String get authErrorSupabaseNotConfigured;
+
+  /// Unknown auth error
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred. Please try again'**
+  String get authErrorUnknown;
+
+  /// Missing anon key banner
+  ///
+  /// In en, this message translates to:
+  /// **'Local Supabase key is missing. Run the app via scripts/run-local.ps1'**
+  String get authMissingAnonKey;
+
+  /// Supabase init failed banner
+  ///
+  /// In en, this message translates to:
+  /// **'Could not initialize Supabase. Check that local services are running'**
+  String get authInitFailed;
+
+  /// Password reset request success message
+  ///
+  /// In en, this message translates to:
+  /// **'If the email is registered, password reset instructions will be sent.'**
+  String get resetPasswordSuccess;
+
+  /// Forgot password screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Reset password'**
+  String get forgotPasswordTitle;
+
+  /// Forgot password screen subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email and we will send reset instructions if the account exists'**
+  String get forgotPasswordSubtitle;
 }
 
 class _AppLocalizationsDelegate

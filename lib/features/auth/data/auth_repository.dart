@@ -64,9 +64,7 @@ class AuthRepository {
   Future<AppPermissions> loadMyPermissions() async {
     try {
       final response = await _requireClient.rpc('get_my_permissions');
-      return AppPermissions.fromRpc(
-        Map<String, dynamic>.from(response as Map),
-      );
+      return AppPermissions.fromRpc(Map<String, dynamic>.from(response as Map));
     } catch (e, st) {
       throw AuthException.fromSupabase(e, st);
     }

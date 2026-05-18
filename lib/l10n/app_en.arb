@@ -4,6 +4,14 @@
   "@appTitle": {
     "description": "Application name"
   },
+  "brandName": "hayat secret",
+  "@brandName": {
+    "description": "Brand wordmark"
+  },
+  "brandTagline": "mind, body, soul & beyond",
+  "@brandTagline": {
+    "description": "Brand tagline"
+  },
   "dashboard": "Dashboard",
   "@dashboard": {
     "description": "Dashboard screen title"
@@ -19,5 +27,113 @@
   "languageArabic": "Arabic",
   "languageEnglish": "English",
   "uiDirectionRtl": "UI direction: RTL",
-  "uiDirectionLtr": "UI direction: LTR"
+  "uiDirectionLtr": "UI direction: LTR",
+  "loginTitle": "Sign in",
+  "@loginTitle": {
+    "description": "Login screen title"
+  },
+  "loginSubtitle": "Enter your account details to continue",
+  "@loginSubtitle": {
+    "description": "Login screen subtitle"
+  },
+  "emailLabel": "Email",
+  "@emailLabel": {
+    "description": "Email field label"
+  },
+  "passwordLabel": "Password",
+  "@passwordLabel": {
+    "description": "Password field label"
+  },
+  "signIn": "Sign in",
+  "@signIn": {
+    "description": "Sign in button"
+  },
+  "forgotPassword": "Forgot password?",
+  "@forgotPassword": {
+    "description": "Link to forgot password screen"
+  },
+  "sendResetLink": "Send reset link",
+  "@sendResetLink": {
+    "description": "Forgot password submit button"
+  },
+  "backToLogin": "Back to sign in",
+  "@backToLogin": {
+    "description": "Return to login from forgot password"
+  },
+  "logout": "Sign out",
+  "@logout": {
+    "description": "Logout action"
+  },
+  "loading": "Loading…",
+  "@loading": {
+    "description": "Loading state label"
+  },
+  "retry": "Retry",
+  "@retry": {
+    "description": "Retry action"
+  },
+  "showPassword": "Show password",
+  "@showPassword": {
+    "description": "Password visibility toggle show"
+  },
+  "hidePassword": "Hide password",
+  "@hidePassword": {
+    "description": "Password visibility toggle hide"
+  },
+  "validationEmailRequired": "Enter your email",
+  "@validationEmailRequired": {
+    "description": "Email required validation"
+  },
+  "validationEmailInvalid": "Enter a valid email address",
+  "@validationEmailInvalid": {
+    "description": "Email format validation"
+  },
+  "validationPasswordRequired": "Enter your password",
+  "@validationPasswordRequired": {
+    "description": "Password required validation"
+  },
+  "authErrorInvalidCredentials": "Invalid email or password",
+  "@authErrorInvalidCredentials": {
+    "description": "Invalid login credentials"
+  },
+  "authErrorNetworkUnavailable": "Could not connect. Check your network or local Supabase",
+  "@authErrorNetworkUnavailable": {
+    "description": "Network unavailable"
+  },
+  "authErrorNoActiveTenantUser": "No active tenant account is linked to this user",
+  "@authErrorNoActiveTenantUser": {
+    "description": "No tenant user"
+  },
+  "authErrorUserInactive": "This user account is inactive",
+  "@authErrorUserInactive": {
+    "description": "Inactive user"
+  },
+  "authErrorSupabaseNotConfigured": "Supabase is not configured",
+  "@authErrorSupabaseNotConfigured": {
+    "description": "Supabase not configured"
+  },
+  "authErrorUnknown": "An unexpected error occurred. Please try again",
+  "@authErrorUnknown": {
+    "description": "Unknown auth error"
+  },
+  "authMissingAnonKey": "Local Supabase key is missing. Run the app via scripts/run-local.ps1",
+  "@authMissingAnonKey": {
+    "description": "Missing anon key banner"
+  },
+  "authInitFailed": "Could not initialize Supabase. Check that local services are running",
+  "@authInitFailed": {
+    "description": "Supabase init failed banner"
+  },
+  "resetPasswordSuccess": "If the email is registered, password reset instructions will be sent.",
+  "@resetPasswordSuccess": {
+    "description": "Password reset request success message"
+  },
+  "forgotPasswordTitle": "Reset password",
+  "@forgotPasswordTitle": {
+    "description": "Forgot password screen title"
+  },
+  "forgotPasswordSubtitle": "Enter your email and we will send reset instructions if the account exists",
+  "@forgotPasswordSubtitle": {
+    "description": "Forgot password screen subtitle"
+  }
 }

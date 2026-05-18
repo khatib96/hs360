@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 
 class AppShell extends StatelessWidget {
   const AppShell({
@@ -23,23 +22,67 @@ class AppShell extends StatelessWidget {
 }
 
 class AppBrandMark extends StatelessWidget {
-  const AppBrandMark({super.key});
+  static const logoAssetPath = 'assets/brand/hs-logo-gold.png';
+
+  const AppBrandMark({
+    required this.title,
+    required this.brandName,
+    required this.tagline,
+    super.key,
+  });
+
+  final String title;
+  final String brandName;
+  final String tagline;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(LucideIcons.sparkles, color: theme.colorScheme.primary, size: 28),
-        const SizedBox(width: 8),
-        Text(
-          'HS360',
-          style: theme.textTheme.headlineMedium?.copyWith(
-            color: theme.colorScheme.onSurface,
+    final textTheme = Theme.of(context).textTheme;
+    final onSurface = Theme.of(context).colorScheme.onSurface;
+
+    return Semantics(
+      image: true,
+      label: title,
+      child: ExcludeSemantics(
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset(
+                logoAssetPath,
+                height: 76,
+                fit: BoxFit.contain,
+                filterQuality: FilterQuality.high,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                brandName,
+                maxLines: 1,
+                textAlign: TextAlign.center,
+                style: textTheme.displaySmall?.copyWith(
+                  color: onSurface,
+                  fontSize: 34,
+                  fontWeight: FontWeight.w400,
+                  height: 1,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                tagline,
+                maxLines: 1,
+                textAlign: TextAlign.center,
+                style: textTheme.bodyLarge?.copyWith(
+                  color: onSurface,
+                  fontSize: 17,
+                  fontStyle: FontStyle.italic,
+                  height: 1.1,
+                ),
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 }

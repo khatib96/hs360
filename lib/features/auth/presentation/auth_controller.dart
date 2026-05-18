@@ -18,10 +18,7 @@ class AuthController extends _$AuthController {
     return ref.read(authRepositoryProvider).loadCurrentAppSession();
   }
 
-  Future<void> signIn({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> signIn({required String email, required String password}) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       final repo = ref.read(authRepositoryProvider);

@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../core/localization/locale_controller.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../shared/widgets/app_shell.dart';
+import '../../auth/presentation/auth_controller.dart';
+import '../../auth/presentation/auth_error_messages.dart';
+import '../../auth/presentation/login_screen.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
-  static const routePath = '/';
+  static const routePath = '/dashboard';
   static const routeName = 'dashboard';
 
   @override
@@ -20,6 +25,27 @@ class DashboardScreen extends ConsumerWidget {
     return AppShell(
       title: l10n.dashboard,
       actions: [
+        IconButton(
+          tooltip: l10n.logout,
+          icon: const Icon(LucideIcons.logOut),
+          onPressed: () async {
+            await ref.read(authControllerProvider.notifier).signOut();
+            if (!context.mounted) return;
+
+            final authState = ref.read(authControllerProvider);
+            if (authState.hasError) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    authErrorMessage(l10n, authErrorCode(authState.error)),
+                  ),
+                ),
+              );
+              return;
+            }
+            context.go(LoginScreen.routePath);
+          },
+        ),
         Padding(
           padding: const EdgeInsetsDirectional.only(end: 8),
           child: _LanguageMenu(
@@ -34,7 +60,11 @@ class DashboardScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const AppBrandMark(),
+            AppBrandMark(
+              title: l10n.appTitle,
+              brandName: l10n.brandName,
+              tagline: l10n.brandTagline,
+            ),
             const SizedBox(height: 24),
             Text(
               l10n.appTitle,
