@@ -51,7 +51,8 @@ class DashboardScreen extends ConsumerWidget {
           child: _LanguageMenu(
             label: l10n.language,
             locale: locale,
-            onChanged: (next) => ref.read(localeProvider.notifier).state = next,
+            onChanged: (next) =>
+                ref.read(localeControllerProvider.notifier).setLocale(next),
           ),
         ),
       ],

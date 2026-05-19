@@ -1,6 +1,6 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-05-19 (Phase 2 M5 complete).
+> Updated 2026-05-19 (Phase 2 M6 complete).
 > Keep this file short. It is for continuity between AI tools, not full project documentation.
 
 ---
@@ -13,6 +13,7 @@
 - **Phase 2 M3 complete** - `033_auth_custom_access_token_hook.sql` + `[auth.hook.custom_access_token]` in `config.toml`; JWTs include `tenant_id`, `tenant_user_id`, `account_type`.
 - **Phase 2 M4 complete** - Login (`/login`), forgot password (`/forgot-password`), logout on dashboard; localized auth errors; `ErrorBanner` / `MessageBanner` / `AppTextField`.
 - **Phase 2 M5 complete** - Permission-aware GoRouter guards; routes `/login`, `/forgot-password`, `/dashboard`, `/field/today`, `/blocked`; `RouterRefreshNotifier` on auth/session changes.
+- **Phase 2 M6 complete** - Locale persistence via `shared_preferences`; `LocaleController` loads/saves `preferred_locale`; `localeProvider` sync alias for `app.dart`.
 - Migrations `001`-`034` apply cleanly with `supabase db reset`.
 - `034_seed_auth_login_fix.sql` makes seeded auth users compatible with GoTrue password login after clean reset.
 - CLI: use `npx --yes supabase` when `supabase` is not on PATH; `status -o env` returns `ANON_KEY` and `API_URL`.
@@ -43,19 +44,19 @@
 ## Last Session Summary
 
 **Date:** 2026-05-19
-**Task:** Phase 2 M5 — Routing Guards.
+**Task:** Phase 2 M6 — Locale Persistence.
 
 What was done:
 
-- `app_routes.dart`, `route_guards.dart`, `router_refresh_notifier.dart`; `app_router.dart` global redirect + refreshListenable.
-- Placeholders: `field_today_screen.dart`, `blocked_screen.dart`; ARB strings for both.
-- Removed post-login `context.go(Dashboard)` from login; router decides home.
-- `test/core/routing/route_guards_test.dart` — 20 tests on `guardRedirectForPath`.
+- `shared_preferences` in pubspec; `locale_controller.dart` refactored with `@Riverpod`, `LocaleRepository`, `LocaleController.setLocale`, `localeProvider` alias.
+- `_defaultLocale()` / `normalizeLocale` / `localeFromCode` — strict `ar`/`en`, no recursion.
+- Dashboard language menu uses `localeControllerProvider.notifier.setLocale`.
+- `test/core/localization/locale_controller_test.dart` — 15 tests.
 
 Verification:
 
-- `dart format .`, `flutter gen-l10n`, `flutter analyze`, `flutter test` 31/31 passed.
+- `flutter pub get`, `build_runner`, `dart format .`, `flutter analyze` (clean), `flutter test` 46/46 passed.
 
 Next recommended step:
 
-- Phase 2 M6 locale persistence.
+- Phase 2 M7 placeholders & shell polish.
