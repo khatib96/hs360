@@ -1,6 +1,6 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-05-20 (Phase 3 M1 complete + RPC-only movement follow-up).
+> Updated 2026-05-20 (Phase 3 M1.5 complete).
 > Keep this file short. It is for continuity between AI tools, not full project documentation.
 
 ---
@@ -10,32 +10,34 @@
 - **Phase 0-1D complete** - local Supabase database foundation is verified.
 - **Phase 2 complete** - auth, routing, permissions, locale (M0–M8).
 - **Phase 3 M0+M0.5 complete** - baseline and pre-migration backups in `supabase/.temp/` (not committed).
-- **Phase 3 M1 complete** - DB helpers, inventory adjustment RPC, product_images storage, SQL verification.
-- Migrations `001`-`038` apply cleanly with `supabase db reset`.
-- **M1 DB additions:**
-  - `to_primary(uuid, numeric)` / `to_secondary(uuid, numeric)` — unit conversion helpers.
-  - `record_inventory_adjustment(...)` — SECURITY DEFINER RPC for `adjustment_in` / `adjustment_out` only; rejects serialized products; WAC on stock-in; stable error messages.
-  - `product_images` storage bucket + public read + authenticated insert (`products.edit`).
-  - `038_inventory_movements_rpc_only.sql` drops direct client INSERT/DELETE policies for `inventory_movements`; movement writes must go through RPC.
-  - Test: `supabase/tests/phase_3_products_inventory.sql` (12 cases).
-- `034_seed_auth_login_fix.sql` makes seeded auth users compatible with GoTrue password login after clean reset.
+- **Phase 3 M1 complete** - DB helpers, inventory adjustment RPC, product_images storage, RPC-only movements, SQL verification.
+- **Phase 3 M1.5 complete** - canonical inventory rules doc + comments-only migration `039`.
+- Migrations `001`-`039` apply cleanly with `supabase db reset`.
+- **Canonical inventory rules:** [`docs/PHASE_3_M1_5_INVENTORY_RULES.md`](docs/PHASE_3_M1_5_INVENTORY_RULES.md) (wins over BUILD_PLAN / ad-hoc notes for inventory behavior until superseded).
+- **M1/M1.5 DB:**
+  - `to_primary` / `to_secondary` (035)
+  - `record_inventory_adjustment` (036) — adjustment_in/out; serialized reject; WAC on stock-in
+  - `product_images` storage (037)
+  - RPC-only movement writes (038)
+  - Business-rule PostgreSQL comments (039)
+  - Test: `supabase/tests/phase_3_products_inventory.sql` (12 cases)
+- `inventory_movements.create` = call approved inventory RPCs, **not** direct table INSERT (after 038).
 - CLI: use `npx --yes supabase` when `supabase` is not on PATH.
-- Initial route `/login`; authenticated users redirect to home by permissions (manager/products → dashboard, field → `/field/today`, zero → `/blocked`).
-- Routing: `app_routes.dart`, `route_guards.dart`, `router_refresh_notifier.dart`.
-- Locale: `locale_controller.dart`; prefs key `preferred_locale`; only `ar` / `en`.
+- Initial route `/login`; permission-aware home routing (manager/products → dashboard, field → `/field/today`, zero → `/blocked`).
 
 ---
 
 ## Decisions Confirmed
 
 - Access control is Manager/User only; RLS uses `user_has_permission()`.
-- Inventory movements are immutable in design; direct client INSERT/DELETE policies are dropped in migration `038`. Corrections should use controlled reverse movements/RPCs.
-- Manual adjustments: `inventory_movements.create`, non-empty notes, `p_unit_cost` required on `adjustment_in` (use `0.000` for free stock).
-- Serialized products cannot use bulk `record_inventory_adjustment` in M1 (`serialized_adjustment_not_supported`).
-- WAC in M1 uses `sum(qty_available)` only; revisit other stock buckets in M1.5/M7.
-- `products_safe` hides cost columns; repositories must not expose cost without field permissions.
-- Storage `product_images`: INSERT only in M1; UPDATE/DELETE policies deferred to M5.
-- Phase 3 transfers (`record_inventory_transfer`) deferred to **M7E**.
+- Inventory movements are append-only; no client INSERT/DELETE (038); corrections via reverse RPC + notes.
+- Manual adjustments: `inventory_movements.create`, non-empty notes, `unit_cost` required on `adjustment_in` (0.000 allowed for free stock).
+- Serialized products: bulk `record_inventory_adjustment` rejected (`serialized_adjustment_not_supported`).
+- WAC: M1 uses `sum(qty_available)` only; revisit all stock buckets before Phase 5 / in M7.
+- `products_safe` for users without full cost field permissions (M2 contract).
+- StockEngine / CostEngine: Dart preview/validation only; DB/RPC is authority (M2).
+- Storage `product_images`: INSERT only in M1; UPDATE/DELETE → M5.
+- Transfers → M7E; serialized unit RPCs → M6/M7D.
 
 ---
 
@@ -43,46 +45,35 @@
 
 | Use | Call |
 |-----|------|
-| Read locale in widgets / `MaterialApp` | `ref.watch(localeProvider)` |
+| Read locale | `ref.watch(localeProvider)` |
 | Change language | `ref.read(localeControllerProvider.notifier).setLocale(locale)` |
 | Text direction | `localeTextDirection(locale)` at app root |
 
-Supported: `Locale('ar')`, `Locale('en')`. Default: `Env.defaultLocale` (`ar`).
+Supported: `ar`, `en`. Default: `ar`.
 
 ---
 
 ## Last Session Summary
 
 **Date:** 2026-05-20  
-**Task:** Phase 3 M1 - Database gap review and inventory helpers, plus RPC-only movement follow-up.
+**Task:** Phase 3 M1.5 - Inventory business rules and engine boundaries.
 
 ### What was done
 
-- Added migrations `035`–`037`: conversion helpers, `record_inventory_adjustment` RPC, `product_images` bucket/policies.
-- Added `038_inventory_movements_rpc_only.sql` to block direct client movement inserts/deletes so balances cannot be bypassed.
-- Added `supabase/tests/phase_3_products_inventory.sql` with conversion, tenant isolation, permissions, direct movement insert blocking, adjustments, WAC, `products_safe`, storage catalog checks.
+- Created [`docs/PHASE_3_M1_5_INVENTORY_RULES.md`](docs/PHASE_3_M1_5_INVENTORY_RULES.md) (sections A–M; canonical inventory rules).
+- Created [`supabase/migrations/039_inventory_business_rules.sql`](supabase/migrations/039_inventory_business_rules.sql) (COMMENT ON tables, columns, helpers, RPC — no behavior change).
+- Cross-linked M1.5 in [`docs/PHASE_3_PRODUCTS_INVENTORY_PLAN.md`](docs/PHASE_3_PRODUCTS_INVENTORY_PLAN.md).
 
 ### Verification
 
 ```text
-npx --yes supabase db reset      -> passed (migrations 001-038)
+npx --yes supabase db reset      -> passed (migrations 001-039)
 phase_1d_rls.sql                 -> phase_1d_rls_verification_passed
 phase_3_products_inventory.sql   -> phase_3_products_inventory_verification_passed
 ```
 
-PowerShell test command:
-
-```powershell
-Get-Content supabase\tests\phase_3_products_inventory.sql | docker exec -i supabase_db_hs360 psql -U postgres -d postgres
-```
-
-### Intentional deferrals (M1)
-
-- `record_inventory_transfer` → M7E
-- `p_client_id` idempotency → M1.5
-- Storage UPDATE/DELETE → M5
-- Serialized unit-level adjustments → M6/M7D
+No Dart files changed; Flutter checks not run.
 
 ### Next recommended step
 
-- **Phase 3 M1.5** - Inventory business rules and engine boundaries, then **M2** domain/repositories.
+- **Phase 3 M2** - Domain models and repositories (`StockEngine` / `CostEngine` per M1.5 contract).

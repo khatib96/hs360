@@ -367,6 +367,8 @@ None committed.
 
 ## M1.5 - Inventory Business Rules & Engine Boundaries
 
+> Canonical inventory rules: [`PHASE_3_M1_5_INVENTORY_RULES.md`](PHASE_3_M1_5_INVENTORY_RULES.md)
+
 ### Goal
 
 حسم قواعد المخزون المحاسبية والتشغيلية قبل بناء الشاشات، حتى لا تصبح القواعد موزعة بين UI و repositories و migrations.
