@@ -1,0 +1,251 @@
+import 'package:decimal/decimal.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../../core/errors/products_exception.dart';
+import '../../../core/network/supabase_providers.dart';
+import '../../../domain/validators/product_validator.dart';
+import '../../auth/domain/app_session.dart';
+import '../domain/product.dart';
+import '../domain/product_cost_access.dart';
+import '../domain/product_filters.dart';
+import '../domain/product_form_state.dart';
+import '../domain/product_stock_summary.dart';
+import '../../inventory/domain/inventory_balance.dart';
+
+part 'product_repository.g.dart';
+
+@Riverpod(keepAlive: true)
+ProductRepository productRepository(Ref ref) {
+  final client = ref.watch(supabaseClientProvider);
+  return ProductRepository(client);
+}
+
+class ProductRepository {
+  ProductRepository(this._client);
+
+  final SupabaseClient? _client;
+
+  SupabaseClient get _requireClient {
+    final client = _client;
+    if (client == null) throw ProductsException.notConfigured();
+    return client;
+  }
+
+  Future<List<Product>> fetchProducts(
+    ProductFilters filters,
+    AppSession session,
+  ) async {
+    try {
+      final table = canViewFullProductCosts(session) ? 'products' : 'products_safe';
+      final columns = canViewFullProductCosts(session)
+          ? ProductColumns.full
+          : ProductColumns.safe;
+
+      var query = _requireClient.from(table).select(columns);
+
+      final search = filters.search?.trim();
+      if (search != null && search.isNotEmpty) {
+        final pattern = '%$search%';
+        query = query.or(
+          'sku.ilike.$pattern,name_ar.ilike.$pattern,'
+          'name_en.ilike.$pattern,barcode.ilike.$pattern',
+        );
+      }
+      if (filters.groupId != null) {
+        query = query.eq('group_id', filters.groupId!);
+      }
+      if (filters.productType != null) {
+        query = query.eq('product_type', filters.productType!.toDb());
+      }
+      if (filters.isActive != null) {
+        query = query.eq('is_active', filters.isActive!);
+      }
+
+      final rows = await query.order('sku');
+      var products = (rows as List)
+          .map((r) => Product.fromRow(Map<String, dynamic>.from(r)))
+          .toList();
+
+      if (filters.stockFilter != null) {
+        products = await _applyStockFilter(products, filters.stockFilter!);
+      }
+
+      return products;
+    } catch (e, st) {
+      throw ProductsException.fromSupabase(e, st);
+    }
+  }
+
+  Future<List<Product>> _applyStockFilter(
+    List<Product> products,
+    ProductStockFilter filter,
+  ) async {
+    final result = <Product>[];
+    for (final product in products) {
+      final summary = await fetchProductStock(product.id);
+      final qty = summary.totalQtyAvailable;
+      final reorder = product.reorderPoint;
+
+      final matches = switch (filter) {
+        ProductStockFilter.inStock => qty > Decimal.zero,
+        ProductStockFilter.outOfStock => qty <= Decimal.zero,
+        ProductStockFilter.lowStock =>
+          reorder != null && qty > Decimal.zero && qty <= reorder,
+      };
+      if (matches) result.add(product);
+    }
+    return result;
+  }
+
+  Future<Product?> fetchProductById(String id, AppSession session) async {
+    try {
+      final table = canViewFullProductCosts(session) ? 'products' : 'products_safe';
+      final columns = canViewFullProductCosts(session)
+          ? ProductColumns.full
+          : ProductColumns.safe;
+
+      final row = await _requireClient
+          .from(table)
+          .select(columns)
+          .eq('id', id)
+          .maybeSingle();
+
+      if (row == null) return null;
+      return Product.fromRow(Map<String, dynamic>.from(row));
+    } catch (e, st) {
+      throw ProductsException.fromSupabase(e, st);
+    }
+  }
+
+  Future<Product> createProduct(
+    AppSession session,
+    ProductFormState input,
+  ) async {
+    _validateBeforeWrite(session, input);
+    try {
+      final data = _buildWriteMap(session, input, isCreate: true);
+      final row = await _requireClient
+          .from('products')
+          .insert(data)
+          .select(ProductColumns.full)
+          .single();
+      return Product.fromRow(Map<String, dynamic>.from(row));
+    } catch (e, st) {
+      throw ProductsException.fromSupabase(e, st);
+    }
+  }
+
+  Future<Product> updateProduct(
+    AppSession session,
+    String id,
+    ProductFormState input,
+  ) async {
+    _validateBeforeWrite(session, input);
+    try {
+      final data = _buildWriteMap(session, input, isCreate: false);
+      final row = await _requireClient
+          .from('products')
+          .update(data)
+          .eq('id', id)
+          .select(ProductColumns.full)
+          .single();
+      return Product.fromRow(Map<String, dynamic>.from(row));
+    } catch (e, st) {
+      throw ProductsException.fromSupabase(e, st);
+    }
+  }
+
+  Future<void> deactivateProduct(AppSession session, String id) async {
+    try {
+      await _requireClient
+          .from('products')
+          .update({'is_active': false})
+          .eq('id', id);
+    } catch (e, st) {
+      throw ProductsException.fromSupabase(e, st);
+    }
+  }
+
+  Future<ProductStockSummary> fetchProductStock(String productId) async {
+    try {
+      final rows = await _requireClient
+          .from('inventory_balances')
+          .select()
+          .eq('product_id', productId);
+
+      final balances = (rows as List)
+          .map((r) => InventoryBalance.fromRow(Map<String, dynamic>.from(r)))
+          .toList();
+
+      var total = Decimal.zero;
+      for (final b in balances) {
+        total += b.qtyAvailable;
+      }
+
+      return ProductStockSummary(
+        productId: productId,
+        totalQtyAvailable: total,
+        balances: balances,
+      );
+    } catch (e, st) {
+      throw ProductsException.fromSupabase(e, st);
+    }
+  }
+
+  void _validateBeforeWrite(AppSession session, ProductFormState input) {
+    final productResult = const ProductValidator().validate(input);
+    if (!productResult.isValid) {
+      throw ProductsException(code: productResult.codes.first);
+    }
+    assertProductCostWrite(session, input);
+  }
+
+  Map<String, dynamic> _buildWriteMap(
+    AppSession session,
+    ProductFormState input, {
+    required bool isCreate,
+  }) {
+    final map = <String, dynamic>{
+      'sku': input.sku.trim(),
+      'barcode': input.barcode?.trim(),
+      'name_ar': input.nameAr.trim(),
+      'name_en': input.nameEn.trim(),
+      'description_ar': input.descriptionAr?.trim(),
+      'description_en': input.descriptionEn?.trim(),
+      'group_id': input.groupId,
+      'product_type': input.productType.toDb(),
+      'unit_primary': input.unitPrimary.toDb(),
+      'unit_secondary': input.unitSecondary?.toDb(),
+      'conversion_factor': input.conversionFactor.toString(),
+      'sale_price': input.salePrice.toString(),
+      'rental_price_monthly': input.rentalPriceMonthly?.toString(),
+      'expected_lifespan_months': input.expectedLifespanMonths,
+      'default_oil_ml_per_month': input.defaultOilMlPerMonth?.toString(),
+      'is_serialized': input.isSerialized,
+      'trackable_for_maintenance': input.trackableForMaintenance,
+      'reorder_point': input.reorderPoint?.toString(),
+      'is_active': input.isActive,
+      'image_url': input.imageUrl,
+    };
+
+    if (isCreate) {
+      map['tenant_id'] = session.tenantId;
+    }
+
+    if (canWriteProductCosts(session)) {
+      if (input.avgCost != null) {
+        map['avg_cost'] = input.avgCost!.toString();
+      }
+      if (input.lastPurchaseCost != null) {
+        map['last_purchase_cost'] = input.lastPurchaseCost!.toString();
+      }
+      if (input.minSalePrice != null) {
+        map['min_sale_price'] = input.minSalePrice!.toString();
+      }
+    }
+
+    return map;
+  }
+}
