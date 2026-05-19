@@ -1,6 +1,6 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-05-19 (Phase 2 M7 complete).
+> Updated 2026-05-19 (Phase 2 M8 complete / Phase 2 closed).
 > Keep this file short. It is for continuity between AI tools, not full project documentation.
 
 ---
@@ -15,6 +15,7 @@
 - **Phase 2 M5 complete** - Permission-aware GoRouter guards; routes `/login`, `/forgot-password`, `/dashboard`, `/field/today`, `/blocked`; `RouterRefreshNotifier` on auth/session changes.
 - **Phase 2 M6 complete** - Locale persistence via `shared_preferences`; `LocaleController` loads/saves `preferred_locale`; `localeProvider` sync alias for `app.dart`.
 - **Phase 2 M7 complete** - Phase 2 placeholders on dashboard, field today, blocked; auth widgets `SignOutIconButton`, `AuthenticatedUserSummary` under `features/auth/presentation/widgets/` (not `shared/`).
+- **Phase 2 M8 complete** - Phase close verification passed: Flutter analyze/tests, integration placeholder, Supabase reset, Phase 1D RLS verification, file-size/security scan review.
 - Migrations `001`-`034` apply cleanly with `supabase db reset`.
 - `034_seed_auth_login_fix.sql` makes seeded auth users compatible with GoTrue password login after clean reset.
 - CLI: use `npx --yes supabase` when `supabase` is not on PATH; `status -o env` returns `ANON_KEY` and `API_URL`.
@@ -61,37 +62,31 @@ Supported: `Locale('ar')`, `Locale('en')`. Default when unset: `Env.defaultLocal
 ## Last Session Summary
 
 **Date:** 2026-05-19  
-**Task:** Phase 2 M7 — Placeholders & Shell.
+**Task:** Phase 2 M8 - Verification & Phase Close.
 
 ### What was done
 
-- Auth widgets: `lib/features/auth/presentation/widgets/sign_out_icon_button.dart`, `authenticated_user_summary.dart` (session rows from `authControllerProvider`; tenant ID uses `labelSmall` + `FontFeature.tabularFigures()`).
-- Dashboard: Phase 2 subtitle, `AuthenticatedUserSummary`, `SignOutIconButton`; removed Phase 0 copy and RTL/LTR dev card; `SingleChildScrollView` body.
-- Field Today: centered `ConstrainedBox(maxWidth: 480)`, summary + placeholder; `SignOutIconButton`.
-- Blocked: `MessageBannerVariant.info` + summary + `SignOutIconButton`.
-- l10n: added session/dashboard keys; removed `phaseZeroReady`, `uiDirectionRtl`, `uiDirectionLtr`.
-- Tests: `test/features/auth/presentation/widgets/authenticated_user_summary_test.dart` (2 tests; `TestAuthController` + `overrideWith`).
-
-### Not changed
-
-- Routing/guards, `AppSession` shape, `app.dart`, no new routes.
+- Ran Phase 2 closeout verification.
+- Confirmed Flutter unit/widget tests, integration placeholder, local Supabase reset, and Phase 1D RLS verification all pass.
+- Verified seeded auth users can log in against local Supabase and `get_my_permissions` returns expected manager/products/field/zero permission shapes; bad password returns `invalid_credentials`.
+- Reviewed file-size scan and checked `lib` for service-role/hardcoded tenant access patterns.
 
 ### Verification
 
 ```text
-dart format .
-flutter gen-l10n
-flutter analyze   → no issues
-flutter test      → 48/48 passed
+flutter pub get
+flutter analyze                  -> no issues
+flutter test                     -> 48/48 passed
+npx --yes supabase db reset      -> passed
+phase_1d_rls.sql                 -> phase_1d_rls_verification_passed
+flutter test integration_test    -> passed
+seeded auth API smoke            -> passed
 ```
 
 ### Manual acceptance
 
-1. `owner@hayat-secret.test` → `/dashboard` with brand, Phase 2 subtitle, session summary, locale menu, logout.
-2. `field@hayat-secret.test` → `/field/today` with summary + placeholder.
-3. `zero@hayat-secret.test` → `/blocked` with info banner + summary.
-4. Logout from all three; locale persists after full restart.
+Manual UI routing smoke remains the final human check before starting Phase 3 if this was not just verified in the running app.
 
 ### Next recommended step
 
-- **Phase 2 M8** — verification & phase close (full auth matrix, file-size scan, phase checklist).
+- **Phase 3** - Products & Inventory foundation.
