@@ -15,7 +15,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboard => 'Dashboard';
 
   @override
-  String get phaseZeroReady => 'Phase 0 ready — local development scaffold';
+  String get dashboardPhase2Subtitle =>
+      'Phase 2 active — authentication, permissions, and routing are ready. Modules arrive in Phase 3.';
+
+  @override
+  String get sessionDisplayNameLabel => 'Display name';
+
+  @override
+  String get sessionAccountTypeLabel => 'Account type';
+
+  @override
+  String get sessionEmailLabel => 'Email';
+
+  @override
+  String get sessionTenantLabel => 'Tenant ID';
+
+  @override
+  String get accountTypeManager => 'Manager';
+
+  @override
+  String get accountTypeUser => 'User';
 
   @override
   String get language => 'Language';
@@ -25,12 +44,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languageEnglish => 'English';
-
-  @override
-  String get uiDirectionRtl => 'UI direction: RTL';
-
-  @override
-  String get uiDirectionLtr => 'UI direction: LTR';
 
   @override
   String get loginTitle => 'Sign in';

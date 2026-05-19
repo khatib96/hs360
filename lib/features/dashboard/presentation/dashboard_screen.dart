@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:hs360/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:hs360/l10n/app_localizations.dart';
 
 import '../../../core/localization/locale_controller.dart';
 import '../../../core/routing/app_routes.dart';
-import '../../../core/theme/app_theme.dart';
 import '../../../shared/widgets/app_shell.dart';
-import '../../auth/presentation/auth_controller.dart';
-import '../../auth/presentation/auth_error_messages.dart';
+import '../../auth/presentation/widgets/authenticated_user_summary.dart';
+import '../../auth/presentation/widgets/sign_out_icon_button.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -21,31 +18,12 @@ class DashboardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final locale = ref.watch(localeProvider);
+    final theme = Theme.of(context);
 
     return AppShell(
       title: l10n.dashboard,
       actions: [
-        IconButton(
-          tooltip: l10n.logout,
-          icon: const Icon(LucideIcons.logOut),
-          onPressed: () async {
-            await ref.read(authControllerProvider.notifier).signOut();
-            if (!context.mounted) return;
-
-            final authState = ref.read(authControllerProvider);
-            if (authState.hasError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    authErrorMessage(l10n, authErrorCode(authState.error)),
-                  ),
-                ),
-              );
-              return;
-            }
-            context.go(AppRoutes.login);
-          },
-        ),
+        const SignOutIconButton(),
         Padding(
           padding: const EdgeInsetsDirectional.only(end: 8),
           child: _LanguageMenu(
@@ -56,50 +34,21 @@ class DashboardScreen extends ConsumerWidget {
           ),
         ),
       ],
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsetsDirectional.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AppBrandMark(title: l10n.appTitle),
             const SizedBox(height: 24),
-            Text(
-              l10n.appTitle,
-              style: Theme.of(context).textTheme.displaySmall,
-            ),
+            Text(l10n.appTitle, style: theme.textTheme.displaySmall),
             const SizedBox(height: 8),
             Text(
-              l10n.phaseZeroReady,
-              style: Theme.of(context).textTheme.bodyLarge,
+              l10n.dashboardPhase2Subtitle,
+              style: theme.textTheme.bodyLarge,
             ),
             const SizedBox(height: 24),
-            DecoratedBox(
-              decoration: BoxDecoration(
-                color: AppColors.offWhite,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.neutral200),
-              ),
-              child: Padding(
-                padding: const EdgeInsetsDirectional.all(16),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.check_circle_outline,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        locale.languageCode == 'ar'
-                            ? l10n.uiDirectionRtl
-                            : l10n.uiDirectionLtr,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            const AuthenticatedUserSummary(),
           ],
         ),
       ),

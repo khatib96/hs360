@@ -8,9 +8,33 @@
   "@dashboard": {
     "description": "Dashboard screen title"
   },
-  "phaseZeroReady": "Phase 0 ready — local development scaffold",
-  "@phaseZeroReady": {
-    "description": "Phase 0 status message on dashboard"
+  "dashboardPhase2Subtitle": "Phase 2 active — authentication, permissions, and routing are ready. Modules arrive in Phase 3.",
+  "@dashboardPhase2Subtitle": {
+    "description": "Phase 2 status message on dashboard"
+  },
+  "sessionDisplayNameLabel": "Display name",
+  "@sessionDisplayNameLabel": {
+    "description": "Session summary display name label"
+  },
+  "sessionAccountTypeLabel": "Account type",
+  "@sessionAccountTypeLabel": {
+    "description": "Session summary account type label"
+  },
+  "sessionEmailLabel": "Email",
+  "@sessionEmailLabel": {
+    "description": "Session summary email label"
+  },
+  "sessionTenantLabel": "Tenant ID",
+  "@sessionTenantLabel": {
+    "description": "Session summary tenant id label"
+  },
+  "accountTypeManager": "Manager",
+  "@accountTypeManager": {
+    "description": "Manager account type"
+  },
+  "accountTypeUser": "User",
+  "@accountTypeUser": {
+    "description": "User account type"
   },
   "language": "Language",
   "@language": {
@@ -18,8 +42,6 @@
   },
   "languageArabic": "Arabic",
   "languageEnglish": "English",
-  "uiDirectionRtl": "UI direction: RTL",
-  "uiDirectionLtr": "UI direction: LTR",
   "loginTitle": "Sign in",
   "@loginTitle": {
     "description": "Login screen title"

@@ -110,11 +110,47 @@ abstract class AppLocalizations {
   /// **'Dashboard'**
   String get dashboard;
 
-  /// Phase 0 status message on dashboard
+  /// Phase 2 status message on dashboard
   ///
   /// In en, this message translates to:
-  /// **'Phase 0 ready — local development scaffold'**
-  String get phaseZeroReady;
+  /// **'Phase 2 active — authentication, permissions, and routing are ready. Modules arrive in Phase 3.'**
+  String get dashboardPhase2Subtitle;
+
+  /// Session summary display name label
+  ///
+  /// In en, this message translates to:
+  /// **'Display name'**
+  String get sessionDisplayNameLabel;
+
+  /// Session summary account type label
+  ///
+  /// In en, this message translates to:
+  /// **'Account type'**
+  String get sessionAccountTypeLabel;
+
+  /// Session summary email label
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get sessionEmailLabel;
+
+  /// Session summary tenant id label
+  ///
+  /// In en, this message translates to:
+  /// **'Tenant ID'**
+  String get sessionTenantLabel;
+
+  /// Manager account type
+  ///
+  /// In en, this message translates to:
+  /// **'Manager'**
+  String get accountTypeManager;
+
+  /// User account type
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get accountTypeUser;
 
   /// Language switcher label
   ///
@@ -133,18 +169,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'English'**
   String get languageEnglish;
-
-  /// No description provided for @uiDirectionRtl.
-  ///
-  /// In en, this message translates to:
-  /// **'UI direction: RTL'**
-  String get uiDirectionRtl;
-
-  /// No description provided for @uiDirectionLtr.
-  ///
-  /// In en, this message translates to:
-  /// **'UI direction: LTR'**
-  String get uiDirectionLtr;
 
   /// Login screen title
   ///

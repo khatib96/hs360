@@ -15,7 +15,26 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dashboard => 'لوحة التحكم';
 
   @override
-  String get phaseZeroReady => 'المرحلة 0 جاهزة — هيكل التطوير المحلي';
+  String get dashboardPhase2Subtitle =>
+      'المرحلة 2 نشطة — المصادقة والصلاحيات والتوجيه جاهزة. الوحدات في المرحلة 3.';
+
+  @override
+  String get sessionDisplayNameLabel => 'اسم العرض';
+
+  @override
+  String get sessionAccountTypeLabel => 'نوع الحساب';
+
+  @override
+  String get sessionEmailLabel => 'البريد الإلكتروني';
+
+  @override
+  String get sessionTenantLabel => 'معرّف المستأجر';
+
+  @override
+  String get accountTypeManager => 'مدير';
+
+  @override
+  String get accountTypeUser => 'مستخدم';
 
   @override
   String get language => 'اللغة';
@@ -25,12 +44,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get languageEnglish => 'الإنجليزية';
-
-  @override
-  String get uiDirectionRtl => 'اتجاه الواجهة: RTL';
-
-  @override
-  String get uiDirectionLtr => 'اتجاه الواجهة: LTR';
 
   @override
   String get loginTitle => 'تسجيل الدخول';
