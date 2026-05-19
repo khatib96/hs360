@@ -5,17 +5,17 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../core/localization/locale_controller.dart';
+import '../../../core/routing/app_routes.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../shared/widgets/app_shell.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../../auth/presentation/auth_error_messages.dart';
-import '../../auth/presentation/login_screen.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
-  static const routePath = '/dashboard';
-  static const routeName = 'dashboard';
+  static const routePath = AppRoutes.dashboard;
+  static const routeName = AppRoutes.dashboardName;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -43,7 +43,7 @@ class DashboardScreen extends ConsumerWidget {
               );
               return;
             }
-            context.go(LoginScreen.routePath);
+            context.go(AppRoutes.login);
           },
         ),
         Padding(

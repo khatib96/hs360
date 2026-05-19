@@ -127,5 +127,21 @@
   "forgotPasswordSubtitle": "Enter your email and we will send reset instructions if the account exists",
   "@forgotPasswordSubtitle": {
     "description": "Forgot password screen subtitle"
+  },
+  "fieldTodayTitle": "Today",
+  "@fieldTodayTitle": {
+    "description": "Field today screen title"
+  },
+  "fieldTodayPlaceholder": "Assigned visits will appear here in a later phase.",
+  "@fieldTodayPlaceholder": {
+    "description": "Field today placeholder body"
+  },
+  "blockedTitle": "No access",
+  "@blockedTitle": {
+    "description": "Blocked screen title"
+  },
+  "blockedMessage": "Your account has no assigned permissions. Contact your manager for access.",
+  "@blockedMessage": {
+    "description": "Blocked screen message"
   }
 }

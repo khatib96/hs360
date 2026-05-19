@@ -119,4 +119,18 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get forgotPasswordSubtitle =>
       'أدخل بريدك الإلكتروني وسنرسل تعليمات إعادة التعيين إن وُجد الحساب';
+
+  @override
+  String get fieldTodayTitle => 'اليوم';
+
+  @override
+  String get fieldTodayPlaceholder =>
+      'ستظهر الزيارات المخصصة هنا في مرحلة لاحقة.';
+
+  @override
+  String get blockedTitle => 'لا يوجد وصول';
+
+  @override
+  String get blockedMessage =>
+      'لا توجد صلاحيات مخصصة لحسابك. تواصل مع المدير للحصول على صلاحيات.';
 }

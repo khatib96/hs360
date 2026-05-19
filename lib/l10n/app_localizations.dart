@@ -307,6 +307,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter your email and we will send reset instructions if the account exists'**
   String get forgotPasswordSubtitle;
+
+  /// Field today screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get fieldTodayTitle;
+
+  /// Field today placeholder body
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned visits will appear here in a later phase.'**
+  String get fieldTodayPlaceholder;
+
+  /// Blocked screen title
+  ///
+  /// In en, this message translates to:
+  /// **'No access'**
+  String get blockedTitle;
+
+  /// Blocked screen message
+  ///
+  /// In en, this message translates to:
+  /// **'Your account has no assigned permissions. Contact your manager for access.'**
+  String get blockedMessage;
 }
 
 class _AppLocalizationsDelegate

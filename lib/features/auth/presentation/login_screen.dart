@@ -4,21 +4,20 @@ import 'package:go_router/go_router.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
 import '../../../core/network/supabase_providers.dart';
+import '../../../core/routing/app_routes.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../shared/widgets/app_shell.dart';
 import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/error_banner.dart';
-import '../../dashboard/presentation/dashboard_screen.dart';
 import 'auth_screen_background.dart';
 import 'auth_controller.dart';
 import 'auth_error_messages.dart';
-import 'forgot_password_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
-  static const routePath = '/login';
-  static const routeName = 'login';
+  static const routePath = AppRoutes.login;
+  static const routeName = AppRoutes.loginName;
 
   @override
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
@@ -69,9 +68,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ),
       );
       return;
-    }
-    if (authState.valueOrNull != null) {
-      context.go(DashboardScreen.routePath);
     }
   }
 
@@ -175,7 +171,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         alignment: AlignmentDirectional.centerStart,
                         child: TextButton(
                           onPressed: () =>
-                              context.push(ForgotPasswordScreen.routePath),
+                              context.push(AppRoutes.forgotPassword),
                           child: Text(l10n.forgotPassword),
                         ),
                       ),

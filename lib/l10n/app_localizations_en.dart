@@ -119,4 +119,18 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get forgotPasswordSubtitle =>
       'Enter your email and we will send reset instructions if the account exists';
+
+  @override
+  String get fieldTodayTitle => 'Today';
+
+  @override
+  String get fieldTodayPlaceholder =>
+      'Assigned visits will appear here in a later phase.';
+
+  @override
+  String get blockedTitle => 'No access';
+
+  @override
+  String get blockedMessage =>
+      'Your account has no assigned permissions. Contact your manager for access.';
 }

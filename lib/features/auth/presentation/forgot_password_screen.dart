@@ -5,6 +5,7 @@ import 'package:hs360/l10n/app_localizations.dart';
 
 import '../../../core/errors/auth_exception.dart';
 import '../../../core/network/supabase_providers.dart';
+import '../../../core/routing/app_routes.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../shared/widgets/app_shell.dart';
 import '../../../shared/widgets/app_text_field.dart';
@@ -13,13 +14,12 @@ import '../../../shared/widgets/message_banner.dart';
 import 'auth_screen_background.dart';
 import 'auth_controller.dart';
 import 'auth_error_messages.dart';
-import 'login_screen.dart';
 
 class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key});
 
-  static const routePath = '/forgot-password';
-  static const routeName = 'forgotPassword';
+  static const routePath = AppRoutes.forgotPassword;
+  static const routeName = AppRoutes.forgotPasswordName;
 
   @override
   ConsumerState<ForgotPasswordScreen> createState() =>
@@ -86,7 +86,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           tooltip: l10n.backToLogin,
-          onPressed: () => context.go(LoginScreen.routePath),
+          onPressed: () => context.go(AppRoutes.login),
         ),
       ),
       body: AuthScreenBackground(
@@ -169,7 +169,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                       Align(
                         alignment: AlignmentDirectional.centerStart,
                         child: TextButton(
-                          onPressed: () => context.go(LoginScreen.routePath),
+                          onPressed: () => context.go(AppRoutes.login),
                           child: Text(l10n.backToLogin),
                         ),
                       ),

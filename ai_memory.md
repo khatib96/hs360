@@ -1,6 +1,6 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-05-18 (Phase 2 M4 complete).
+> Updated 2026-05-19 (Phase 2 M5 complete).
 > Keep this file short. It is for continuity between AI tools, not full project documentation.
 
 ---
@@ -12,11 +12,13 @@
 - **Phase 2 M1+M2 implemented** - Supabase providers, auth domain/data/controller, and permission tests are in place.
 - **Phase 2 M3 complete** - `033_auth_custom_access_token_hook.sql` + `[auth.hook.custom_access_token]` in `config.toml`; JWTs include `tenant_id`, `tenant_user_id`, `account_type`.
 - **Phase 2 M4 complete** - Login (`/login`), forgot password (`/forgot-password`), logout on dashboard; localized auth errors; `ErrorBanner` / `MessageBanner` / `AppTextField`.
+- **Phase 2 M5 complete** - Permission-aware GoRouter guards; routes `/login`, `/forgot-password`, `/dashboard`, `/field/today`, `/blocked`; `RouterRefreshNotifier` on auth/session changes.
 - Migrations `001`-`034` apply cleanly with `supabase db reset`.
 - `034_seed_auth_login_fix.sql` makes seeded auth users compatible with GoTrue password login after clean reset.
 - CLI: use `npx --yes supabase` when `supabase` is not on PATH; `status -o env` returns `ANON_KEY` and `API_URL`.
-- Initial route is `/login` (M4); M5 will add auth/permission redirect guards.
+- Initial route `/login`; authenticated users redirect to home by permissions (manager/products → dashboard, field → `/field/today`, zero → `/blocked`).
 - `AuthRepository.loadCurrentAppSession()` uses DB `tenant_users` as authoritative; JWT decode remains best-effort.
+- Routing: `app_routes.dart`, `route_guards.dart` (`guardRedirectForPath` pure + `guardRedirect` wrapper with `ref.read`), `router_refresh_notifier.dart`.
 
 ---
 
@@ -40,22 +42,20 @@
 
 ## Last Session Summary
 
-**Date:** 2026-05-18
-**Task:** Phase 2 M4 — Auth UI.
+**Date:** 2026-05-19
+**Task:** Phase 2 M5 — Routing Guards.
 
 What was done:
 
-- `login_screen.dart`, `forgot_password_screen.dart`, `auth_error_messages.dart`.
-- Shared: `error_banner.dart`, `message_banner.dart`, `app_text_field.dart`; `AppBrandMark(required title)`.
-- `app_router.dart`: initial `/login`, routes `/forgot-password`, `/dashboard`, `/` redirect to login.
-- Dashboard logout via `AuthController.signOut()`; navigates to login only when `!authState.hasError`.
-- Auth ARB strings (ar/en); `SocketException` → `networkUnavailable` in `auth_exception.dart`.
-- Tests: `widget_test` expects login on boot; `login_screen_test` for missing anon key + validation with config override.
+- `app_routes.dart`, `route_guards.dart`, `router_refresh_notifier.dart`; `app_router.dart` global redirect + refreshListenable.
+- Placeholders: `field_today_screen.dart`, `blocked_screen.dart`; ARB strings for both.
+- Removed post-login `context.go(Dashboard)` from login; router decides home.
+- `test/core/routing/route_guards_test.dart` — 20 tests on `guardRedirectForPath`.
 
 Verification:
 
-- `dart format .`, `flutter gen-l10n`, `flutter analyze` (clean after redirect lint fix), `flutter test` 11/11 passed.
+- `dart format .`, `flutter gen-l10n`, `flutter analyze`, `flutter test` 31/31 passed.
 
 Next recommended step:
 
-- Phase 2 M5 routing guards (unauthenticated redirect, permission-aware home).
+- Phase 2 M6 locale persistence.
