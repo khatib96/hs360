@@ -1,6 +1,7 @@
 import '../../../core/errors/products_exception.dart';
 import '../../../domain/validators/validation_result.dart';
 import '../../auth/domain/app_session.dart';
+import 'product.dart';
 import 'product_form_state.dart';
 
 const _costFieldPermissions = [
@@ -19,6 +20,20 @@ bool canViewFullProductCosts(AppSession session) {
 bool canWriteProductCosts(AppSession session) {
   if (session.permissions.isManager) return true;
   return _costFieldPermissions.every(session.permissions.can);
+}
+
+String productReadTableForSession(AppSession session) {
+  return canViewFullProductCosts(session) ? 'products' : 'products_safe';
+}
+
+String productReadColumnsForSession(AppSession session) {
+  return canViewFullProductCosts(session)
+      ? ProductColumns.full
+      : ProductColumns.safe;
+}
+
+String productMutationReturnColumnsForSession(AppSession session) {
+  return canViewFullProductCosts(session) ? ProductColumns.full : 'id';
 }
 
 bool _hasSubmittedExistingCostFields(ProductFormState input) {

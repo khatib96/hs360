@@ -38,10 +38,8 @@ class ProductRepository {
     AppSession session,
   ) async {
     try {
-      final table = canViewFullProductCosts(session) ? 'products' : 'products_safe';
-      final columns = canViewFullProductCosts(session)
-          ? ProductColumns.full
-          : ProductColumns.safe;
+      final table = productReadTableForSession(session);
+      final columns = productReadColumnsForSession(session);
 
       var query = _requireClient.from(table).select(columns);
 
@@ -101,10 +99,8 @@ class ProductRepository {
 
   Future<Product?> fetchProductById(String id, AppSession session) async {
     try {
-      final table = canViewFullProductCosts(session) ? 'products' : 'products_safe';
-      final columns = canViewFullProductCosts(session)
-          ? ProductColumns.full
-          : ProductColumns.safe;
+      final table = productReadTableForSession(session);
+      final columns = productReadColumnsForSession(session);
 
       final row = await _requireClient
           .from(table)
@@ -129,9 +125,9 @@ class ProductRepository {
       final row = await _requireClient
           .from('products')
           .insert(data)
-          .select(ProductColumns.full)
+          .select(productMutationReturnColumnsForSession(session))
           .single();
-      return Product.fromRow(Map<String, dynamic>.from(row));
+      return _mapMutationResponse(row, session);
     } catch (e, st) {
       throw ProductsException.fromSupabase(e, st);
     }
@@ -149,9 +145,9 @@ class ProductRepository {
           .from('products')
           .update(data)
           .eq('id', id)
-          .select(ProductColumns.full)
+          .select(productMutationReturnColumnsForSession(session))
           .single();
-      return Product.fromRow(Map<String, dynamic>.from(row));
+      return _mapMutationResponse(row, session);
     } catch (e, st) {
       throw ProductsException.fromSupabase(e, st);
     }
@@ -192,6 +188,21 @@ class ProductRepository {
     } catch (e, st) {
       throw ProductsException.fromSupabase(e, st);
     }
+  }
+
+  Future<Product> _mapMutationResponse(
+    Map<String, dynamic> row,
+    AppSession session,
+  ) async {
+    if (canViewFullProductCosts(session)) {
+      return Product.fromRow(Map<String, dynamic>.from(row));
+    }
+
+    final product = await fetchProductById(row['id'] as String, session);
+    if (product == null) {
+      throw const ProductsException(code: ProductsException.unknown);
+    }
+    return product;
   }
 
   void _validateBeforeWrite(AppSession session, ProductFormState input) {

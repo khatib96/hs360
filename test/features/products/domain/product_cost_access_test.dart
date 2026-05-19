@@ -66,5 +66,45 @@ void main() {
       );
       expect(canViewFullProductCosts(session), isFalse);
     });
+
+    test('unauthorized reads use products_safe and safe columns', () {
+      final session = _session(
+        permissions: AppPermissions(
+          isManager: false,
+          permissions: {'products.view'},
+        ),
+      );
+
+      expect(productReadTableForSession(session), 'products_safe');
+      expect(productReadColumnsForSession(session), isNot(contains('avg_cost')));
+      expect(
+        productReadColumnsForSession(session),
+        isNot(contains('last_purchase_cost')),
+      );
+      expect(
+        productReadColumnsForSession(session),
+        isNot(contains('min_sale_price')),
+      );
+    });
+
+    test('unauthorized mutation response requests id only', () {
+      final session = _session(
+        permissions: AppPermissions(
+          isManager: false,
+          permissions: {'products.view', 'products.create'},
+        ),
+      );
+
+      expect(productMutationReturnColumnsForSession(session), 'id');
+    });
+
+    test('authorized mutation response may return full product columns', () {
+      final session = _session(permissions: AppPermissions.manager);
+
+      expect(
+        productMutationReturnColumnsForSession(session),
+        contains('avg_cost'),
+      );
+    });
   });
 }
