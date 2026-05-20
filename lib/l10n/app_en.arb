@@ -165,5 +165,33 @@
   "blockedMessage": "Your account has no assigned permissions. Contact your manager for access.",
   "@blockedMessage": {
     "description": "Blocked screen message"
+  },
+  "products": "Products",
+  "@products": {
+    "description": "Products menu/screen title"
+  },
+  "productsNew": "New Product",
+  "@productsNew": {
+    "description": "New product screen title"
+  },
+  "productsDetail": "Product Details",
+  "@productsDetail": {
+    "description": "Product details screen title"
+  },
+  "warehouses": "Warehouses",
+  "@warehouses": {
+    "description": "Warehouses menu/screen title"
+  },
+  "inventory": "Inventory Balances",
+  "@inventory": {
+    "description": "Inventory balances screen title"
+  },
+  "inventoryMovements": "Movements Log",
+  "@inventoryMovements": {
+    "description": "Inventory movements log screen title"
+  },
+  "inventoryTransfers": "Stock Transfers",
+  "@inventoryTransfers": {
+    "description": "Inventory transfers screen title"
   }
 }

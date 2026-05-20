@@ -257,5 +257,74 @@ void main() {
         AppRoutes.dashboard,
       );
     });
+
+    test('User with warehouses.view can access /warehouses but cannot access /inventory', () {
+      final warehousesUser = session(
+        accountType: 'user',
+        permissions: {'warehouses.view'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.warehouses,
+          hasSupabaseSession: true,
+          authState: loaded(warehousesUser),
+        ),
+        isNull,
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.inventory,
+          hasSupabaseSession: true,
+          authState: loaded(warehousesUser),
+        ),
+        AppRoutes.dashboard,
+      );
+    });
+
+    test('User with products.create can access /products/new even if they do not have products.view', () {
+      final creatorUser = session(
+        accountType: 'user',
+        permissions: {'products.create'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.productsNew,
+          hasSupabaseSession: true,
+          authState: loaded(creatorUser),
+        ),
+        isNull,
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.products,
+          hasSupabaseSession: true,
+          authState: loaded(creatorUser),
+        ),
+        AppRoutes.dashboard,
+      );
+    });
+
+    test('User with inventory_movements.create can access /inventory/transfers but cannot access /inventory/movements if they lack inventory_movements.view', () {
+      final transferUser = session(
+        accountType: 'user',
+        permissions: {'inventory_movements.create'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.inventoryTransfers,
+          hasSupabaseSession: true,
+          authState: loaded(transferUser),
+        ),
+        isNull,
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.inventoryMovements,
+          hasSupabaseSession: true,
+          authState: loaded(transferUser),
+        ),
+        AppRoutes.dashboard,
+      );
+    });
   });
 }

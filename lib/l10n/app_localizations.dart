@@ -355,6 +355,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your account has no assigned permissions. Contact your manager for access.'**
   String get blockedMessage;
+
+  /// Products menu/screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Products'**
+  String get products;
+
+  /// New product screen title
+  ///
+  /// In en, this message translates to:
+  /// **'New Product'**
+  String get productsNew;
+
+  /// Product details screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Product Details'**
+  String get productsDetail;
+
+  /// Warehouses menu/screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouses'**
+  String get warehouses;
+
+  /// Inventory balances screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Inventory Balances'**
+  String get inventory;
+
+  /// Inventory movements log screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Movements Log'**
+  String get inventoryMovements;
+
+  /// Inventory transfers screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Stock Transfers'**
+  String get inventoryTransfers;
 }
 
 class _AppLocalizationsDelegate

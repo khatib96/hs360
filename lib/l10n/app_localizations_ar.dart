@@ -146,4 +146,25 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get blockedMessage =>
       'لا توجد صلاحيات مخصصة لحسابك. تواصل مع المدير للحصول على صلاحيات.';
+
+  @override
+  String get products => 'المنتجات';
+
+  @override
+  String get productsNew => 'منتج جديد';
+
+  @override
+  String get productsDetail => 'تفاصيل المنتج';
+
+  @override
+  String get warehouses => 'المستودعات';
+
+  @override
+  String get inventory => 'أرصدة المخزون';
+
+  @override
+  String get inventoryMovements => 'سجل الحركات';
+
+  @override
+  String get inventoryTransfers => 'تحويلات المخزون';
 }

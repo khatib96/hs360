@@ -146,4 +146,25 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get blockedMessage =>
       'Your account has no assigned permissions. Contact your manager for access.';
+
+  @override
+  String get products => 'Products';
+
+  @override
+  String get productsNew => 'New Product';
+
+  @override
+  String get productsDetail => 'Product Details';
+
+  @override
+  String get warehouses => 'Warehouses';
+
+  @override
+  String get inventory => 'Inventory Balances';
+
+  @override
+  String get inventoryMovements => 'Movements Log';
+
+  @override
+  String get inventoryTransfers => 'Stock Transfers';
 }

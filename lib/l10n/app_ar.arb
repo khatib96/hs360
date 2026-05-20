@@ -42,5 +42,12 @@
   "fieldTodayTitle": "اليوم",
   "fieldTodayPlaceholder": "ستظهر الزيارات المخصصة هنا في مرحلة لاحقة.",
   "blockedTitle": "لا يوجد وصول",
-  "blockedMessage": "لا توجد صلاحيات مخصصة لحسابك. تواصل مع المدير للحصول على صلاحيات."
+  "blockedMessage": "لا توجد صلاحيات مخصصة لحسابك. تواصل مع المدير للحصول على صلاحيات.",
+  "products": "المنتجات",
+  "productsNew": "منتج جديد",
+  "productsDetail": "تفاصيل المنتج",
+  "warehouses": "المستودعات",
+  "inventory": "أرصدة المخزون",
+  "inventoryMovements": "سجل الحركات",
+  "inventoryTransfers": "تحويلات المخزون"
 }

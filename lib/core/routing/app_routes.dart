@@ -5,10 +5,24 @@ abstract final class AppRoutes {
   static const dashboard = '/dashboard';
   static const fieldToday = '/field/today';
   static const blocked = '/blocked';
+  static const products = '/products';
+  static const productsNew = '/products/new';
+  static const productsDetail = '/products/:id';
+  static const warehouses = '/warehouses';
+  static const inventory = '/inventory';
+  static const inventoryMovements = '/inventory/movements';
+  static const inventoryTransfers = '/inventory/transfers';
 
   static const loginName = 'login';
   static const forgotPasswordName = 'forgotPassword';
   static const dashboardName = 'dashboard';
   static const fieldTodayName = 'fieldToday';
   static const blockedName = 'blocked';
+  static const productsName = 'products';
+  static const productsNewName = 'productsNew';
+  static const productsDetailName = 'productsDetail';
+  static const warehousesName = 'warehouses';
+  static const inventoryName = 'inventory';
+  static const inventoryMovementsName = 'inventoryMovements';
+  static const inventoryTransfersName = 'inventoryTransfers';
 }

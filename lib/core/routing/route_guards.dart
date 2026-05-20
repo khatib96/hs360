@@ -15,11 +15,15 @@ const _fieldPermissionIds = [
 const _officePermissionIds = [
   'dashboard.view',
   'products.view',
+  'products.create',
   'customers.view',
   'contracts.view',
   'invoices.view',
   'vouchers.view',
   'inventory.view',
+  'warehouses.view',
+  'inventory_movements.view',
+  'inventory_movements.create',
 ];
 
 bool isPublicRoute(String path) =>
@@ -41,6 +45,40 @@ bool canAccessDashboard(AppSession session) =>
 
 bool canAccessField(AppSession session) =>
     session.isManager || session.permissions.hasAny(_fieldPermissionIds);
+
+/// Inner path permission validation helper.
+bool _isPathAllowed(String path, AppSession session) {
+  if (session.isManager) return true;
+
+  if (path == AppRoutes.productsNew) {
+    return session.permissions.can('products.create');
+  }
+  if (path == AppRoutes.products || path.startsWith('/products/')) {
+    return session.permissions.can('products.view');
+  }
+  if (path == AppRoutes.warehouses) {
+    return session.permissions.can('warehouses.view');
+  }
+  if (path == AppRoutes.inventoryMovements) {
+    return session.permissions.can('inventory_movements.view');
+  }
+  if (path == AppRoutes.inventoryTransfers) {
+    return session.permissions.can('inventory_movements.create');
+  }
+  if (path == AppRoutes.inventory) {
+    return session.permissions.can('inventory.view');
+  }
+
+  // Dashboard and Field specific permissions
+  if (path == AppRoutes.dashboard) {
+    return canAccessDashboard(session);
+  }
+  if (path == AppRoutes.fieldToday) {
+    return canAccessField(session);
+  }
+
+  return true;
+}
 
 /// Pure redirect logic for unit tests. Returns a path or null (no redirect).
 String? guardRedirectForPath({
@@ -75,11 +113,7 @@ String? guardRedirectForPath({
     return home;
   }
 
-  if (normalized == AppRoutes.dashboard && !canAccessDashboard(session)) {
-    return normalized == home ? null : home;
-  }
-
-  if (normalized == AppRoutes.fieldToday && !canAccessField(session)) {
+  if (!_isPathAllowed(normalized, session)) {
     return normalized == home ? null : home;
   }
 
