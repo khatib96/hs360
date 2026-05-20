@@ -7,6 +7,7 @@ import '../../features/auth/presentation/forgot_password_screen.dart';
 import '../../features/auth/presentation/login_screen.dart';
 import '../../features/dashboard/presentation/dashboard_screen.dart';
 import '../../features/field_ops/presentation/field_today_screen.dart';
+import '../../features/products/presentation/product_list_screen.dart';
 import '../../features/products/presentation/products_placeholder_screen.dart';
 import '../../features/inventory/presentation/inventory_placeholder_screen.dart';
 import 'app_routes.dart';
@@ -53,9 +54,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.products,
         name: AppRoutes.productsName,
-        builder: (context, state) => const ProductsPlaceholderScreen(
-          mode: ProductsViewMode.list,
-        ),
+        builder: (context, state) => const ProductListScreen(),
       ),
       GoRoute(
         path: AppRoutes.productsNew,

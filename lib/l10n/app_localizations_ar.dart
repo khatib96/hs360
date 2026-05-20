@@ -167,4 +167,134 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get inventoryTransfers => 'تحويلات المخزون';
+
+  @override
+  String get productsSearchHint => 'بحث بالرمز أو الاسم أو الباركود';
+
+  @override
+  String get productsListEmpty => 'لا توجد منتجات مطابقة للفلاتر.';
+
+  @override
+  String get productsListError => 'تعذر تحميل المنتجات. حاول مرة أخرى.';
+
+  @override
+  String get productsNotAvailable => '—';
+
+  @override
+  String get productsGroupUnavailable => 'غير متاح';
+
+  @override
+  String get productsAllGroups => 'كل المنتجات';
+
+  @override
+  String get productsFilterType => 'النوع';
+
+  @override
+  String get productsFilterActive => 'الحالة';
+
+  @override
+  String get productsFilterStock => 'المخزون';
+
+  @override
+  String get productsFilterClear => 'مسح الفلاتر';
+
+  @override
+  String get productsFilterAll => 'الكل';
+
+  @override
+  String get productsFilterActiveOnly => 'نشط فقط';
+
+  @override
+  String get productsFilterInactiveOnly => 'غير نشط فقط';
+
+  @override
+  String get productTypeSaleOnly => 'بيع فقط';
+
+  @override
+  String get productTypeAssetRental => 'أصل إيجار';
+
+  @override
+  String get productTypeConsumableRental => 'مستهلك إيجار';
+
+  @override
+  String get productStatusActive => 'نشط';
+
+  @override
+  String get productStatusInactive => 'غير نشط';
+
+  @override
+  String get productStockIn => 'متوفر';
+
+  @override
+  String get productStockOut => 'نفد';
+
+  @override
+  String get productStockLow => 'مخزون منخفض';
+
+  @override
+  String get productColumnSku => 'الرمز';
+
+  @override
+  String get productColumnName => 'الاسم';
+
+  @override
+  String get productColumnGroup => 'المجموعة';
+
+  @override
+  String get productColumnType => 'النوع';
+
+  @override
+  String get productColumnSalePrice => 'سعر البيع';
+
+  @override
+  String get productColumnRentalPrice => 'سعر الإيجار';
+
+  @override
+  String get productColumnStock => 'المخزون';
+
+  @override
+  String get productColumnActive => 'الحالة';
+
+  @override
+  String get productColumnAvgCost => 'متوسط التكلفة';
+
+  @override
+  String get productColumnLastPurchaseCost => 'آخر شراء';
+
+  @override
+  String get productColumnMinSalePrice => 'أدنى سعر بيع';
+
+  @override
+  String get productGroupAdd => 'إضافة مجموعة';
+
+  @override
+  String get productGroupEdit => 'تعديل مجموعة';
+
+  @override
+  String get productGroupDeactivate => 'تعطيل المجموعة';
+
+  @override
+  String get productGroupDeactivateConfirm => 'تعطيل مجموعة المنتجات هذه؟';
+
+  @override
+  String get productGroupNameAr => 'الاسم بالعربية';
+
+  @override
+  String get productGroupNameEn => 'الاسم بالإنجليزية';
+
+  @override
+  String get productGroupParent => 'المجموعة الأب';
+
+  @override
+  String get productGroupActive => 'نشط';
+
+  @override
+  String get productGroupNone => 'بدون';
+
+  @override
+  String get productGroupValidationNameRequired =>
+      'أدخل الاسم بالعربية والإنجليزية';
+
+  @override
+  String get productsGroupsTitle => 'مجموعات المنتجات';
 }

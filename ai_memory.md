@@ -1,6 +1,6 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-05-20 (Phase 3 M3 complete).
+> Updated 2026-05-20 (Phase 3 M4 complete).
 > Keep this file short. It is for continuity between AI tools, not full project documentation.
 
 ---
@@ -9,74 +9,27 @@
 
 - **Phase 0-1D complete** - local Supabase database foundation is verified.
 - **Phase 2 complete** - auth, routing, permissions, locale (M0-M8).
-- **Phase 3 M0+M0.5 complete** - baseline and pre-migration backups in `supabase/.temp/` (not committed).
-- **Phase 3 M1 complete** - DB helpers, inventory adjustment RPC, product_images storage, RPC-only movements, SQL verification.
-- **Phase 3 M1.5 complete** - canonical inventory rules doc + comments-only migration `039`.
-- **Phase 3 M2 complete** - Dart domain/data layer for products and inventory (no UI, no new migrations).
-- **Phase 3 M3 complete** - routes, permission guards, navigation, l10n, and lightweight placeholders.
+- **Phase 3 M0–M3 complete** - DB, domain/data, routes, placeholders.
+- **Phase 3 M4 complete** - product list screen, group tree, filters, permission-aware columns, AR/EN l10n.
 - Migrations `001`-`039` apply cleanly with `supabase db reset`.
 - **Canonical inventory rules:** [`docs/PHASE_3_M1_5_INVENTORY_RULES.md`](docs/PHASE_3_M1_5_INVENTORY_RULES.md)
-- **Next:** Phase 3 M4 - Product Groups & Product List.
+- **Next:** Phase 3 M5 - Product Detail, Edit & Wizard.
 
 ---
 
-## Phase 3 M2 - Dart Files Created
+## Phase 3 M4 - Product Groups & Product List
 
-### Core
+- `/products` → real `ProductListScreen` (M2 repositories; no new migrations).
+- Search + type/active/stock filters; UI-local search debounce.
+- Group panel (~240px wide) when `product_groups.view`; simple create/edit/deactivate via `product_groups.create` / `edit` (deactivate = `is_active=false`, not `delete`).
+- Stock column always visible; values only with `inventory.view`; stock filter hidden without it; product list never fails on stock errors.
+- Group column always visible; unavailable label without `product_groups.view` (never raw UUID).
+- Cost columns only when `canViewFullProductCosts`; `ProductTable` receives `canViewCosts` bool from screen.
+- Rental price column always visible; `—` when `rentalPriceMonthly` null.
+- `/products/new` and `/products/:id` still placeholders.
+- Tests: tree, controller (fake repos), table/empty/error widgets.
 
-- `lib/core/utils/decimal_parser.dart`
-- `lib/core/utils/money_formatter.dart`
-- `lib/core/utils/quantity_formatter.dart`
-- `lib/core/errors/inventory_exception.dart`
-- `lib/core/errors/products_exception.dart`
-
-### Domain
-
-- `lib/domain/validators/validation_result.dart`
-- `lib/domain/validators/product_validator.dart`
-- `lib/domain/validators/inventory_adjustment_validator.dart`
-- `lib/domain/services/unit_conversion_service.dart`
-- `lib/domain/services/stock_engine.dart`
-- `lib/domain/services/cost_engine.dart`
-
-### Products
-
-- `lib/features/products/domain/product_type.dart`
-- `lib/features/products/domain/unit_of_measure.dart`
-- `lib/features/products/domain/unit_status.dart`
-- `lib/features/products/domain/product.dart`
-- `lib/features/products/domain/product_group.dart`
-- `lib/features/products/domain/product_filters.dart`
-- `lib/features/products/domain/product_form_state.dart`
-- `lib/features/products/domain/product_stock_summary.dart`
-- `lib/features/products/domain/product_cost_access.dart`
-- `lib/features/products/data/product_repository.dart` + `.g.dart`
-- `lib/features/products/data/product_group_repository.dart` + `.g.dart`
-
-### Inventory
-
-- `lib/features/inventory/domain/warehouse_type.dart`
-- `lib/features/inventory/domain/movement_type.dart`
-- `lib/features/inventory/domain/warehouse.dart`
-- `lib/features/inventory/domain/inventory_balance.dart`
-- `lib/features/inventory/domain/inventory_movement.dart`
-- `lib/features/inventory/domain/inventory_adjustment_form_state.dart`
-- `lib/features/inventory/data/warehouse_repository.dart` + `.g.dart`
-- `lib/features/inventory/data/inventory_repository.dart` + `.g.dart`
-
----
-
-## Phase 3 M3 - Routing, Permissions, and Navigation
-
-- Added `/products`, `/products/new`, `/products/:id`, `/warehouses`, `/inventory`, `/inventory/movements`, and `/inventory/transfers`.
-- Added exact route permission guards for Phase 3 paths.
-- Added permission-aware AppShell navigation for desktop sidebar and mobile drawer.
-- Sidebar is light/white with subtle gold background accents; active items use brand gold with white text.
-- Added lightweight product and inventory placeholder screens.
-- Added localized module labels in Arabic and English.
-- Added route guard and navigation permission tests.
-
-**No DB migrations added in M3.**
+**No DB migrations in M4.**
 
 ---
 
@@ -108,17 +61,20 @@ Supported: `ar`, `en`. Default: `ar`.
 ## Last Session Summary
 
 **Date:** 2026-05-20  
-**Task:** Phase 3 M3 - Routes, permissions, and navigation.
+**Task:** Phase 3 M4 - Product Groups & Product List.
 
 ### Verification
 
 ```text
+dart run build_runner build --delete-conflicting-outputs
 flutter analyze  -> No issues found
-flutter test     -> All tests passed
+flutter test     -> All tests passed (107)
 ```
 
-No `supabase db reset` (no SQL changes in M3).
+No `supabase db reset` (no SQL changes in M4).
+Post-review hardening: product list scroll behavior, secondary group/stock load handling,
+hidden permission filters, and product-group tree safety were tightened.
 
 ### Next Recommended Step
 
-- **Phase 3 M4** - Product Groups & Product List.
+- **Phase 3 M5** - Product Detail, Edit & Add Product Wizard.

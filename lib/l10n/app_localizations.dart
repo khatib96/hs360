@@ -397,6 +397,264 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Stock Transfers'**
   String get inventoryTransfers;
+
+  /// No description provided for @productsSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search SKU, name, or barcode'**
+  String get productsSearchHint;
+
+  /// No description provided for @productsListEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No products match your filters.'**
+  String get productsListEmpty;
+
+  /// No description provided for @productsListError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load products. Try again.'**
+  String get productsListError;
+
+  /// No description provided for @productsNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'—'**
+  String get productsNotAvailable;
+
+  /// No description provided for @productsGroupUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Unavailable'**
+  String get productsGroupUnavailable;
+
+  /// No description provided for @productsAllGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'All products'**
+  String get productsAllGroups;
+
+  /// No description provided for @productsFilterType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get productsFilterType;
+
+  /// No description provided for @productsFilterActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get productsFilterActive;
+
+  /// No description provided for @productsFilterStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock'**
+  String get productsFilterStock;
+
+  /// No description provided for @productsFilterClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear filters'**
+  String get productsFilterClear;
+
+  /// No description provided for @productsFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get productsFilterAll;
+
+  /// No description provided for @productsFilterActiveOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Active only'**
+  String get productsFilterActiveOnly;
+
+  /// No description provided for @productsFilterInactiveOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive only'**
+  String get productsFilterInactiveOnly;
+
+  /// No description provided for @productTypeSaleOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Sale only'**
+  String get productTypeSaleOnly;
+
+  /// No description provided for @productTypeAssetRental.
+  ///
+  /// In en, this message translates to:
+  /// **'Asset rental'**
+  String get productTypeAssetRental;
+
+  /// No description provided for @productTypeConsumableRental.
+  ///
+  /// In en, this message translates to:
+  /// **'Consumable rental'**
+  String get productTypeConsumableRental;
+
+  /// No description provided for @productStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get productStatusActive;
+
+  /// No description provided for @productStatusInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get productStatusInactive;
+
+  /// No description provided for @productStockIn.
+  ///
+  /// In en, this message translates to:
+  /// **'In stock'**
+  String get productStockIn;
+
+  /// No description provided for @productStockOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Out of stock'**
+  String get productStockOut;
+
+  /// No description provided for @productStockLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low stock'**
+  String get productStockLow;
+
+  /// No description provided for @productColumnSku.
+  ///
+  /// In en, this message translates to:
+  /// **'SKU'**
+  String get productColumnSku;
+
+  /// No description provided for @productColumnName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get productColumnName;
+
+  /// No description provided for @productColumnGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Group'**
+  String get productColumnGroup;
+
+  /// No description provided for @productColumnType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get productColumnType;
+
+  /// No description provided for @productColumnSalePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Sale price'**
+  String get productColumnSalePrice;
+
+  /// No description provided for @productColumnRentalPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Rental price'**
+  String get productColumnRentalPrice;
+
+  /// No description provided for @productColumnStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock'**
+  String get productColumnStock;
+
+  /// No description provided for @productColumnActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get productColumnActive;
+
+  /// No description provided for @productColumnAvgCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg cost'**
+  String get productColumnAvgCost;
+
+  /// No description provided for @productColumnLastPurchaseCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Last purchase'**
+  String get productColumnLastPurchaseCost;
+
+  /// No description provided for @productColumnMinSalePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Min sale price'**
+  String get productColumnMinSalePrice;
+
+  /// No description provided for @productGroupAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add group'**
+  String get productGroupAdd;
+
+  /// No description provided for @productGroupEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit group'**
+  String get productGroupEdit;
+
+  /// No description provided for @productGroupDeactivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate group'**
+  String get productGroupDeactivate;
+
+  /// No description provided for @productGroupDeactivateConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate this product group?'**
+  String get productGroupDeactivateConfirm;
+
+  /// No description provided for @productGroupNameAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic name'**
+  String get productGroupNameAr;
+
+  /// No description provided for @productGroupNameEn.
+  ///
+  /// In en, this message translates to:
+  /// **'English name'**
+  String get productGroupNameEn;
+
+  /// No description provided for @productGroupParent.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent group'**
+  String get productGroupParent;
+
+  /// No description provided for @productGroupActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get productGroupActive;
+
+  /// No description provided for @productGroupNone.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get productGroupNone;
+
+  /// No description provided for @productGroupValidationNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Arabic and English names'**
+  String get productGroupValidationNameRequired;
+
+  /// No description provided for @productsGroupsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Product groups'**
+  String get productsGroupsTitle;
 }
 
 class _AppLocalizationsDelegate

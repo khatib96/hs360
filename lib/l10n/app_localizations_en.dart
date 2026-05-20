@@ -167,4 +167,134 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get inventoryTransfers => 'Stock Transfers';
+
+  @override
+  String get productsSearchHint => 'Search SKU, name, or barcode';
+
+  @override
+  String get productsListEmpty => 'No products match your filters.';
+
+  @override
+  String get productsListError => 'Could not load products. Try again.';
+
+  @override
+  String get productsNotAvailable => '—';
+
+  @override
+  String get productsGroupUnavailable => 'Unavailable';
+
+  @override
+  String get productsAllGroups => 'All products';
+
+  @override
+  String get productsFilterType => 'Type';
+
+  @override
+  String get productsFilterActive => 'Status';
+
+  @override
+  String get productsFilterStock => 'Stock';
+
+  @override
+  String get productsFilterClear => 'Clear filters';
+
+  @override
+  String get productsFilterAll => 'All';
+
+  @override
+  String get productsFilterActiveOnly => 'Active only';
+
+  @override
+  String get productsFilterInactiveOnly => 'Inactive only';
+
+  @override
+  String get productTypeSaleOnly => 'Sale only';
+
+  @override
+  String get productTypeAssetRental => 'Asset rental';
+
+  @override
+  String get productTypeConsumableRental => 'Consumable rental';
+
+  @override
+  String get productStatusActive => 'Active';
+
+  @override
+  String get productStatusInactive => 'Inactive';
+
+  @override
+  String get productStockIn => 'In stock';
+
+  @override
+  String get productStockOut => 'Out of stock';
+
+  @override
+  String get productStockLow => 'Low stock';
+
+  @override
+  String get productColumnSku => 'SKU';
+
+  @override
+  String get productColumnName => 'Name';
+
+  @override
+  String get productColumnGroup => 'Group';
+
+  @override
+  String get productColumnType => 'Type';
+
+  @override
+  String get productColumnSalePrice => 'Sale price';
+
+  @override
+  String get productColumnRentalPrice => 'Rental price';
+
+  @override
+  String get productColumnStock => 'Stock';
+
+  @override
+  String get productColumnActive => 'Status';
+
+  @override
+  String get productColumnAvgCost => 'Avg cost';
+
+  @override
+  String get productColumnLastPurchaseCost => 'Last purchase';
+
+  @override
+  String get productColumnMinSalePrice => 'Min sale price';
+
+  @override
+  String get productGroupAdd => 'Add group';
+
+  @override
+  String get productGroupEdit => 'Edit group';
+
+  @override
+  String get productGroupDeactivate => 'Deactivate group';
+
+  @override
+  String get productGroupDeactivateConfirm => 'Deactivate this product group?';
+
+  @override
+  String get productGroupNameAr => 'Arabic name';
+
+  @override
+  String get productGroupNameEn => 'English name';
+
+  @override
+  String get productGroupParent => 'Parent group';
+
+  @override
+  String get productGroupActive => 'Active';
+
+  @override
+  String get productGroupNone => 'None';
+
+  @override
+  String get productGroupValidationNameRequired =>
+      'Enter Arabic and English names';
+
+  @override
+  String get productsGroupsTitle => 'Product groups';
 }
