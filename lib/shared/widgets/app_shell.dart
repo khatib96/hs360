@@ -30,12 +30,14 @@ class AppShell extends ConsumerWidget {
     required this.title,
     required this.body,
     this.actions,
+    this.currentRoute,
     super.key,
   });
 
   final String title;
   final Widget body;
   final List<Widget>? actions;
+  final String? currentRoute;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -51,9 +53,11 @@ class AppShell extends ConsumerWidget {
       );
     }
 
-    String currentPath = '';
+    String currentPath = currentRoute ?? '';
     try {
-      currentPath = GoRouterState.of(context).uri.path;
+      currentPath = currentPath.isEmpty
+          ? GoRouterState.of(context).uri.path
+          : currentPath;
     } catch (_) {}
 
     final allItems = [
@@ -307,25 +311,36 @@ class _NavigationTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final foreground = isActive ? AppColors.pureWhite : AppColors.charcoal;
 
+    final borderRadius = BorderRadius.circular(8);
+
     return Padding(
       padding: const EdgeInsetsDirectional.symmetric(
         horizontal: 12,
         vertical: 4,
       ),
-      child: ListTile(
-        leading: Icon(item.icon, color: foreground),
-        title: Text(
-          item.titleGetter(l10n),
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: foreground,
-            fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-          ),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: isActive ? AppColors.gold : Colors.transparent,
+          borderRadius: borderRadius,
         ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        tileColor: isActive ? AppColors.gold : Colors.transparent,
-        selected: isActive,
-        selectedTileColor: AppColors.gold,
-        onTap: onTap,
+        child: ListTile(
+          contentPadding: const EdgeInsetsDirectional.symmetric(
+            horizontal: 16,
+          ),
+          leading: Icon(item.icon, color: foreground),
+          title: Text(
+            item.titleGetter(l10n),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: foreground,
+              fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+          shape: RoundedRectangleBorder(borderRadius: borderRadius),
+          tileColor: Colors.transparent,
+          selected: isActive,
+          selectedTileColor: Colors.transparent,
+          onTap: onTap,
+        ),
       ),
     );
   }

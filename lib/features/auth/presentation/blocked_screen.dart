@@ -20,6 +20,7 @@ class BlockedScreen extends ConsumerWidget {
 
     return AppShell(
       title: l10n.blockedTitle,
+      currentRoute: AppRoutes.blocked,
       actions: const [SignOutIconButton()],
       body: SingleChildScrollView(
         padding: const EdgeInsetsDirectional.all(24),

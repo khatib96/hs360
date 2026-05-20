@@ -20,6 +20,7 @@ class FieldTodayScreen extends ConsumerWidget {
 
     return AppShell(
       title: l10n.fieldTodayTitle,
+      currentRoute: AppRoutes.fieldToday,
       actions: const [SignOutIconButton()],
       body: SingleChildScrollView(
         padding: const EdgeInsetsDirectional.all(24),

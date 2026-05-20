@@ -22,6 +22,7 @@ class DashboardScreen extends ConsumerWidget {
 
     return AppShell(
       title: l10n.dashboard,
+      currentRoute: AppRoutes.dashboard,
       actions: [
         const SignOutIconButton(),
         Padding(

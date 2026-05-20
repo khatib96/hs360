@@ -156,6 +156,12 @@ class InventoryPlaceholderScreen extends ConsumerWidget {
 
     return AppShell(
       title: title,
+      currentRoute: switch (mode) {
+        InventoryViewMode.balances => AppRoutes.inventory,
+        InventoryViewMode.warehouses => AppRoutes.warehouses,
+        InventoryViewMode.movements => AppRoutes.inventoryMovements,
+        InventoryViewMode.transfers => AppRoutes.inventoryTransfers,
+      },
       body: SingleChildScrollView(
         padding: const EdgeInsetsDirectional.all(24),
         child: Column(

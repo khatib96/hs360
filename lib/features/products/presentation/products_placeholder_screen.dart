@@ -125,6 +125,11 @@ class ProductsPlaceholderScreen extends ConsumerWidget {
 
     return AppShell(
       title: title,
+      currentRoute: switch (mode) {
+        ProductsViewMode.list => AppRoutes.products,
+        ProductsViewMode.create => AppRoutes.productsNew,
+        ProductsViewMode.detail => AppRoutes.productsDetail,
+      },
       body: SingleChildScrollView(
         padding: const EdgeInsetsDirectional.all(24),
         child: Column(
