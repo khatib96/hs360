@@ -16,6 +16,7 @@ const _officePermissionIds = [
   'dashboard.view',
   'products.view',
   'products.create',
+  'products.edit',
   'customers.view',
   'contracts.view',
   'invoices.view',
@@ -46,12 +47,24 @@ bool canAccessDashboard(AppSession session) =>
 bool canAccessField(AppSession session) =>
     session.isManager || session.permissions.hasAny(_fieldPermissionIds);
 
+/// True for `/products/{segment}/edit` where segment is not `new`.
+bool isProductEditPath(String path) {
+  final match =
+      RegExp(r'^/products/([^/]+)/edit$').firstMatch(_normalizePath(path));
+  if (match == null) return false;
+  return match.group(1)! != 'new';
+}
+
 /// Inner path permission validation helper.
 bool _isPathAllowed(String path, AppSession session) {
   if (session.isManager) return true;
 
   if (path == AppRoutes.productsNew) {
     return session.permissions.can('products.create');
+  }
+  if (isProductEditPath(path)) {
+    return session.permissions.can('products.view') &&
+        session.permissions.can('products.edit');
   }
   if (path == AppRoutes.products || path.startsWith('/products/')) {
     return session.permissions.can('products.view');

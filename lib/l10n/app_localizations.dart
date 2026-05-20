@@ -655,6 +655,408 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Product groups'**
   String get productsGroupsTitle;
+
+  /// No description provided for @productsEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Product'**
+  String get productsEdit;
+
+  /// No description provided for @productEditAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get productEditAction;
+
+  /// No description provided for @productWizardStepIdentity.
+  ///
+  /// In en, this message translates to:
+  /// **'Identity'**
+  String get productWizardStepIdentity;
+
+  /// No description provided for @productWizardStepUnits.
+  ///
+  /// In en, this message translates to:
+  /// **'Units'**
+  String get productWizardStepUnits;
+
+  /// No description provided for @productWizardStepPricing.
+  ///
+  /// In en, this message translates to:
+  /// **'Pricing'**
+  String get productWizardStepPricing;
+
+  /// No description provided for @productWizardStepFlags.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get productWizardStepFlags;
+
+  /// No description provided for @productWizardStepReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get productWizardStepReview;
+
+  /// No description provided for @productWizardNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get productWizardNext;
+
+  /// No description provided for @productWizardBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get productWizardBack;
+
+  /// No description provided for @productWizardSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Save product'**
+  String get productWizardSubmit;
+
+  /// No description provided for @productWizardCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New product'**
+  String get productWizardCreateTitle;
+
+  /// No description provided for @productFieldSku.
+  ///
+  /// In en, this message translates to:
+  /// **'SKU'**
+  String get productFieldSku;
+
+  /// No description provided for @productFieldNameAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic name'**
+  String get productFieldNameAr;
+
+  /// No description provided for @productFieldNameEn.
+  ///
+  /// In en, this message translates to:
+  /// **'English name'**
+  String get productFieldNameEn;
+
+  /// No description provided for @productFieldGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Product group'**
+  String get productFieldGroup;
+
+  /// No description provided for @productFieldType.
+  ///
+  /// In en, this message translates to:
+  /// **'Product type'**
+  String get productFieldType;
+
+  /// No description provided for @productFieldUnitPrimary.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary unit'**
+  String get productFieldUnitPrimary;
+
+  /// No description provided for @productFieldUnitSecondary.
+  ///
+  /// In en, this message translates to:
+  /// **'Secondary unit'**
+  String get productFieldUnitSecondary;
+
+  /// No description provided for @productFieldConversionFactor.
+  ///
+  /// In en, this message translates to:
+  /// **'Conversion factor'**
+  String get productFieldConversionFactor;
+
+  /// No description provided for @productFieldSalePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Sale price'**
+  String get productFieldSalePrice;
+
+  /// No description provided for @productFieldMinSalePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Min sale price'**
+  String get productFieldMinSalePrice;
+
+  /// No description provided for @productFieldRentalPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly rental price'**
+  String get productFieldRentalPrice;
+
+  /// No description provided for @productFieldAvgCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Average cost'**
+  String get productFieldAvgCost;
+
+  /// No description provided for @productFieldLastPurchaseCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Last purchase cost'**
+  String get productFieldLastPurchaseCost;
+
+  /// No description provided for @productFieldBarcode.
+  ///
+  /// In en, this message translates to:
+  /// **'Barcode'**
+  String get productFieldBarcode;
+
+  /// No description provided for @productFieldSerialized.
+  ///
+  /// In en, this message translates to:
+  /// **'Serialized product'**
+  String get productFieldSerialized;
+
+  /// No description provided for @productFieldMaintenance.
+  ///
+  /// In en, this message translates to:
+  /// **'Trackable for maintenance'**
+  String get productFieldMaintenance;
+
+  /// No description provided for @productFieldReorderPoint.
+  ///
+  /// In en, this message translates to:
+  /// **'Reorder point'**
+  String get productFieldReorderPoint;
+
+  /// No description provided for @productFieldActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get productFieldActive;
+
+  /// No description provided for @productSectionOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get productSectionOverview;
+
+  /// No description provided for @productSectionPricing.
+  ///
+  /// In en, this message translates to:
+  /// **'Pricing'**
+  String get productSectionPricing;
+
+  /// No description provided for @productSectionUnits.
+  ///
+  /// In en, this message translates to:
+  /// **'Units'**
+  String get productSectionUnits;
+
+  /// No description provided for @productSectionInventory.
+  ///
+  /// In en, this message translates to:
+  /// **'Inventory'**
+  String get productSectionInventory;
+
+  /// No description provided for @productSectionAudit.
+  ///
+  /// In en, this message translates to:
+  /// **'Audit'**
+  String get productSectionAudit;
+
+  /// No description provided for @productDetailNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Product not found.'**
+  String get productDetailNotFound;
+
+  /// No description provided for @productDetailLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load product. Try again.'**
+  String get productDetailLoadError;
+
+  /// No description provided for @productDetailStockUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock summary unavailable.'**
+  String get productDetailStockUnavailable;
+
+  /// No description provided for @productDetailStockTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total available'**
+  String get productDetailStockTotal;
+
+  /// No description provided for @productDetailCreatedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Created'**
+  String get productDetailCreatedAt;
+
+  /// No description provided for @productDetailUpdatedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated'**
+  String get productDetailUpdatedAt;
+
+  /// No description provided for @productImageAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add image'**
+  String get productImageAdd;
+
+  /// No description provided for @productImageChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change image'**
+  String get productImageChange;
+
+  /// No description provided for @productImageUploading.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading image…'**
+  String get productImageUploading;
+
+  /// No description provided for @productCreatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Product {sku} created successfully.'**
+  String productCreatedSuccess(String sku);
+
+  /// No description provided for @productSavedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Product saved.'**
+  String get productSavedSuccess;
+
+  /// No description provided for @productGroupsPermissionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'You need product group access to create products.'**
+  String get productGroupsPermissionRequired;
+
+  /// No description provided for @productValidationSkuRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'SKU is required'**
+  String get productValidationSkuRequired;
+
+  /// No description provided for @productValidationNameArRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic name is required'**
+  String get productValidationNameArRequired;
+
+  /// No description provided for @productValidationNameEnRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'English name is required'**
+  String get productValidationNameEnRequired;
+
+  /// No description provided for @productValidationGroupRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Product group is required'**
+  String get productValidationGroupRequired;
+
+  /// No description provided for @productValidationConversionInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid conversion factor for selected units'**
+  String get productValidationConversionInvalid;
+
+  /// No description provided for @productValidationSaleBelowMin.
+  ///
+  /// In en, this message translates to:
+  /// **'Sale price cannot be below minimum sale price'**
+  String get productValidationSaleBelowMin;
+
+  /// No description provided for @productValidationRentalRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Rental price is required for rental products'**
+  String get productValidationRentalRequired;
+
+  /// No description provided for @productValidationSerializedPiece.
+  ///
+  /// In en, this message translates to:
+  /// **'Serialized products must use piece as primary unit'**
+  String get productValidationSerializedPiece;
+
+  /// No description provided for @productValidationNegative.
+  ///
+  /// In en, this message translates to:
+  /// **'Value cannot be negative'**
+  String get productValidationNegative;
+
+  /// No description provided for @productValidationInvalidDecimal.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid number'**
+  String get productValidationInvalidDecimal;
+
+  /// No description provided for @productValidationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fix the highlighted fields'**
+  String get productValidationFailed;
+
+  /// No description provided for @productErrorPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have permission for this action'**
+  String get productErrorPermissionDenied;
+
+  /// No description provided for @productErrorDuplicateSku.
+  ///
+  /// In en, this message translates to:
+  /// **'SKU already exists'**
+  String get productErrorDuplicateSku;
+
+  /// No description provided for @productErrorDuplicateBarcode.
+  ///
+  /// In en, this message translates to:
+  /// **'Barcode already exists'**
+  String get productErrorDuplicateBarcode;
+
+  /// No description provided for @productErrorFieldNotSupported.
+  ///
+  /// In en, this message translates to:
+  /// **'This field is not supported yet'**
+  String get productErrorFieldNotSupported;
+
+  /// No description provided for @productErrorImageType.
+  ///
+  /// In en, this message translates to:
+  /// **'Image must be JPG, PNG, or WebP'**
+  String get productErrorImageType;
+
+  /// No description provided for @productErrorImageSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Image must be 5 MB or smaller'**
+  String get productErrorImageSize;
+
+  /// No description provided for @productErrorUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Try again.'**
+  String get productErrorUnknown;
+
+  /// No description provided for @productSerializedLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot change serialization while stock exists or is unknown'**
+  String get productSerializedLocked;
+
+  /// No description provided for @productNoSecondaryUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get productNoSecondaryUnit;
+
+  /// No description provided for @productWizardReviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review before saving'**
+  String get productWizardReviewTitle;
 }
 
 class _AppLocalizationsDelegate

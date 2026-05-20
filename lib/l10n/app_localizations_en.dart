@@ -297,4 +297,214 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get productsGroupsTitle => 'Product groups';
+
+  @override
+  String get productsEdit => 'Edit Product';
+
+  @override
+  String get productEditAction => 'Edit';
+
+  @override
+  String get productWizardStepIdentity => 'Identity';
+
+  @override
+  String get productWizardStepUnits => 'Units';
+
+  @override
+  String get productWizardStepPricing => 'Pricing';
+
+  @override
+  String get productWizardStepFlags => 'Details';
+
+  @override
+  String get productWizardStepReview => 'Review';
+
+  @override
+  String get productWizardNext => 'Next';
+
+  @override
+  String get productWizardBack => 'Back';
+
+  @override
+  String get productWizardSubmit => 'Save product';
+
+  @override
+  String get productWizardCreateTitle => 'New product';
+
+  @override
+  String get productFieldSku => 'SKU';
+
+  @override
+  String get productFieldNameAr => 'Arabic name';
+
+  @override
+  String get productFieldNameEn => 'English name';
+
+  @override
+  String get productFieldGroup => 'Product group';
+
+  @override
+  String get productFieldType => 'Product type';
+
+  @override
+  String get productFieldUnitPrimary => 'Primary unit';
+
+  @override
+  String get productFieldUnitSecondary => 'Secondary unit';
+
+  @override
+  String get productFieldConversionFactor => 'Conversion factor';
+
+  @override
+  String get productFieldSalePrice => 'Sale price';
+
+  @override
+  String get productFieldMinSalePrice => 'Min sale price';
+
+  @override
+  String get productFieldRentalPrice => 'Monthly rental price';
+
+  @override
+  String get productFieldAvgCost => 'Average cost';
+
+  @override
+  String get productFieldLastPurchaseCost => 'Last purchase cost';
+
+  @override
+  String get productFieldBarcode => 'Barcode';
+
+  @override
+  String get productFieldSerialized => 'Serialized product';
+
+  @override
+  String get productFieldMaintenance => 'Trackable for maintenance';
+
+  @override
+  String get productFieldReorderPoint => 'Reorder point';
+
+  @override
+  String get productFieldActive => 'Active';
+
+  @override
+  String get productSectionOverview => 'Overview';
+
+  @override
+  String get productSectionPricing => 'Pricing';
+
+  @override
+  String get productSectionUnits => 'Units';
+
+  @override
+  String get productSectionInventory => 'Inventory';
+
+  @override
+  String get productSectionAudit => 'Audit';
+
+  @override
+  String get productDetailNotFound => 'Product not found.';
+
+  @override
+  String get productDetailLoadError => 'Could not load product. Try again.';
+
+  @override
+  String get productDetailStockUnavailable => 'Stock summary unavailable.';
+
+  @override
+  String get productDetailStockTotal => 'Total available';
+
+  @override
+  String get productDetailCreatedAt => 'Created';
+
+  @override
+  String get productDetailUpdatedAt => 'Updated';
+
+  @override
+  String get productImageAdd => 'Add image';
+
+  @override
+  String get productImageChange => 'Change image';
+
+  @override
+  String get productImageUploading => 'Uploading image…';
+
+  @override
+  String productCreatedSuccess(String sku) {
+    return 'Product $sku created successfully.';
+  }
+
+  @override
+  String get productSavedSuccess => 'Product saved.';
+
+  @override
+  String get productGroupsPermissionRequired =>
+      'You need product group access to create products.';
+
+  @override
+  String get productValidationSkuRequired => 'SKU is required';
+
+  @override
+  String get productValidationNameArRequired => 'Arabic name is required';
+
+  @override
+  String get productValidationNameEnRequired => 'English name is required';
+
+  @override
+  String get productValidationGroupRequired => 'Product group is required';
+
+  @override
+  String get productValidationConversionInvalid =>
+      'Invalid conversion factor for selected units';
+
+  @override
+  String get productValidationSaleBelowMin =>
+      'Sale price cannot be below minimum sale price';
+
+  @override
+  String get productValidationRentalRequired =>
+      'Rental price is required for rental products';
+
+  @override
+  String get productValidationSerializedPiece =>
+      'Serialized products must use piece as primary unit';
+
+  @override
+  String get productValidationNegative => 'Value cannot be negative';
+
+  @override
+  String get productValidationInvalidDecimal => 'Enter a valid number';
+
+  @override
+  String get productValidationFailed => 'Please fix the highlighted fields';
+
+  @override
+  String get productErrorPermissionDenied =>
+      'You do not have permission for this action';
+
+  @override
+  String get productErrorDuplicateSku => 'SKU already exists';
+
+  @override
+  String get productErrorDuplicateBarcode => 'Barcode already exists';
+
+  @override
+  String get productErrorFieldNotSupported => 'This field is not supported yet';
+
+  @override
+  String get productErrorImageType => 'Image must be JPG, PNG, or WebP';
+
+  @override
+  String get productErrorImageSize => 'Image must be 5 MB or smaller';
+
+  @override
+  String get productErrorUnknown => 'Something went wrong. Try again.';
+
+  @override
+  String get productSerializedLocked =>
+      'Cannot change serialization while stock exists or is unknown';
+
+  @override
+  String get productNoSecondaryUnit => 'None';
+
+  @override
+  String get productWizardReviewTitle => 'Review before saving';
 }

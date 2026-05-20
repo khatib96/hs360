@@ -297,4 +297,213 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get productsGroupsTitle => 'مجموعات المنتجات';
+
+  @override
+  String get productsEdit => 'تعديل المنتج';
+
+  @override
+  String get productEditAction => 'تعديل';
+
+  @override
+  String get productWizardStepIdentity => 'البيانات الأساسية';
+
+  @override
+  String get productWizardStepUnits => 'الوحدات';
+
+  @override
+  String get productWizardStepPricing => 'التسعير';
+
+  @override
+  String get productWizardStepFlags => 'التفاصيل';
+
+  @override
+  String get productWizardStepReview => 'المراجعة';
+
+  @override
+  String get productWizardNext => 'التالي';
+
+  @override
+  String get productWizardBack => 'السابق';
+
+  @override
+  String get productWizardSubmit => 'حفظ المنتج';
+
+  @override
+  String get productWizardCreateTitle => 'منتج جديد';
+
+  @override
+  String get productFieldSku => 'الرمز';
+
+  @override
+  String get productFieldNameAr => 'الاسم بالعربية';
+
+  @override
+  String get productFieldNameEn => 'الاسم بالإنجليزية';
+
+  @override
+  String get productFieldGroup => 'مجموعة المنتج';
+
+  @override
+  String get productFieldType => 'نوع المنتج';
+
+  @override
+  String get productFieldUnitPrimary => 'الوحدة الأساسية';
+
+  @override
+  String get productFieldUnitSecondary => 'الوحدة الثانوية';
+
+  @override
+  String get productFieldConversionFactor => 'معامل التحويل';
+
+  @override
+  String get productFieldSalePrice => 'سعر البيع';
+
+  @override
+  String get productFieldMinSalePrice => 'أدنى سعر بيع';
+
+  @override
+  String get productFieldRentalPrice => 'سعر الإيجار الشهري';
+
+  @override
+  String get productFieldAvgCost => 'متوسط التكلفة';
+
+  @override
+  String get productFieldLastPurchaseCost => 'آخر تكلفة شراء';
+
+  @override
+  String get productFieldBarcode => 'الباركود';
+
+  @override
+  String get productFieldSerialized => 'منتج متسلسل';
+
+  @override
+  String get productFieldMaintenance => 'قابل للصيانة';
+
+  @override
+  String get productFieldReorderPoint => 'نقطة إعادة الطلب';
+
+  @override
+  String get productFieldActive => 'نشط';
+
+  @override
+  String get productSectionOverview => 'نظرة عامة';
+
+  @override
+  String get productSectionPricing => 'التسعير';
+
+  @override
+  String get productSectionUnits => 'الوحدات';
+
+  @override
+  String get productSectionInventory => 'المخزون';
+
+  @override
+  String get productSectionAudit => 'التدقيق';
+
+  @override
+  String get productDetailNotFound => 'المنتج غير موجود.';
+
+  @override
+  String get productDetailLoadError => 'تعذر تحميل المنتج. حاول مرة أخرى.';
+
+  @override
+  String get productDetailStockUnavailable => 'ملخص المخزون غير متاح.';
+
+  @override
+  String get productDetailStockTotal => 'الإجمالي المتاح';
+
+  @override
+  String get productDetailCreatedAt => 'تاريخ الإنشاء';
+
+  @override
+  String get productDetailUpdatedAt => 'آخر تحديث';
+
+  @override
+  String get productImageAdd => 'إضافة صورة';
+
+  @override
+  String get productImageChange => 'تغيير الصورة';
+
+  @override
+  String get productImageUploading => 'جاري رفع الصورة…';
+
+  @override
+  String productCreatedSuccess(String sku) {
+    return 'تم إنشاء المنتج $sku بنجاح.';
+  }
+
+  @override
+  String get productSavedSuccess => 'تم حفظ المنتج.';
+
+  @override
+  String get productGroupsPermissionRequired =>
+      'تحتاج صلاحية مجموعات المنتجات لإنشاء منتج.';
+
+  @override
+  String get productValidationSkuRequired => 'الرمز مطلوب';
+
+  @override
+  String get productValidationNameArRequired => 'الاسم بالعربية مطلوب';
+
+  @override
+  String get productValidationNameEnRequired => 'الاسم بالإنجليزية مطلوب';
+
+  @override
+  String get productValidationGroupRequired => 'مجموعة المنتج مطلوبة';
+
+  @override
+  String get productValidationConversionInvalid =>
+      'معامل التحويل غير صالح للوحدات المختارة';
+
+  @override
+  String get productValidationSaleBelowMin =>
+      'سعر البيع لا يمكن أن يكون أقل من أدنى سعر بيع';
+
+  @override
+  String get productValidationRentalRequired =>
+      'سعر الإيجار مطلوب لمنتجات الإيجار';
+
+  @override
+  String get productValidationSerializedPiece =>
+      'المنتجات المتسلسلة يجب أن تستخدم القطعة كوحدة أساسية';
+
+  @override
+  String get productValidationNegative => 'القيمة لا يمكن أن تكون سالبة';
+
+  @override
+  String get productValidationInvalidDecimal => 'أدخل رقماً صالحاً';
+
+  @override
+  String get productValidationFailed => 'يرجى تصحيح الحقول المحددة';
+
+  @override
+  String get productErrorPermissionDenied => 'ليس لديك صلاحية لهذا الإجراء';
+
+  @override
+  String get productErrorDuplicateSku => 'الرمز موجود مسبقاً';
+
+  @override
+  String get productErrorDuplicateBarcode => 'الباركود موجود مسبقاً';
+
+  @override
+  String get productErrorFieldNotSupported => 'هذا الحقل غير مدعوم حالياً';
+
+  @override
+  String get productErrorImageType => 'يجب أن تكون الصورة JPG أو PNG أو WebP';
+
+  @override
+  String get productErrorImageSize => 'يجب ألا يتجاوز حجم الصورة 5 ميجابايت';
+
+  @override
+  String get productErrorUnknown => 'حدث خطأ. حاول مرة أخرى.';
+
+  @override
+  String get productSerializedLocked =>
+      'لا يمكن تغيير التسلسل مع وجود مخزون أو عدم معرفة المخزون';
+
+  @override
+  String get productNoSecondaryUnit => 'بدون';
+
+  @override
+  String get productWizardReviewTitle => 'مراجعة قبل الحفظ';
 }

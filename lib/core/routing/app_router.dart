@@ -7,8 +7,9 @@ import '../../features/auth/presentation/forgot_password_screen.dart';
 import '../../features/auth/presentation/login_screen.dart';
 import '../../features/dashboard/presentation/dashboard_screen.dart';
 import '../../features/field_ops/presentation/field_today_screen.dart';
+import '../../features/products/presentation/product_detail_screen.dart';
 import '../../features/products/presentation/product_list_screen.dart';
-import '../../features/products/presentation/products_placeholder_screen.dart';
+import '../../features/products/presentation/product_wizard_screen.dart';
 import '../../features/inventory/presentation/inventory_placeholder_screen.dart';
 import 'app_routes.dart';
 import 'route_guards.dart';
@@ -59,16 +60,20 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.productsNew,
         name: AppRoutes.productsNewName,
-        builder: (context, state) => const ProductsPlaceholderScreen(
-          mode: ProductsViewMode.create,
+        builder: (context, state) => const ProductWizardScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.productsEdit,
+        name: AppRoutes.productsEditName,
+        builder: (context, state) => ProductWizardScreen(
+          productId: state.pathParameters['id'],
         ),
       ),
       GoRoute(
         path: AppRoutes.productsDetail,
         name: AppRoutes.productsDetailName,
-        builder: (context, state) => ProductsPlaceholderScreen(
-          mode: ProductsViewMode.detail,
-          productId: state.pathParameters['id'],
+        builder: (context, state) => ProductDetailScreen(
+          productId: state.pathParameters['id']!,
         ),
       ),
       GoRoute(

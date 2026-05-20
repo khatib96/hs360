@@ -18,4 +18,7 @@ enum ProductType {
   }
 
   String toDb() => dbValue;
+
+  bool get isRental =>
+      this == ProductType.assetRental || this == ProductType.consumableRental;
 }

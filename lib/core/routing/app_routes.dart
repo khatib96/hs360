@@ -7,6 +7,7 @@ abstract final class AppRoutes {
   static const blocked = '/blocked';
   static const products = '/products';
   static const productsNew = '/products/new';
+  static const productsEdit = '/products/:id/edit';
   static const productsDetail = '/products/:id';
   static const warehouses = '/warehouses';
   static const inventory = '/inventory';
@@ -20,6 +21,7 @@ abstract final class AppRoutes {
   static const blockedName = 'blocked';
   static const productsName = 'products';
   static const productsNewName = 'productsNew';
+  static const productsEditName = 'productsEdit';
   static const productsDetailName = 'productsDetail';
   static const warehousesName = 'warehouses';
   static const inventoryName = 'inventory';

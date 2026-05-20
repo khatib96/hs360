@@ -8,6 +8,20 @@ class ProductsException extends AppException {
 
   static const permissionDenied = 'permission_denied';
   static const validationFailed = 'validation_failed';
+  static const skuRequired = 'sku_required';
+  static const nameArRequired = 'name_ar_required';
+  static const nameEnRequired = 'name_en_required';
+  static const groupRequired = 'group_required';
+  static const conversionFactorInvalid = 'conversion_factor_invalid';
+  static const salePriceBelowMin = 'sale_price_below_min';
+  static const rentalPriceRequired = 'rental_price_required';
+  static const serializedRequiresPiece = 'serialized_requires_piece';
+  static const negativeValue = 'negative_value';
+  static const invalidDecimal = 'invalid_decimal';
+  static const productGroupsPermissionRequired =
+      'product_groups_permission_required';
+  static const imageTypeInvalid = 'image_type_invalid';
+  static const imageTooLarge = 'image_too_large';
   static const fieldNotSupported = 'field_not_supported';
   static const duplicateSku = 'duplicate_sku';
   static const duplicateBarcode = 'duplicate_barcode';

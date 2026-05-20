@@ -281,6 +281,49 @@ void main() {
       );
     });
 
+    test('isProductEditPath matches edit route and rejects new/edit', () {
+      expect(isProductEditPath('/products/abc-123/edit'), isTrue);
+      expect(isProductEditPath('/products/new/edit'), isFalse);
+      expect(isProductEditPath('/products/abc-123'), isFalse);
+    });
+
+    test('edit route requires products.view and products.edit', () {
+      final viewOnly = session(
+        accountType: 'user',
+        permissions: {'products.view'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: '/products/p-1/edit',
+          hasSupabaseSession: true,
+          authState: loaded(viewOnly),
+        ),
+        AppRoutes.dashboard,
+      );
+
+      final editor = session(
+        accountType: 'user',
+        permissions: {'products.view', 'products.edit'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: '/products/p-1/edit',
+          hasSupabaseSession: true,
+          authState: loaded(editor),
+        ),
+        isNull,
+      );
+    });
+
+    test('products.edit alone resolves home to dashboard', () {
+      expect(
+        resolveHomeRoute(
+          session(accountType: 'user', permissions: {'products.edit'}),
+        ),
+        AppRoutes.dashboard,
+      );
+    });
+
     test('User with products.create can access /products/new even if they do not have products.view', () {
       final creatorUser = session(
         accountType: 'user',

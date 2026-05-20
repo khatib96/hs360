@@ -7,7 +7,11 @@ import 'package:hs360/features/auth/domain/app_permissions.dart';
 import 'package:hs360/features/auth/domain/app_session.dart';
 import 'package:hs360/features/auth/presentation/auth_controller.dart';
 import 'package:hs360/features/inventory/presentation/inventory_placeholder_screen.dart';
-import 'package:hs360/features/products/presentation/products_placeholder_screen.dart';
+import 'package:hs360/features/products/data/product_group_repository.dart';
+import 'package:hs360/features/products/data/product_repository.dart';
+import 'package:hs360/features/products/presentation/product_list_screen.dart';
+
+import '../../features/products/fake_product_repositories.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 import 'package:hs360/shared/widgets/app_shell.dart';
 
@@ -99,9 +103,27 @@ void main() {
     final l10n = lookupAppLocalizations(const Locale('en'));
 
     await tester.pumpWidget(
-      buildTestApp(
-        appSession: session(permissions: {'products.view'}),
-        child: const ProductsPlaceholderScreen(mode: ProductsViewMode.list),
+      ProviderScope(
+        overrides: [
+          authControllerProvider.overrideWith(
+            () => TestAuthController(session(permissions: {'products.view'})),
+          ),
+          productRepositoryProvider.overrideWith(
+            (ref) => FakeProductRepository(),
+          ),
+          productGroupRepositoryProvider.overrideWith(
+            (ref) => FakeProductGroupRepository(),
+          ),
+        ],
+        child: MaterialApp(
+          locale: const Locale('en'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: MediaQuery(
+            data: const MediaQueryData(size: Size(1024, 768)),
+            child: const ProductListScreen(),
+          ),
+        ),
       ),
     );
     await tester.pumpAndSettle();

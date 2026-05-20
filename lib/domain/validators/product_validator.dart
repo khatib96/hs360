@@ -2,6 +2,7 @@ import 'package:decimal/decimal.dart';
 
 import '../../core/errors/products_exception.dart';
 import '../../features/products/domain/product_form_state.dart';
+import '../../features/products/domain/unit_of_measure.dart';
 import 'validation_result.dart';
 
 class ProductValidator {
@@ -11,39 +12,57 @@ class ProductValidator {
     final codes = <String>[];
 
     if (input.sku.trim().isEmpty) {
-      codes.add(ProductsException.validationFailed);
+      codes.add(ProductsException.skuRequired);
     }
-    if (input.nameAr.trim().isEmpty || input.nameEn.trim().isEmpty) {
-      codes.add(ProductsException.validationFailed);
+    if (input.nameAr.trim().isEmpty) {
+      codes.add(ProductsException.nameArRequired);
+    }
+    if (input.nameEn.trim().isEmpty) {
+      codes.add(ProductsException.nameEnRequired);
     }
     if (input.groupId.trim().isEmpty) {
-      codes.add(ProductsException.validationFailed);
+      codes.add(ProductsException.groupRequired);
     }
 
     if (input.unitSecondary == null) {
       if (input.conversionFactor != Decimal.one) {
-        codes.add(ProductsException.validationFailed);
+        codes.add(ProductsException.conversionFactorInvalid);
       }
     } else if (input.conversionFactor <= Decimal.one) {
-      codes.add(ProductsException.validationFailed);
+      codes.add(ProductsException.conversionFactorInvalid);
+    }
+
+    if (input.salePrice < Decimal.zero) {
+      codes.add(ProductsException.negativeValue);
+    }
+    if (input.rentalPriceMonthly != null &&
+        input.rentalPriceMonthly! < Decimal.zero) {
+      codes.add(ProductsException.negativeValue);
+    }
+    if (input.minSalePrice != null && input.minSalePrice! < Decimal.zero) {
+      codes.add(ProductsException.negativeValue);
+    }
+    if (input.reorderPoint != null && input.reorderPoint! < Decimal.zero) {
+      codes.add(ProductsException.negativeValue);
+    }
+    for (final cost in [input.avgCost, input.lastPurchaseCost]) {
+      if (cost != null && cost < Decimal.zero) {
+        codes.add(ProductsException.negativeValue);
+      }
     }
 
     if (input.minSalePrice != null && input.salePrice < input.minSalePrice!) {
-      codes.add(ProductsException.validationFailed);
+      codes.add(ProductsException.salePriceBelowMin);
     }
 
-    if (input.reorderPoint != null && input.reorderPoint! < Decimal.zero) {
-      codes.add(ProductsException.validationFailed);
+    if (input.productType.isRental &&
+        (input.rentalPriceMonthly == null ||
+            input.rentalPriceMonthly! <= Decimal.zero)) {
+      codes.add(ProductsException.rentalPriceRequired);
     }
 
-    for (final cost in [
-      input.avgCost,
-      input.lastPurchaseCost,
-      input.minSalePrice,
-    ]) {
-      if (cost != null && cost < Decimal.zero) {
-        codes.add(ProductsException.validationFailed);
-      }
+    if (input.isSerialized && input.unitPrimary != UnitOfMeasure.piece) {
+      codes.add(ProductsException.serializedRequiresPiece);
     }
 
     if (input.minRentalPrice != null) {
@@ -52,5 +71,33 @@ class ProductValidator {
 
     if (codes.isEmpty) return const ValidationResult.valid();
     return ValidationResult(codes: codes);
+  }
+
+  /// Step-scoped validation for wizard navigation (1–5).
+  ValidationResult validateStep(int step, ProductFormState input) {
+    final all = validate(input);
+    if (all.isValid) return all;
+
+    final stepCodes = switch (step) {
+      1 => {
+          ProductsException.skuRequired,
+          ProductsException.nameArRequired,
+          ProductsException.nameEnRequired,
+          ProductsException.groupRequired,
+        },
+      2 => {ProductsException.conversionFactorInvalid},
+      3 => {
+          ProductsException.negativeValue,
+          ProductsException.salePriceBelowMin,
+          ProductsException.rentalPriceRequired,
+        },
+      4 => {ProductsException.serializedRequiresPiece},
+      _ => <String>{},
+    };
+
+    final filtered =
+        all.codes.where((c) => step == 5 || stepCodes.contains(c)).toList();
+    if (filtered.isEmpty) return const ValidationResult.valid();
+    return ValidationResult(codes: filtered);
   }
 }

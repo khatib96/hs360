@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:decimal/decimal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -9,6 +11,7 @@ import '../../../domain/validators/product_validator.dart';
 import '../../auth/domain/app_session.dart';
 import '../domain/product.dart';
 import '../domain/product_cost_access.dart';
+import '../domain/product_permissions.dart';
 import '../domain/product_filters.dart';
 import '../domain/product_form_state.dart';
 import '../domain/product_stock_summary.dart';
@@ -121,7 +124,24 @@ class ProductRepository {
   ) async {
     _validateBeforeWrite(session, input);
     try {
-      final data = _buildWriteMap(session, input, isCreate: true);
+      final canReadCreatedProduct = canViewProductsList(session);
+      final createdId = canReadCreatedProduct ? null : _newUuidV4();
+      final data = _buildWriteMap(
+        session,
+        input,
+        isCreate: true,
+        id: createdId,
+      );
+
+      if (!canReadCreatedProduct) {
+        await _requireClient.from('products').insert(data);
+        return _productFromCreateInput(
+          id: createdId!,
+          session: session,
+          input: input,
+        );
+      }
+
       final row = await _requireClient
           .from('products')
           .insert(data)
@@ -148,6 +168,24 @@ class ProductRepository {
           .select(productMutationReturnColumnsForSession(session))
           .single();
       return _mapMutationResponse(row, session);
+    } catch (e, st) {
+      throw ProductsException.fromSupabase(e, st);
+    }
+  }
+
+  Future<void> updateProductImageUrl(
+    AppSession session,
+    String productId,
+    String? imageUrl,
+  ) async {
+    if (!canEditProduct(session)) {
+      throw const ProductsException(code: ProductsException.permissionDenied);
+    }
+    try {
+      await _requireClient
+          .from('products')
+          .update({'image_url': imageUrl})
+          .eq('id', productId);
     } catch (e, st) {
       throw ProductsException.fromSupabase(e, st);
     }
@@ -217,6 +255,7 @@ class ProductRepository {
     AppSession session,
     ProductFormState input, {
     required bool isCreate,
+    String? id,
   }) {
     final map = <String, dynamic>{
       'sku': input.sku.trim(),
@@ -243,6 +282,7 @@ class ProductRepository {
 
     if (isCreate) {
       map['tenant_id'] = session.tenantId;
+      if (id != null) map['id'] = id;
     }
 
     if (canWriteProductCosts(session)) {
@@ -258,5 +298,56 @@ class ProductRepository {
     }
 
     return map;
+  }
+
+  Product _productFromCreateInput({
+    required String id,
+    required AppSession session,
+    required ProductFormState input,
+  }) {
+    final canViewCosts = canViewFullProductCosts(session);
+    return Product(
+      id: id,
+      tenantId: session.tenantId,
+      sku: input.sku.trim(),
+      barcode: input.barcode?.trim(),
+      nameAr: input.nameAr.trim(),
+      nameEn: input.nameEn.trim(),
+      descriptionAr: input.descriptionAr?.trim(),
+      descriptionEn: input.descriptionEn?.trim(),
+      groupId: input.groupId,
+      productType: input.productType,
+      unitPrimary: input.unitPrimary,
+      unitSecondary: input.unitSecondary,
+      conversionFactor: input.conversionFactor,
+      salePrice: input.salePrice,
+      minSalePrice: canViewCosts ? input.minSalePrice : null,
+      rentalPriceMonthly: input.rentalPriceMonthly,
+      avgCost: canViewCosts ? input.avgCost : null,
+      lastPurchaseCost: canViewCosts ? input.lastPurchaseCost : null,
+      expectedLifespanMonths: input.expectedLifespanMonths,
+      defaultOilMlPerMonth: input.defaultOilMlPerMonth,
+      isSerialized: input.isSerialized,
+      trackableForMaintenance: input.trackableForMaintenance,
+      reorderPoint: input.reorderPoint,
+      isActive: input.isActive,
+      imageUrl: input.imageUrl,
+      createdAt: DateTime.now().toUtc(),
+    );
+  }
+
+  String _newUuidV4() {
+    final random = Random.secure();
+    final bytes = List<int>.generate(16, (_) => random.nextInt(256));
+    bytes[6] = (bytes[6] & 0x0f) | 0x40;
+    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+
+    String hex(int byte) => byte.toRadixString(16).padLeft(2, '0');
+    final value = bytes.map(hex).join();
+    return '${value.substring(0, 8)}-'
+        '${value.substring(8, 12)}-'
+        '${value.substring(12, 16)}-'
+        '${value.substring(16, 20)}-'
+        '${value.substring(20)}';
   }
 }
