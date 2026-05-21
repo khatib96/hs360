@@ -10,6 +10,36 @@ $ErrorActionPreference = "Stop"
 $repoRoot = Split-Path -Parent $PSScriptRoot
 Set-Location $repoRoot
 
+function Test-TcpEndpoint {
+  param(
+    [Parameter(Mandatory=$true)]
+    [string]$Url
+  )
+
+  try {
+    $uri = [System.Uri]$Url
+    if ($uri.Host -notin @("127.0.0.1", "localhost", "::1")) {
+      return $true
+    }
+
+    $port = $uri.Port
+    if ($port -lt 0) {
+      $port = if ($uri.Scheme -eq "https") { 443 } else { 80 }
+    }
+
+    $client = [System.Net.Sockets.TcpClient]::new()
+    try {
+      $task = $client.ConnectAsync($uri.Host, $port)
+      if (-not $task.Wait(1000)) { return $false }
+      return $client.Connected
+    } finally {
+      $client.Dispose()
+    }
+  } catch {
+    return $false
+  }
+}
+
 $localEnvPath = Join-Path $repoRoot "supabase\.temp\local-run.env"
 $apiUrl = $SupabaseUrl
 $anonKey = $SupabaseAnonKey
@@ -51,6 +81,21 @@ if (-not [string]::IsNullOrWhiteSpace($anonKey)) {
     "API_URL=""$apiUrl"""
     "ANON_KEY=""$anonKey"""
   ) | Set-Content -Path $localEnvPath -Encoding UTF8
+}
+
+if (-not (Test-TcpEndpoint -Url $apiUrl)) {
+  Write-Error @"
+Local Supabase API is not reachable at $apiUrl.
+
+Start Docker Desktop, then run:
+  npx --yes supabase start
+
+If the local stack URL changed, delete:
+  supabase\.temp\local-run.env
+
+Then rerun:
+  .\scripts\run-local.ps1
+"@
 }
 
 Write-Host "Using API_URL=$apiUrl"
