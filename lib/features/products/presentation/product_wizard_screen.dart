@@ -30,10 +30,10 @@ class _ProductWizardScreenState extends ConsumerState<ProductWizardScreen> {
   final _nameEn = TextEditingController();
   final _conversion = TextEditingController();
   final _salePrice = TextEditingController();
-  final _rentalPrice = TextEditingController();
   final _minSalePrice = TextEditingController();
   final _avgCost = TextEditingController();
   final _lastPurchase = TextEditingController();
+  final _expectedLifespan = TextEditingController();
   final _barcode = TextEditingController();
   final _reorder = TextEditingController();
 
@@ -44,10 +44,10 @@ class _ProductWizardScreenState extends ConsumerState<ProductWizardScreen> {
     _nameEn.dispose();
     _conversion.dispose();
     _salePrice.dispose();
-    _rentalPrice.dispose();
     _minSalePrice.dispose();
     _avgCost.dispose();
     _lastPurchase.dispose();
+    _expectedLifespan.dispose();
     _barcode.dispose();
     _reorder.dispose();
     super.dispose();
@@ -61,15 +61,15 @@ class _ProductWizardScreenState extends ConsumerState<ProductWizardScreen> {
       _conversion.text = draft.conversionFactor;
     }
     if (_salePrice.text != draft.salePrice) _salePrice.text = draft.salePrice;
-    if (_rentalPrice.text != (draft.rentalPriceMonthly ?? '')) {
-      _rentalPrice.text = draft.rentalPriceMonthly ?? '';
-    }
     if (_minSalePrice.text != (draft.minSalePrice ?? '')) {
       _minSalePrice.text = draft.minSalePrice ?? '';
     }
     if (_avgCost.text != (draft.avgCost ?? '')) _avgCost.text = draft.avgCost ?? '';
     if (_lastPurchase.text != (draft.lastPurchaseCost ?? '')) {
       _lastPurchase.text = draft.lastPurchaseCost ?? '';
+    }
+    if (_expectedLifespan.text != draft.expectedLifespanMonths) {
+      _expectedLifespan.text = draft.expectedLifespanMonths;
     }
     if (_barcode.text != (draft.barcode ?? '')) _barcode.text = draft.barcode ?? '';
     if (_reorder.text != (draft.reorderPoint ?? '')) {
@@ -85,16 +85,17 @@ class _ProductWizardScreenState extends ConsumerState<ProductWizardScreen> {
       nameEn: _nameEn.text,
       groupId: base.groupId,
       productType: base.productType,
+      canBeSold: base.canBeSold,
+      canBeRented: base.canBeRented,
       unitPrimary: base.unitPrimary,
       unitSecondary: base.unitSecondary,
       conversionFactor: _conversion.text,
       salePrice: _salePrice.text,
       minSalePrice: _minSalePrice.text.trim().isEmpty ? null : _minSalePrice.text,
-      rentalPriceMonthly:
-          _rentalPrice.text.trim().isEmpty ? null : _rentalPrice.text,
       avgCost: _avgCost.text.trim().isEmpty ? null : _avgCost.text,
       lastPurchaseCost:
           _lastPurchase.text.trim().isEmpty ? null : _lastPurchase.text,
+      expectedLifespanMonths: _expectedLifespan.text,
       reorderPoint: _reorder.text.trim().isEmpty ? null : _reorder.text,
       isSerialized: base.isSerialized,
       trackableForMaintenance: base.trackableForMaintenance,
@@ -157,7 +158,6 @@ class _ProductWizardScreenState extends ConsumerState<ProductWizardScreen> {
             canWriteCosts: canWriteCosts,
             onChanged: onChanged,
             salePriceController: _salePrice,
-            rentalPriceController: _rentalPrice,
             minSalePriceController: _minSalePrice,
             avgCostController: _avgCost,
             lastPurchaseController: _lastPurchase,
@@ -167,6 +167,7 @@ class _ProductWizardScreenState extends ConsumerState<ProductWizardScreen> {
             canChangeSerialized: state.canChangeSerialized,
             onChanged: onChanged,
             barcodeController: _barcode,
+            expectedLifespanController: _expectedLifespan,
             reorderController: _reorder,
           ),
         _ => ProductWizardReviewStep(

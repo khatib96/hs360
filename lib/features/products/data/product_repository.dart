@@ -265,12 +265,14 @@ class ProductRepository {
       'description_ar': input.descriptionAr?.trim(),
       'description_en': input.descriptionEn?.trim(),
       'group_id': input.groupId,
-      'product_type': input.productType.toDb(),
+      'product_type': input.effectiveProductType.toDb(),
+      'can_be_sold': input.canBeSold,
+      'can_be_rented': input.canBeRented,
       'unit_primary': input.unitPrimary.toDb(),
       'unit_secondary': input.unitSecondary?.toDb(),
       'conversion_factor': input.conversionFactor.toString(),
-      'sale_price': input.salePrice.toString(),
-      'rental_price_monthly': input.rentalPriceMonthly?.toString(),
+      'sale_price': input.canBeSold ? input.salePrice.toString() : '0',
+      'rental_price_monthly': null,
       'expected_lifespan_months': input.expectedLifespanMonths,
       'default_oil_ml_per_month': input.defaultOilMlPerMonth?.toString(),
       'is_serialized': input.isSerialized,
@@ -292,8 +294,10 @@ class ProductRepository {
       if (input.lastPurchaseCost != null) {
         map['last_purchase_cost'] = input.lastPurchaseCost!.toString();
       }
-      if (input.minSalePrice != null) {
+      if (input.canBeSold && input.minSalePrice != null) {
         map['min_sale_price'] = input.minSalePrice!.toString();
+      } else if (!input.canBeSold) {
+        map['min_sale_price'] = null;
       }
     }
 
@@ -316,13 +320,14 @@ class ProductRepository {
       descriptionAr: input.descriptionAr?.trim(),
       descriptionEn: input.descriptionEn?.trim(),
       groupId: input.groupId,
-      productType: input.productType,
+      productType: input.effectiveProductType,
+      canBeSold: input.canBeSold,
+      canBeRented: input.canBeRented,
       unitPrimary: input.unitPrimary,
       unitSecondary: input.unitSecondary,
       conversionFactor: input.conversionFactor,
       salePrice: input.salePrice,
       minSalePrice: canViewCosts ? input.minSalePrice : null,
-      rentalPriceMonthly: input.rentalPriceMonthly,
       avgCost: canViewCosts ? input.avgCost : null,
       lastPurchaseCost: canViewCosts ? input.lastPurchaseCost : null,
       expectedLifespanMonths: input.expectedLifespanMonths,

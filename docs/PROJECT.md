@@ -57,7 +57,7 @@ The system must:
 - Product groups (hierarchical)
 - Three product types: `sale_only`, `asset_rental`, `consumable_rental`
 - Serialized units for rentable assets (each device has unique S/N + barcode)
-- Manual pricing: sale price, monthly rental price
+- Product pricing: sale price and purchase/WAC cost. No product-level rental price.
 - Auto-computed weighted average cost (WAC) from purchase invoices
 - Maintenance tracking flag
 
@@ -158,8 +158,8 @@ The system must:
 | Type | Stock Behavior | Pricing | Examples |
 |------|----------------|---------|----------|
 | `sale_only` | Decremented permanently on sale | Sale price only | Perfumes, gift sets |
-| `asset_rental` | Tracked per-unit by S/N; returns on contract end | Sale OR rental price | Diffuser devices |
-| `consumable_rental` | Decremented on refill; never returns | Sale OR (per-ml or per-unit) price | Oils |
+| `asset_rental` | Tracked per-unit by S/N when available; returns on contract end | Sale price; contract basis = sale price / lifespan | Diffuser devices |
+| `consumable_rental` | Decremented on refill; never returns | Sale price converted by unit/quantity | Oils |
 
 ### 4.2 Contract Pricing Rule
 

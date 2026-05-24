@@ -14,7 +14,8 @@ class ProductsException extends AppException {
   static const groupRequired = 'group_required';
   static const conversionFactorInvalid = 'conversion_factor_invalid';
   static const salePriceBelowMin = 'sale_price_below_min';
-  static const rentalPriceRequired = 'rental_price_required';
+  static const productModeRequired = 'product_mode_required';
+  static const expectedLifespanInvalid = 'expected_lifespan_invalid';
   static const serializedRequiresPiece = 'serialized_requires_piece';
   static const negativeValue = 'negative_value';
   static const invalidDecimal = 'invalid_decimal';

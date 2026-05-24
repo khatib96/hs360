@@ -11,6 +11,8 @@ class ProductFormState {
     required this.nameEn,
     required this.groupId,
     required this.productType,
+    this.canBeSold = true,
+    bool? canBeRented,
     required this.unitPrimary,
     this.barcode,
     this.descriptionAr,
@@ -19,7 +21,6 @@ class ProductFormState {
     Decimal? conversionFactor,
     Decimal? salePrice,
     this.minSalePrice,
-    this.rentalPriceMonthly,
     this.avgCost,
     this.lastPurchaseCost,
     this.minRentalPrice,
@@ -30,7 +31,8 @@ class ProductFormState {
     this.reorderPoint,
     this.isActive = true,
     this.imageUrl,
-  })  : conversionFactor = conversionFactor ?? Decimal.one,
+  })  : canBeRented = canBeRented ?? productType.isRental,
+        conversionFactor = conversionFactor ?? Decimal.one,
         salePrice = salePrice ?? Decimal.zero;
 
   final String sku;
@@ -40,13 +42,16 @@ class ProductFormState {
   final String? descriptionAr;
   final String? descriptionEn;
   final String groupId;
+  /// Rental kind when [canBeRented] is true. [ProductType.saleOnly] is used
+  /// for non-rental products to preserve the existing database enum.
   final ProductType productType;
+  final bool canBeSold;
+  final bool canBeRented;
   final UnitOfMeasure unitPrimary;
   final UnitOfMeasure? unitSecondary;
   final Decimal conversionFactor;
   final Decimal salePrice;
   final Decimal? minSalePrice;
-  final Decimal? rentalPriceMonthly;
   final Decimal? avgCost;
   final Decimal? lastPurchaseCost;
   final Decimal? minRentalPrice;
@@ -57,4 +62,15 @@ class ProductFormState {
   final Decimal? reorderPoint;
   final bool isActive;
   final String? imageUrl;
+
+  ProductType get effectiveProductType {
+    if (!canBeRented) return ProductType.saleOnly;
+    return productType.isRental ? productType : ProductType.assetRental;
+  }
+
+  bool get isAssetRental =>
+      canBeRented && effectiveProductType == ProductType.assetRental;
+
+  bool get isConsumableRental =>
+      canBeRented && effectiveProductType == ProductType.consumableRental;
 }

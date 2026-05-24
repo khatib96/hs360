@@ -217,6 +217,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get productTypeConsumableRental => 'مستهلك إيجار';
 
   @override
+  String get productModeSale => 'بيع';
+
+  @override
+  String get productModeRental => 'تأجير';
+
+  @override
+  String get productRentalTypeAsset => 'أصل';
+
+  @override
+  String get productRentalTypeConsumable => 'مستهلك';
+
+  @override
   String get productStatusActive => 'نشط';
 
   @override
@@ -245,9 +257,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get productColumnSalePrice => 'سعر البيع';
-
-  @override
-  String get productColumnRentalPrice => 'سعر الإيجار';
 
   @override
   String get productColumnStock => 'المخزون';
@@ -347,6 +356,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get productFieldType => 'نوع المنتج';
 
   @override
+  String get productFieldMode => 'طريقة التعامل';
+
+  @override
+  String get productFieldRentalType => 'نوع التأجير';
+
+  @override
   String get productFieldUnitPrimary => 'الوحدة الأساسية';
 
   @override
@@ -362,9 +377,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get productFieldMinSalePrice => 'أدنى سعر بيع';
 
   @override
-  String get productFieldRentalPrice => 'سعر الإيجار الشهري';
-
-  @override
   String get productFieldAvgCost => 'متوسط التكلفة';
 
   @override
@@ -378,6 +390,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get productFieldMaintenance => 'قابل للصيانة';
+
+  @override
+  String get productFieldExpectedLifespan => 'العمر الافتراضي بالأشهر';
 
   @override
   String get productFieldReorderPoint => 'نقطة إعادة الطلب';
@@ -460,8 +475,12 @@ class AppLocalizationsAr extends AppLocalizations {
       'سعر البيع لا يمكن أن يكون أقل من أدنى سعر بيع';
 
   @override
-  String get productValidationRentalRequired =>
-      'سعر الإيجار مطلوب لمنتجات الإيجار';
+  String get productValidationModeRequired =>
+      'اختر البيع أو التأجير أو الاثنين معًا';
+
+  @override
+  String get productValidationExpectedLifespan =>
+      'العمر الافتراضي يجب أن يكون رقمًا صحيحًا أكبر من صفر';
 
   @override
   String get productValidationSerializedPiece =>

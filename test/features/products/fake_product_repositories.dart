@@ -119,6 +119,8 @@ Product sampleProduct({String id = 'p-1', String groupId = 'g-1'}) {
     nameEn: 'Product',
     groupId: groupId,
     productType: ProductType.saleOnly,
+    canBeSold: true,
+    canBeRented: false,
     unitPrimary: UnitOfMeasure.piece,
     conversionFactor: Decimal.one,
     salePrice: Decimal.fromInt(100),

@@ -79,22 +79,57 @@ class ProductWizardIdentityStep extends StatelessWidget {
             subtitle: Text(l10n.productsGroupUnavailable),
           ),
         const SizedBox(height: 12),
-        DropdownButtonFormField<ProductType>(
-          initialValue: draft.productType,
-          decoration: InputDecoration(labelText: l10n.productFieldType),
-          items: ProductType.values
-              .map(
-                (t) => DropdownMenuItem(
-                  value: t,
-                  child: Text(_typeLabel(l10n, t)),
-                ),
-              )
-              .toList(),
+        Text(
+          l10n.productFieldMode,
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        const SizedBox(height: 4),
+        CheckboxListTile(
+          contentPadding: EdgeInsets.zero,
+          title: Text(l10n.productModeSale),
+          value: draft.canBeSold,
+          onChanged: (v) => onChanged(draft..canBeSold = v ?? false),
+        ),
+        CheckboxListTile(
+          contentPadding: EdgeInsets.zero,
+          title: Text(l10n.productModeRental),
+          value: draft.canBeRented,
           onChanged: (v) {
-            if (v == null) return;
-            onChanged(draft..productType = v);
+            final enabled = v ?? false;
+            onChanged(
+              draft
+                ..canBeRented = enabled
+                ..productType = enabled
+                    ? (draft.productType.isRental
+                        ? draft.productType
+                        : ProductType.assetRental)
+                    : ProductType.saleOnly,
+            );
           },
         ),
+        if (draft.canBeRented) ...[
+          const SizedBox(height: 12),
+          DropdownButtonFormField<ProductType>(
+            initialValue: draft.productType.isRental
+                ? draft.productType
+                : ProductType.assetRental,
+            decoration: InputDecoration(labelText: l10n.productFieldRentalType),
+            items: [
+              DropdownMenuItem(
+                value: ProductType.assetRental,
+                child: Text(l10n.productRentalTypeAsset),
+              ),
+              DropdownMenuItem(
+                value: ProductType.consumableRental,
+                child: Text(l10n.productRentalTypeConsumable),
+              ),
+            ],
+            onChanged: (v) {
+              if (v == null) return;
+              onChanged(draft..productType = v);
+            },
+          ),
+        ],
       ],
     );
   }
@@ -108,13 +143,6 @@ class ProductWizardIdentityStep extends StatelessWidget {
     );
   }
 
-  String _typeLabel(AppLocalizations l10n, ProductType type) {
-    return switch (type) {
-      ProductType.saleOnly => l10n.productTypeSaleOnly,
-      ProductType.assetRental => l10n.productTypeAssetRental,
-      ProductType.consumableRental => l10n.productTypeConsumableRental,
-    };
-  }
 }
 
 class ProductWizardUnitsStep extends StatelessWidget {
@@ -190,7 +218,6 @@ class ProductWizardPricingStep extends StatelessWidget {
     required this.canWriteCosts,
     required this.onChanged,
     required this.salePriceController,
-    required this.rentalPriceController,
     required this.minSalePriceController,
     required this.avgCostController,
     required this.lastPurchaseController,
@@ -201,7 +228,6 @@ class ProductWizardPricingStep extends StatelessWidget {
   final bool canWriteCosts;
   final ValueChanged<ProductFormDraft> onChanged;
   final TextEditingController salePriceController;
-  final TextEditingController rentalPriceController;
   final TextEditingController minSalePriceController;
   final TextEditingController avgCostController;
   final TextEditingController lastPurchaseController;
@@ -212,26 +238,21 @@ class ProductWizardPricingStep extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        AppTextField(
-          label: l10n.productFieldSalePrice,
-          controller: salePriceController,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-        ),
-        if (draft.productType.isRental) ...[
-          const SizedBox(height: 12),
+        if (draft.canBeSold)
           AppTextField(
-            label: l10n.productFieldRentalPrice,
-            controller: rentalPriceController,
+            label: l10n.productFieldSalePrice,
+            controller: salePriceController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
           ),
-        ],
         if (canWriteCosts) ...[
-          const SizedBox(height: 12),
-          AppTextField(
-            label: l10n.productFieldMinSalePrice,
-            controller: minSalePriceController,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          ),
+          if (draft.canBeSold) ...[
+            const SizedBox(height: 12),
+            AppTextField(
+              label: l10n.productFieldMinSalePrice,
+              controller: minSalePriceController,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            ),
+          ],
           const SizedBox(height: 12),
           AppTextField(
             label: l10n.productFieldAvgCost,
@@ -256,6 +277,7 @@ class ProductWizardFlagsStep extends StatelessWidget {
     required this.canChangeSerialized,
     required this.onChanged,
     required this.barcodeController,
+    required this.expectedLifespanController,
     required this.reorderController,
     super.key,
   });
@@ -264,6 +286,7 @@ class ProductWizardFlagsStep extends StatelessWidget {
   final bool canChangeSerialized;
   final ValueChanged<ProductFormDraft> onChanged;
   final TextEditingController barcodeController;
+  final TextEditingController expectedLifespanController;
   final TextEditingController reorderController;
 
   @override
@@ -294,6 +317,15 @@ class ProductWizardFlagsStep extends StatelessWidget {
           value: draft.trackableForMaintenance,
           onChanged: (v) => onChanged(draft..trackableForMaintenance = v),
         ),
+        if (draft.canBeRented &&
+            draft.productType == ProductType.assetRental) ...[
+          const SizedBox(height: 12),
+          AppTextField(
+            label: l10n.productFieldExpectedLifespan,
+            controller: expectedLifespanController,
+            keyboardType: TextInputType.number,
+          ),
+        ],
         const SizedBox(height: 12),
         AppTextField(
           label: l10n.productFieldReorderPoint,
@@ -333,11 +365,12 @@ class ProductWizardReviewStep extends StatelessWidget {
         _line(l10n.productFieldSku, draft.sku),
         _line(l10n.productFieldNameAr, draft.nameAr),
         _line(l10n.productFieldNameEn, draft.nameEn),
-        _line(l10n.productFieldSalePrice, draft.salePrice),
-        if (draft.productType.isRental)
+        _line(l10n.productFieldMode, _modeLabel()),
+        if (draft.canBeSold) _line(l10n.productFieldSalePrice, draft.salePrice),
+        if (draft.canBeRented && draft.productType == ProductType.assetRental)
           _line(
-            l10n.productFieldRentalPrice,
-            draft.rentalPriceMonthly ?? l10n.productsNotAvailable,
+            l10n.productFieldExpectedLifespan,
+            draft.expectedLifespanMonths,
           ),
         if (canViewCosts && draft.minSalePrice != null)
           _line(l10n.productFieldMinSalePrice, draft.minSalePrice!),
@@ -350,5 +383,13 @@ class ProductWizardReviewStep extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Text('$label: $value'),
     );
+  }
+
+  String _modeLabel() {
+    if (draft.canBeSold && draft.canBeRented) {
+      return '${l10n.productModeSale} + ${l10n.productModeRental}';
+    }
+    if (draft.canBeRented) return l10n.productModeRental;
+    return l10n.productModeSale;
   }
 }

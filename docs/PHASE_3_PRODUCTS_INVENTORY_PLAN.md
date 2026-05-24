@@ -495,7 +495,6 @@ lib/core/utils/quantity_formatter.dart
 - Money fields:
   - `salePrice`
   - `minSalePrice`
-  - `rentalPriceMonthly`
   - `avgCost`
   - `lastPurchaseCost`
   - `purchaseCost`
@@ -675,7 +674,6 @@ lib/shared/widgets/permission_gated.dart
    - Group
    - Type
    - Sale price
-   - Rental price
    - Stock
    - Active status
 
@@ -683,7 +681,6 @@ lib/shared/widgets/permission_gated.dart
    - Avg cost
    - Last purchase cost
    - Min sale price
-   - Min rental price
    تظهر فقط حسب cost visibility rule من M2.
 
 5. Row click يفتح `/products/:id`.
@@ -769,7 +766,7 @@ lib/features/products/presentation/widgets/product_group_tree.dart
 - `conversion_factor = 1` when `unit_secondary is null`.
 - `conversion_factor > 1` when `unit_secondary` exists.
 - `sale_price >= min_sale_price` if both exist.
-- rental product should have `rental_price_monthly`.
+- rental products do not have product-level rental price; contract monthly value is entered on contracts.
 - serialized products should be `unit_primary = piece`.
 - `reorder_point >= 0`.
 - `avg_cost >= 0`.

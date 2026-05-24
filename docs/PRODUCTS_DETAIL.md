@@ -321,8 +321,6 @@ When a contract is created, the device's primary image appears on the contract P
 │  Pricing                                               │
 │                                                        │
 │  Sale price:          KWD 100.000                      │
-│  Rental price (info): KWD 12.500 / month               │
-│  Min rental price:    KWD 10.000                       │
 │                                                        │
 │  Cost (requires permission):                           │
 │    Avg cost:        KWD 60.000                         │
@@ -447,7 +445,7 @@ For Hayat Secret's migration, a CSV import tool:
 ```
 CSV columns:
   sku, name_ar, name_en, group_name, product_type, unit_primary,
-  unit_secondary, conversion_factor, sale_price, rental_price_monthly,
+  unit_secondary, conversion_factor, sale_price,
   avg_cost, expected_lifespan_months, is_serialized, barcode
 
 Import flow:

@@ -24,7 +24,7 @@ abstract final class AppTheme {
   static ThemeData light() {
     final colorScheme = ColorScheme.light(
       primary: AppColors.gold,
-      onPrimary: AppColors.charcoal,
+      onPrimary: AppColors.pureWhite,
       primaryContainer: AppColors.goldSoft,
       onPrimaryContainer: AppColors.charcoal,
       secondary: AppColors.goldDeep,
@@ -49,12 +49,20 @@ abstract final class AppTheme {
       ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: AppColors.gold,
-        foregroundColor: AppColors.charcoal,
+        foregroundColor: AppColors.pureWhite,
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: AppColors.gold,
+          foregroundColor: AppColors.pureWhite,
+          disabledBackgroundColor: AppColors.neutral100,
+          disabledForegroundColor: AppColors.neutral400,
+        ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.gold,
-          foregroundColor: AppColors.charcoal,
+          foregroundColor: AppColors.pureWhite,
           disabledBackgroundColor: AppColors.neutral100,
           disabledForegroundColor: AppColors.neutral400,
         ),

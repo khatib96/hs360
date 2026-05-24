@@ -28,6 +28,17 @@
 
 ## 2. Pricing Model — The Owner's Rule
 
+### 2.0 Product Pricing Boundary
+
+Products do **not** have a rental price.
+
+Product records store sale/cost data only:
+- `sale_price` is the product's sale value in its primary unit.
+- Purchase cost / WAC comes from purchase and stock flows; it is not the rental contract price.
+- `expected_lifespan_months` exists only for asset-rental products and can differ per product.
+
+Rental pricing is decided on the **contract**, not on the product. Product sale values only help the system calculate the internal minimum and suggested monthly contract value.
+
 ### 2.1 What the Agent Enters
 **Only one number:** the monthly rental value.
 
@@ -35,28 +46,36 @@ That's it. No per-line prices. No formulas to memorize. The customer agreed to p
 
 ### 2.2 What the System Computes (Snapshot at Save Time)
 
-When the contract is saved, the system reads the current cost data and freezes a **snapshot** on the contract row:
+When the contract is saved, the system reads the current product data and freezes a **snapshot** on the contract row:
 
 ```
 Inputs available to the system:
   • Selected device product (asset_rental)
-      product.avg_cost           = current WAC of that device
+      product.sale_price         = current sale value of that device
       product.expected_lifespan_months  = e.g. 24
   • Selected oil product (consumable_rental)
-      product.avg_cost           = current WAC per ml or per liter
+      product.sale_price         = current sale value per primary unit
+      product.unit_primary / unit_secondary / conversion_factor
   • Oil qty per refill (entered by agent)  = e.g. 500 ml
   • Tenant's min_monthly_profit setting
+  • Optional tenant default pricing multiplier for suggestions
 
 Computations:
 
-  device_monthly_cost  =  device.avg_cost / device.expected_lifespan_months
-  oil_monthly_cost     =  oil_qty_per_refill × oil.avg_cost_per_unit
-  total_monthly_cost   =  device_monthly_cost + oil_monthly_cost
-  expected_monthly_profit  =  monthly_rental_value − total_monthly_cost
+  device_monthly_basis = device.sale_price / device.expected_lifespan_months
+  oil_monthly_basis    = converted_oil_qty × oil.sale_price_per_primary_unit
+  total_monthly_basis  = device_monthly_basis + oil_monthly_basis
+  minimum_allowed_monthly_value =
+      total_monthly_basis + tenant.min_monthly_profit
+  suggested_monthly_value =
+      total_monthly_basis × tenant.default_rental_multiplier
+      (if configured)
+  expected_monthly_profit =
+      monthly_rental_value − total_monthly_basis
 
 Validation:
 
-  IF expected_monthly_profit < tenant.min_monthly_profit
+  IF monthly_rental_value < minimum_allowed_monthly_value
     THEN reject save
        OR require `contracts.approve_override` with reason
 ```
@@ -69,30 +88,31 @@ Owner sets in Settings:
 
 Agent creates contract:
   Customer: "Cafe Bloom"
-  Device: Diffuser Model X (avg_cost = 60.000, lifespan = 24 months)
-  Oil: "Hilton" (avg_cost = 0.010 per ml — i.e. 10 KWD per liter)
+  Device: Diffuser Model X (sale_price = 60.000, lifespan = 24 months)
+  Oil: "Hilton" (sale_price = 15.000 per liter)
   Oil qty per refill: 500 ml
-  Monthly rental value: 12.500 KWD
+  Monthly rental value entered by agent: 20.000 KWD
 
 System computes:
-  device_monthly_cost  = 60.000 / 24 = 2.500
-  oil_monthly_cost     = 500 × 0.010 = 5.000
-  total_monthly_cost   = 7.500
-  expected_monthly_profit = 12.500 − 7.500 = 5.000
+  device_monthly_basis = 60.000 / 24 = 2.500
+  oil_monthly_basis    = 0.5 liter × 15.000 = 7.500
+  total_monthly_basis  = 10.000
+  minimum_allowed_monthly_value = 10.000 + 5.000 = 15.000
+  expected_monthly_profit = 20.000 − 10.000 = 10.000
 
 Validation:
-  5.000 >= 5.000 (min_monthly_profit) → PASS
+  20.000 >= 15.000 → PASS
 
 Saved to contract:
-  monthly_rental_value             = 12.500
-  snapshot_device_monthly_cost     = 2.500
-  snapshot_oil_monthly_cost        = 5.000
-  snapshot_total_monthly_cost      = 7.500
-  snapshot_monthly_profit          = 5.000
+  monthly_rental_value             = 20.000
+  snapshot_device_monthly_basis    = 2.500
+  snapshot_oil_monthly_basis       = 7.500
+  snapshot_total_monthly_basis     = 10.000
+  snapshot_monthly_profit          = 10.000
   snapshot_min_profit_threshold    = 5.000
 ```
 
-If the field user tried `monthly_rental_value = 10.000`, the profit would be `2.500`, which is below `5.000`. The system would reject the save, and offer a "Request Manager approval" path.
+If the field user tried `monthly_rental_value = 11.000` or `12.000`, both are below the minimum allowed `15.000`. The system rejects the save and offers a manager approval path.
 
 ### 2.4 Why Snapshots Are Critical
 

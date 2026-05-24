@@ -21,4 +21,8 @@ enum ProductType {
 
   bool get isRental =>
       this == ProductType.assetRental || this == ProductType.consumableRental;
+
+  bool get isAssetRental => this == ProductType.assetRental;
+
+  bool get isConsumableRental => this == ProductType.consumableRental;
 }

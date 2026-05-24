@@ -198,6 +198,7 @@ Component: `MoneyDisplay(amount, currency, locale)` — used everywhere money ap
 
 Each list view has an empty state:
 - Icon (line style, gold)
+- Gold filled buttons must use white text/icons (`AppColors.pureWhite`) for contrast and brand consistency.
 - Headline
 - One-line description
 - Primary action button (where applicable)

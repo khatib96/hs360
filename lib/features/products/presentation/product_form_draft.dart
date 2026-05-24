@@ -14,14 +14,16 @@ class ProductFormDraft {
     this.nameEn = '',
     this.groupId = '',
     this.productType = ProductType.saleOnly,
+    this.canBeSold = true,
+    this.canBeRented = false,
     this.unitPrimary = UnitOfMeasure.piece,
     this.unitSecondary,
     this.conversionFactor = '1',
     this.salePrice = '0',
     this.minSalePrice,
-    this.rentalPriceMonthly,
     this.avgCost,
     this.lastPurchaseCost,
+    this.expectedLifespanMonths = '24',
     this.reorderPoint,
     this.isSerialized = false,
     this.trackableForMaintenance = false,
@@ -35,14 +37,16 @@ class ProductFormDraft {
   String nameEn;
   String groupId;
   ProductType productType;
+  bool canBeSold;
+  bool canBeRented;
   UnitOfMeasure unitPrimary;
   UnitOfMeasure? unitSecondary;
   String conversionFactor;
   String salePrice;
   String? minSalePrice;
-  String? rentalPriceMonthly;
   String? avgCost;
   String? lastPurchaseCost;
+  String expectedLifespanMonths;
   String? reorderPoint;
   bool isSerialized;
   bool trackableForMaintenance;
@@ -57,14 +61,16 @@ class ProductFormDraft {
       nameEn: state.nameEn,
       groupId: state.groupId,
       productType: state.productType,
+      canBeSold: state.canBeSold,
+      canBeRented: state.canBeRented,
       unitPrimary: state.unitPrimary,
       unitSecondary: state.unitSecondary,
       conversionFactor: state.conversionFactor.toString(),
       salePrice: state.salePrice.toString(),
       minSalePrice: state.minSalePrice?.toString(),
-      rentalPriceMonthly: state.rentalPriceMonthly?.toString(),
       avgCost: state.avgCost?.toString(),
       lastPurchaseCost: state.lastPurchaseCost?.toString(),
+      expectedLifespanMonths: state.expectedLifespanMonths.toString(),
       reorderPoint: state.reorderPoint?.toString(),
       isSerialized: state.isSerialized,
       trackableForMaintenance: state.trackableForMaintenance,
@@ -81,14 +87,16 @@ class ProductFormDraft {
       nameEn: nameEn,
       groupId: groupId,
       productType: productType,
+      canBeSold: canBeSold,
+      canBeRented: canBeRented,
       unitPrimary: unitPrimary,
       unitSecondary: unitSecondary,
       conversionFactor: _parseDecimal(conversionFactor, defaultValue: Decimal.one),
       salePrice: _parseDecimal(salePrice, defaultValue: Decimal.zero),
       minSalePrice: _tryParse(minSalePrice),
-      rentalPriceMonthly: _tryParse(rentalPriceMonthly),
       avgCost: _tryParse(avgCost),
       lastPurchaseCost: _tryParse(lastPurchaseCost),
+      expectedLifespanMonths: int.tryParse(expectedLifespanMonths.trim()) ?? 24,
       reorderPoint: _tryParse(reorderPoint),
       isSerialized: isSerialized,
       trackableForMaintenance: trackableForMaintenance,
@@ -104,10 +112,9 @@ class ProductFormDraft {
     final values = switch (step) {
       2 => <String?>[conversionFactor],
       3 => <String?>[
-          salePrice,
-          if (productType.isRental) rentalPriceMonthly,
+          if (canBeSold) salePrice,
           if (canWriteCosts) ...[
-            minSalePrice,
+            if (canBeSold) minSalePrice,
             avgCost,
             lastPurchaseCost,
           ],
@@ -133,6 +140,12 @@ class ProductFormDraft {
       if (code != null) return code;
     }
     return null;
+  }
+
+  bool get hasInvalidExpectedLifespan {
+    if (!canBeRented || productType != ProductType.assetRental) return false;
+    final parsed = int.tryParse(expectedLifespanMonths.trim());
+    return parsed == null || parsed <= 0;
   }
 
   static Decimal _parseDecimal(String value, {required Decimal defaultValue}) {

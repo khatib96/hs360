@@ -432,7 +432,8 @@ create table products (
   sale_price numeric(15,3) not null default 0,
   min_sale_price numeric(15,3),
 
-  -- Rental pricing (the "asking price" if rented alone — informational)
+  -- Legacy/unused: product-level rental price is not used.
+  -- Contract monthly value is entered on contracts.
   rental_price_monthly numeric(15,3),
 
   -- Cost (auto-computed)
@@ -730,7 +731,9 @@ create table contracts (
   -- Total value (informational): monthly × duration if fixed-term
   total_contract_value numeric(15,3),
 
-  -- COST SNAPSHOT (frozen at creation, used for profit reports forever)
+  -- CONTRACT BASIS SNAPSHOT (frozen at creation, used for profit reports forever)
+  -- Product-level rental price does not exist; these are derived from sale
+  -- price, lifespan, unit conversion, and selected refill quantities.
   snapshot_device_monthly_cost numeric(15,3) not null default 0,
   snapshot_oil_monthly_cost numeric(15,3) not null default 0,
   snapshot_total_monthly_cost numeric(15,3) not null default 0,
@@ -797,9 +800,9 @@ create table contract_lines (
   qty_per_refill numeric(15,3),                          -- e.g. 500 (ml)
   refill_frequency_months int default 1,
 
-  -- Cost snapshot (used for profit calc)
-  snapshot_unit_cost numeric(15,3) not null,             -- from product.avg_cost
-  snapshot_monthly_cost numeric(15,3) not null,          -- (device_cost/lifespan) OR (qty × unit_cost)
+  -- Basis snapshot (used for profit validation)
+  snapshot_unit_cost numeric(15,3) not null,             -- from product.sale_price converted to primary unit
+  snapshot_monthly_cost numeric(15,3) not null,          -- (device_sale_price/lifespan) OR (qty × sale_price_per_unit)
 
   line_order int not null,
   created_at timestamptz default now()

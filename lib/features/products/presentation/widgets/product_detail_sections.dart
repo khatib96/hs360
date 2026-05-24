@@ -39,9 +39,14 @@ class ProductDetailOverviewSection extends StatelessWidget {
         _Row(l10n.productFieldSku, product.sku),
         _Row(l10n.productFieldGroup, groupLabel),
         _Row(
-          l10n.productFieldType,
-          _typeLabel(l10n, product.productType),
+          l10n.productFieldMode,
+          _modeLabel(l10n, product),
         ),
+        if (product.canBeRented)
+          _Row(
+            l10n.productFieldRentalType,
+            _rentalTypeLabel(l10n, product.productType),
+          ),
         if (product.barcode != null && product.barcode!.isNotEmpty)
           _Row(l10n.productFieldBarcode, product.barcode!),
         _Row(
@@ -61,11 +66,19 @@ class ProductDetailOverviewSection extends StatelessWidget {
     );
   }
 
-  String _typeLabel(AppLocalizations l10n, ProductType type) {
+  String _modeLabel(AppLocalizations l10n, Product product) {
+    if (product.canBeSold && product.canBeRented) {
+      return '${l10n.productModeSale} + ${l10n.productModeRental}';
+    }
+    if (product.canBeRented) return l10n.productModeRental;
+    return l10n.productModeSale;
+  }
+
+  String _rentalTypeLabel(AppLocalizations l10n, ProductType type) {
     return switch (type) {
-      ProductType.saleOnly => l10n.productTypeSaleOnly,
-      ProductType.assetRental => l10n.productTypeAssetRental,
-      ProductType.consumableRental => l10n.productTypeConsumableRental,
+      ProductType.assetRental => l10n.productRentalTypeAsset,
+      ProductType.consumableRental => l10n.productRentalTypeConsumable,
+      ProductType.saleOnly => l10n.productsNotAvailable,
     };
   }
 }
@@ -87,11 +100,14 @@ class ProductDetailPricingSection extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        _Row(l10n.productFieldSalePrice, formatMoney(product.salePrice)),
-        if (product.rentalPriceMonthly != null)
+        if (product.canBeSold)
+          _Row(l10n.productFieldSalePrice, formatMoney(product.salePrice)),
+        if (product.canBeRented &&
+            product.productType == ProductType.assetRental &&
+            product.expectedLifespanMonths != null)
           _Row(
-            l10n.productFieldRentalPrice,
-            formatMoney(product.rentalPriceMonthly!),
+            l10n.productFieldExpectedLifespan,
+            product.expectedLifespanMonths!.toString(),
           ),
         if (canViewCosts) ...[
           if (product.minSalePrice != null)

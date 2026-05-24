@@ -13,12 +13,13 @@ ProductFormState productFormStateFromProduct(Product product) {
     descriptionEn: product.descriptionEn,
     groupId: product.groupId,
     productType: product.productType,
+    canBeSold: product.canBeSold,
+    canBeRented: product.canBeRented,
     unitPrimary: product.unitPrimary,
     unitSecondary: product.unitSecondary,
     conversionFactor: product.conversionFactor,
     salePrice: product.salePrice,
     minSalePrice: product.minSalePrice,
-    rentalPriceMonthly: product.rentalPriceMonthly,
     avgCost: product.avgCost,
     lastPurchaseCost: product.lastPurchaseCost,
     expectedLifespanMonths: product.expectedLifespanMonths ?? 24,
@@ -38,6 +39,8 @@ ProductFormState emptyProductFormState({String groupId = ''}) {
     nameEn: '',
     groupId: groupId,
     productType: ProductType.saleOnly,
+    canBeSold: true,
+    canBeRented: false,
     unitPrimary: UnitOfMeasure.piece,
   );
 }

@@ -13,10 +13,10 @@ ProductFormState _validForm({ProductType type = ProductType.saleOnly}) {
     nameEn: 'Name',
     groupId: 'g-1',
     productType: type,
+    canBeSold: type == ProductType.saleOnly,
+    canBeRented: type.isRental,
     unitPrimary: UnitOfMeasure.piece,
     salePrice: Decimal.fromInt(10),
-    rentalPriceMonthly:
-        type.isRental ? Decimal.fromInt(50) : null,
   );
 }
 
@@ -36,13 +36,15 @@ void main() {
         nameEn: form.nameEn,
         groupId: form.groupId,
         productType: form.productType,
+        canBeSold: form.canBeSold,
+        canBeRented: form.canBeRented,
         unitPrimary: form.unitPrimary,
       ),
     );
     expect(result.codes, contains(ProductsException.skuRequired));
   });
 
-  test('rental_price_required for rental without price', () {
+  test('rental product does not require product-level rental price', () {
     final result = validator.validate(
       ProductFormState(
         sku: 'S',
@@ -50,11 +52,12 @@ void main() {
         nameEn: 'b',
         groupId: 'g',
         productType: ProductType.assetRental,
+        canBeSold: false,
+        canBeRented: true,
         unitPrimary: UnitOfMeasure.piece,
-        rentalPriceMonthly: null,
       ),
     );
-    expect(result.codes, contains(ProductsException.rentalPriceRequired));
+    expect(result.isValid, isTrue);
   });
 
   test('serialized_requires_piece when serialized and not piece', () {
@@ -64,6 +67,8 @@ void main() {
       nameEn: 'b',
       groupId: 'g',
       productType: ProductType.saleOnly,
+      canBeSold: true,
+      canBeRented: false,
       unitPrimary: UnitOfMeasure.liter,
       isSerialized: true,
     );
@@ -82,6 +87,8 @@ void main() {
         nameEn: form.nameEn,
         groupId: form.groupId,
         productType: form.productType,
+        canBeSold: form.canBeSold,
+        canBeRented: form.canBeRented,
         unitPrimary: form.unitPrimary,
         salePrice: Decimal.fromInt(-1),
       ),
@@ -98,10 +105,66 @@ void main() {
         nameEn: form.nameEn,
         groupId: form.groupId,
         productType: form.productType,
+        canBeSold: form.canBeSold,
+        canBeRented: form.canBeRented,
         unitPrimary: form.unitPrimary,
         minRentalPrice: Decimal.one,
       ),
     );
     expect(result.codes, contains(ProductsException.fieldNotSupported));
+  });
+
+  test('sale and rental together are valid', () {
+    final form = ProductFormState(
+      sku: 'S',
+      nameAr: 'a',
+      nameEn: 'b',
+      groupId: 'g',
+      productType: ProductType.consumableRental,
+      canBeSold: true,
+      canBeRented: true,
+      unitPrimary: UnitOfMeasure.liter,
+      salePrice: Decimal.fromInt(10),
+    );
+
+    expect(validator.validate(form).isValid, isTrue);
+  });
+
+  test('product_mode_required when neither sale nor rental selected', () {
+    final result = validator.validate(
+      ProductFormState(
+        sku: 'S',
+        nameAr: 'a',
+        nameEn: 'b',
+        groupId: 'g',
+        productType: ProductType.saleOnly,
+        canBeSold: false,
+        canBeRented: false,
+        unitPrimary: UnitOfMeasure.piece,
+      ),
+    );
+
+    expect(result.codes, contains(ProductsException.productModeRequired));
+  });
+
+  test('expected_lifespan_invalid for asset rental with non-positive months', () {
+    final result = validator.validate(
+      ProductFormState(
+        sku: 'S',
+        nameAr: 'a',
+        nameEn: 'b',
+        groupId: 'g',
+        productType: ProductType.assetRental,
+        canBeSold: false,
+        canBeRented: true,
+        unitPrimary: UnitOfMeasure.piece,
+        expectedLifespanMonths: 0,
+      ),
+    );
+
+    expect(
+      result.codes,
+      contains(ProductsException.expectedLifespanInvalid),
+    );
   });
 }

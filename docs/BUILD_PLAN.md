@@ -283,7 +283,7 @@ Admin can manage products, units, and warehouses. Stock balances are visible.
 **3.3 Product Detail Screen (Desktop)**
 - Form with all product fields
 - Image upload
-- Pricing block: sale_price, rental_price_monthly, min prices
+- Pricing block: sale_price, cost fields, min prices. No product-level rental price; contract monthly value is entered on the contract.
 - Cost block (requires cost field permissions): avg_cost, last_purchase_cost
 - Stock block: balances per warehouse
 - For asset_rental: list of `product_units` with statuses

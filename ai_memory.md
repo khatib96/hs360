@@ -1,6 +1,6 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-05-24 (Phase 3 M6 complete).
+> Updated 2026-05-24 (Phase 3 M6.5 complete).
 > Keep this file short. It is for continuity between AI tools, not full project documentation.
 
 ---
@@ -12,9 +12,22 @@
 - **Phase 3 M0–M4 complete** - DB, domain/data, routes, product list.
 - **Phase 3 M5 complete** - product detail, 5-step create/edit wizard, primary image upload.
 - **Phase 3 M6 complete** - serialized product units in product detail Units tab.
-- Migrations `001`-`040` apply cleanly with `supabase db reset`.
+- **Phase 3 M6.5 complete** - product sale/rental modes split before M7.
+- Migrations `001`-`041` apply cleanly with `supabase db reset`.
 - **Canonical inventory rules:** [`docs/PHASE_3_M1_5_INVENTORY_RULES.md`](docs/PHASE_3_M1_5_INVENTORY_RULES.md)
 - **Next:** Phase 3 M7A - Warehouses UI (or M7B stock balances).
+
+---
+
+## Phase 3 M6.5 - Product Sale/Rental Modes
+
+- Migration [`041_product_sale_rental_modes.sql`](supabase/migrations/041_product_sale_rental_modes.sql): adds `products.can_be_sold`, `products.can_be_rented`, compatibility trigger, constraints, and refreshed `products_safe`.
+- `product_type` remains the rental kind/legacy enum: `sale_only`, `asset_rental`, `consumable_rental`.
+- UI now models sale and rental as independent checkboxes; when rental is enabled, user chooses rental type (`asset` or `consumable`).
+- Asset rental shows per-product expected lifespan months. Serialized is allowed but not required because old non-serialized devices may exist.
+- Contract implication: asset rental leaves/returns as company asset; consumable rental is consumed from stock during refill visits.
+- Products do **not** have a rental price. Contract monthly value is entered on contracts; product sale price and expected lifespan/unit conversion provide the internal basis for minimum-profit validation.
+- UI rule: filled gold buttons use white text/icons.
 
 ---
 

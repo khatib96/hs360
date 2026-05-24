@@ -17,8 +17,10 @@ String productsErrorMessage(AppLocalizations l10n, String code) {
     ProductsException.conversionFactorInvalid =>
       l10n.productValidationConversionInvalid,
     ProductsException.salePriceBelowMin => l10n.productValidationSaleBelowMin,
-    ProductsException.rentalPriceRequired =>
-      l10n.productValidationRentalRequired,
+    ProductsException.productModeRequired =>
+      l10n.productValidationModeRequired,
+    ProductsException.expectedLifespanInvalid =>
+      l10n.productValidationExpectedLifespan,
     ProductsException.serializedRequiresPiece =>
       l10n.productValidationSerializedPiece,
     ProductsException.negativeValue => l10n.productValidationNegative,

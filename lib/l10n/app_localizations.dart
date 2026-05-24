@@ -494,6 +494,30 @@ abstract class AppLocalizations {
   /// **'Consumable rental'**
   String get productTypeConsumableRental;
 
+  /// No description provided for @productModeSale.
+  ///
+  /// In en, this message translates to:
+  /// **'Sale'**
+  String get productModeSale;
+
+  /// No description provided for @productModeRental.
+  ///
+  /// In en, this message translates to:
+  /// **'Rental'**
+  String get productModeRental;
+
+  /// No description provided for @productRentalTypeAsset.
+  ///
+  /// In en, this message translates to:
+  /// **'Asset'**
+  String get productRentalTypeAsset;
+
+  /// No description provided for @productRentalTypeConsumable.
+  ///
+  /// In en, this message translates to:
+  /// **'Consumable'**
+  String get productRentalTypeConsumable;
+
   /// No description provided for @productStatusActive.
   ///
   /// In en, this message translates to:
@@ -553,12 +577,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sale price'**
   String get productColumnSalePrice;
-
-  /// No description provided for @productColumnRentalPrice.
-  ///
-  /// In en, this message translates to:
-  /// **'Rental price'**
-  String get productColumnRentalPrice;
 
   /// No description provided for @productColumnStock.
   ///
@@ -752,6 +770,18 @@ abstract class AppLocalizations {
   /// **'Product type'**
   String get productFieldType;
 
+  /// No description provided for @productFieldMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Product mode'**
+  String get productFieldMode;
+
+  /// No description provided for @productFieldRentalType.
+  ///
+  /// In en, this message translates to:
+  /// **'Rental type'**
+  String get productFieldRentalType;
+
   /// No description provided for @productFieldUnitPrimary.
   ///
   /// In en, this message translates to:
@@ -782,12 +812,6 @@ abstract class AppLocalizations {
   /// **'Min sale price'**
   String get productFieldMinSalePrice;
 
-  /// No description provided for @productFieldRentalPrice.
-  ///
-  /// In en, this message translates to:
-  /// **'Monthly rental price'**
-  String get productFieldRentalPrice;
-
   /// No description provided for @productFieldAvgCost.
   ///
   /// In en, this message translates to:
@@ -817,6 +841,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Trackable for maintenance'**
   String get productFieldMaintenance;
+
+  /// No description provided for @productFieldExpectedLifespan.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected lifespan (months)'**
+  String get productFieldExpectedLifespan;
 
   /// No description provided for @productFieldReorderPoint.
   ///
@@ -968,11 +998,17 @@ abstract class AppLocalizations {
   /// **'Sale price cannot be below minimum sale price'**
   String get productValidationSaleBelowMin;
 
-  /// No description provided for @productValidationRentalRequired.
+  /// No description provided for @productValidationModeRequired.
   ///
   /// In en, this message translates to:
-  /// **'Rental price is required for rental products'**
-  String get productValidationRentalRequired;
+  /// **'Select sale, rental, or both'**
+  String get productValidationModeRequired;
+
+  /// No description provided for @productValidationExpectedLifespan.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected lifespan must be a positive whole number'**
+  String get productValidationExpectedLifespan;
 
   /// No description provided for @productValidationSerializedPiece.
   ///

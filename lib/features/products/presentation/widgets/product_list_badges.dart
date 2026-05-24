@@ -8,17 +8,30 @@ import '../../domain/product_stock_summary.dart';
 import '../../domain/product_type.dart';
 
 class ProductTypeBadge extends StatelessWidget {
-  const ProductTypeBadge({required this.type, super.key});
+  const ProductTypeBadge({
+    required this.type,
+    required this.canBeSold,
+    required this.canBeRented,
+    super.key,
+  });
 
   final ProductType type;
+  final bool canBeSold;
+  final bool canBeRented;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final label = switch (type) {
-      ProductType.saleOnly => l10n.productTypeSaleOnly,
-      ProductType.assetRental => l10n.productTypeAssetRental,
-      ProductType.consumableRental => l10n.productTypeConsumableRental,
+    final rentalKind = switch (type) {
+      ProductType.assetRental => l10n.productRentalTypeAsset,
+      ProductType.consumableRental => l10n.productRentalTypeConsumable,
+      ProductType.saleOnly => '',
+    };
+    final label = switch ((canBeSold, canBeRented)) {
+      (true, true) => '${l10n.productModeSale} + ${l10n.productModeRental}'
+          ' ($rentalKind)',
+      (false, true) => '${l10n.productModeRental} ($rentalKind)',
+      _ => l10n.productModeSale,
     };
 
     return Container(

@@ -89,7 +89,6 @@ class _DesktopProductTable extends StatelessWidget {
               DataColumn(label: Text(l10n.productColumnGroup)),
               DataColumn(label: Text(l10n.productColumnType)),
               DataColumn(label: Text(l10n.productColumnSalePrice)),
-              DataColumn(label: Text(l10n.productColumnRentalPrice)),
               DataColumn(label: Text(l10n.productColumnStock)),
               DataColumn(label: Text(l10n.productColumnActive)),
               if (canViewCosts) ...[
@@ -105,9 +104,12 @@ class _DesktopProductTable extends StatelessWidget {
                   DataCell(Text(product.sku)),
                   DataCell(Text(localizedProductName(product, languageCode))),
                   DataCell(Text(groupLabelFor(product.groupId))),
-                  DataCell(ProductTypeBadge(type: product.productType)),
+                  DataCell(ProductTypeBadge(
+                    type: product.productType,
+                    canBeSold: product.canBeSold,
+                    canBeRented: product.canBeRented,
+                  )),
                   DataCell(Text(_formatMoney(product.salePrice))),
-                  DataCell(_rentalCell(product)),
                   DataCell(
                     ProductStockBadge(
                       canViewStock: canViewStock,
@@ -132,13 +134,6 @@ class _DesktopProductTable extends StatelessWidget {
 
   String _formatMoney(Decimal value) {
     return _formatMoneyForLanguage(value, languageCode);
-  }
-
-  Widget _rentalCell(Product product) {
-    if (product.rentalPriceMonthly == null) {
-      return const ProductEmDashCell();
-    }
-    return Text(_formatMoney(product.rentalPriceMonthly!));
   }
 
   Widget _optionalMoney(Decimal? value) {
@@ -221,19 +216,15 @@ class _MobileProductSubtitle extends StatelessWidget {
             runSpacing: 8,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              ProductTypeBadge(type: product.productType),
+              ProductTypeBadge(
+                type: product.productType,
+                canBeSold: product.canBeSold,
+                canBeRented: product.canBeRented,
+              ),
               ProductActiveBadge(isActive: product.isActive),
               Text(
                 '${l10n.productColumnSalePrice}: '
                 '${_formatMoneyForLanguage(product.salePrice, languageCode)}',
-              ),
-              Text(
-                '${l10n.productColumnRentalPrice}: '
-                '${_optionalMoneyText(
-                  context,
-                  product.rentalPriceMonthly,
-                  languageCode,
-                )}',
               ),
               if (canViewCosts) ...[
                 Text(

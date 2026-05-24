@@ -122,7 +122,11 @@ class ProductDetailScreen extends ConsumerWidget {
                         Wrap(
                           spacing: 8,
                           children: [
-                            ProductTypeBadge(type: product.productType),
+                            ProductTypeBadge(
+                              type: product.productType,
+                              canBeSold: product.canBeSold,
+                              canBeRented: product.canBeRented,
+                            ),
                             ProductActiveBadge(isActive: product.isActive),
                           ],
                         ),

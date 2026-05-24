@@ -217,6 +217,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get productTypeConsumableRental => 'Consumable rental';
 
   @override
+  String get productModeSale => 'Sale';
+
+  @override
+  String get productModeRental => 'Rental';
+
+  @override
+  String get productRentalTypeAsset => 'Asset';
+
+  @override
+  String get productRentalTypeConsumable => 'Consumable';
+
+  @override
   String get productStatusActive => 'Active';
 
   @override
@@ -245,9 +257,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get productColumnSalePrice => 'Sale price';
-
-  @override
-  String get productColumnRentalPrice => 'Rental price';
 
   @override
   String get productColumnStock => 'Stock';
@@ -347,6 +356,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get productFieldType => 'Product type';
 
   @override
+  String get productFieldMode => 'Product mode';
+
+  @override
+  String get productFieldRentalType => 'Rental type';
+
+  @override
   String get productFieldUnitPrimary => 'Primary unit';
 
   @override
@@ -362,9 +377,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get productFieldMinSalePrice => 'Min sale price';
 
   @override
-  String get productFieldRentalPrice => 'Monthly rental price';
-
-  @override
   String get productFieldAvgCost => 'Average cost';
 
   @override
@@ -378,6 +390,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get productFieldMaintenance => 'Trackable for maintenance';
+
+  @override
+  String get productFieldExpectedLifespan => 'Expected lifespan (months)';
 
   @override
   String get productFieldReorderPoint => 'Reorder point';
@@ -460,8 +475,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Sale price cannot be below minimum sale price';
 
   @override
-  String get productValidationRentalRequired =>
-      'Rental price is required for rental products';
+  String get productValidationModeRequired => 'Select sale, rental, or both';
+
+  @override
+  String get productValidationExpectedLifespan =>
+      'Expected lifespan must be a positive whole number';
 
   @override
   String get productValidationSerializedPiece =>

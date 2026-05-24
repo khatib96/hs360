@@ -53,6 +53,12 @@ class ProductFormController extends _$ProductFormController {
       state = state.copyWith(errorCode: decimalCode);
       return false;
     }
+    if (state.stepIndex == 3 && state.draft.hasInvalidExpectedLifespan) {
+      state = state.copyWith(
+        errorCode: ProductsException.expectedLifespanInvalid,
+      );
+      return false;
+    }
     final result = const ProductValidator()
         .validateStep(state.stepIndex + 1, state.draft.toFormState());
     if (!result.isValid) {
@@ -79,6 +85,12 @@ class ProductFormController extends _$ProductFormController {
     );
     if (decimalCode != null) {
       state = state.copyWith(errorCode: decimalCode);
+      return null;
+    }
+    if (state.draft.hasInvalidExpectedLifespan) {
+      state = state.copyWith(
+        errorCode: ProductsException.expectedLifespanInvalid,
+      );
       return null;
     }
 

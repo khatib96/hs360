@@ -23,6 +23,9 @@ class ProductValidator {
     if (input.groupId.trim().isEmpty) {
       codes.add(ProductsException.groupRequired);
     }
+    if (!input.canBeSold && !input.canBeRented) {
+      codes.add(ProductsException.productModeRequired);
+    }
 
     if (input.unitSecondary == null) {
       if (input.conversionFactor != Decimal.one) {
@@ -35,11 +38,9 @@ class ProductValidator {
     if (input.salePrice < Decimal.zero) {
       codes.add(ProductsException.negativeValue);
     }
-    if (input.rentalPriceMonthly != null &&
-        input.rentalPriceMonthly! < Decimal.zero) {
-      codes.add(ProductsException.negativeValue);
-    }
-    if (input.minSalePrice != null && input.minSalePrice! < Decimal.zero) {
+    if (input.canBeSold &&
+        input.minSalePrice != null &&
+        input.minSalePrice! < Decimal.zero) {
       codes.add(ProductsException.negativeValue);
     }
     if (input.reorderPoint != null && input.reorderPoint! < Decimal.zero) {
@@ -51,14 +52,14 @@ class ProductValidator {
       }
     }
 
-    if (input.minSalePrice != null && input.salePrice < input.minSalePrice!) {
+    if (input.canBeSold &&
+        input.minSalePrice != null &&
+        input.salePrice < input.minSalePrice!) {
       codes.add(ProductsException.salePriceBelowMin);
     }
 
-    if (input.productType.isRental &&
-        (input.rentalPriceMonthly == null ||
-            input.rentalPriceMonthly! <= Decimal.zero)) {
-      codes.add(ProductsException.rentalPriceRequired);
+    if (input.isAssetRental && input.expectedLifespanMonths <= 0) {
+      codes.add(ProductsException.expectedLifespanInvalid);
     }
 
     if (input.isSerialized && input.unitPrimary != UnitOfMeasure.piece) {
@@ -84,14 +85,17 @@ class ProductValidator {
           ProductsException.nameArRequired,
           ProductsException.nameEnRequired,
           ProductsException.groupRequired,
+          ProductsException.productModeRequired,
         },
       2 => {ProductsException.conversionFactorInvalid},
       3 => {
           ProductsException.negativeValue,
           ProductsException.salePriceBelowMin,
-          ProductsException.rentalPriceRequired,
         },
-      4 => {ProductsException.serializedRequiresPiece},
+      4 => {
+          ProductsException.serializedRequiresPiece,
+          ProductsException.expectedLifespanInvalid,
+        },
       _ => <String>{},
     };
 

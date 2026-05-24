@@ -17,12 +17,13 @@ class Product {
     this.descriptionEn,
     required this.groupId,
     required this.productType,
+    required this.canBeSold,
+    required this.canBeRented,
     required this.unitPrimary,
     this.unitSecondary,
     required this.conversionFactor,
     required this.salePrice,
     this.minSalePrice,
-    this.rentalPriceMonthly,
     this.avgCost,
     this.lastPurchaseCost,
     this.minRentalPrice,
@@ -47,12 +48,13 @@ class Product {
   final String? descriptionEn;
   final String groupId;
   final ProductType productType;
+  final bool canBeSold;
+  final bool canBeRented;
   final UnitOfMeasure unitPrimary;
   final UnitOfMeasure? unitSecondary;
   final Decimal conversionFactor;
   final Decimal salePrice;
   final Decimal? minSalePrice;
-  final Decimal? rentalPriceMonthly;
   final Decimal? avgCost;
   final Decimal? lastPurchaseCost;
   final Decimal? minRentalPrice;
@@ -78,6 +80,11 @@ class Product {
       descriptionEn: row['description_en'] as String?,
       groupId: row['group_id'] as String,
       productType: ProductType.fromDb(row['product_type'] as String?),
+      canBeSold: row['can_be_sold'] as bool? ??
+          (ProductType.fromDb(row['product_type'] as String?) ==
+              ProductType.saleOnly),
+      canBeRented: row['can_be_rented'] as bool? ??
+          ProductType.fromDb(row['product_type'] as String?).isRental,
       unitPrimary: UnitOfMeasure.fromDb(row['unit_primary'] as String?),
       unitSecondary: row['unit_secondary'] != null
           ? UnitOfMeasure.fromDb(row['unit_secondary'] as String?)
@@ -85,7 +92,6 @@ class Product {
       conversionFactor: parseDecimal(row['conversion_factor']),
       salePrice: parseDecimal(row['sale_price']),
       minSalePrice: tryParseDecimal(row['min_sale_price']),
-      rentalPriceMonthly: tryParseDecimal(row['rental_price_monthly']),
       avgCost: tryParseDecimal(row['avg_cost']),
       lastPurchaseCost: tryParseDecimal(row['last_purchase_cost']),
       minRentalPrice: tryParseDecimal(row['min_rental_price']),
@@ -122,12 +128,13 @@ class Product {
       descriptionEn: descriptionEn,
       groupId: groupId,
       productType: productType,
+      canBeSold: canBeSold,
+      canBeRented: canBeRented,
       unitPrimary: unitPrimary,
       unitSecondary: unitSecondary,
       conversionFactor: conversionFactor,
       salePrice: salePrice,
       minSalePrice: minSalePrice,
-      rentalPriceMonthly: rentalPriceMonthly,
       avgCost: avgCost ?? this.avgCost,
       lastPurchaseCost: lastPurchaseCost ?? this.lastPurchaseCost,
       minRentalPrice: minRentalPrice,
@@ -148,15 +155,17 @@ class Product {
 abstract final class ProductColumns {
   static const safe = '''
 id, tenant_id, sku, barcode, name_ar, name_en, description_ar, description_en,
-group_id, product_type, unit_primary, unit_secondary, conversion_factor,
-sale_price, rental_price_monthly, expected_lifespan_months, default_oil_ml_per_month,
+group_id, product_type, can_be_sold, can_be_rented,
+unit_primary, unit_secondary, conversion_factor,
+sale_price, expected_lifespan_months, default_oil_ml_per_month,
 is_serialized, trackable_for_maintenance, reorder_point, is_active, image_url, created_at
 ''';
 
   static const full = '''
 id, tenant_id, sku, barcode, name_ar, name_en, description_ar, description_en,
-group_id, product_type, unit_primary, unit_secondary, conversion_factor,
-sale_price, rental_price_monthly, expected_lifespan_months, default_oil_ml_per_month,
+group_id, product_type, can_be_sold, can_be_rented,
+unit_primary, unit_secondary, conversion_factor,
+sale_price, expected_lifespan_months, default_oil_ml_per_month,
 is_serialized, trackable_for_maintenance, reorder_point, is_active, image_url,
 created_at, updated_at, avg_cost, last_purchase_cost, min_sale_price
 ''';
