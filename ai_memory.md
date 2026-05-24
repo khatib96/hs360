@@ -1,6 +1,6 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-05-21 (Phase 3 M5 complete).
+> Updated 2026-05-24 (Phase 3 M6 complete).
 > Keep this file short. It is for continuity between AI tools, not full project documentation.
 
 ---
@@ -11,9 +11,21 @@
 - **Phase 2 complete** - auth, routing, permissions, locale (M0-M8).
 - **Phase 3 M0–M4 complete** - DB, domain/data, routes, product list.
 - **Phase 3 M5 complete** - product detail, 5-step create/edit wizard, primary image upload.
-- Migrations `001`-`039` apply cleanly with `supabase db reset`.
+- **Phase 3 M6 complete** - serialized product units in product detail Units tab.
+- Migrations `001`-`040` apply cleanly with `supabase db reset`.
 - **Canonical inventory rules:** [`docs/PHASE_3_M1_5_INVENTORY_RULES.md`](docs/PHASE_3_M1_5_INVENTORY_RULES.md)
-- **Next:** Phase 3 M6 - Product Units Management.
+- **Next:** Phase 3 M7A - Warehouses UI (or M7B stock balances).
+
+---
+
+## Phase 3 M6 - Product Units Management
+
+- Migration [`040_product_units_rpc.sql`](supabase/migrations/040_product_units_rpc.sql): `create_product_units`, `update_product_unit_safe`, `user_has_full_product_cost_access`, `ux_product_units_tenant_serial_ci`; dropped `product_units` insert/update/delete RLS policies.
+- Unit create atomically: `product_units` + `adjustment_in` movement + `inventory_balances`; WAC/`last_purchase_cost` updated.
+- Safe edit RPC only: `barcode`, `notes`, `health_status` (no warehouse change in M6 — defer to M7E).
+- Flutter: `ProductUnitRepository`, Units tab table, Add/Bulk/Edit dialogs, `ProductUnitBulkParser`.
+- Permissions: `product_units.view/create/edit`; `purchase_cost` gated by `canViewFullProductCosts` in columns and JSON anti-tamper in RPC.
+- Tests: 141 `flutter test`; SQL tests 13–19 in `phase_3_products_inventory.sql` pass after `db reset`.
 
 ---
 

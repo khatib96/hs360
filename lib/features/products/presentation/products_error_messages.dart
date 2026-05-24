@@ -31,6 +31,10 @@ String productsErrorMessage(AppLocalizations l10n, String code) {
     ProductsException.duplicateBarcode => l10n.productErrorDuplicateBarcode,
     ProductsException.fieldNotSupported => l10n.productErrorFieldNotSupported,
     ProductsException.validationFailed => l10n.productValidationFailed,
+    ProductsException.duplicateSerial => l10n.productUnitErrorDuplicateSerial,
+    ProductsException.notSerializedProduct => l10n.productUnitErrorNotSerialized,
+    ProductsException.unitNotEditable => l10n.productUnitErrorNotEditable,
+    ProductsException.bulkLimitExceeded => l10n.productUnitErrorBulkLimit,
     _ => l10n.productErrorUnknown,
   };
 }

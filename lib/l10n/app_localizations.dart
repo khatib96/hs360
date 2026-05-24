@@ -1057,6 +1057,246 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Review before saving'**
   String get productWizardReviewTitle;
+
+  /// No description provided for @productUnitsNotSerialized.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit tracking applies to serialized products only.'**
+  String get productUnitsNotSerialized;
+
+  /// No description provided for @productUnitsViewDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have permission to view product units.'**
+  String get productUnitsViewDenied;
+
+  /// No description provided for @productUnitsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No units yet. Add a unit or bulk import serial numbers.'**
+  String get productUnitsEmpty;
+
+  /// No description provided for @productUnitsHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No contract history for this unit yet.'**
+  String get productUnitsHistoryEmpty;
+
+  /// No description provided for @productUnitAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add unit'**
+  String get productUnitAdd;
+
+  /// No description provided for @productUnitBulkAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Bulk add'**
+  String get productUnitBulkAdd;
+
+  /// No description provided for @productUnitEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit unit'**
+  String get productUnitEdit;
+
+  /// No description provided for @productUnitFieldSerial.
+  ///
+  /// In en, this message translates to:
+  /// **'Serial number'**
+  String get productUnitFieldSerial;
+
+  /// No description provided for @productUnitFieldBarcode.
+  ///
+  /// In en, this message translates to:
+  /// **'Barcode'**
+  String get productUnitFieldBarcode;
+
+  /// No description provided for @productUnitFieldStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get productUnitFieldStatus;
+
+  /// No description provided for @productUnitFieldWarehouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse'**
+  String get productUnitFieldWarehouse;
+
+  /// No description provided for @productUnitFieldPurchaseCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase cost'**
+  String get productUnitFieldPurchaseCost;
+
+  /// No description provided for @productUnitFieldHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Health'**
+  String get productUnitFieldHealth;
+
+  /// No description provided for @productUnitFieldAcquired.
+  ///
+  /// In en, this message translates to:
+  /// **'Acquired'**
+  String get productUnitFieldAcquired;
+
+  /// No description provided for @productUnitFieldNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get productUnitFieldNotes;
+
+  /// No description provided for @productUnitBulkPasteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste one serial per line, or CSV: serial,barcode,cost. Simple CSV only (no quoted commas).'**
+  String get productUnitBulkPasteHint;
+
+  /// No description provided for @productUnitBulkPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get productUnitBulkPreview;
+
+  /// No description provided for @productUnitBulkConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Create units'**
+  String get productUnitBulkConfirm;
+
+  /// No description provided for @productUnitHealthGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get productUnitHealthGood;
+
+  /// No description provided for @productUnitHealthNeedsService.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs service'**
+  String get productUnitHealthNeedsService;
+
+  /// No description provided for @productUnitHealthDamaged.
+  ///
+  /// In en, this message translates to:
+  /// **'Damaged'**
+  String get productUnitHealthDamaged;
+
+  /// No description provided for @productUnitHealthLost.
+  ///
+  /// In en, this message translates to:
+  /// **'Lost'**
+  String get productUnitHealthLost;
+
+  /// No description provided for @productUnitStatusAvailableNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Available (new)'**
+  String get productUnitStatusAvailableNew;
+
+  /// No description provided for @productUnitStatusAvailableUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Available (used)'**
+  String get productUnitStatusAvailableUsed;
+
+  /// No description provided for @productUnitStatusRented.
+  ///
+  /// In en, this message translates to:
+  /// **'Rented'**
+  String get productUnitStatusRented;
+
+  /// No description provided for @productUnitStatusTrial.
+  ///
+  /// In en, this message translates to:
+  /// **'Trial'**
+  String get productUnitStatusTrial;
+
+  /// No description provided for @productUnitStatusMaintenance.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintenance'**
+  String get productUnitStatusMaintenance;
+
+  /// No description provided for @productUnitStatusSold.
+  ///
+  /// In en, this message translates to:
+  /// **'Sold'**
+  String get productUnitStatusSold;
+
+  /// No description provided for @productUnitStatusDamaged.
+  ///
+  /// In en, this message translates to:
+  /// **'Damaged'**
+  String get productUnitStatusDamaged;
+
+  /// No description provided for @productUnitStatusLost.
+  ///
+  /// In en, this message translates to:
+  /// **'Lost'**
+  String get productUnitStatusLost;
+
+  /// No description provided for @productUnitStatusRetired.
+  ///
+  /// In en, this message translates to:
+  /// **'Retired'**
+  String get productUnitStatusRetired;
+
+  /// No description provided for @productUnitErrorDuplicateSerial.
+  ///
+  /// In en, this message translates to:
+  /// **'Serial number already exists'**
+  String get productUnitErrorDuplicateSerial;
+
+  /// No description provided for @productUnitErrorNotSerialized.
+  ///
+  /// In en, this message translates to:
+  /// **'This product is not serialized'**
+  String get productUnitErrorNotSerialized;
+
+  /// No description provided for @productUnitErrorNotEditable.
+  ///
+  /// In en, this message translates to:
+  /// **'This unit cannot be edited in its current status'**
+  String get productUnitErrorNotEditable;
+
+  /// No description provided for @productUnitErrorBulkLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum 100 units per bulk operation'**
+  String get productUnitErrorBulkLimit;
+
+  /// No description provided for @productUnitParserEmptySerial.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty serial number in pasted list'**
+  String get productUnitParserEmptySerial;
+
+  /// No description provided for @productUnitParserDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicate serial in pasted list'**
+  String get productUnitParserDuplicate;
+
+  /// No description provided for @productUnitParserInvalidCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid purchase cost in pasted list'**
+  String get productUnitParserInvalidCost;
+
+  /// No description provided for @productUnitSectionHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Contract history'**
+  String get productUnitSectionHistory;
+
+  /// No description provided for @productUnitWarehouseTransferHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse changes use inventory transfer (coming soon).'**
+  String get productUnitWarehouseTransferHint;
 }
 
 class _AppLocalizationsDelegate

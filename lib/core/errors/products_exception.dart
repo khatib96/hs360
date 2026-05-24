@@ -25,6 +25,10 @@ class ProductsException extends AppException {
   static const fieldNotSupported = 'field_not_supported';
   static const duplicateSku = 'duplicate_sku';
   static const duplicateBarcode = 'duplicate_barcode';
+  static const duplicateSerial = 'duplicate_serial';
+  static const notSerializedProduct = 'not_serialized_product';
+  static const unitNotEditable = 'unit_not_editable';
+  static const bulkLimitExceeded = 'bulk_limit_exceeded';
   static const supabaseNotConfigured = 'supabaseNotConfigured';
   static const unknown = 'unknown';
 
@@ -42,6 +46,24 @@ class ProductsException extends AppException {
         technicalDetail: message,
       );
     }
+    if (message.contains('duplicate_serial')) {
+      return ProductsException(
+        code: duplicateSerial,
+        technicalDetail: message,
+      );
+    }
+    if (message.contains('not_serialized_product')) {
+      return ProductsException(
+        code: notSerializedProduct,
+        technicalDetail: message,
+      );
+    }
+    if (message.contains('unit_not_editable')) {
+      return ProductsException(
+        code: unitNotEditable,
+        technicalDetail: message,
+      );
+    }
     if (message.contains('23505') || message.contains('unique')) {
       if (message.contains('sku')) {
         return ProductsException(code: duplicateSku, technicalDetail: message);
@@ -49,6 +71,12 @@ class ProductsException extends AppException {
       if (message.contains('barcode')) {
         return ProductsException(
           code: duplicateBarcode,
+          technicalDetail: message,
+        );
+      }
+      if (message.contains('serial')) {
+        return ProductsException(
+          code: duplicateSerial,
           technicalDetail: message,
         );
       }

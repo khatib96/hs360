@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
 import '../../../../core/utils/money_formatter.dart';
 import '../../../../core/utils/quantity_formatter.dart';
+import '../../../auth/domain/app_session.dart';
 import '../../domain/product.dart';
 import '../../domain/product_stock_summary.dart';
 import '../../domain/product_type.dart';
+import '../../domain/product_unit_permissions.dart';
+import '../product_detail_controller.dart';
 import '../product_display_helpers.dart';
+import '../products_error_messages.dart';
+import 'add_product_unit_dialog.dart';
+import 'bulk_product_units_dialog.dart';
+import 'product_unit_table.dart';
 
 class ProductDetailOverviewSection extends StatelessWidget {
   const ProductDetailOverviewSection({
@@ -104,38 +112,193 @@ class ProductDetailPricingSection extends StatelessWidget {
   }
 }
 
-class ProductDetailUnitsSection extends StatelessWidget {
+class ProductDetailUnitsSection extends ConsumerWidget {
   const ProductDetailUnitsSection({
+    required this.productId,
     required this.product,
+    required this.languageCode,
     required this.l10n,
+    required this.canViewCosts,
+    required this.session,
     super.key,
   });
 
+  final String productId;
   final Product product;
+  final String languageCode;
   final AppLocalizations l10n;
+  final bool canViewCosts;
+  final AppSession session;
 
   @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(16),
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (!product.isSerialized) {
+      return ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          _Row(l10n.productFieldUnitPrimary, unitOfMeasureLabel(product.unitPrimary)),
+          _Row(
+            l10n.productFieldUnitSecondary,
+            product.unitSecondary != null
+                ? unitOfMeasureLabel(product.unitSecondary!)
+                : l10n.productNoSecondaryUnit,
+          ),
+          _Row(
+            l10n.productFieldConversionFactor,
+            product.conversionFactor.toString(),
+          ),
+          _Row(
+            l10n.productFieldSerialized,
+            product.isSerialized ? l10n.productStatusActive : l10n.productsNotAvailable,
+          ),
+          const SizedBox(height: 16),
+          Text(l10n.productUnitsNotSerialized),
+        ],
+      );
+    }
+
+    final state = ref.watch(productDetailControllerProvider(productId));
+    final controller =
+        ref.read(productDetailControllerProvider(productId).notifier);
+
+    if (!canViewProductUnits(session)) {
+      return Center(child: Text(l10n.productUnitsViewDenied));
+    }
+
+    if (state.unitsLoading && state.units.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    final canCreate = canCreateProductUnits(session);
+    final canEdit = canEditProductUnits(session);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _Row(l10n.productFieldUnitPrimary, unitOfMeasureLabel(product.unitPrimary)),
-        _Row(
-          l10n.productFieldUnitSecondary,
-          product.unitSecondary != null
-              ? unitOfMeasureLabel(product.unitSecondary!)
-              : l10n.productNoSecondaryUnit,
+        if (canCreate)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+            child: Wrap(
+              spacing: 8,
+              children: [
+                FilledButton.icon(
+                  onPressed: state.warehouses.isEmpty
+                      ? null
+                      : () => _onAdd(context, ref, controller),
+                  icon: const Icon(Icons.add),
+                  label: Text(l10n.productUnitAdd),
+                ),
+                OutlinedButton.icon(
+                  onPressed: state.warehouses.isEmpty
+                      ? null
+                      : () => _onBulk(context, ref, controller),
+                  icon: const Icon(Icons.playlist_add),
+                  label: Text(l10n.productUnitBulkAdd),
+                ),
+              ],
+            ),
+          ),
+        if (state.unitsErrorCode != null)
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(
+              productsErrorMessage(l10n, state.unitsErrorCode!),
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
+          ),
+        Expanded(
+          child: ProductUnitTable(
+            units: state.units,
+            languageCode: languageCode,
+            canViewCosts: canViewCosts,
+            canEdit: canEdit,
+            l10n: l10n,
+            onEdit: (unitId, result) async {
+              final code = await controller.updateUnitSafe(
+                productId: productId,
+                unitId: unitId,
+                input: result.input,
+              );
+              if (code != null && context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(productsErrorMessage(l10n, code))),
+                );
+              }
+              return code;
+            },
+          ),
         ),
-        _Row(
-          l10n.productFieldConversionFactor,
-          product.conversionFactor.toString(),
-        ),
-        _Row(
-          l10n.productFieldSerialized,
-          product.isSerialized ? l10n.productStatusActive : l10n.productsNotAvailable,
+        const Divider(height: 1),
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.productUnitSectionHistory,
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+              const SizedBox(height: 8),
+              Text(l10n.productUnitsHistoryEmpty),
+            ],
+          ),
         ),
       ],
     );
+  }
+
+  Future<void> _onAdd(
+    BuildContext context,
+    WidgetRef ref,
+    ProductDetailController controller,
+  ) async {
+    final state = ref.read(productDetailControllerProvider(productId));
+    final result = await showAddProductUnitDialog(
+      context: context,
+      warehouses: state.warehouses,
+      languageCode: languageCode,
+      canViewCosts: canViewCosts,
+      l10n: l10n,
+    );
+    if (result == null || !context.mounted) return;
+
+    final code = await controller.addUnit(
+      productId: productId,
+      warehouseId: result.warehouseId,
+      input: result.input,
+    );
+    if (code != null && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(productsErrorMessage(l10n, code))),
+      );
+    }
+  }
+
+  Future<void> _onBulk(
+    BuildContext context,
+    WidgetRef ref,
+    ProductDetailController controller,
+  ) async {
+    final state = ref.read(productDetailControllerProvider(productId));
+    final result = await showBulkProductUnitsDialog(
+      context: context,
+      warehouses: state.warehouses,
+      languageCode: languageCode,
+      canViewCosts: canViewCosts,
+      l10n: l10n,
+    );
+    if (result == null || !context.mounted) return;
+
+    final code = await controller.bulkAddUnits(
+      productId: productId,
+      warehouseId: result.warehouseId,
+      units: result.units,
+    );
+    if (code != null && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(productsErrorMessage(l10n, code))),
+      );
+    }
   }
 }
 

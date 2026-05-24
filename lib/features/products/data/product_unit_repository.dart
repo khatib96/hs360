@@ -1,0 +1,171 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../../core/errors/products_exception.dart';
+import '../../../core/network/supabase_providers.dart';
+import '../../auth/domain/app_session.dart';
+import '../../inventory/domain/warehouse.dart';
+import '../domain/product_cost_access.dart';
+import '../domain/product_unit.dart';
+import '../domain/product_unit_bulk_parser.dart';
+import '../domain/product_unit_columns.dart';
+import '../domain/product_unit_form_state.dart';
+import '../domain/product_unit_permissions.dart';
+
+part 'product_unit_repository.g.dart';
+
+@Riverpod(keepAlive: true)
+ProductUnitRepository productUnitRepository(Ref ref) {
+  final client = ref.watch(supabaseClientProvider);
+  return ProductUnitRepository(client);
+}
+
+class ProductUnitRepository {
+  ProductUnitRepository(this._client);
+
+  final SupabaseClient? _client;
+
+  SupabaseClient get _requireClient {
+    final client = _client;
+    if (client == null) throw ProductsException.notConfigured();
+    return client;
+  }
+
+  Future<List<ProductUnit>> fetchUnitsByProductId(
+    String productId,
+    AppSession session, {
+    Map<String, Warehouse>? warehousesById,
+  }) async {
+    if (!canViewProductUnits(session)) {
+      throw const ProductsException(code: ProductsException.permissionDenied);
+    }
+
+    try {
+      final columns = ProductUnitColumns.forSession(session);
+      final rows = await _requireClient
+          .from('product_units')
+          .select(columns)
+          .eq('product_id', productId)
+          .order('serial_number');
+
+      return (rows as List).map((r) {
+        final map = Map<String, dynamic>.from(r);
+        String? nameAr;
+        String? nameEn;
+        final whId = map['current_warehouse_id'] as String?;
+        if (whId != null && warehousesById != null) {
+          final wh = warehousesById[whId];
+          nameAr = wh?.nameAr;
+          nameEn = wh?.nameEn;
+        }
+        return ProductUnit.fromRow(
+          map,
+          warehouseNameAr: nameAr,
+          warehouseNameEn: nameEn,
+        );
+      }).toList();
+    } catch (e, st) {
+      throw ProductsException.fromSupabase(e, st);
+    }
+  }
+
+  Future<List<String>> createUnit({
+    required AppSession session,
+    required String productId,
+    required String warehouseId,
+    required ProductUnitCreateInput input,
+  }) async {
+    return bulkCreateUnits(
+      session: session,
+      productId: productId,
+      warehouseId: warehouseId,
+      units: [input],
+    );
+  }
+
+  Future<List<String>> bulkCreateUnits({
+    required AppSession session,
+    required String productId,
+    required String warehouseId,
+    required List<ProductUnitCreateInput> units,
+  }) async {
+    if (!canCreateProductUnits(session)) {
+      throw const ProductsException(code: ProductsException.permissionDenied);
+    }
+    if (units.isEmpty) {
+      throw const ProductsException(code: ProductsException.validationFailed);
+    }
+    if (units.length > ProductUnitBulkParser.maxUnitsPerBatch) {
+      throw const ProductsException(code: ProductsException.bulkLimitExceeded);
+    }
+
+    final jsonUnits = units.map((u) => _unitToJson(session, u)).toList();
+
+    try {
+      final response = await _requireClient.rpc(
+        'create_product_units',
+        params: {
+          'p_product_id': productId,
+          'p_warehouse_id': warehouseId,
+          'p_units': jsonUnits,
+        },
+      );
+      return (response as List).map((id) => id as String).toList();
+    } catch (e, st) {
+      throw ProductsException.fromSupabase(e, st);
+    }
+  }
+
+  Future<String> updateUnitSafe({
+    required AppSession session,
+    required String unitId,
+    required ProductUnitSafeEditInput input,
+  }) async {
+    if (!canEditProductUnits(session)) {
+      throw const ProductsException(code: ProductsException.permissionDenied);
+    }
+
+    try {
+      final response = await _requireClient.rpc(
+        'update_product_unit_safe',
+        params: {
+          'p_unit_id': unitId,
+          'p_barcode': input.barcode,
+          'p_notes': input.notes,
+          'p_health_status': input.healthStatus?.toDb(),
+        },
+      );
+      return response as String;
+    } catch (e, st) {
+      throw ProductsException.fromSupabase(e, st);
+    }
+  }
+
+  Map<String, dynamic> _unitToJson(
+    AppSession session,
+    ProductUnitCreateInput input,
+  ) {
+    final map = <String, dynamic>{
+      'serial_number': input.serialNumber.trim(),
+      if (input.barcode != null && input.barcode!.trim().isNotEmpty)
+        'barcode': input.barcode!.trim(),
+      'health_status': input.healthStatus.toDb(),
+      if (input.acquiredAt != null)
+        'acquired_at': _formatDate(input.acquiredAt!),
+      if (input.notes != null && input.notes!.trim().isNotEmpty)
+        'notes': input.notes!.trim(),
+    };
+
+    if (canViewFullProductCosts(session) && input.purchaseCost != null) {
+      map['purchase_cost'] = input.purchaseCost!.toString();
+    }
+
+    return map;
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-'
+        '${date.day.toString().padLeft(2, '0')}';
+  }
+}

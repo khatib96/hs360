@@ -507,4 +507,134 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get productWizardReviewTitle => 'Review before saving';
+
+  @override
+  String get productUnitsNotSerialized =>
+      'Unit tracking applies to serialized products only.';
+
+  @override
+  String get productUnitsViewDenied =>
+      'You do not have permission to view product units.';
+
+  @override
+  String get productUnitsEmpty =>
+      'No units yet. Add a unit or bulk import serial numbers.';
+
+  @override
+  String get productUnitsHistoryEmpty =>
+      'No contract history for this unit yet.';
+
+  @override
+  String get productUnitAdd => 'Add unit';
+
+  @override
+  String get productUnitBulkAdd => 'Bulk add';
+
+  @override
+  String get productUnitEdit => 'Edit unit';
+
+  @override
+  String get productUnitFieldSerial => 'Serial number';
+
+  @override
+  String get productUnitFieldBarcode => 'Barcode';
+
+  @override
+  String get productUnitFieldStatus => 'Status';
+
+  @override
+  String get productUnitFieldWarehouse => 'Warehouse';
+
+  @override
+  String get productUnitFieldPurchaseCost => 'Purchase cost';
+
+  @override
+  String get productUnitFieldHealth => 'Health';
+
+  @override
+  String get productUnitFieldAcquired => 'Acquired';
+
+  @override
+  String get productUnitFieldNotes => 'Notes';
+
+  @override
+  String get productUnitBulkPasteHint =>
+      'Paste one serial per line, or CSV: serial,barcode,cost. Simple CSV only (no quoted commas).';
+
+  @override
+  String get productUnitBulkPreview => 'Preview';
+
+  @override
+  String get productUnitBulkConfirm => 'Create units';
+
+  @override
+  String get productUnitHealthGood => 'Good';
+
+  @override
+  String get productUnitHealthNeedsService => 'Needs service';
+
+  @override
+  String get productUnitHealthDamaged => 'Damaged';
+
+  @override
+  String get productUnitHealthLost => 'Lost';
+
+  @override
+  String get productUnitStatusAvailableNew => 'Available (new)';
+
+  @override
+  String get productUnitStatusAvailableUsed => 'Available (used)';
+
+  @override
+  String get productUnitStatusRented => 'Rented';
+
+  @override
+  String get productUnitStatusTrial => 'Trial';
+
+  @override
+  String get productUnitStatusMaintenance => 'Maintenance';
+
+  @override
+  String get productUnitStatusSold => 'Sold';
+
+  @override
+  String get productUnitStatusDamaged => 'Damaged';
+
+  @override
+  String get productUnitStatusLost => 'Lost';
+
+  @override
+  String get productUnitStatusRetired => 'Retired';
+
+  @override
+  String get productUnitErrorDuplicateSerial => 'Serial number already exists';
+
+  @override
+  String get productUnitErrorNotSerialized => 'This product is not serialized';
+
+  @override
+  String get productUnitErrorNotEditable =>
+      'This unit cannot be edited in its current status';
+
+  @override
+  String get productUnitErrorBulkLimit =>
+      'Maximum 100 units per bulk operation';
+
+  @override
+  String get productUnitParserEmptySerial =>
+      'Empty serial number in pasted list';
+
+  @override
+  String get productUnitParserDuplicate => 'Duplicate serial in pasted list';
+
+  @override
+  String get productUnitParserInvalidCost =>
+      'Invalid purchase cost in pasted list';
+
+  @override
+  String get productUnitSectionHistory => 'Contract history';
+
+  @override
+  String get productUnitWarehouseTransferHint =>
+      'Warehouse changes use inventory transfer (coming soon).';
 }

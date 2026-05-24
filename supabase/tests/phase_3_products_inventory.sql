@@ -579,4 +579,303 @@ begin
 end $$;
 rollback;
 
+-- 13. M6: create_product_units bulk (10 units), movements, balance.
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+
+do $$
+declare
+  v_product_id uuid := '00000000-0000-0000-0000-000000000901';
+  v_warehouse uuid := '00000000-0000-0000-0000-000000000701';
+  v_units jsonb;
+  v_ids uuid[];
+  v_unit_count int;
+  v_movement_count int;
+  v_qty numeric(15, 3);
+  v_i int;
+begin
+  select jsonb_agg(
+    jsonb_build_object('serial_number', 'M6-' || lpad(g::text, 4, '0'), 'purchase_cost', 50.000)
+  )
+  into v_units
+  from generate_series(1, 10) g;
+
+  v_ids := create_product_units(v_product_id, v_warehouse, v_units);
+
+  if coalesce(array_length(v_ids, 1), 0) <> 10 then
+    raise exception 'M6 bulk create: expected 10 ids, got %', coalesce(array_length(v_ids, 1), 0);
+  end if;
+
+  select count(*) into v_unit_count
+  from product_units
+  where product_id = v_product_id
+    and serial_number like 'M6-%';
+
+  if v_unit_count <> 10 then
+    raise exception 'M6 bulk create: expected 10 units, got %', v_unit_count;
+  end if;
+
+  select count(*) into v_movement_count
+  from inventory_movements im
+  where im.product_id = v_product_id
+    and im.product_unit_id is not null
+    and im.notes like 'Product unit: M6-%';
+
+  if v_movement_count <> 10 then
+    raise exception 'M6 bulk create: expected 10 movements, got %', v_movement_count;
+  end if;
+
+  select qty_available into v_qty
+  from inventory_balances
+  where warehouse_id = v_warehouse
+    and product_id = v_product_id;
+
+  if coalesce(v_qty, 0) < 10 then
+    raise exception 'M6 bulk create: qty_available expected >= 10, got %', coalesce(v_qty, 0);
+  end if;
+end $$;
+rollback;
+
+-- 14. M6: duplicate serial in batch rolls back.
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+
+do $$
+declare
+  v_product_id uuid := '00000000-0000-0000-0000-000000000901';
+  v_warehouse uuid := '00000000-0000-0000-0000-000000000701';
+  v_units jsonb := jsonb_build_array(
+    jsonb_build_object('serial_number', 'M6-DUP-A'),
+    jsonb_build_object('serial_number', 'm6-dup-a')
+  );
+  v_before int;
+  v_after int;
+begin
+  select count(*) into v_before
+  from product_units
+  where serial_number ilike 'M6-DUP-A';
+
+  begin
+    perform create_product_units(v_product_id, v_warehouse, v_units);
+    raise exception 'M6 duplicate batch: expected duplicate_serial';
+  exception
+    when others then
+      if position('duplicate_serial' in sqlerrm) = 0 then
+        raise;
+      end if;
+  end;
+
+  select count(*) into v_after
+  from product_units
+  where serial_number ilike 'M6-DUP-A';
+
+  if v_after <> v_before then
+    raise exception 'M6 duplicate batch: rows changed from % to %', v_before, v_after;
+  end if;
+end $$;
+rollback;
+
+-- 15. M6: not_serialized_product rejected.
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+
+do $$
+declare
+  v_tenant_a uuid := '00000000-0000-0000-0000-000000000101';
+  v_oils_group uuid := '00000000-0000-0000-0000-000000000802';
+  v_owner_user uuid := '00000000-0000-0000-0000-000000000201';
+  v_warehouse uuid := '00000000-0000-0000-0000-000000000701';
+  v_product_id uuid;
+  v_units jsonb := jsonb_build_array(jsonb_build_object('serial_number', 'M6-NS-1'));
+begin
+  insert into products (
+    tenant_id, sku, name_ar, name_en, group_id, product_type,
+    unit_primary, conversion_factor, sale_price, avg_cost, is_serialized, created_by
+  )
+  values (
+    v_tenant_a,
+    'M6-NS-' || left(gen_random_uuid()::text, 8),
+    'غير متسلسل', 'Not Serialized',
+    v_oils_group, 'sale_only', 'piece', 1, 1.000, 1.000, false, v_owner_user
+  )
+  returning id into v_product_id;
+
+  begin
+    perform create_product_units(v_product_id, v_warehouse, v_units);
+    raise exception 'M6 not serialized: expected not_serialized_product';
+  exception
+    when others then
+      if position('not_serialized_product' in sqlerrm) = 0 then
+        raise;
+      end if;
+  end;
+end $$;
+rollback;
+
+-- 16. M6: direct INSERT on product_units blocked.
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+
+do $$
+declare
+  v_tenant_a uuid := '00000000-0000-0000-0000-000000000101';
+  v_product_id uuid := '00000000-0000-0000-0000-000000000901';
+begin
+  begin
+    insert into product_units (
+      tenant_id, product_id, serial_number, acquired_at
+    )
+    values (v_tenant_a, v_product_id, 'M6-DIRECT-INSERT', current_date);
+    raise exception 'M6 direct insert: expected failure';
+  exception
+    when insufficient_privilege then
+      null;
+    when others then
+      if position('policy' in lower(sqlerrm)) = 0
+        and position('permission' in lower(sqlerrm)) = 0
+      then
+        raise;
+      end if;
+  end;
+end $$;
+rollback;
+
+-- 17. M6: write policies removed from product_units catalog.
+begin;
+do $$
+declare
+  v_count int;
+begin
+  select count(*) into v_count
+  from pg_policies
+  where schemaname = 'public'
+    and tablename = 'product_units'
+    and policyname in (
+      'product_units_insert',
+      'product_units_update',
+      'product_units_delete'
+    );
+
+  if v_count <> 0 then
+    raise exception 'M6 policies: expected 0 write policies, found %', v_count;
+  end if;
+end $$;
+rollback;
+
+-- 17b. M6: update_product_unit_safe + unit_not_editable on rented.
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+
+do $$
+declare
+  v_product_id uuid := '00000000-0000-0000-0000-000000000901';
+  v_warehouse uuid := '00000000-0000-0000-0000-000000000701';
+  v_units jsonb := jsonb_build_array(jsonb_build_object('serial_number', 'M6-EDIT-1'));
+  v_unit_id uuid;
+  v_barcode text;
+begin
+  perform create_product_units(v_product_id, v_warehouse, v_units);
+
+  select id into v_unit_id
+  from product_units
+  where serial_number = 'M6-EDIT-1';
+
+  perform update_product_unit_safe(v_unit_id, 'BC-M6', 'Note M6', 'needs_service');
+
+  select barcode into v_barcode
+  from product_units
+  where id = v_unit_id;
+
+  if v_barcode <> 'BC-M6' then
+    raise exception 'M6 safe update: barcode expected BC-M6, got %', v_barcode;
+  end if;
+
+  update product_units
+  set status = 'rented'
+  where id = v_unit_id
+    and tenant_id = '00000000-0000-0000-0000-000000000101';
+
+  begin
+    perform update_product_unit_safe(v_unit_id, 'X', null, null);
+    raise exception 'M6 rented edit: expected unit_not_editable';
+  exception
+    when others then
+      if position('unit_not_editable' in sqlerrm) = 0 then
+        raise;
+      end if;
+  end;
+end $$;
+rollback;
+
+-- 18. M6: purchase_cost without full cost permission denied.
+begin;
+do $$
+declare
+  v_tenant_a uuid := '00000000-0000-0000-0000-000000000101';
+  v_products_tu uuid := '00000000-0000-0000-0000-000000000303';
+  v_owner_user uuid := '00000000-0000-0000-0000-000000000201';
+begin
+  insert into user_permissions (tenant_id, tenant_user_id, permission_id, granted_by)
+  values
+    (v_tenant_a, v_products_tu, 'product_units.create', v_owner_user),
+    (v_tenant_a, v_products_tu, 'products.view', v_owner_user)
+  on conflict (tenant_user_id, permission_id) do nothing;
+end $$;
+
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000203';
+
+do $$
+declare
+  v_product_id uuid := '00000000-0000-0000-0000-000000000901';
+  v_warehouse uuid := '00000000-0000-0000-0000-000000000701';
+  v_units jsonb := jsonb_build_array(
+    jsonb_build_object('serial_number', 'M6-COST-TAMPER', 'purchase_cost', 99.000)
+  );
+begin
+  begin
+    perform create_product_units(v_product_id, v_warehouse, v_units);
+    raise exception 'M6 cost tamper: expected permission_denied';
+  exception
+    when others then
+      if position('permission_denied' in sqlerrm) = 0 then
+        raise;
+      end if;
+  end;
+end $$;
+rollback;
+
+-- 19. M6: last_purchase_cost = last JSON element resolved cost.
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+
+do $$
+declare
+  v_product_id uuid := '00000000-0000-0000-0000-000000000901';
+  v_warehouse uuid := '00000000-0000-0000-0000-000000000701';
+  v_units jsonb := jsonb_build_array(
+    jsonb_build_object('serial_number', 'M6-LPC-1', 'purchase_cost', 10.000),
+    jsonb_build_object('serial_number', 'M6-LPC-2', 'purchase_cost', 20.000),
+    jsonb_build_object('serial_number', 'M6-LPC-3', 'purchase_cost', 30.000)
+  );
+  v_lpc numeric(15, 3);
+begin
+  perform create_product_units(v_product_id, v_warehouse, v_units);
+
+  select last_purchase_cost into v_lpc
+  from products
+  where id = v_product_id;
+
+  if v_lpc <> 30.000 then
+    raise exception 'M6 last_purchase_cost: expected 30.000, got %', v_lpc;
+  end if;
+end $$;
+rollback;
+
 select 'phase_3_products_inventory_verification_passed' as result;

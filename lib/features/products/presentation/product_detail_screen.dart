@@ -165,7 +165,14 @@ class ProductDetailScreen extends ConsumerWidget {
                     canViewCosts: canViewCosts,
                     l10n: l10n,
                   ),
-                  ProductDetailUnitsSection(product: product, l10n: l10n),
+                  ProductDetailUnitsSection(
+                    productId: productId,
+                    product: product,
+                    languageCode: languageCode,
+                    l10n: l10n,
+                    canViewCosts: canViewCosts,
+                    session: session!,
+                  ),
                   ProductDetailInventorySection(
                     stock: state.stockSummary,
                     unavailable: !canViewStock || state.stockUnavailable,

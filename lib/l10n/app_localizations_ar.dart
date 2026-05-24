@@ -506,4 +506,130 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get productWizardReviewTitle => 'مراجعة قبل الحفظ';
+
+  @override
+  String get productUnitsNotSerialized =>
+      'تتبع الوحدات للمنتجات المتسلسلة فقط.';
+
+  @override
+  String get productUnitsViewDenied => 'ليس لديك صلاحية عرض وحدات المنتج.';
+
+  @override
+  String get productUnitsEmpty =>
+      'لا توجد وحدات بعد. أضف وحدة أو الصق أرقام تسلسلية.';
+
+  @override
+  String get productUnitsHistoryEmpty => 'لا يوجد سجل عقود لهذه الوحدة بعد.';
+
+  @override
+  String get productUnitAdd => 'إضافة وحدة';
+
+  @override
+  String get productUnitBulkAdd => 'إضافة جماعية';
+
+  @override
+  String get productUnitEdit => 'تعديل الوحدة';
+
+  @override
+  String get productUnitFieldSerial => 'الرقم التسلسلي';
+
+  @override
+  String get productUnitFieldBarcode => 'الباركود';
+
+  @override
+  String get productUnitFieldStatus => 'الحالة';
+
+  @override
+  String get productUnitFieldWarehouse => 'المستودع';
+
+  @override
+  String get productUnitFieldPurchaseCost => 'تكلفة الشراء';
+
+  @override
+  String get productUnitFieldHealth => 'الصحة';
+
+  @override
+  String get productUnitFieldAcquired => 'تاريخ الاستلام';
+
+  @override
+  String get productUnitFieldNotes => 'ملاحظات';
+
+  @override
+  String get productUnitBulkPasteHint =>
+      'الصق رقم تسلسلي في كل سطر، أو CSV: serial,barcode,cost. CSV بسيط فقط.';
+
+  @override
+  String get productUnitBulkPreview => 'معاينة';
+
+  @override
+  String get productUnitBulkConfirm => 'إنشاء الوحدات';
+
+  @override
+  String get productUnitHealthGood => 'جيد';
+
+  @override
+  String get productUnitHealthNeedsService => 'يحتاج صيانة';
+
+  @override
+  String get productUnitHealthDamaged => 'تالف';
+
+  @override
+  String get productUnitHealthLost => 'مفقود';
+
+  @override
+  String get productUnitStatusAvailableNew => 'متاح (جديد)';
+
+  @override
+  String get productUnitStatusAvailableUsed => 'متاح (مستعمل)';
+
+  @override
+  String get productUnitStatusRented => 'مؤجر';
+
+  @override
+  String get productUnitStatusTrial => 'تجريبي';
+
+  @override
+  String get productUnitStatusMaintenance => 'صيانة';
+
+  @override
+  String get productUnitStatusSold => 'مباع';
+
+  @override
+  String get productUnitStatusDamaged => 'تالف';
+
+  @override
+  String get productUnitStatusLost => 'مفقود';
+
+  @override
+  String get productUnitStatusRetired => 'متقاعد';
+
+  @override
+  String get productUnitErrorDuplicateSerial => 'الرقم التسلسلي موجود مسبقاً';
+
+  @override
+  String get productUnitErrorNotSerialized => 'هذا المنتج غير متسلسل';
+
+  @override
+  String get productUnitErrorNotEditable =>
+      'لا يمكن تعديل هذه الوحدة في حالتها الحالية';
+
+  @override
+  String get productUnitErrorBulkLimit =>
+      'الحد الأقصى 100 وحدة لكل عملية جماعية';
+
+  @override
+  String get productUnitParserEmptySerial => 'رقم تسلسلي فارغ في القائمة';
+
+  @override
+  String get productUnitParserDuplicate => 'رقم تسلسلي مكرر في القائمة';
+
+  @override
+  String get productUnitParserInvalidCost => 'تكلفة شراء غير صالحة في القائمة';
+
+  @override
+  String get productUnitSectionHistory => 'سجل العقود';
+
+  @override
+  String get productUnitWarehouseTransferHint =>
+      'تغيير المستودع عبر نقل المخزون (قريباً).';
 }
