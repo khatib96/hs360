@@ -160,6 +160,87 @@ class AppLocalizationsAr extends AppLocalizations {
   String get warehouses => 'المستودعات';
 
   @override
+  String get warehouseAdd => 'إضافة مستودع';
+
+  @override
+  String get warehouseEdit => 'تعديل مستودع';
+
+  @override
+  String get warehouseDeactivate => 'تعطيل المستودع';
+
+  @override
+  String get warehouseDeactivateConfirm =>
+      'تعطيل هذا المستودع؟ لن يظهر في اختيارات حركات المخزون.';
+
+  @override
+  String get warehouseNameAr => 'الاسم بالعربية';
+
+  @override
+  String get warehouseNameEn => 'الاسم بالإنجليزية';
+
+  @override
+  String get warehouseType => 'نوع المستودع';
+
+  @override
+  String get warehouseTypeMain => 'رئيسي';
+
+  @override
+  String get warehouseTypeBranch => 'فرع';
+
+  @override
+  String get warehouseTypeVan => 'سيارة';
+
+  @override
+  String get warehouseEmployee => 'الموظف';
+
+  @override
+  String get warehouseEmployeeNone => 'اختر موظفاً';
+
+  @override
+  String get warehouseEmployeeInactiveHint => 'موظف غير نشط';
+
+  @override
+  String get warehouseLocationAddress => 'عنوان الموقع';
+
+  @override
+  String get warehouseActive => 'نشط';
+
+  @override
+  String get warehouseInactive => 'غير نشط';
+
+  @override
+  String get warehouseColumnName => 'الاسم';
+
+  @override
+  String get warehouseColumnType => 'النوع';
+
+  @override
+  String get warehouseColumnEmployee => 'الموظف';
+
+  @override
+  String get warehouseColumnAddress => 'العنوان';
+
+  @override
+  String get warehouseColumnStatus => 'الحالة';
+
+  @override
+  String get warehouseListEmpty => 'لا توجد مستودعات بعد.';
+
+  @override
+  String get warehouseListError => 'تعذر تحميل المستودعات. حاول مرة أخرى.';
+
+  @override
+  String get warehouseValidationAgentRequired =>
+      'اختر موظفاً لمستودعات السيارات';
+
+  @override
+  String get warehouseErrorDuplicateActiveVan =>
+      'هذا الموظف لديه مستودع سيارة نشط مسبقاً';
+
+  @override
+  String get warehouseErrorUnknown => 'حدث خطأ. حاول مرة أخرى.';
+
+  @override
   String get inventory => 'أرصدة المخزون';
 
   @override

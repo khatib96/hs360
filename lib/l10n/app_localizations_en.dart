@@ -160,6 +160,87 @@ class AppLocalizationsEn extends AppLocalizations {
   String get warehouses => 'Warehouses';
 
   @override
+  String get warehouseAdd => 'Add warehouse';
+
+  @override
+  String get warehouseEdit => 'Edit warehouse';
+
+  @override
+  String get warehouseDeactivate => 'Deactivate warehouse';
+
+  @override
+  String get warehouseDeactivateConfirm =>
+      'Deactivate this warehouse? It will no longer appear in stock movement choices.';
+
+  @override
+  String get warehouseNameAr => 'Arabic name';
+
+  @override
+  String get warehouseNameEn => 'English name';
+
+  @override
+  String get warehouseType => 'Warehouse type';
+
+  @override
+  String get warehouseTypeMain => 'Main';
+
+  @override
+  String get warehouseTypeBranch => 'Branch';
+
+  @override
+  String get warehouseTypeVan => 'Van';
+
+  @override
+  String get warehouseEmployee => 'Employee';
+
+  @override
+  String get warehouseEmployeeNone => 'Select employee';
+
+  @override
+  String get warehouseEmployeeInactiveHint => 'Inactive employee';
+
+  @override
+  String get warehouseLocationAddress => 'Location address';
+
+  @override
+  String get warehouseActive => 'Active';
+
+  @override
+  String get warehouseInactive => 'Inactive';
+
+  @override
+  String get warehouseColumnName => 'Name';
+
+  @override
+  String get warehouseColumnType => 'Type';
+
+  @override
+  String get warehouseColumnEmployee => 'Employee';
+
+  @override
+  String get warehouseColumnAddress => 'Address';
+
+  @override
+  String get warehouseColumnStatus => 'Status';
+
+  @override
+  String get warehouseListEmpty => 'No warehouses yet.';
+
+  @override
+  String get warehouseListError => 'Could not load warehouses. Try again.';
+
+  @override
+  String get warehouseValidationAgentRequired =>
+      'Select an employee for van warehouses';
+
+  @override
+  String get warehouseErrorDuplicateActiveVan =>
+      'This employee already has an active van warehouse';
+
+  @override
+  String get warehouseErrorUnknown => 'Something went wrong. Try again.';
+
+  @override
   String get inventory => 'Inventory Balances';
 
   @override

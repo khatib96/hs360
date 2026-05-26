@@ -380,6 +380,162 @@ abstract class AppLocalizations {
   /// **'Warehouses'**
   String get warehouses;
 
+  /// No description provided for @warehouseAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add warehouse'**
+  String get warehouseAdd;
+
+  /// No description provided for @warehouseEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit warehouse'**
+  String get warehouseEdit;
+
+  /// No description provided for @warehouseDeactivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate warehouse'**
+  String get warehouseDeactivate;
+
+  /// No description provided for @warehouseDeactivateConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate this warehouse? It will no longer appear in stock movement choices.'**
+  String get warehouseDeactivateConfirm;
+
+  /// No description provided for @warehouseNameAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic name'**
+  String get warehouseNameAr;
+
+  /// No description provided for @warehouseNameEn.
+  ///
+  /// In en, this message translates to:
+  /// **'English name'**
+  String get warehouseNameEn;
+
+  /// No description provided for @warehouseType.
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse type'**
+  String get warehouseType;
+
+  /// No description provided for @warehouseTypeMain.
+  ///
+  /// In en, this message translates to:
+  /// **'Main'**
+  String get warehouseTypeMain;
+
+  /// No description provided for @warehouseTypeBranch.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch'**
+  String get warehouseTypeBranch;
+
+  /// No description provided for @warehouseTypeVan.
+  ///
+  /// In en, this message translates to:
+  /// **'Van'**
+  String get warehouseTypeVan;
+
+  /// No description provided for @warehouseEmployee.
+  ///
+  /// In en, this message translates to:
+  /// **'Employee'**
+  String get warehouseEmployee;
+
+  /// No description provided for @warehouseEmployeeNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Select employee'**
+  String get warehouseEmployeeNone;
+
+  /// No description provided for @warehouseEmployeeInactiveHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive employee'**
+  String get warehouseEmployeeInactiveHint;
+
+  /// No description provided for @warehouseLocationAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Location address'**
+  String get warehouseLocationAddress;
+
+  /// No description provided for @warehouseActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get warehouseActive;
+
+  /// No description provided for @warehouseInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get warehouseInactive;
+
+  /// No description provided for @warehouseColumnName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get warehouseColumnName;
+
+  /// No description provided for @warehouseColumnType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get warehouseColumnType;
+
+  /// No description provided for @warehouseColumnEmployee.
+  ///
+  /// In en, this message translates to:
+  /// **'Employee'**
+  String get warehouseColumnEmployee;
+
+  /// No description provided for @warehouseColumnAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get warehouseColumnAddress;
+
+  /// No description provided for @warehouseColumnStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get warehouseColumnStatus;
+
+  /// No description provided for @warehouseListEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No warehouses yet.'**
+  String get warehouseListEmpty;
+
+  /// No description provided for @warehouseListError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load warehouses. Try again.'**
+  String get warehouseListError;
+
+  /// No description provided for @warehouseValidationAgentRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select an employee for van warehouses'**
+  String get warehouseValidationAgentRequired;
+
+  /// No description provided for @warehouseErrorDuplicateActiveVan.
+  ///
+  /// In en, this message translates to:
+  /// **'This employee already has an active van warehouse'**
+  String get warehouseErrorDuplicateActiveVan;
+
+  /// No description provided for @warehouseErrorUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Try again.'**
+  String get warehouseErrorUnknown;
+
   /// Inventory balances screen title
   ///
   /// In en, this message translates to:

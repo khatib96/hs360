@@ -878,4 +878,89 @@ begin
 end $$;
 rollback;
 
+-- 20. M7A: deactivated van + new active van for same employee succeeds.
+begin;
+do $$
+declare
+  v_tenant_a uuid := '00000000-0000-0000-0000-000000000101';
+  v_field_employee uuid := '00000000-0000-0000-0000-000000000602';
+  v_van_warehouse uuid := '00000000-0000-0000-0000-000000000702';
+  v_new_van uuid;
+begin
+  update warehouses
+  set is_active = false
+  where id = v_van_warehouse
+    and tenant_id = v_tenant_a;
+
+  insert into warehouses (tenant_id, name_ar, name_en, type, agent_id, is_active)
+  values (
+    v_tenant_a,
+    'سيارة أحمد جديدة',
+    'Ahmad van renewed',
+    'van',
+    v_field_employee,
+    true
+  )
+  returning id into v_new_van;
+
+  if v_new_van is null then
+    raise exception 'M7A: expected new active van after deactivating old one';
+  end if;
+end $$;
+rollback;
+
+-- 21. M7A: second active van for same employee fails.
+begin;
+do $$
+declare
+  v_tenant_a uuid := '00000000-0000-0000-0000-000000000101';
+  v_field_employee uuid := '00000000-0000-0000-0000-000000000602';
+begin
+  begin
+    insert into warehouses (tenant_id, name_ar, name_en, type, agent_id, is_active)
+    values (
+      v_tenant_a,
+      'سيارة مكررة',
+      'Duplicate van',
+      'van',
+      v_field_employee,
+      true
+    );
+    raise exception 'M7A duplicate active van: expected unique violation';
+  exception
+    when unique_violation then
+      if position('ux_warehouses_active_van_agent' in sqlerrm) = 0
+         and position('23505' in sqlstate) = 0 then
+        raise;
+      end if;
+  end;
+end $$;
+rollback;
+
+-- 22. M7A: van without agent_id fails CHECK constraint.
+begin;
+do $$
+declare
+  v_tenant_a uuid := '00000000-0000-0000-0000-000000000101';
+begin
+  begin
+    insert into warehouses (tenant_id, name_ar, name_en, type, agent_id, is_active)
+    values (
+      v_tenant_a,
+      'سيارة بدون مندوب',
+      'Van without agent',
+      'van',
+      null,
+      true
+    );
+    raise exception 'M7A van requires agent: expected check violation';
+  exception
+    when check_violation then
+      if position('warehouses_van_requires_agent' in sqlerrm) = 0 then
+        raise;
+      end if;
+  end;
+end $$;
+rollback;
+
 select 'phase_3_products_inventory_verification_passed' as result;

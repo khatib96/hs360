@@ -11,6 +11,7 @@ import '../../features/products/presentation/product_detail_screen.dart';
 import '../../features/products/presentation/product_list_screen.dart';
 import '../../features/products/presentation/product_wizard_screen.dart';
 import '../../features/inventory/presentation/inventory_placeholder_screen.dart';
+import '../../features/inventory/presentation/warehouses_screen.dart';
 import 'app_routes.dart';
 import 'route_guards.dart';
 import 'router_refresh_notifier.dart';
@@ -79,9 +80,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.warehouses,
         name: AppRoutes.warehousesName,
-        builder: (context, state) => const InventoryPlaceholderScreen(
-          mode: InventoryViewMode.warehouses,
-        ),
+        builder: (context, state) => const WarehousesScreen(),
       ),
       GoRoute(
         path: AppRoutes.inventory,

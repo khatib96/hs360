@@ -1,6 +1,6 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-05-24 (Phase 3 M6.5 complete).
+> Updated 2026-05-26 (Phase 3 M7A complete).
 > Keep this file short. It is for continuity between AI tools, not full project documentation.
 
 ---
@@ -13,9 +13,22 @@
 - **Phase 3 M5 complete** - product detail, 5-step create/edit wizard, primary image upload.
 - **Phase 3 M6 complete** - serialized product units in product detail Units tab.
 - **Phase 3 M6.5 complete** - product sale/rental modes split before M7.
-- Migrations `001`-`041` apply cleanly with `supabase db reset`.
+- **Phase 3 M7A complete** - warehouse CRUD screen, van rules, assignable employees RPC.
+- Migrations `001`-`042` apply cleanly with `supabase db reset`.
 - **Canonical inventory rules:** [`docs/PHASE_3_M1_5_INVENTORY_RULES.md`](docs/PHASE_3_M1_5_INVENTORY_RULES.md)
-- **Next:** Phase 3 M7A - Warehouses UI (or M7B stock balances).
+- **Next:** Phase 3 M7B - Stock balances UI.
+
+---
+
+## Phase 3 M7A - Warehouses
+
+- Migration [`042_warehouse_van_rules.sql`](supabase/migrations/042_warehouse_van_rules.sql): `ux_warehouses_active_van_agent` partial unique index, `warehouses_van_requires_agent` CHECK, `list_warehouse_assignable_employees()` RPC.
+- Flutter: `WarehousesScreen`, form dialog, table, `WarehousesController`, `WarehouseValidator`, extended `WarehouseRepository` (CRUD + employees RPC).
+- Van rules: employee required; one active van per employee; inactive warehouses excluded via `fetchWarehouses(activeOnly: true)`.
+- Employee labels: `{code} - {name}`; RPC returns all tenant employees with `is_active`; dropdown filters active only.
+- Permissions: `warehouses.view/create/edit`; deactivate via `is_active=false` (not hard delete).
+- SQL tests 20–22 in `phase_3_products_inventory.sql`.
+- Tests: 154 `flutter test`; `flutter analyze` clean.
 
 ---
 

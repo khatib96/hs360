@@ -30,6 +30,8 @@ class ProductsException extends AppException {
   static const notSerializedProduct = 'not_serialized_product';
   static const unitNotEditable = 'unit_not_editable';
   static const bulkLimitExceeded = 'bulk_limit_exceeded';
+  static const warehouseAgentRequired = 'warehouse_agent_required';
+  static const duplicateActiveVanWarehouse = 'duplicate_active_van_warehouse';
   static const supabaseNotConfigured = 'supabaseNotConfigured';
   static const unknown = 'unknown';
 
@@ -66,6 +68,12 @@ class ProductsException extends AppException {
       );
     }
     if (message.contains('23505') || message.contains('unique')) {
+      if (message.contains('ux_warehouses_active_van_agent')) {
+        return ProductsException(
+          code: duplicateActiveVanWarehouse,
+          technicalDetail: message,
+        );
+      }
       if (message.contains('sku')) {
         return ProductsException(code: duplicateSku, technicalDetail: message);
       }

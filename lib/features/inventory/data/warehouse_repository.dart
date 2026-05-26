@@ -4,7 +4,12 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/errors/products_exception.dart';
 import '../../../core/network/supabase_providers.dart';
+import '../../../domain/validators/warehouse_validator.dart';
+import '../../auth/domain/app_session.dart';
 import '../domain/warehouse.dart';
+import '../domain/warehouse_assignable_employee.dart';
+import '../domain/warehouse_form_state.dart';
+import '../domain/warehouse_type.dart';
 
 part 'warehouse_repository.g.dart';
 
@@ -21,6 +26,7 @@ class WarehouseRepository {
   WarehouseRepository(this._client);
 
   final SupabaseClient? _client;
+  final WarehouseValidator _validator = const WarehouseValidator();
 
   SupabaseClient get _requireClient {
     final client = _client;
@@ -28,6 +34,8 @@ class WarehouseRepository {
     return client;
   }
 
+  /// Loads warehouses. Pass [activeOnly: true] for movement/adjustment/transfer
+  /// pickers (M7B+) — inactive warehouses must not appear as choices.
   Future<List<Warehouse>> fetchWarehouses({bool activeOnly = false}) async {
     try {
       var query = _requireClient.from('warehouses').select(_warehouseColumns);
@@ -41,5 +49,107 @@ class WarehouseRepository {
     } catch (e, st) {
       throw ProductsException.fromSupabase(e, st);
     }
+  }
+
+  Future<List<WarehouseAssignableEmployee>> fetchAssignableEmployees() async {
+    try {
+      final rows = await _requireClient.rpc('list_warehouse_assignable_employees');
+      return (rows as List)
+          .map(
+            (r) => WarehouseAssignableEmployee.fromRow(
+              Map<String, dynamic>.from(r),
+            ),
+          )
+          .toList();
+    } catch (e, st) {
+      throw ProductsException.fromSupabase(e, st);
+    }
+  }
+
+  Future<Warehouse> createWarehouse(
+    AppSession session,
+    WarehouseFormState input, {
+    List<Warehouse> existingWarehouses = const [],
+  }) async {
+    final validation = _validator.validate(
+      input,
+      existingWarehouses: existingWarehouses,
+    );
+    if (!validation.isValid) {
+      throw ProductsException(code: validation.codes.first);
+    }
+
+    try {
+      final row = await _requireClient
+          .from('warehouses')
+          .insert(_toMap(session, input))
+          .select(_warehouseColumns)
+          .single();
+      return Warehouse.fromRow(Map<String, dynamic>.from(row));
+    } catch (e, st) {
+      throw ProductsException.fromSupabase(e, st);
+    }
+  }
+
+  Future<Warehouse> updateWarehouse(
+    AppSession session,
+    String id,
+    WarehouseFormState input, {
+    List<Warehouse> existingWarehouses = const [],
+  }) async {
+    final validation = _validator.validate(
+      input,
+      existingWarehouses: existingWarehouses,
+      excludeWarehouseId: id,
+    );
+    if (!validation.isValid) {
+      throw ProductsException(code: validation.codes.first);
+    }
+
+    try {
+      final row = await _requireClient
+          .from('warehouses')
+          .update(_toMap(session, input, includeTenant: false))
+          .eq('id', id)
+          .select(_warehouseColumns)
+          .single();
+      return Warehouse.fromRow(Map<String, dynamic>.from(row));
+    } catch (e, st) {
+      throw ProductsException.fromSupabase(e, st);
+    }
+  }
+
+  Future<void> deactivateWarehouse(AppSession session, String id) async {
+    try {
+      await _requireClient
+          .from('warehouses')
+          .update({'is_active': false})
+          .eq('id', id);
+    } catch (e, st) {
+      throw ProductsException.fromSupabase(e, st);
+    }
+  }
+
+  Map<String, dynamic> _toMap(
+    AppSession session,
+    WarehouseFormState input, {
+    bool includeTenant = true,
+  }) {
+    final isVan = input.type == WarehouseType.van;
+    return {
+      if (includeTenant) 'tenant_id': session.tenantId,
+      'name_ar': input.nameAr.trim(),
+      'name_en': input.nameEn.trim(),
+      'type': input.type.toDb(),
+      'agent_id': isVan ? input.agentId?.trim() : null,
+      'location_address': _trimOrNull(input.locationAddress),
+      'is_active': input.isActive,
+    };
+  }
+
+  String? _trimOrNull(String? value) {
+    if (value == null) return null;
+    final trimmed = value.trim();
+    return trimmed.isEmpty ? null : trimmed;
   }
 }
