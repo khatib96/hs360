@@ -106,5 +106,15 @@ void main() {
         contains('avg_cost'),
       );
     });
+
+    test('stock label columns are minimal and exclude cost fields', () {
+      final session = _session(permissions: AppPermissions.manager);
+      final columns = productStockLabelColumnsForSession(session);
+
+      expect(columns, productStockLabelColumns);
+      expect(columns, isNot(contains('avg_cost')));
+      expect(columns, isNot(contains('last_purchase_cost')));
+      expect(columns, contains('reorder_point'));
+    });
   });
 }

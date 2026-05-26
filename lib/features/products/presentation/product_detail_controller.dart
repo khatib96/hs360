@@ -6,6 +6,7 @@ import '../../../core/errors/products_exception.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../../inventory/data/warehouse_repository.dart';
 import '../../inventory/domain/warehouse.dart';
+import '../../inventory/domain/warehouse_permissions.dart';
 import '../data/product_group_repository.dart';
 import '../data/product_image_repository.dart';
 import '../data/product_repository.dart';
@@ -82,6 +83,17 @@ class ProductDetailController extends _$ProductDetailController {
         }
       }
 
+      var stockWarehouses = <Warehouse>[];
+      if (canViewProductStock(session) && canViewWarehouses(session)) {
+        try {
+          stockWarehouses = await ref
+              .read(warehouseRepositoryProvider)
+              .fetchWarehouses(activeOnly: false);
+        } catch (_) {
+          stockWarehouses = <Warehouse>[];
+        }
+      }
+
       state = ProductDetailUiState(
         isLoading: false,
         product: product,
@@ -89,6 +101,7 @@ class ProductDetailController extends _$ProductDetailController {
         stockSummary: stock,
         stockUnavailable: stockUnavailable,
         warehouses: warehouses,
+        stockWarehouses: stockWarehouses,
       );
 
       if (product.isSerialized) {

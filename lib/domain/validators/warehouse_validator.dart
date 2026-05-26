@@ -25,9 +25,6 @@ class WarehouseValidator {
       if (input.agentId == null || input.agentId!.trim().isEmpty) {
         codes.add(ProductsException.warehouseAgentRequired);
       }
-    } else if (input.agentId != null) {
-      // Internal guard only; UI/repository clear stale agentId before submit.
-      codes.add(ProductsException.validationFailed);
     }
 
     if (input.isActive &&

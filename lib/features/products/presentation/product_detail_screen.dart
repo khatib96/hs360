@@ -178,8 +178,11 @@ class ProductDetailScreen extends ConsumerWidget {
                     session: session!,
                   ),
                   ProductDetailInventorySection(
+                    product: product,
                     stock: state.stockSummary,
+                    warehouses: state.stockWarehouses,
                     unavailable: !canViewStock || state.stockUnavailable,
+                    languageCode: languageCode,
                     l10n: l10n,
                   ),
                   ProductDetailAuditSection(product: product, l10n: l10n),

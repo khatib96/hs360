@@ -8,6 +8,7 @@ import 'package:hs360/features/auth/presentation/auth_controller.dart';
 import 'package:hs360/features/inventory/data/warehouse_repository.dart';
 import 'package:hs360/features/inventory/domain/warehouse_form_state.dart';
 import 'package:hs360/features/inventory/domain/warehouse_type.dart';
+import 'package:hs360/core/errors/products_exception.dart';
 import 'package:hs360/features/inventory/presentation/warehouses_controller.dart';
 
 import '../fake_warehouse_repository.dart';
@@ -122,6 +123,36 @@ void main() {
       expect(code, isNull);
       expect(repo.lastCreateInput?.nameEn, 'Store');
       expect(repo.warehouses, hasLength(1));
+    });
+
+    test('employee lookup failure keeps warehouses and sets warning code',
+        () async {
+      final repo = FakeWarehouseRepository(
+        warehouses: [sampleWarehouse()],
+        fetchEmployeesError: const ProductsException(
+          code: ProductsException.permissionDenied,
+        ),
+      );
+      final container = ProviderContainer(
+        overrides: [
+          authControllerProvider.overrideWith(
+            () => TestAuthController(
+              _session(permissions: {'warehouses.view'}),
+            ),
+          ),
+          warehouseRepositoryProvider.overrideWith((ref) => repo),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await container.read(warehousesControllerProvider.notifier).refresh();
+
+      final state = container.read(warehousesControllerProvider);
+      expect(state.warehouses, hasLength(1));
+      expect(state.employees, isEmpty);
+      expect(state.errorCode, isNull);
+      expect(state.employeeLookupErrorCode, ProductsException.permissionDenied);
+      expect(state.isLoading, isFalse);
     });
 
     test('deactivateWarehouse requires edit permission', () async {

@@ -32,6 +32,13 @@ String productReadColumnsForSession(AppSession session) {
       : ProductColumns.safe;
 }
 
+/// Non-cost columns for inventory balance / stock label hydration.
+const productStockLabelColumns =
+    'id, sku, name_ar, name_en, reorder_point';
+
+String productStockLabelColumnsForSession(AppSession session) =>
+    productStockLabelColumns;
+
 String productMutationReturnColumnsForSession(AppSession session) {
   return canViewFullProductCosts(session) ? ProductColumns.full : 'id';
 }

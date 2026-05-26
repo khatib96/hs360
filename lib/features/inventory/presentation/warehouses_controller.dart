@@ -4,6 +4,7 @@ import '../../../core/errors/products_exception.dart';
 import '../../auth/domain/app_session.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../data/warehouse_repository.dart';
+import '../domain/warehouse_assignable_employee.dart';
 import '../domain/warehouse_form_state.dart';
 import '../domain/warehouse_permissions.dart';
 import 'warehouses_state.dart';
@@ -55,18 +56,25 @@ class WarehousesController extends _$WarehousesController {
     }
 
     final refreshId = ++_refreshSerial;
-    state = state.copyWith(isLoading: true, clearError: true);
+    state = state.copyWith(
+      isLoading: true,
+      clearError: true,
+      clearEmployeeLookupError: true,
+    );
 
     try {
       final repo = ref.read(warehouseRepositoryProvider);
       final warehouses = await repo.fetchWarehouses();
       if (refreshId != _refreshSerial) return;
 
-      var employees = state.employees;
+      var employees = const <WarehouseAssignableEmployee>[];
+      String? employeeLookupErrorCode;
       try {
         employees = await repo.fetchAssignableEmployees();
+      } on ProductsException catch (e) {
+        employeeLookupErrorCode = e.code;
       } catch (_) {
-        employees = const [];
+        employeeLookupErrorCode = ProductsException.unknown;
       }
       if (refreshId != _refreshSerial) return;
 
@@ -75,6 +83,8 @@ class WarehousesController extends _$WarehousesController {
         employees: employees,
         isLoading: false,
         clearError: true,
+        employeeLookupErrorCode: employeeLookupErrorCode,
+        clearEmployeeLookupError: employeeLookupErrorCode == null,
       );
     } on ProductsException catch (e) {
       if (refreshId != _refreshSerial) return;

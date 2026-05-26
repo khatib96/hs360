@@ -14,6 +14,7 @@ import '../domain/product_cost_access.dart';
 import '../domain/product_permissions.dart';
 import '../domain/product_filters.dart';
 import '../domain/product_form_state.dart';
+import '../domain/product_stock_label.dart';
 import '../domain/product_stock_summary.dart';
 import '../../inventory/domain/inventory_balance.dart';
 
@@ -197,6 +198,35 @@ class ProductRepository {
           .from('products')
           .update({'is_active': false})
           .eq('id', id);
+    } catch (e, st) {
+      throw ProductsException.fromSupabase(e, st);
+    }
+  }
+
+  Future<Map<String, ProductStockLabel>> fetchProductsByIdsForStockLabels(
+    AppSession session,
+    Set<String> productIds,
+  ) async {
+    if (!canViewProductsList(session) || productIds.isEmpty) {
+      return {};
+    }
+
+    try {
+      final table = productReadTableForSession(session);
+      final columns = productStockLabelColumnsForSession(session);
+      final rows = await _requireClient
+          .from(table)
+          .select(columns)
+          .inFilter('id', productIds.toList());
+
+      final map = <String, ProductStockLabel>{};
+      for (final row in rows as List) {
+        final label = ProductStockLabel.fromRow(
+          Map<String, dynamic>.from(row),
+        );
+        map[label.id] = label;
+      }
+      return map;
     } catch (e, st) {
       throw ProductsException.fromSupabase(e, st);
     }

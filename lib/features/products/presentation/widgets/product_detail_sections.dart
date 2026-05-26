@@ -3,14 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
 import '../../../../core/utils/money_formatter.dart';
-import '../../../../core/utils/quantity_formatter.dart';
 import '../../../auth/domain/app_session.dart';
 import '../../domain/product.dart';
 import '../../domain/product_stock_summary.dart';
 import '../../domain/product_type.dart';
 import '../../domain/product_unit_permissions.dart';
 import '../product_detail_controller.dart';
+import '../../../inventory/domain/warehouse.dart';
 import '../product_display_helpers.dart';
+import 'product_stock_summary_card.dart';
 import '../products_error_messages.dart';
 import 'add_product_unit_dialog.dart';
 import 'bulk_product_units_dialog.dart';
@@ -320,14 +321,20 @@ class ProductDetailUnitsSection extends ConsumerWidget {
 
 class ProductDetailInventorySection extends StatelessWidget {
   const ProductDetailInventorySection({
+    required this.product,
     required this.stock,
+    required this.warehouses,
     required this.unavailable,
+    required this.languageCode,
     required this.l10n,
     super.key,
   });
 
+  final Product product;
   final ProductStockSummary? stock;
+  final List<Warehouse> warehouses;
   final bool unavailable;
+  final String languageCode;
   final AppLocalizations l10n;
 
   @override
@@ -335,14 +342,12 @@ class ProductDetailInventorySection extends StatelessWidget {
     if (unavailable) {
       return Center(child: Text(l10n.productDetailStockUnavailable));
     }
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        _Row(
-          l10n.productDetailStockTotal,
-          formatQuantity(stock!.totalQtyAvailable),
-        ),
-      ],
+    return ProductStockSummaryCard(
+      stock: stock!,
+      product: product,
+      warehouses: warehouses,
+      languageCode: languageCode,
+      l10n: l10n,
     );
   }
 }

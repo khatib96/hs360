@@ -1,6 +1,6 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-05-26 (Phase 3 M7A complete).
+> Updated 2026-05-26 (Phase 3 M7B complete).
 > Keep this file short. It is for continuity between AI tools, not full project documentation.
 
 ---
@@ -14,9 +14,23 @@
 - **Phase 3 M6 complete** - serialized product units in product detail Units tab.
 - **Phase 3 M6.5 complete** - product sale/rental modes split before M7.
 - **Phase 3 M7A complete** - warehouse CRUD screen, van rules, assignable employees RPC.
+- **Phase 3 M7B complete** - inventory balances screen, product detail stock card, partial hydration failures.
 - Migrations `001`-`042` apply cleanly with `supabase db reset`.
 - **Canonical inventory rules:** [`docs/PHASE_3_M1_5_INVENTORY_RULES.md`](docs/PHASE_3_M1_5_INVENTORY_RULES.md)
-- **Next:** Phase 3 M7B - Stock balances UI.
+- **Next:** Phase 3 M7C - Movements log.
+
+---
+
+## Phase 3 M7B - Stock Balances
+
+- `/inventory` → `InventoryScreen` (replaces balances placeholder only; movements/transfers placeholders unchanged).
+- `InventoryBalancesController` coordinates `InventoryRepository.fetchInventoryBalances` + label hydration via `ProductRepository.fetchProductsByIdsForStockLabels` and `WarehouseRepository.fetchWarehouses`.
+- Partial failure: balances error = full error state; product/warehouse hydration failure = rows with fallback labels + non-blocking banners.
+- `productStockLabelColumnsForSession` in `product_cost_access.dart` — minimal non-cost columns only.
+- Product detail Inventory tab: `ProductStockSummaryCard` (per-warehouse buckets, low-stock warning, warehouse fallback).
+- M7A cleanup: `employeeLookupErrorCode` on warehouses screen; non-van `agentId` normalized before validation.
+- **Deferred to M7.5 (important):** low-stock filter currently evaluates after active UI filters; revisit whether low-stock must always use product total across all warehouses, independent of warehouse/search filters.
+- Tests: 171 `flutter test`; `flutter analyze` clean; `phase_3_products_inventory.sql` passed.
 
 ---
 

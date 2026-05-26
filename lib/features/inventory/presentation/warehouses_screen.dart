@@ -6,6 +6,7 @@ import '../../../core/errors/products_exception.dart';
 import '../../../core/localization/locale_controller.dart';
 import '../../../core/routing/app_routes.dart';
 import '../../../shared/widgets/app_shell.dart';
+import '../../../shared/widgets/message_banner.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../domain/warehouse.dart';
 import '../domain/warehouse_form_state.dart';
@@ -52,24 +53,48 @@ class WarehousesScreen extends ConsumerWidget {
     } else if (!state.isLoading && state.warehouses.isEmpty) {
       body = _WarehousesEmptyState(canCreate: canCreate);
     } else {
-      body = WarehouseTable(
-        warehouses: state.warehouses,
-        languageCode: languageCode,
-        employeesById: state.employeesById,
-        inactiveEmployeeHint: l10n.warehouseEmployeeInactiveHint,
-        canEdit: canEdit,
-        onEdit: (warehouse) => _showFormDialog(
-          context,
-          ref,
-          languageCode,
-          state: state,
-          initial: warehouse,
-        ),
-        onDeactivate: (warehouse) => _confirmDeactivate(
-          context,
-          ref,
-          warehouse,
-        ),
+      body = Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (state.hasEmployeeLookupWarning) ...[
+            MessageBanner(
+              variant: MessageBannerVariant.info,
+              message: warehouseEmployeeLookupErrorMessage(
+                l10n,
+                state.employeeLookupErrorCode!,
+              ),
+            ),
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: TextButton(
+                onPressed: controller.refresh,
+                child: Text(l10n.warehouseEmployeeLookupRetry),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+          Expanded(
+            child: WarehouseTable(
+              warehouses: state.warehouses,
+              languageCode: languageCode,
+              employeesById: state.employeesById,
+              inactiveEmployeeHint: l10n.warehouseEmployeeInactiveHint,
+              canEdit: canEdit,
+              onEdit: (warehouse) => _showFormDialog(
+                context,
+                ref,
+                languageCode,
+                state: state,
+                initial: warehouse,
+              ),
+              onDeactivate: (warehouse) => _confirmDeactivate(
+                context,
+                ref,
+                warehouse,
+              ),
+            ),
+          ),
+        ],
       );
     }
 

@@ -103,7 +103,7 @@ void main() {
     expect(result.isValid, isTrue);
   });
 
-  test('internal guard for non-van with stale agentId', () {
+  test('non-van with stale agentId passes at validator layer', () {
     final result = validator.validate(
       const WarehouseFormState(
         nameAr: 'مخزن',
@@ -112,6 +112,6 @@ void main() {
         agentId: 'emp-1',
       ),
     );
-    expect(result.codes, contains(ProductsException.validationFailed));
+    expect(result.isValid, isTrue);
   });
 }

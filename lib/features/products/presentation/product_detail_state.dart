@@ -19,6 +19,7 @@ class ProductDetailUiState {
     this.unitsUnavailable = false,
     this.unitsErrorCode,
     this.warehouses = const [],
+    this.stockWarehouses = const [],
   });
 
   final bool isLoading;
@@ -34,6 +35,7 @@ class ProductDetailUiState {
   final bool unitsUnavailable;
   final String? unitsErrorCode;
   final List<Warehouse> warehouses;
+  final List<Warehouse> stockWarehouses;
 
   bool get notFound => !isLoading && product == null && errorCode == null;
 
@@ -54,6 +56,7 @@ class ProductDetailUiState {
     String? unitsErrorCode,
     bool clearUnitsError = false,
     List<Warehouse>? warehouses,
+    List<Warehouse>? stockWarehouses,
   }) {
     return ProductDetailUiState(
       isLoading: isLoading ?? this.isLoading,
@@ -71,6 +74,7 @@ class ProductDetailUiState {
       unitsErrorCode:
           clearUnitsError ? null : (unitsErrorCode ?? this.unitsErrorCode),
       warehouses: warehouses ?? this.warehouses,
+      stockWarehouses: stockWarehouses ?? this.stockWarehouses,
     );
   }
 }

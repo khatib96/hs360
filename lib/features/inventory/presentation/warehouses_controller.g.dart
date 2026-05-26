@@ -7,7 +7,7 @@ part of 'warehouses_controller.dart';
 // **************************************************************************
 
 String _$warehousesControllerHash() =>
-    r'30d1cba28a568ae46b1796656f7e42c2662179fc';
+    r'37409601fc7783c0015c63d14fbec92b7feed19d';
 
 /// See also [WarehousesController].
 @ProviderFor(WarehousesController)

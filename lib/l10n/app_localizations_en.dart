@@ -241,7 +241,79 @@ class AppLocalizationsEn extends AppLocalizations {
   String get warehouseErrorUnknown => 'Something went wrong. Try again.';
 
   @override
+  String get warehouseEmployeeLookupFailed =>
+      'Could not load employees for van assignment. Van warehouses may be limited until this is fixed.';
+
+  @override
+  String get warehouseEmployeeLookupRetry => 'Retry employee lookup';
+
+  @override
   String get inventory => 'Inventory Balances';
+
+  @override
+  String get inventoryBalancesEmpty => 'No stock balances yet.';
+
+  @override
+  String get inventoryBalancesError =>
+      'Could not load inventory balances. Try again.';
+
+  @override
+  String get inventoryBalancesProductLabelsFailed =>
+      'Product names could not be loaded. Balances are shown with limited labels.';
+
+  @override
+  String get inventoryBalancesWarehouseLabelsFailed =>
+      'Warehouse names could not be loaded. Balances are shown with limited labels.';
+
+  @override
+  String get inventoryBalanceNameUnavailable => 'Unavailable';
+
+  @override
+  String get inventoryBalanceProduct => 'Product';
+
+  @override
+  String get inventoryBalanceWarehouse => 'Warehouse';
+
+  @override
+  String get inventoryBalanceAvailable => 'Available';
+
+  @override
+  String get inventoryBalanceRented => 'Rented';
+
+  @override
+  String get inventoryBalanceTrial => 'Trial';
+
+  @override
+  String get inventoryBalanceMaintenance => 'Maintenance';
+
+  @override
+  String get inventoryBalanceDamaged => 'Damaged';
+
+  @override
+  String get inventoryBalancesSearchHint => 'Search product or warehouse';
+
+  @override
+  String get inventoryBalancesFilterWarehouse => 'Warehouse';
+
+  @override
+  String get inventoryBalancesFilterWarehouseAll => 'All warehouses';
+
+  @override
+  String get inventoryBalancesFilterLowStock => 'Low stock only';
+
+  @override
+  String get inventoryBalancesSummaryTotal => 'Filtered totals';
+
+  @override
+  String get inventoryErrorInsufficientStock =>
+      'Insufficient stock for this operation.';
+
+  @override
+  String get productDetailStockByWarehouse => 'By warehouse';
+
+  @override
+  String get productDetailStockLowWarning =>
+      'Available stock is at or below the reorder point.';
 
   @override
   String get inventoryMovements => 'Movements Log';

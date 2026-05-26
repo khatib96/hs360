@@ -536,11 +536,143 @@ abstract class AppLocalizations {
   /// **'Something went wrong. Try again.'**
   String get warehouseErrorUnknown;
 
+  /// No description provided for @warehouseEmployeeLookupFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load employees for van assignment. Van warehouses may be limited until this is fixed.'**
+  String get warehouseEmployeeLookupFailed;
+
+  /// No description provided for @warehouseEmployeeLookupRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry employee lookup'**
+  String get warehouseEmployeeLookupRetry;
+
   /// Inventory balances screen title
   ///
   /// In en, this message translates to:
   /// **'Inventory Balances'**
   String get inventory;
+
+  /// No description provided for @inventoryBalancesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No stock balances yet.'**
+  String get inventoryBalancesEmpty;
+
+  /// No description provided for @inventoryBalancesError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load inventory balances. Try again.'**
+  String get inventoryBalancesError;
+
+  /// No description provided for @inventoryBalancesProductLabelsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Product names could not be loaded. Balances are shown with limited labels.'**
+  String get inventoryBalancesProductLabelsFailed;
+
+  /// No description provided for @inventoryBalancesWarehouseLabelsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse names could not be loaded. Balances are shown with limited labels.'**
+  String get inventoryBalancesWarehouseLabelsFailed;
+
+  /// No description provided for @inventoryBalanceNameUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Unavailable'**
+  String get inventoryBalanceNameUnavailable;
+
+  /// No description provided for @inventoryBalanceProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Product'**
+  String get inventoryBalanceProduct;
+
+  /// No description provided for @inventoryBalanceWarehouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse'**
+  String get inventoryBalanceWarehouse;
+
+  /// No description provided for @inventoryBalanceAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get inventoryBalanceAvailable;
+
+  /// No description provided for @inventoryBalanceRented.
+  ///
+  /// In en, this message translates to:
+  /// **'Rented'**
+  String get inventoryBalanceRented;
+
+  /// No description provided for @inventoryBalanceTrial.
+  ///
+  /// In en, this message translates to:
+  /// **'Trial'**
+  String get inventoryBalanceTrial;
+
+  /// No description provided for @inventoryBalanceMaintenance.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintenance'**
+  String get inventoryBalanceMaintenance;
+
+  /// No description provided for @inventoryBalanceDamaged.
+  ///
+  /// In en, this message translates to:
+  /// **'Damaged'**
+  String get inventoryBalanceDamaged;
+
+  /// No description provided for @inventoryBalancesSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search product or warehouse'**
+  String get inventoryBalancesSearchHint;
+
+  /// No description provided for @inventoryBalancesFilterWarehouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse'**
+  String get inventoryBalancesFilterWarehouse;
+
+  /// No description provided for @inventoryBalancesFilterWarehouseAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All warehouses'**
+  String get inventoryBalancesFilterWarehouseAll;
+
+  /// No description provided for @inventoryBalancesFilterLowStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Low stock only'**
+  String get inventoryBalancesFilterLowStock;
+
+  /// No description provided for @inventoryBalancesSummaryTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Filtered totals'**
+  String get inventoryBalancesSummaryTotal;
+
+  /// No description provided for @inventoryErrorInsufficientStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Insufficient stock for this operation.'**
+  String get inventoryErrorInsufficientStock;
+
+  /// No description provided for @productDetailStockByWarehouse.
+  ///
+  /// In en, this message translates to:
+  /// **'By warehouse'**
+  String get productDetailStockByWarehouse;
+
+  /// No description provided for @productDetailStockLowWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Available stock is at or below the reorder point.'**
+  String get productDetailStockLowWarning;
 
   /// Inventory movements log screen title
   ///

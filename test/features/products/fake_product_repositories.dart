@@ -5,7 +5,9 @@ import 'package:hs360/features/products/data/product_repository.dart';
 import 'package:hs360/features/products/domain/product.dart';
 import 'package:hs360/features/products/domain/product_filters.dart';
 import 'package:hs360/features/products/domain/product_group.dart';
+import 'package:hs360/features/products/domain/product_stock_label.dart';
 import 'package:hs360/features/products/domain/product_stock_summary.dart';
+import 'package:hs360/features/products/domain/product_permissions.dart';
 import 'package:hs360/core/errors/products_exception.dart';
 import 'package:hs360/features/products/domain/product_form_state.dart';
 import 'package:hs360/features/products/domain/product_type.dart';
@@ -16,11 +18,15 @@ class FakeProductRepository extends ProductRepository {
     this.products = const [],
     this.productById,
     this.stockThrows = false,
+    this.stockLabelsById = const {},
+    this.stockLabelsThrows = false,
   }) : super(null);
 
   List<Product> products;
   Product? productById;
   bool stockThrows;
+  Map<String, ProductStockLabel> stockLabelsById;
+  bool stockLabelsThrows;
   ProductFilters? lastFilters;
   int stockFetchCount = 0;
 
@@ -79,6 +85,23 @@ class FakeProductRepository extends ProductRepository {
       throw const ProductsException(code: ProductsException.permissionDenied);
     }
     lastImageUrl = imageUrl;
+  }
+
+  @override
+  Future<Map<String, ProductStockLabel>> fetchProductsByIdsForStockLabels(
+    AppSession session,
+    Set<String> productIds,
+  ) async {
+    if (!canViewProductsList(session) || productIds.isEmpty) {
+      return {};
+    }
+    if (stockLabelsThrows) {
+      throw const ProductsException(code: ProductsException.unknown);
+    }
+    return {
+      for (final id in productIds)
+        if (stockLabelsById.containsKey(id)) id: stockLabelsById[id]!,
+    };
   }
 
   @override

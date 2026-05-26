@@ -241,7 +241,79 @@ class AppLocalizationsAr extends AppLocalizations {
   String get warehouseErrorUnknown => 'حدث خطأ. حاول مرة أخرى.';
 
   @override
+  String get warehouseEmployeeLookupFailed =>
+      'تعذر تحميل الموظفين لتعيين السيارات. قد تكون مستودعات السيارات محدودة حتى يتم الإصلاح.';
+
+  @override
+  String get warehouseEmployeeLookupRetry => 'إعادة تحميل الموظفين';
+
+  @override
   String get inventory => 'أرصدة المخزون';
+
+  @override
+  String get inventoryBalancesEmpty => 'لا توجد أرصدة مخزون بعد.';
+
+  @override
+  String get inventoryBalancesError =>
+      'تعذر تحميل أرصدة المخزون. حاول مرة أخرى.';
+
+  @override
+  String get inventoryBalancesProductLabelsFailed =>
+      'تعذر تحميل أسماء المنتجات. تُعرض الأرصدة بتسميات محدودة.';
+
+  @override
+  String get inventoryBalancesWarehouseLabelsFailed =>
+      'تعذر تحميل أسماء المستودعات. تُعرض الأرصدة بتسميات محدودة.';
+
+  @override
+  String get inventoryBalanceNameUnavailable => 'غير متاح';
+
+  @override
+  String get inventoryBalanceProduct => 'المنتج';
+
+  @override
+  String get inventoryBalanceWarehouse => 'المستودع';
+
+  @override
+  String get inventoryBalanceAvailable => 'متاح';
+
+  @override
+  String get inventoryBalanceRented => 'مؤجر';
+
+  @override
+  String get inventoryBalanceTrial => 'تجريبي';
+
+  @override
+  String get inventoryBalanceMaintenance => 'صيانة';
+
+  @override
+  String get inventoryBalanceDamaged => 'تالف';
+
+  @override
+  String get inventoryBalancesSearchHint => 'بحث بالمنتج أو المستودع';
+
+  @override
+  String get inventoryBalancesFilterWarehouse => 'المستودع';
+
+  @override
+  String get inventoryBalancesFilterWarehouseAll => 'كل المستودعات';
+
+  @override
+  String get inventoryBalancesFilterLowStock => 'مخزون منخفض فقط';
+
+  @override
+  String get inventoryBalancesSummaryTotal => 'إجماليات التصفية';
+
+  @override
+  String get inventoryErrorInsufficientStock =>
+      'المخزون غير كافٍ لهذه العملية.';
+
+  @override
+  String get productDetailStockByWarehouse => 'حسب المستودع';
+
+  @override
+  String get productDetailStockLowWarning =>
+      'المخزون المتاح عند أو أقل من نقطة إعادة الطلب.';
 
   @override
   String get inventoryMovements => 'سجل الحركات';

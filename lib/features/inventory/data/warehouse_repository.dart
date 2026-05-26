@@ -71,8 +71,9 @@ class WarehouseRepository {
     WarehouseFormState input, {
     List<Warehouse> existingWarehouses = const [],
   }) async {
+    final normalized = _normalizedInput(input);
     final validation = _validator.validate(
-      input,
+      normalized,
       existingWarehouses: existingWarehouses,
     );
     if (!validation.isValid) {
@@ -82,7 +83,7 @@ class WarehouseRepository {
     try {
       final row = await _requireClient
           .from('warehouses')
-          .insert(_toMap(session, input))
+          .insert(_toMap(session, normalized))
           .select(_warehouseColumns)
           .single();
       return Warehouse.fromRow(Map<String, dynamic>.from(row));
@@ -97,8 +98,9 @@ class WarehouseRepository {
     WarehouseFormState input, {
     List<Warehouse> existingWarehouses = const [],
   }) async {
+    final normalized = _normalizedInput(input);
     final validation = _validator.validate(
-      input,
+      normalized,
       existingWarehouses: existingWarehouses,
       excludeWarehouseId: id,
     );
@@ -109,7 +111,7 @@ class WarehouseRepository {
     try {
       final row = await _requireClient
           .from('warehouses')
-          .update(_toMap(session, input, includeTenant: false))
+          .update(_toMap(session, normalized, includeTenant: false))
           .eq('id', id)
           .select(_warehouseColumns)
           .single();
@@ -128,6 +130,18 @@ class WarehouseRepository {
     } catch (e, st) {
       throw ProductsException.fromSupabase(e, st);
     }
+  }
+
+  WarehouseFormState _normalizedInput(WarehouseFormState input) {
+    if (input.type == WarehouseType.van) return input;
+    return WarehouseFormState(
+      nameAr: input.nameAr,
+      nameEn: input.nameEn,
+      type: input.type,
+      agentId: null,
+      locationAddress: input.locationAddress,
+      isActive: input.isActive,
+    );
   }
 
   Map<String, dynamic> _toMap(

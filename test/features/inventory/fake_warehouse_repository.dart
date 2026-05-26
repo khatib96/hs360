@@ -1,3 +1,4 @@
+import 'package:hs360/core/errors/products_exception.dart';
 import 'package:hs360/features/auth/domain/app_session.dart';
 import 'package:hs360/features/inventory/data/warehouse_repository.dart';
 import 'package:hs360/features/inventory/domain/warehouse.dart';
@@ -9,10 +10,14 @@ class FakeWarehouseRepository extends WarehouseRepository {
   FakeWarehouseRepository({
     this.warehouses = const [],
     this.employees = const [],
+    this.fetchEmployeesError,
+    this.fetchWarehousesError,
   }) : super(null);
 
   List<Warehouse> warehouses;
   List<WarehouseAssignableEmployee> employees;
+  final Object? fetchEmployeesError;
+  Object? fetchWarehousesError;
   WarehouseFormState? lastCreateInput;
   WarehouseFormState? lastUpdateInput;
   String? lastDeactivatedId;
@@ -21,6 +26,11 @@ class FakeWarehouseRepository extends WarehouseRepository {
   @override
   Future<List<Warehouse>> fetchWarehouses({bool activeOnly = false}) async {
     lastActiveOnly = activeOnly;
+    final error = fetchWarehousesError;
+    if (error != null) {
+      if (error is ProductsException) throw error;
+      throw const ProductsException(code: ProductsException.unknown);
+    }
     if (activeOnly) {
       return warehouses.where((w) => w.isActive).toList();
     }
@@ -29,6 +39,11 @@ class FakeWarehouseRepository extends WarehouseRepository {
 
   @override
   Future<List<WarehouseAssignableEmployee>> fetchAssignableEmployees() async {
+    final error = fetchEmployeesError;
+    if (error != null) {
+      if (error is ProductsException) throw error;
+      throw Error();
+    }
     return List<WarehouseAssignableEmployee>.from(employees);
   }
 
