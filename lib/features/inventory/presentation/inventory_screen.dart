@@ -11,8 +11,10 @@ import '../../../shared/widgets/app_shell.dart';
 import '../../../shared/widgets/message_banner.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../domain/inventory_balance_row.dart';
+import '../domain/inventory_permissions.dart';
 import 'inventory_balances_controller.dart';
 import 'inventory_error_messages.dart';
+import 'widgets/inventory_adjustment_dialog.dart';
 import 'widgets/inventory_balance_table.dart';
 import 'widgets/inventory_balances_filters_bar.dart';
 
@@ -29,11 +31,9 @@ class InventoryScreen extends ConsumerWidget {
     final controller = ref.read(inventoryBalancesControllerProvider.notifier);
 
     final canViewMovements =
-        session?.isManager == true ||
-        (session?.permissions.can('inventory_movements.view') ?? false);
+        session != null && canViewInventoryMovements(session);
     final canCreateMovements =
-        session?.isManager == true ||
-        (session?.permissions.can('inventory_movements.create') ?? false);
+        session != null && canCreateInventoryMovements(session);
 
     final filtered = state.filteredRows;
 
@@ -106,9 +106,21 @@ class InventoryScreen extends ConsumerWidget {
             Wrap(
               spacing: 12,
               runSpacing: 12,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 if (canCreateMovements)
-                  ElevatedButton.icon(
+                  FilledButton.icon(
+                    onPressed: () => _openManualAdjustment(
+                      context,
+                      ref,
+                      languageCode,
+                      warehouseId: state.warehouseId,
+                    ),
+                    icon: const Icon(Icons.tune),
+                    label: Text(l10n.inventoryManualAdjustment),
+                  ),
+                if (canCreateMovements)
+                  TextButton.icon(
                     onPressed: () => context.go(AppRoutes.inventoryTransfers),
                     icon: const Icon(Icons.swap_horiz),
                     label: Text(l10n.inventoryTransfers),
@@ -179,6 +191,26 @@ class _SummaryBar extends StatelessWidget {
       '${l10n.inventoryBalanceMaintenance} ${formatQuantity(maintenance)}, '
       '${l10n.inventoryBalanceDamaged} ${formatQuantity(damaged)}',
       style: Theme.of(context).textTheme.bodySmall,
+    );
+  }
+}
+
+Future<void> _openManualAdjustment(
+  BuildContext context,
+  WidgetRef ref,
+  String languageCode, {
+  String? warehouseId,
+}) async {
+  final l10n = AppLocalizations.of(context)!;
+  final success = await showInventoryAdjustmentDialog(
+    context: context,
+    ref: ref,
+    languageCode: languageCode,
+    prefillWarehouseId: warehouseId,
+  );
+  if (success == true && context.mounted) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.inventoryAdjustmentSuccess)),
     );
   }
 }

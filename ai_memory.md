@@ -1,6 +1,6 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-05-26 (Phase 3 M7C complete).
+> Updated 2026-05-27 (Phase 3 M7D complete; M7.5 cleanup notes recorded).
 > Keep this file short. It is for continuity between AI tools, not full project documentation.
 
 ---
@@ -16,9 +16,38 @@
 - **Phase 3 M7A complete** - warehouse CRUD screen, van rules, assignable employees RPC.
 - **Phase 3 M7B complete** - inventory balances screen, product detail stock card, partial hydration failures.
 - **Phase 3 M7C complete** - read-only movements log at `/inventory/movements`.
-- Migrations `001`-`042` apply cleanly with `supabase db reset`.
+- **Phase 3 M7D complete** - manual stock-in/out dialog on `/inventory`; migration `043` cost gate on `adjustment_in`.
+- Migrations `001`-`043` apply cleanly with `supabase db reset`.
 - **Canonical inventory rules:** [`docs/PHASE_3_M1_5_INVENTORY_RULES.md`](docs/PHASE_3_M1_5_INVENTORY_RULES.md)
-- **Next:** Phase 3 M7D - Manual adjustments.
+- **Next:** Phase 3 M7E - Transfers.
+- **Before M8:** Phase 3 M7.5 cleanup/hardening pass.
+
+---
+
+## Phase 3 M7.5 - Cleanup Before M8
+
+- Split `inventory_adjustment_dialog.dart` (currently large) by extracting product search / selection into a focused widget.
+- Add direct dialog widget tests for M7D cost gates:
+  - stock-in type hidden without `canWriteProductCosts`.
+  - unit cost field absent without `canWriteProductCosts`.
+  - WAC preview absent without `canViewFullProductCosts`.
+- Revisit M7B low-stock filter semantics: currently evaluates after active UI filters; decide whether low-stock should use product total across all warehouses independent of search/warehouse filters.
+- Run full verification before M8: `flutter analyze`, `flutter test`, `supabase db reset`, and `phase_3_products_inventory.sql`.
+
+---
+
+## Phase 3 M7D - Manual Adjustments
+
+- Entry: `/inventory` → **Manual adjustment** (`FilledButton`); requires `inventory.view` + `inventory_movements.create`.
+- `adjustment_in` also requires full cost permissions (DB `user_has_full_product_cost_access()` + repo `canWriteProductCosts` + UI).
+- `recordInventoryAdjustment(AppSession, formState)` only path; permission gates before validator.
+- Dialog: warehouse/product/qty/notes; signed delta preview (`+`/`-`); optional WAC preview when `canViewFullProductCosts`; serialized products blocked.
+- Success: dialog closes + SnackBar; refreshes balances + best-effort movements log when `inventory_movements.view`.
+- Migration [`043_inventory_adjustment_cost_permission.sql`](supabase/migrations/043_inventory_adjustment_cost_permission.sql).
+- SQL tests 23–24 (cost permission fixtures); test 4 updated with cost grants for `adjustment_in`.
+- Tests: 197 `flutter test`; `flutter analyze` clean; `phase_3_products_inventory.sql` passed.
+
+**Deferred:** M7E transfers UI/RPC; M7.5 dialog cleanup + cost-gate widget tests; serialized unit-level warehouse changes; adjustments without `inventory.view` route.
 
 ---
 

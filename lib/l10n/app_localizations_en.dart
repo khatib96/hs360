@@ -309,6 +309,56 @@ class AppLocalizationsEn extends AppLocalizations {
       'Insufficient stock for this operation.';
 
   @override
+  String get inventoryErrorSerializedAdjustmentNotSupported =>
+      'Bulk quantity adjustments are not supported for serialized products. Use product units instead.';
+
+  @override
+  String get inventoryManualAdjustment => 'Manual adjustment';
+
+  @override
+  String get inventoryAdjustmentTitle => 'Manual stock adjustment';
+
+  @override
+  String get inventoryAdjustmentNotes => 'Reason / notes';
+
+  @override
+  String get inventoryAdjustmentQuantity => 'Quantity';
+
+  @override
+  String get inventoryAdjustmentUnitCost => 'Unit cost';
+
+  @override
+  String get inventoryAdjustmentPreviewDelta => 'Available change';
+
+  @override
+  String get inventoryAdjustmentPreviewWac =>
+      'Estimated average cost after stock-in';
+
+  @override
+  String get inventoryAdjustmentStockInRequiresCost =>
+      'Stock-in requires full product cost permissions.';
+
+  @override
+  String get inventoryAdjustmentProductsViewRequired =>
+      'Product search requires products.view permission.';
+
+  @override
+  String get inventoryAdjustmentWarehouseRequired => 'Select a warehouse.';
+
+  @override
+  String get inventoryAdjustmentProductRequired => 'Select a product.';
+
+  @override
+  String get inventoryAdjustmentSuccess => 'Inventory adjustment recorded.';
+
+  @override
+  String get inventoryAdjustmentSelectProduct =>
+      'Search product by name or SKU';
+
+  @override
+  String get inventoryAdjustmentMovementType => 'Movement type';
+
+  @override
   String get productDetailStockByWarehouse => 'By warehouse';
 
   @override

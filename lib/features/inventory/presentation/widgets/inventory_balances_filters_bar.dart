@@ -91,6 +91,7 @@ class _InventoryBalancesFiltersBarState extends State<InventoryBalancesFiltersBa
         SizedBox(
           width: 220,
           child: DropdownButtonFormField<String?>(
+            isExpanded: true,
             initialValue: widget.warehouseId,
             decoration: InputDecoration(
               labelText: l10n.inventoryBalancesFilterWarehouse,
@@ -99,13 +100,17 @@ class _InventoryBalancesFiltersBarState extends State<InventoryBalancesFiltersBa
             items: [
               DropdownMenuItem<String?>(
                 value: null,
-                child: Text(l10n.inventoryBalancesFilterWarehouseAll),
+                child: Text(
+                  l10n.inventoryBalancesFilterWarehouseAll,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
               for (final warehouse in widget.activeWarehouses)
                 DropdownMenuItem<String?>(
                   value: warehouse.id,
                   child: Text(
                     localizedWarehouseName(warehouse, widget.languageCode),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
             ],

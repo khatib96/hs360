@@ -49,6 +49,48 @@ void main() {
     expect(result.isValid, isTrue);
   });
 
+  test('rejects empty warehouse', () {
+    final result = validator.validate(
+      InventoryAdjustmentFormState(
+        warehouseId: '   ',
+        productId: 'p',
+        qty: Decimal.one,
+        movementType: MovementType.adjustmentOut,
+        notes: 'out',
+        currentQtyAvailable: Decimal.fromInt(10),
+      ),
+    );
+    expect(result.codes, contains(InventoryException.warehouseRequired));
+  });
+
+  test('rejects empty product', () {
+    final result = validator.validate(
+      InventoryAdjustmentFormState(
+        warehouseId: 'w',
+        productId: '',
+        qty: Decimal.one,
+        movementType: MovementType.adjustmentOut,
+        notes: 'out',
+        currentQtyAvailable: Decimal.fromInt(10),
+      ),
+    );
+    expect(result.codes, contains(InventoryException.productRequired));
+  });
+
+  test('rejects insufficient stock on adjustment_out', () {
+    final result = validator.validate(
+      InventoryAdjustmentFormState(
+        warehouseId: 'w',
+        productId: 'p',
+        qty: Decimal.fromInt(10),
+        movementType: MovementType.adjustmentOut,
+        notes: 'out',
+        currentQtyAvailable: Decimal.fromInt(5),
+      ),
+    );
+    expect(result.codes, contains(InventoryException.insufficientStock));
+  });
+
   test('serialized product rejected', () {
     final result = validator.validate(
       InventoryAdjustmentFormState(

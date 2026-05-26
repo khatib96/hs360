@@ -1,3 +1,4 @@
+import '../../core/errors/inventory_exception.dart';
 import '../../features/inventory/domain/inventory_adjustment_form_state.dart';
 import '../../features/inventory/domain/movement_type.dart';
 import '../services/cost_engine.dart';
@@ -15,6 +16,13 @@ class InventoryAdjustmentValidator {
   final CostEngine _costEngine;
 
   ValidationResult validate(InventoryAdjustmentFormState input) {
+    if (input.warehouseId.trim().isEmpty) {
+      return const ValidationResult(codes: [InventoryException.warehouseRequired]);
+    }
+    if (input.productId.trim().isEmpty) {
+      return const ValidationResult(codes: [InventoryException.productRequired]);
+    }
+
     final stockResult = _stockEngine.validateAdjustment(input);
     if (!stockResult.isValid) return stockResult;
 

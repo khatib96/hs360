@@ -127,7 +127,12 @@ begin
   returning id into v_product_id;
 
   insert into user_permissions (tenant_id, tenant_user_id, permission_id, granted_by)
-  values (v_tenant_a, v_products_tu, 'inventory_movements.create', v_owner_user)
+  values
+    (v_tenant_a, v_products_tu, 'inventory_movements.create', v_owner_user),
+    (v_tenant_a, v_products_tu, 'products.field.avg_cost', v_owner_user),
+    (v_tenant_a, v_products_tu, 'products.field.last_purchase_cost', v_owner_user),
+    (v_tenant_a, v_products_tu, 'products.field.min_sale_price', v_owner_user),
+    (v_tenant_a, v_products_tu, 'products.field.min_rental_price', v_owner_user)
   on conflict (tenant_user_id, permission_id) do nothing;
 
   perform set_config('test.phase3.gate_product_id', v_product_id::text, true);
@@ -960,6 +965,163 @@ begin
         raise;
       end if;
   end;
+end $$;
+rollback;
+
+-- 23. M7D: adjustment_in denied without full cost access; adjustment_out allowed.
+begin;
+do $$
+declare
+  v_tenant_a uuid := '00000000-0000-0000-0000-000000000101';
+  v_oils_group uuid := '00000000-0000-0000-0000-000000000802';
+  v_owner_user uuid := '00000000-0000-0000-0000-000000000201';
+  v_products_tu uuid := '00000000-0000-0000-0000-000000000303';
+  v_main_warehouse uuid := '00000000-0000-0000-0000-000000000701';
+  v_product_id uuid;
+begin
+  delete from user_permissions
+  where tenant_user_id = v_products_tu
+    and permission_id in (
+      'inventory_movements.create',
+      'products.field.avg_cost',
+      'products.field.last_purchase_cost',
+      'products.field.min_sale_price',
+      'products.field.min_rental_price'
+    );
+
+  insert into products (
+    tenant_id, sku, name_ar, name_en, group_id, product_type,
+    unit_primary, sale_price, avg_cost, is_serialized, created_by
+  )
+  values (
+    v_tenant_a,
+    'M7D-A-' || left(gen_random_uuid()::text, 8),
+    'منتج M7D A', 'M7D Fixture A Product',
+    v_oils_group,
+    'sale_only',
+    'piece',
+    1.000, 0, false,
+    v_owner_user
+  )
+  returning id into v_product_id;
+
+  insert into inventory_balances (tenant_id, warehouse_id, product_id, qty_available)
+  values (v_tenant_a, v_main_warehouse, v_product_id, 10)
+  on conflict (warehouse_id, product_id) do update
+    set qty_available = excluded.qty_available;
+
+  insert into user_permissions (tenant_id, tenant_user_id, permission_id, granted_by)
+  values (v_tenant_a, v_products_tu, 'inventory_movements.create', v_owner_user);
+
+  perform set_config('test.phase3.m7d_a_product_id', v_product_id::text, true);
+end $$;
+
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000203';
+
+do $$
+declare
+  v_main_warehouse uuid := '00000000-0000-0000-0000-000000000701';
+  v_product_id uuid := current_setting('test.phase3.m7d_a_product_id')::uuid;
+begin
+  begin
+    perform record_inventory_adjustment(
+      v_main_warehouse,
+      v_product_id,
+      1,
+      'adjustment_in',
+      1.000,
+      'M7D should deny stock-in without cost'
+    );
+    raise exception 'M7D fixture A failed: adjustment_in succeeded without cost access';
+  exception
+    when others then
+      if sqlerrm <> 'permission_denied' then
+        raise exception 'M7D fixture A failed: expected permission_denied, got %', sqlerrm;
+      end if;
+  end;
+
+  perform record_inventory_adjustment(
+    v_main_warehouse,
+    v_product_id,
+    1,
+    'adjustment_out',
+    null,
+    'M7D create-only stock-out'
+  );
+end $$;
+rollback;
+
+-- 24. M7D: adjustment_in succeeds with full cost permissions.
+begin;
+do $$
+declare
+  v_tenant_a uuid := '00000000-0000-0000-0000-000000000101';
+  v_oils_group uuid := '00000000-0000-0000-0000-000000000802';
+  v_owner_user uuid := '00000000-0000-0000-0000-000000000201';
+  v_products_tu uuid := '00000000-0000-0000-0000-000000000303';
+  v_main_warehouse uuid := '00000000-0000-0000-0000-000000000701';
+  v_product_id uuid;
+  v_movement_id uuid;
+begin
+  delete from user_permissions
+  where tenant_user_id = v_products_tu
+    and permission_id in (
+      'inventory_movements.create',
+      'products.field.avg_cost',
+      'products.field.last_purchase_cost',
+      'products.field.min_sale_price',
+      'products.field.min_rental_price'
+    );
+
+  insert into products (
+    tenant_id, sku, name_ar, name_en, group_id, product_type,
+    unit_primary, sale_price, avg_cost, is_serialized, created_by
+  )
+  values (
+    v_tenant_a,
+    'M7D-B-' || left(gen_random_uuid()::text, 8),
+    'منتج M7D B', 'M7D Fixture B Product',
+    v_oils_group,
+    'sale_only',
+    'piece',
+    1.000, 0, false,
+    v_owner_user
+  )
+  returning id into v_product_id;
+
+  insert into user_permissions (tenant_id, tenant_user_id, permission_id, granted_by)
+  values
+    (v_tenant_a, v_products_tu, 'inventory_movements.create', v_owner_user),
+    (v_tenant_a, v_products_tu, 'products.field.avg_cost', v_owner_user),
+    (v_tenant_a, v_products_tu, 'products.field.last_purchase_cost', v_owner_user),
+    (v_tenant_a, v_products_tu, 'products.field.min_sale_price', v_owner_user),
+    (v_tenant_a, v_products_tu, 'products.field.min_rental_price', v_owner_user);
+
+  perform set_config('test.phase3.m7d_b_product_id', v_product_id::text, true);
+end $$;
+
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000203';
+
+do $$
+declare
+  v_main_warehouse uuid := '00000000-0000-0000-0000-000000000701';
+  v_product_id uuid := current_setting('test.phase3.m7d_b_product_id')::uuid;
+  v_movement_id uuid;
+begin
+  v_movement_id := record_inventory_adjustment(
+    v_main_warehouse,
+    v_product_id,
+    2,
+    'adjustment_in',
+    0.500,
+    'M7D full cost stock-in'
+  );
+
+  if v_movement_id is null then
+    raise exception 'M7D fixture B failed: null movement id';
+  end if;
 end $$;
 rollback;
 

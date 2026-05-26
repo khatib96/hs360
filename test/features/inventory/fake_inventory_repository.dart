@@ -1,8 +1,13 @@
 import 'package:hs360/core/errors/inventory_exception.dart';
+import 'package:hs360/domain/validators/inventory_adjustment_validator.dart';
+import 'package:hs360/features/auth/domain/app_session.dart';
 import 'package:hs360/features/inventory/data/inventory_repository.dart';
+import 'package:hs360/features/inventory/domain/inventory_adjustment_form_state.dart';
 import 'package:hs360/features/inventory/domain/inventory_balance.dart';
 import 'package:hs360/features/inventory/domain/inventory_movement.dart';
 import 'package:hs360/features/inventory/domain/movement_type.dart';
+import 'package:hs360/features/inventory/domain/inventory_permissions.dart';
+import 'package:hs360/features/products/domain/product_cost_access.dart';
 
 class FakeInventoryRepository extends InventoryRepository {
   FakeInventoryRepository({
@@ -10,6 +15,8 @@ class FakeInventoryRepository extends InventoryRepository {
     this.balancesError,
     this.movements = const [],
     this.movementsError,
+    this.adjustmentResult = 'movement-id',
+    this.adjustmentError,
   }) : super(null);
 
   List<InventoryBalance> balances;
@@ -17,8 +24,14 @@ class FakeInventoryRepository extends InventoryRepository {
   List<InventoryMovement> movements;
   final Object? movementsError;
 
+  final String adjustmentResult;
+  final Object? adjustmentError;
+
   int fetchBalancesCount = 0;
   int fetchMovementsCount = 0;
+  int adjustmentCallCount = 0;
+  AppSession? lastAdjustmentSession;
+  InventoryAdjustmentFormState? lastAdjustmentInput;
 
   String? lastWarehouseId;
   MovementType? lastMovementType;
@@ -91,5 +104,37 @@ class FakeInventoryRepository extends InventoryRepository {
       result = result.take(limit).toList();
     }
     return result;
+  }
+
+  @override
+  Future<String> recordInventoryAdjustment(
+    AppSession session,
+    InventoryAdjustmentFormState input,
+  ) async {
+    if (!canCreateInventoryMovements(session)) {
+      throw const InventoryException(code: InventoryException.permissionDenied);
+    }
+    if (input.movementType == MovementType.adjustmentIn &&
+        !canWriteProductCosts(session)) {
+      throw const InventoryException(code: InventoryException.permissionDenied);
+    }
+
+    const validator = InventoryAdjustmentValidator();
+    final validation = validator.validate(input);
+    if (!validation.isValid) {
+      throw InventoryException(code: validation.codes.first);
+    }
+
+    adjustmentCallCount++;
+    lastAdjustmentSession = session;
+    lastAdjustmentInput = input;
+
+    final error = adjustmentError;
+    if (error != null) {
+      if (error is InventoryException) throw error;
+      throw const InventoryException(code: InventoryException.unknown);
+    }
+
+    return adjustmentResult;
   }
 }

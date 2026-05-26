@@ -5,3 +5,6 @@ bool canViewInventoryBalances(AppSession session) =>
 
 bool canViewInventoryMovements(AppSession session) =>
     session.isManager || session.permissions.can('inventory_movements.view');
+
+bool canCreateInventoryMovements(AppSession session) =>
+    session.isManager || session.permissions.can('inventory_movements.create');

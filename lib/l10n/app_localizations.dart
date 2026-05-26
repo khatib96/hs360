@@ -662,6 +662,96 @@ abstract class AppLocalizations {
   /// **'Insufficient stock for this operation.'**
   String get inventoryErrorInsufficientStock;
 
+  /// No description provided for @inventoryErrorSerializedAdjustmentNotSupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Bulk quantity adjustments are not supported for serialized products. Use product units instead.'**
+  String get inventoryErrorSerializedAdjustmentNotSupported;
+
+  /// No description provided for @inventoryManualAdjustment.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual adjustment'**
+  String get inventoryManualAdjustment;
+
+  /// No description provided for @inventoryAdjustmentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual stock adjustment'**
+  String get inventoryAdjustmentTitle;
+
+  /// No description provided for @inventoryAdjustmentNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason / notes'**
+  String get inventoryAdjustmentNotes;
+
+  /// No description provided for @inventoryAdjustmentQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get inventoryAdjustmentQuantity;
+
+  /// No description provided for @inventoryAdjustmentUnitCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit cost'**
+  String get inventoryAdjustmentUnitCost;
+
+  /// No description provided for @inventoryAdjustmentPreviewDelta.
+  ///
+  /// In en, this message translates to:
+  /// **'Available change'**
+  String get inventoryAdjustmentPreviewDelta;
+
+  /// No description provided for @inventoryAdjustmentPreviewWac.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated average cost after stock-in'**
+  String get inventoryAdjustmentPreviewWac;
+
+  /// No description provided for @inventoryAdjustmentStockInRequiresCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock-in requires full product cost permissions.'**
+  String get inventoryAdjustmentStockInRequiresCost;
+
+  /// No description provided for @inventoryAdjustmentProductsViewRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Product search requires products.view permission.'**
+  String get inventoryAdjustmentProductsViewRequired;
+
+  /// No description provided for @inventoryAdjustmentWarehouseRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a warehouse.'**
+  String get inventoryAdjustmentWarehouseRequired;
+
+  /// No description provided for @inventoryAdjustmentProductRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a product.'**
+  String get inventoryAdjustmentProductRequired;
+
+  /// No description provided for @inventoryAdjustmentSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Inventory adjustment recorded.'**
+  String get inventoryAdjustmentSuccess;
+
+  /// No description provided for @inventoryAdjustmentSelectProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Search product by name or SKU'**
+  String get inventoryAdjustmentSelectProduct;
+
+  /// No description provided for @inventoryAdjustmentMovementType.
+  ///
+  /// In en, this message translates to:
+  /// **'Movement type'**
+  String get inventoryAdjustmentMovementType;
+
   /// No description provided for @productDetailStockByWarehouse.
   ///
   /// In en, this message translates to:

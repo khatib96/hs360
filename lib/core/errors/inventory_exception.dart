@@ -12,6 +12,8 @@ class InventoryException extends AppException {
   static const insufficientStock = 'insufficient_stock';
   static const serializedAdjustmentNotSupported =
       'serialized_adjustment_not_supported';
+  static const warehouseRequired = 'inventory_warehouse_required';
+  static const productRequired = 'inventory_product_required';
   static const unknown = 'unknown';
 
   factory InventoryException.fromSupabase(Object error, [StackTrace? stackTrace]) {

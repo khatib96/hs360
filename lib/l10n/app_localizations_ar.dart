@@ -309,6 +309,55 @@ class AppLocalizationsAr extends AppLocalizations {
       'المخزون غير كافٍ لهذه العملية.';
 
   @override
+  String get inventoryErrorSerializedAdjustmentNotSupported =>
+      'تعديلات الكمية الجماعية غير مدعومة للمنتجات المسلسلة. استخدم وحدات المنتج بدلاً من ذلك.';
+
+  @override
+  String get inventoryManualAdjustment => 'تعديل يدوي';
+
+  @override
+  String get inventoryAdjustmentTitle => 'تعديل مخزون يدوي';
+
+  @override
+  String get inventoryAdjustmentNotes => 'السبب / الملاحظات';
+
+  @override
+  String get inventoryAdjustmentQuantity => 'الكمية';
+
+  @override
+  String get inventoryAdjustmentUnitCost => 'تكلفة الوحدة';
+
+  @override
+  String get inventoryAdjustmentPreviewDelta => 'تغير المتاح';
+
+  @override
+  String get inventoryAdjustmentPreviewWac =>
+      'متوسط التكلفة المتوقع بعد الإدخال';
+
+  @override
+  String get inventoryAdjustmentStockInRequiresCost =>
+      'إدخال المخزون يتطلب صلاحيات تكلفة المنتج الكاملة.';
+
+  @override
+  String get inventoryAdjustmentProductsViewRequired =>
+      'بحث المنتج يتطلب صلاحية products.view.';
+
+  @override
+  String get inventoryAdjustmentWarehouseRequired => 'اختر مستودعاً.';
+
+  @override
+  String get inventoryAdjustmentProductRequired => 'اختر منتجاً.';
+
+  @override
+  String get inventoryAdjustmentSuccess => 'تم تسجيل تعديل المخزون.';
+
+  @override
+  String get inventoryAdjustmentSelectProduct => 'ابحث عن منتج بالاسم أو SKU';
+
+  @override
+  String get inventoryAdjustmentMovementType => 'نوع الحركة';
+
+  @override
   String get productDetailStockByWarehouse => 'حسب المستودع';
 
   @override

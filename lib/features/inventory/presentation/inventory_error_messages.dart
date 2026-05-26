@@ -17,8 +17,17 @@ String inventoryErrorMessage(AppLocalizations l10n, String code) {
     InventoryException.permissionDenied => l10n.productErrorPermissionDenied,
     InventoryException.validationFailed => l10n.productValidationFailed,
     InventoryException.insufficientStock => l10n.inventoryErrorInsufficientStock,
+    InventoryException.serializedAdjustmentNotSupported =>
+      l10n.inventoryErrorSerializedAdjustmentNotSupported,
+    InventoryException.warehouseRequired =>
+      l10n.inventoryAdjustmentWarehouseRequired,
+    InventoryException.productRequired => l10n.inventoryAdjustmentProductRequired,
     _ => l10n.inventoryBalancesError,
   };
+}
+
+String inventoryAdjustmentErrorMessage(AppLocalizations l10n, String code) {
+  return inventoryErrorMessage(l10n, code);
 }
 
 String inventoryMovementsErrorMessage(AppLocalizations l10n, String code) {

@@ -5,7 +5,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/errors/inventory_exception.dart';
 import '../../../core/network/supabase_providers.dart';
 import '../../../domain/validators/inventory_adjustment_validator.dart';
+import '../../auth/domain/app_session.dart';
+import '../../products/domain/product_cost_access.dart';
 import '../domain/inventory_adjustment_form_state.dart';
+import '../domain/inventory_permissions.dart';
 import '../domain/inventory_balance.dart';
 import '../domain/inventory_movement.dart';
 import '../domain/movement_type.dart';
@@ -110,8 +113,17 @@ class InventoryRepository {
   }
 
   Future<String> recordInventoryAdjustment(
+    AppSession session,
     InventoryAdjustmentFormState input,
   ) async {
+    if (!canCreateInventoryMovements(session)) {
+      throw const InventoryException(code: InventoryException.permissionDenied);
+    }
+    if (input.movementType == MovementType.adjustmentIn &&
+        !canWriteProductCosts(session)) {
+      throw const InventoryException(code: InventoryException.permissionDenied);
+    }
+
     final validation = _validator.validate(input);
     if (!validation.isValid) {
       throw InventoryException(code: validation.codes.first);
