@@ -107,6 +107,19 @@
   "inventoryAdjustmentWarehouseRequired": "اختر مستودعاً.",
   "inventoryAdjustmentProductRequired": "اختر منتجاً.",
   "inventoryAdjustmentSuccess": "تم تسجيل تعديل المخزون.",
+  "inventoryTransferTitle": "تحويل مخزون",
+  "inventoryTransferSourceWarehouse": "المستودع المصدر",
+  "inventoryTransferDestinationWarehouse": "المستودع الوجهة",
+  "inventoryTransferQuantity": "الكمية",
+  "inventoryTransferNotes": "السبب / الملاحظات",
+  "inventoryTransferSelectProduct": "ابحث عن منتج بالاسم أو SKU",
+  "inventoryTransferPreviewSource": "تغيير المصدر",
+  "inventoryTransferPreviewDestination": "تغيير الوجهة",
+  "inventoryTransferSameWarehouse": "يجب أن يختلف المستودع المصدر عن الوجهة.",
+  "inventoryTransferSuccess": "تم تسجيل تحويل المخزون.",
+  "inventorySourceWarehouseRequired": "اختر المستودع المصدر.",
+  "inventoryDestinationWarehouseRequired": "اختر مستودع الوجهة.",
+  "inventoryErrorSerializedTransferNotSupported": "تحويل المخزون غير مدعوم للمنتجات المسلسلة.",
   "inventoryAdjustmentSelectProduct": "ابحث عن منتج بالاسم أو SKU",
   "inventoryAdjustmentMovementType": "نوع الحركة",
   "productDetailStockByWarehouse": "حسب المستودع",
@@ -309,5 +322,5 @@
   "productUnitParserDuplicate": "رقم تسلسلي مكرر في القائمة",
   "productUnitParserInvalidCost": "تكلفة شراء غير صالحة في القائمة",
   "productUnitSectionHistory": "سجل العقود",
-  "productUnitWarehouseTransferHint": "تغيير المستودع عبر نقل المخزون (قريباً)."
+  "productUnitWarehouseTransferHint": "استخدم تحويلات المخزون لنقل المخزون بين المستودعات."
 }

@@ -352,6 +352,48 @@ class AppLocalizationsEn extends AppLocalizations {
   String get inventoryAdjustmentSuccess => 'Inventory adjustment recorded.';
 
   @override
+  String get inventoryTransferTitle => 'Stock transfer';
+
+  @override
+  String get inventoryTransferSourceWarehouse => 'Source warehouse';
+
+  @override
+  String get inventoryTransferDestinationWarehouse => 'Destination warehouse';
+
+  @override
+  String get inventoryTransferQuantity => 'Quantity';
+
+  @override
+  String get inventoryTransferNotes => 'Reason / notes';
+
+  @override
+  String get inventoryTransferSelectProduct => 'Search product by name or SKU';
+
+  @override
+  String get inventoryTransferPreviewSource => 'Source change';
+
+  @override
+  String get inventoryTransferPreviewDestination => 'Destination change';
+
+  @override
+  String get inventoryTransferSameWarehouse =>
+      'Source and destination must be different warehouses.';
+
+  @override
+  String get inventoryTransferSuccess => 'Stock transfer recorded.';
+
+  @override
+  String get inventorySourceWarehouseRequired => 'Select a source warehouse.';
+
+  @override
+  String get inventoryDestinationWarehouseRequired =>
+      'Select a destination warehouse.';
+
+  @override
+  String get inventoryErrorSerializedTransferNotSupported =>
+      'Stock transfers are not supported for serialized products.';
+
+  @override
   String get inventoryAdjustmentSelectProduct =>
       'Search product by name or SKU';
 
@@ -985,5 +1027,5 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get productUnitWarehouseTransferHint =>
-      'Warehouse changes use inventory transfer (coming soon).';
+      'Use Stock Transfers to move stock between warehouses.';
 }

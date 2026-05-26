@@ -2,6 +2,7 @@ import 'package:decimal/decimal.dart';
 
 import '../../core/errors/inventory_exception.dart';
 import '../../features/inventory/domain/inventory_adjustment_form_state.dart';
+import '../../features/inventory/domain/inventory_transfer_form_state.dart';
 import '../../features/inventory/domain/movement_type.dart';
 import '../../domain/validators/validation_result.dart';
 
@@ -55,6 +56,35 @@ class StockEngine {
       if (available == null || available < input.qty) {
         codes.add(InventoryException.insufficientStock);
       }
+    }
+
+    if (codes.isEmpty) return const ValidationResult.valid();
+    return ValidationResult(codes: codes);
+  }
+
+  ValidationResult validateTransfer(InventoryTransferFormState input) {
+    final codes = <String>[];
+
+    if (input.fromWarehouseId == input.toWarehouseId) {
+      codes.add(InventoryException.transferSameWarehouse);
+    }
+
+    if (input.qty <= Decimal.zero) {
+      codes.add(InventoryException.validationFailed);
+    }
+
+    if (input.isSerialized) {
+      codes.add(InventoryException.serializedTransferNotSupported);
+    }
+
+    final notes = input.notes.trim();
+    if (notes.isEmpty) {
+      codes.add(InventoryException.validationFailed);
+    }
+
+    final available = input.sourceQtyAvailable;
+    if (available == null || available < input.qty) {
+      codes.add(InventoryException.insufficientStock);
     }
 
     if (codes.isEmpty) return const ValidationResult.valid();

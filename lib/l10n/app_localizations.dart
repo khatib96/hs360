@@ -740,6 +740,84 @@ abstract class AppLocalizations {
   /// **'Inventory adjustment recorded.'**
   String get inventoryAdjustmentSuccess;
 
+  /// No description provided for @inventoryTransferTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock transfer'**
+  String get inventoryTransferTitle;
+
+  /// No description provided for @inventoryTransferSourceWarehouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Source warehouse'**
+  String get inventoryTransferSourceWarehouse;
+
+  /// No description provided for @inventoryTransferDestinationWarehouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Destination warehouse'**
+  String get inventoryTransferDestinationWarehouse;
+
+  /// No description provided for @inventoryTransferQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get inventoryTransferQuantity;
+
+  /// No description provided for @inventoryTransferNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason / notes'**
+  String get inventoryTransferNotes;
+
+  /// No description provided for @inventoryTransferSelectProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Search product by name or SKU'**
+  String get inventoryTransferSelectProduct;
+
+  /// No description provided for @inventoryTransferPreviewSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Source change'**
+  String get inventoryTransferPreviewSource;
+
+  /// No description provided for @inventoryTransferPreviewDestination.
+  ///
+  /// In en, this message translates to:
+  /// **'Destination change'**
+  String get inventoryTransferPreviewDestination;
+
+  /// No description provided for @inventoryTransferSameWarehouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Source and destination must be different warehouses.'**
+  String get inventoryTransferSameWarehouse;
+
+  /// No description provided for @inventoryTransferSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock transfer recorded.'**
+  String get inventoryTransferSuccess;
+
+  /// No description provided for @inventorySourceWarehouseRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a source warehouse.'**
+  String get inventorySourceWarehouseRequired;
+
+  /// No description provided for @inventoryDestinationWarehouseRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a destination warehouse.'**
+  String get inventoryDestinationWarehouseRequired;
+
+  /// No description provided for @inventoryErrorSerializedTransferNotSupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock transfers are not supported for serialized products.'**
+  String get inventoryErrorSerializedTransferNotSupported;
+
   /// No description provided for @inventoryAdjustmentSelectProduct.
   ///
   /// In en, this message translates to:
@@ -1955,7 +2033,7 @@ abstract class AppLocalizations {
   /// No description provided for @productUnitWarehouseTransferHint.
   ///
   /// In en, this message translates to:
-  /// **'Warehouse changes use inventory transfer (coming soon).'**
+  /// **'Use Stock Transfers to move stock between warehouses.'**
   String get productUnitWarehouseTransferHint;
 }
 

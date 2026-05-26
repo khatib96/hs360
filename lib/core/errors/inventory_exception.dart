@@ -12,7 +12,13 @@ class InventoryException extends AppException {
   static const insufficientStock = 'insufficient_stock';
   static const serializedAdjustmentNotSupported =
       'serialized_adjustment_not_supported';
+  static const serializedTransferNotSupported =
+      'serialized_transfer_not_supported';
   static const warehouseRequired = 'inventory_warehouse_required';
+  static const sourceWarehouseRequired = 'inventory_source_warehouse_required';
+  static const destinationWarehouseRequired =
+      'inventory_destination_warehouse_required';
+  static const transferSameWarehouse = 'inventory_transfer_same_warehouse';
   static const productRequired = 'inventory_product_required';
   static const unknown = 'unknown';
 
@@ -39,6 +45,12 @@ class InventoryException extends AppException {
     if (message.contains('serialized_adjustment_not_supported')) {
       return InventoryException(
         code: serializedAdjustmentNotSupported,
+        technicalDetail: message,
+      );
+    }
+    if (message.contains('serialized_transfer_not_supported')) {
+      return InventoryException(
+        code: serializedTransferNotSupported,
         technicalDetail: message,
       );
     }

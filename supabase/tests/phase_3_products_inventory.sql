@@ -1125,4 +1125,510 @@ begin
 end $$;
 rollback;
 
+-- 25. M7E: successful transfer main -> van decreases source and increases destination.
+begin;
+do $$
+declare
+  v_tenant_a uuid := '00000000-0000-0000-0000-000000000101';
+  v_oils_group uuid := '00000000-0000-0000-0000-000000000802';
+  v_owner_user uuid := '00000000-0000-0000-0000-000000000201';
+  v_main_warehouse uuid := '00000000-0000-0000-0000-000000000701';
+  v_van_warehouse uuid := '00000000-0000-0000-0000-000000000702';
+  v_product_id uuid;
+  v_transfer_id uuid;
+  v_source_qty numeric(15, 3);
+  v_dest_qty numeric(15, 3);
+begin
+  insert into products (
+    tenant_id, sku, name_ar, name_en, group_id, product_type,
+    unit_primary, sale_price, avg_cost, is_serialized, created_by
+  )
+  values (
+    v_tenant_a,
+    'M7E-25-' || left(gen_random_uuid()::text, 8),
+    'منتج M7E 25', 'M7E Fixture 25 Product',
+    v_oils_group,
+    'sale_only',
+    'piece',
+    1.000, 5.000, false,
+    v_owner_user
+  )
+  returning id into v_product_id;
+
+  insert into inventory_balances (tenant_id, warehouse_id, product_id, qty_available)
+  values (v_tenant_a, v_main_warehouse, v_product_id, 20)
+  on conflict (warehouse_id, product_id) do update
+    set qty_available = excluded.qty_available;
+
+  insert into inventory_balances (tenant_id, warehouse_id, product_id, qty_available)
+  values (v_tenant_a, v_van_warehouse, v_product_id, 3)
+  on conflict (warehouse_id, product_id) do update
+    set qty_available = excluded.qty_available;
+
+  perform set_config('test.phase3.m7e_25_product_id', v_product_id::text, true);
+end $$;
+
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+
+do $$
+declare
+  v_main_warehouse uuid := '00000000-0000-0000-0000-000000000701';
+  v_van_warehouse uuid := '00000000-0000-0000-0000-000000000702';
+  v_product_id uuid := current_setting('test.phase3.m7e_25_product_id')::uuid;
+  v_transfer_id uuid;
+  v_source_qty numeric(15, 3);
+  v_dest_qty numeric(15, 3);
+begin
+  v_transfer_id := record_inventory_transfer(
+    v_main_warehouse,
+    v_van_warehouse,
+    v_product_id,
+    5,
+    null,
+    'M7E happy path transfer'
+  );
+
+  if v_transfer_id is null then
+    raise exception 'M7E fixture 25 failed: null transfer id';
+  end if;
+
+  select qty_available into v_source_qty
+  from inventory_balances
+  where warehouse_id = v_main_warehouse and product_id = v_product_id;
+
+  select qty_available into v_dest_qty
+  from inventory_balances
+  where warehouse_id = v_van_warehouse and product_id = v_product_id;
+
+  if v_source_qty <> 15 then
+    raise exception 'M7E fixture 25 failed: source expected 15, got %', v_source_qty;
+  end if;
+
+  if v_dest_qty <> 8 then
+    raise exception 'M7E fixture 25 failed: dest expected 8, got %', v_dest_qty;
+  end if;
+end $$;
+rollback;
+
+-- 26. M7E: transfer to same warehouse fails validation_failed.
+begin;
+do $$
+declare
+  v_tenant_a uuid := '00000000-0000-0000-0000-000000000101';
+  v_oils_group uuid := '00000000-0000-0000-0000-000000000802';
+  v_owner_user uuid := '00000000-0000-0000-0000-000000000201';
+  v_main_warehouse uuid := '00000000-0000-0000-0000-000000000701';
+  v_product_id uuid;
+begin
+  insert into products (
+    tenant_id, sku, name_ar, name_en, group_id, product_type,
+    unit_primary, sale_price, avg_cost, is_serialized, created_by
+  )
+  values (
+    v_tenant_a,
+    'M7E-26-' || left(gen_random_uuid()::text, 8),
+    'منتج M7E 26', 'M7E Fixture 26 Product',
+    v_oils_group,
+    'sale_only',
+    'piece',
+    1.000, 0, false,
+    v_owner_user
+  )
+  returning id into v_product_id;
+
+  insert into inventory_balances (tenant_id, warehouse_id, product_id, qty_available)
+  values (v_tenant_a, v_main_warehouse, v_product_id, 10)
+  on conflict (warehouse_id, product_id) do update
+    set qty_available = excluded.qty_available;
+
+  perform set_config('test.phase3.m7e_26_product_id', v_product_id::text, true);
+end $$;
+
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+
+do $$
+declare
+  v_main_warehouse uuid := '00000000-0000-0000-0000-000000000701';
+  v_product_id uuid := current_setting('test.phase3.m7e_26_product_id')::uuid;
+begin
+  begin
+    perform record_inventory_transfer(
+      v_main_warehouse,
+      v_main_warehouse,
+      v_product_id,
+      1,
+      null,
+      'Same warehouse attempt'
+    );
+    raise exception 'M7E fixture 26 failed: same-warehouse transfer succeeded';
+  exception
+    when others then
+      if sqlerrm <> 'validation_failed' then
+        raise exception 'M7E fixture 26 failed: expected validation_failed, got %', sqlerrm;
+      end if;
+  end;
+end $$;
+rollback;
+
+-- 27. M7E: transfer above available stock fails insufficient_stock.
+begin;
+do $$
+declare
+  v_tenant_a uuid := '00000000-0000-0000-0000-000000000101';
+  v_oils_group uuid := '00000000-0000-0000-0000-000000000802';
+  v_owner_user uuid := '00000000-0000-0000-0000-000000000201';
+  v_main_warehouse uuid := '00000000-0000-0000-0000-000000000701';
+  v_van_warehouse uuid := '00000000-0000-0000-0000-000000000702';
+  v_product_id uuid;
+begin
+  insert into products (
+    tenant_id, sku, name_ar, name_en, group_id, product_type,
+    unit_primary, sale_price, avg_cost, is_serialized, created_by
+  )
+  values (
+    v_tenant_a,
+    'M7E-27-' || left(gen_random_uuid()::text, 8),
+    'منتج M7E 27', 'M7E Fixture 27 Product',
+    v_oils_group,
+    'sale_only',
+    'piece',
+    1.000, 0, false,
+    v_owner_user
+  )
+  returning id into v_product_id;
+
+  insert into inventory_balances (tenant_id, warehouse_id, product_id, qty_available)
+  values (v_tenant_a, v_main_warehouse, v_product_id, 2)
+  on conflict (warehouse_id, product_id) do update
+    set qty_available = excluded.qty_available;
+
+  perform set_config('test.phase3.m7e_27_product_id', v_product_id::text, true);
+end $$;
+
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+
+do $$
+declare
+  v_main_warehouse uuid := '00000000-0000-0000-0000-000000000701';
+  v_van_warehouse uuid := '00000000-0000-0000-0000-000000000702';
+  v_product_id uuid := current_setting('test.phase3.m7e_27_product_id')::uuid;
+begin
+  begin
+    perform record_inventory_transfer(
+      v_main_warehouse,
+      v_van_warehouse,
+      v_product_id,
+      5,
+      null,
+      'Over stock attempt'
+    );
+    raise exception 'M7E fixture 27 failed: over-stock transfer succeeded';
+  exception
+    when others then
+      if sqlerrm <> 'insufficient_stock' then
+        raise exception 'M7E fixture 27 failed: expected insufficient_stock, got %', sqlerrm;
+      end if;
+  end;
+end $$;
+rollback;
+
+-- 28. M7E: two movement rows with shared reference_id equal to returned transfer id.
+begin;
+do $$
+declare
+  v_tenant_a uuid := '00000000-0000-0000-0000-000000000101';
+  v_oils_group uuid := '00000000-0000-0000-0000-000000000802';
+  v_owner_user uuid := '00000000-0000-0000-0000-000000000201';
+  v_main_warehouse uuid := '00000000-0000-0000-0000-000000000701';
+  v_van_warehouse uuid := '00000000-0000-0000-0000-000000000702';
+  v_product_id uuid;
+begin
+  insert into products (
+    tenant_id, sku, name_ar, name_en, group_id, product_type,
+    unit_primary, sale_price, avg_cost, is_serialized, created_by
+  )
+  values (
+    v_tenant_a,
+    'M7E-28-' || left(gen_random_uuid()::text, 8),
+    'منتج M7E 28', 'M7E Fixture 28 Product',
+    v_oils_group,
+    'sale_only',
+    'piece',
+    1.000, 0, false,
+    v_owner_user
+  )
+  returning id into v_product_id;
+
+  insert into inventory_balances (tenant_id, warehouse_id, product_id, qty_available)
+  values (v_tenant_a, v_main_warehouse, v_product_id, 10)
+  on conflict (warehouse_id, product_id) do update
+    set qty_available = excluded.qty_available;
+
+  perform set_config('test.phase3.m7e_28_product_id', v_product_id::text, true);
+end $$;
+
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+
+do $$
+declare
+  v_main_warehouse uuid := '00000000-0000-0000-0000-000000000701';
+  v_van_warehouse uuid := '00000000-0000-0000-0000-000000000702';
+  v_product_id uuid := current_setting('test.phase3.m7e_28_product_id')::uuid;
+  v_transfer_id uuid;
+  v_movement_count int;
+  v_out_count int;
+  v_in_count int;
+begin
+  v_transfer_id := record_inventory_transfer(
+    v_main_warehouse,
+    v_van_warehouse,
+    v_product_id,
+    3,
+    null,
+    'M7E movement audit'
+  );
+
+  select count(*) into v_movement_count
+  from inventory_movements
+  where reference_table = 'inventory_transfer'
+    and reference_id = v_transfer_id;
+
+  select count(*) into v_out_count
+  from inventory_movements
+  where reference_table = 'inventory_transfer'
+    and reference_id = v_transfer_id
+    and movement_type = 'transfer_out'
+    and unit_cost is null;
+
+  select count(*) into v_in_count
+  from inventory_movements
+  where reference_table = 'inventory_transfer'
+    and reference_id = v_transfer_id
+    and movement_type = 'transfer_in'
+    and unit_cost is null;
+
+  if v_movement_count <> 2 then
+    raise exception 'M7E fixture 28 failed: expected 2 movements, got %', v_movement_count;
+  end if;
+
+  if v_out_count <> 1 or v_in_count <> 1 then
+    raise exception 'M7E fixture 28 failed: expected transfer_out/in pair';
+  end if;
+end $$;
+rollback;
+
+-- 29. M7E: avg_cost and last_purchase_cost unchanged after transfer.
+begin;
+do $$
+declare
+  v_tenant_a uuid := '00000000-0000-0000-0000-000000000101';
+  v_oils_group uuid := '00000000-0000-0000-0000-000000000802';
+  v_owner_user uuid := '00000000-0000-0000-0000-000000000201';
+  v_main_warehouse uuid := '00000000-0000-0000-0000-000000000701';
+  v_van_warehouse uuid := '00000000-0000-0000-0000-000000000702';
+  v_product_id uuid;
+begin
+  insert into products (
+    tenant_id, sku, name_ar, name_en, group_id, product_type,
+    unit_primary, sale_price, avg_cost, last_purchase_cost,
+    is_serialized, created_by
+  )
+  values (
+    v_tenant_a,
+    'M7E-29-' || left(gen_random_uuid()::text, 8),
+    'منتج M7E 29', 'M7E Fixture 29 Product',
+    v_oils_group,
+    'sale_only',
+    'piece',
+    1.000, 12.500, 15.000, false,
+    v_owner_user
+  )
+  returning id into v_product_id;
+
+  insert into inventory_balances (tenant_id, warehouse_id, product_id, qty_available)
+  values (v_tenant_a, v_main_warehouse, v_product_id, 50)
+  on conflict (warehouse_id, product_id) do update
+    set qty_available = excluded.qty_available;
+
+  perform set_config('test.phase3.m7e_29_product_id', v_product_id::text, true);
+end $$;
+
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+
+do $$
+declare
+  v_main_warehouse uuid := '00000000-0000-0000-0000-000000000701';
+  v_van_warehouse uuid := '00000000-0000-0000-0000-000000000702';
+  v_product_id uuid := current_setting('test.phase3.m7e_29_product_id')::uuid;
+  v_avg numeric(15, 3);
+  v_lpc numeric(15, 3);
+begin
+  perform record_inventory_transfer(
+    v_main_warehouse,
+    v_van_warehouse,
+    v_product_id,
+    4,
+    null,
+    'M7E WAC unchanged'
+  );
+
+  select avg_cost, last_purchase_cost into v_avg, v_lpc
+  from products
+  where id = v_product_id;
+
+  if v_avg <> 12.500 then
+    raise exception 'M7E fixture 29 failed: avg_cost changed to %', v_avg;
+  end if;
+
+  if v_lpc <> 15.000 then
+    raise exception 'M7E fixture 29 failed: last_purchase_cost changed to %', v_lpc;
+  end if;
+end $$;
+rollback;
+
+-- 30. M7E: zero-permission user cannot record transfer.
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000202';
+
+do $$
+declare
+  v_main_warehouse uuid := '00000000-0000-0000-0000-000000000701';
+  v_van_warehouse uuid := '00000000-0000-0000-0000-000000000702';
+  v_product_id uuid := '00000000-0000-0000-0000-000000000901';
+begin
+  begin
+    perform record_inventory_transfer(
+      v_main_warehouse,
+      v_van_warehouse,
+      v_product_id,
+      1,
+      null,
+      'Should be denied'
+    );
+    raise exception 'M7E fixture 30 failed: zero-permission transfer succeeded';
+  exception
+    when others then
+      if sqlerrm <> 'permission_denied' then
+        raise exception 'M7E fixture 30 failed: expected permission_denied, got %', sqlerrm;
+      end if;
+  end;
+end $$;
+rollback;
+
+-- 31. M7E: lookup RPCs — create-only user succeeds; zero-permission denied.
+begin;
+do $$
+declare
+  v_tenant_a uuid := '00000000-0000-0000-0000-000000000101';
+  v_oils_group uuid := '00000000-0000-0000-0000-000000000802';
+  v_owner_user uuid := '00000000-0000-0000-0000-000000000201';
+  v_products_tu uuid := '00000000-0000-0000-0000-000000000303';
+  v_main_warehouse uuid := '00000000-0000-0000-0000-000000000701';
+  v_product_id uuid;
+begin
+  delete from user_permissions
+  where tenant_user_id = v_products_tu
+    and permission_id = 'inventory_movements.create';
+
+  insert into products (
+    tenant_id, sku, name_ar, name_en, group_id, product_type,
+    unit_primary, sale_price, avg_cost, is_serialized, created_by
+  )
+  values (
+    v_tenant_a,
+    'M7E-31-' || left(gen_random_uuid()::text, 8),
+    'منتج M7E 31', 'M7E Fixture 31 Product',
+    v_oils_group,
+    'sale_only',
+    'piece',
+    1.000, 0, false,
+    v_owner_user
+  )
+  returning id into v_product_id;
+
+  insert into inventory_balances (tenant_id, warehouse_id, product_id, qty_available)
+  values (v_tenant_a, v_main_warehouse, v_product_id, 7)
+  on conflict (warehouse_id, product_id) do update
+    set qty_available = excluded.qty_available;
+
+  insert into user_permissions (tenant_id, tenant_user_id, permission_id, granted_by)
+  values (v_tenant_a, v_products_tu, 'inventory_movements.create', v_owner_user);
+
+  perform set_config('test.phase3.m7e_31_product_id', v_product_id::text, true);
+end $$;
+
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000203';
+
+do $$
+declare
+  v_main_warehouse uuid := '00000000-0000-0000-0000-000000000701';
+  v_product_id uuid := current_setting('test.phase3.m7e_31_product_id')::uuid;
+  v_wh_count int;
+  v_prod_count int;
+  v_qty numeric;
+begin
+  select count(*) into v_wh_count from list_transfer_warehouses();
+  if v_wh_count = 0 then
+    raise exception 'M7E fixture 31 failed: no warehouses from lookup';
+  end if;
+
+  select count(*) into v_prod_count
+  from search_transfer_products('M7E-31', 20);
+  if v_prod_count = 0 then
+    raise exception 'M7E fixture 31 failed: product search returned no rows';
+  end if;
+
+  v_qty := get_transfer_source_qty(v_main_warehouse, v_product_id);
+  if v_qty <> 7 then
+    raise exception 'M7E fixture 31 failed: expected qty 7, got %', v_qty;
+  end if;
+end $$;
+
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000202';
+
+do $$
+declare
+  v_main_warehouse uuid := '00000000-0000-0000-0000-000000000701';
+  v_product_id uuid := '00000000-0000-0000-0000-000000000901';
+begin
+  begin
+    perform list_transfer_warehouses();
+    raise exception 'M7E fixture 31 failed: zero user listed warehouses';
+  exception
+    when others then
+      if sqlerrm <> 'permission_denied' then
+        raise exception 'M7E fixture 31 failed: warehouses expected permission_denied, got %', sqlerrm;
+      end if;
+  end;
+
+  begin
+    perform search_transfer_products('test', 20);
+    raise exception 'M7E fixture 31 failed: zero user searched products';
+  exception
+    when others then
+      if sqlerrm <> 'permission_denied' then
+        raise exception 'M7E fixture 31 failed: search expected permission_denied, got %', sqlerrm;
+      end if;
+  end;
+
+  begin
+    perform get_transfer_source_qty(v_main_warehouse, v_product_id);
+    raise exception 'M7E fixture 31 failed: zero user got source qty';
+  exception
+    when others then
+      if sqlerrm <> 'permission_denied' then
+        raise exception 'M7E fixture 31 failed: qty expected permission_denied, got %', sqlerrm;
+      end if;
+  end;
+end $$;
+rollback;
+
 select 'phase_3_products_inventory_verification_passed' as result;

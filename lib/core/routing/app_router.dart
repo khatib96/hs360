@@ -11,7 +11,7 @@ import '../../features/products/presentation/product_detail_screen.dart';
 import '../../features/products/presentation/product_list_screen.dart';
 import '../../features/products/presentation/product_wizard_screen.dart';
 import '../../features/inventory/presentation/inventory_movements_screen.dart';
-import '../../features/inventory/presentation/inventory_placeholder_screen.dart';
+import '../../features/inventory/presentation/inventory_transfers_screen.dart';
 import '../../features/inventory/presentation/inventory_screen.dart';
 import '../../features/inventory/presentation/warehouses_screen.dart';
 import 'app_routes.dart';
@@ -97,9 +97,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.inventoryTransfers,
         name: AppRoutes.inventoryTransfersName,
-        builder: (context, state) => const InventoryPlaceholderScreen(
-          mode: InventoryViewMode.transfers,
-        ),
+        builder: (context, state) => const InventoryTransfersScreen(),
       ),
     ],
   );

@@ -245,6 +245,19 @@
   "inventoryAdjustmentWarehouseRequired": "Select a warehouse.",
   "inventoryAdjustmentProductRequired": "Select a product.",
   "inventoryAdjustmentSuccess": "Inventory adjustment recorded.",
+  "inventoryTransferTitle": "Stock transfer",
+  "inventoryTransferSourceWarehouse": "Source warehouse",
+  "inventoryTransferDestinationWarehouse": "Destination warehouse",
+  "inventoryTransferQuantity": "Quantity",
+  "inventoryTransferNotes": "Reason / notes",
+  "inventoryTransferSelectProduct": "Search product by name or SKU",
+  "inventoryTransferPreviewSource": "Source change",
+  "inventoryTransferPreviewDestination": "Destination change",
+  "inventoryTransferSameWarehouse": "Source and destination must be different warehouses.",
+  "inventoryTransferSuccess": "Stock transfer recorded.",
+  "inventorySourceWarehouseRequired": "Select a source warehouse.",
+  "inventoryDestinationWarehouseRequired": "Select a destination warehouse.",
+  "inventoryErrorSerializedTransferNotSupported": "Stock transfers are not supported for serialized products.",
   "inventoryAdjustmentSelectProduct": "Search product by name or SKU",
   "inventoryAdjustmentMovementType": "Movement type",
   "productDetailStockByWarehouse": "By warehouse",
@@ -458,5 +471,5 @@
   "productUnitParserDuplicate": "Duplicate serial in pasted list",
   "productUnitParserInvalidCost": "Invalid purchase cost in pasted list",
   "productUnitSectionHistory": "Contract history",
-  "productUnitWarehouseTransferHint": "Warehouse changes use inventory transfer (coming soon)."
+  "productUnitWarehouseTransferHint": "Use Stock Transfers to move stock between warehouses."
 }

@@ -19,14 +19,25 @@ String inventoryErrorMessage(AppLocalizations l10n, String code) {
     InventoryException.insufficientStock => l10n.inventoryErrorInsufficientStock,
     InventoryException.serializedAdjustmentNotSupported =>
       l10n.inventoryErrorSerializedAdjustmentNotSupported,
+    InventoryException.serializedTransferNotSupported =>
+      l10n.inventoryErrorSerializedTransferNotSupported,
     InventoryException.warehouseRequired =>
       l10n.inventoryAdjustmentWarehouseRequired,
+    InventoryException.sourceWarehouseRequired =>
+      l10n.inventorySourceWarehouseRequired,
+    InventoryException.destinationWarehouseRequired =>
+      l10n.inventoryDestinationWarehouseRequired,
+    InventoryException.transferSameWarehouse => l10n.inventoryTransferSameWarehouse,
     InventoryException.productRequired => l10n.inventoryAdjustmentProductRequired,
     _ => l10n.inventoryBalancesError,
   };
 }
 
 String inventoryAdjustmentErrorMessage(AppLocalizations l10n, String code) {
+  return inventoryErrorMessage(l10n, code);
+}
+
+String inventoryTransferErrorMessage(AppLocalizations l10n, String code) {
   return inventoryErrorMessage(l10n, code);
 }
 

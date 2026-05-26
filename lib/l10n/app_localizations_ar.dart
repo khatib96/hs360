@@ -352,6 +352,47 @@ class AppLocalizationsAr extends AppLocalizations {
   String get inventoryAdjustmentSuccess => 'تم تسجيل تعديل المخزون.';
 
   @override
+  String get inventoryTransferTitle => 'تحويل مخزون';
+
+  @override
+  String get inventoryTransferSourceWarehouse => 'المستودع المصدر';
+
+  @override
+  String get inventoryTransferDestinationWarehouse => 'المستودع الوجهة';
+
+  @override
+  String get inventoryTransferQuantity => 'الكمية';
+
+  @override
+  String get inventoryTransferNotes => 'السبب / الملاحظات';
+
+  @override
+  String get inventoryTransferSelectProduct => 'ابحث عن منتج بالاسم أو SKU';
+
+  @override
+  String get inventoryTransferPreviewSource => 'تغيير المصدر';
+
+  @override
+  String get inventoryTransferPreviewDestination => 'تغيير الوجهة';
+
+  @override
+  String get inventoryTransferSameWarehouse =>
+      'يجب أن يختلف المستودع المصدر عن الوجهة.';
+
+  @override
+  String get inventoryTransferSuccess => 'تم تسجيل تحويل المخزون.';
+
+  @override
+  String get inventorySourceWarehouseRequired => 'اختر المستودع المصدر.';
+
+  @override
+  String get inventoryDestinationWarehouseRequired => 'اختر مستودع الوجهة.';
+
+  @override
+  String get inventoryErrorSerializedTransferNotSupported =>
+      'تحويل المخزون غير مدعوم للمنتجات المسلسلة.';
+
+  @override
   String get inventoryAdjustmentSelectProduct => 'ابحث عن منتج بالاسم أو SKU';
 
   @override
@@ -979,5 +1020,5 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get productUnitWarehouseTransferHint =>
-      'تغيير المستودع عبر نقل المخزون (قريباً).';
+      'استخدم تحويلات المخزون لنقل المخزون بين المستودعات.';
 }
