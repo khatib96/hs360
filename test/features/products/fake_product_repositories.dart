@@ -20,6 +20,8 @@ class FakeProductRepository extends ProductRepository {
     this.stockThrows = false,
     this.stockLabelsById = const {},
     this.stockLabelsThrows = false,
+    this.searchProductIdsResult = const {},
+    this.searchProductIdsThrows = false,
   }) : super(null);
 
   List<Product> products;
@@ -27,8 +29,12 @@ class FakeProductRepository extends ProductRepository {
   bool stockThrows;
   Map<String, ProductStockLabel> stockLabelsById;
   bool stockLabelsThrows;
+  bool searchProductIdsThrows = false;
+  Set<String> searchProductIdsResult = const {};
+  String? lastMovementSearch;
   ProductFilters? lastFilters;
   int stockFetchCount = 0;
+  int searchProductIdsCount = 0;
 
   @override
   Future<List<Product>> fetchProducts(
@@ -85,6 +91,20 @@ class FakeProductRepository extends ProductRepository {
       throw const ProductsException(code: ProductsException.permissionDenied);
     }
     lastImageUrl = imageUrl;
+  }
+
+  @override
+  Future<Set<String>> searchProductIdsForInventoryMovements(
+    AppSession session,
+    String search,
+  ) async {
+    searchProductIdsCount++;
+    lastMovementSearch = search;
+    if (!canViewProductsList(session)) return {};
+    if (searchProductIdsThrows) {
+      throw const ProductsException(code: ProductsException.unknown);
+    }
+    return searchProductIdsResult;
   }
 
   @override

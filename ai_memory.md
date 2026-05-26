@@ -1,6 +1,6 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-05-26 (Phase 3 M7B complete).
+> Updated 2026-05-26 (Phase 3 M7C complete).
 > Keep this file short. It is for continuity between AI tools, not full project documentation.
 
 ---
@@ -15,15 +15,28 @@
 - **Phase 3 M6.5 complete** - product sale/rental modes split before M7.
 - **Phase 3 M7A complete** - warehouse CRUD screen, van rules, assignable employees RPC.
 - **Phase 3 M7B complete** - inventory balances screen, product detail stock card, partial hydration failures.
+- **Phase 3 M7C complete** - read-only movements log at `/inventory/movements`.
 - Migrations `001`-`042` apply cleanly with `supabase db reset`.
 - **Canonical inventory rules:** [`docs/PHASE_3_M1_5_INVENTORY_RULES.md`](docs/PHASE_3_M1_5_INVENTORY_RULES.md)
-- **Next:** Phase 3 M7C - Movements log.
+- **Next:** Phase 3 M7D - Manual adjustments.
+
+---
+
+## Phase 3 M7C - Movements Log
+
+- `/inventory/movements` → `InventoryMovementsScreen` (router only; `inventory_placeholder_screen.dart` unchanged; transfers placeholder unchanged).
+- `InventoryMovementsController` loads `fetchInventoryMovements` only (never balances); filters: warehouse, movement type, local date range (exclusive `occurredBefore` in repo), page size, product search.
+- Product search with `products.view`: `searchProductIdsForInventoryMovements` (no `is_active`, no limit); zero IDs → empty list without movements query.
+- Without `products.view`: client-side search on movement fields; ARB hint for name/SKU limitation.
+- `unit_cost` column/card only when `canViewFullProductCosts`; wide table truncates notes + tooltip.
+- Inverted date pick clears the other endpoint (no error banner).
+- Tests: 188 `flutter test`; `flutter analyze` clean; `phase_3_products_inventory.sql` passed.
 
 ---
 
 ## Phase 3 M7B - Stock Balances
 
-- `/inventory` → `InventoryScreen` (replaces balances placeholder only; movements/transfers placeholders unchanged).
+- `/inventory` → `InventoryScreen`.
 - `InventoryBalancesController` coordinates `InventoryRepository.fetchInventoryBalances` + label hydration via `ProductRepository.fetchProductsByIdsForStockLabels` and `WarehouseRepository.fetchWarehouses`.
 - Partial failure: balances error = full error state; product/warehouse hydration failure = rows with fallback labels + non-blocking banners.
 - `productStockLabelColumnsForSession` in `product_cost_access.dart` — minimal non-cost columns only.
@@ -131,4 +144,4 @@ No `supabase db reset` (no SQL changes in M5).
 
 ### Next Recommended Step
 
-- **Phase 3 M6** - Product Units Management (serial units inside product detail).
+- **Phase 3 M7D** - Manual stock adjustments UI (`record_inventory_adjustment`).

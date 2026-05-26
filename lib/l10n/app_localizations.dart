@@ -686,6 +686,252 @@ abstract class AppLocalizations {
   /// **'Stock Transfers'**
   String get inventoryTransfers;
 
+  /// No description provided for @inventoryMovementsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No inventory movements match your filters.'**
+  String get inventoryMovementsEmpty;
+
+  /// No description provided for @inventoryMovementsError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load inventory movements. Try again.'**
+  String get inventoryMovementsError;
+
+  /// No description provided for @inventoryMovementsProductLabelsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Product names could not be loaded. Movements are shown with limited labels.'**
+  String get inventoryMovementsProductLabelsFailed;
+
+  /// No description provided for @inventoryMovementsWarehouseLabelsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse names could not be loaded. Movements are shown with limited labels.'**
+  String get inventoryMovementsWarehouseLabelsFailed;
+
+  /// No description provided for @inventoryMovementsSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search product name or SKU'**
+  String get inventoryMovementsSearchHint;
+
+  /// No description provided for @inventoryMovementsSearchRequiresProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'Product name or SKU search requires products.view permission. You can still search by movement IDs and notes.'**
+  String get inventoryMovementsSearchRequiresProducts;
+
+  /// No description provided for @inventoryMovementsFilterWarehouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse'**
+  String get inventoryMovementsFilterWarehouse;
+
+  /// No description provided for @inventoryMovementsFilterWarehouseAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All warehouses'**
+  String get inventoryMovementsFilterWarehouseAll;
+
+  /// No description provided for @inventoryMovementsFilterMovementType.
+  ///
+  /// In en, this message translates to:
+  /// **'Movement type'**
+  String get inventoryMovementsFilterMovementType;
+
+  /// No description provided for @inventoryMovementsFilterMovementTypeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All types'**
+  String get inventoryMovementsFilterMovementTypeAll;
+
+  /// No description provided for @inventoryMovementsFilterDateFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From date'**
+  String get inventoryMovementsFilterDateFrom;
+
+  /// No description provided for @inventoryMovementsFilterDateTo.
+  ///
+  /// In en, this message translates to:
+  /// **'To date'**
+  String get inventoryMovementsFilterDateTo;
+
+  /// No description provided for @inventoryMovementsFilterPageSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Page size'**
+  String get inventoryMovementsFilterPageSize;
+
+  /// No description provided for @inventoryMovementOccurredAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Occurred'**
+  String get inventoryMovementOccurredAt;
+
+  /// No description provided for @inventoryMovementType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get inventoryMovementType;
+
+  /// No description provided for @inventoryMovementProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Product'**
+  String get inventoryMovementProduct;
+
+  /// No description provided for @inventoryMovementWarehouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse'**
+  String get inventoryMovementWarehouse;
+
+  /// No description provided for @inventoryMovementQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get inventoryMovementQuantity;
+
+  /// No description provided for @inventoryMovementReference.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference'**
+  String get inventoryMovementReference;
+
+  /// No description provided for @inventoryMovementCreatedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Created by'**
+  String get inventoryMovementCreatedBy;
+
+  /// No description provided for @inventoryMovementNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get inventoryMovementNotes;
+
+  /// No description provided for @inventoryMovementUnitCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit cost'**
+  String get inventoryMovementUnitCost;
+
+  /// No description provided for @inventoryMovementNotesNone.
+  ///
+  /// In en, this message translates to:
+  /// **'—'**
+  String get inventoryMovementNotesNone;
+
+  /// No description provided for @inventoryMovementReferenceNone.
+  ///
+  /// In en, this message translates to:
+  /// **'—'**
+  String get inventoryMovementReferenceNone;
+
+  /// No description provided for @inventoryMovementCreatedByNotRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Not recorded'**
+  String get inventoryMovementCreatedByNotRecorded;
+
+  /// No description provided for @inventoryMovementReferenceAdjustment.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjustment'**
+  String get inventoryMovementReferenceAdjustment;
+
+  /// No description provided for @inventoryMovementReferenceTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer'**
+  String get inventoryMovementReferenceTransfer;
+
+  /// No description provided for @inventoryMovementReferenceProductUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Product unit'**
+  String get inventoryMovementReferenceProductUnit;
+
+  /// No description provided for @inventoryMovementTypePurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase'**
+  String get inventoryMovementTypePurchase;
+
+  /// No description provided for @inventoryMovementTypeSale.
+  ///
+  /// In en, this message translates to:
+  /// **'Sale'**
+  String get inventoryMovementTypeSale;
+
+  /// No description provided for @inventoryMovementTypeRentalOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Rental out'**
+  String get inventoryMovementTypeRentalOut;
+
+  /// No description provided for @inventoryMovementTypeRentalReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'Rental return'**
+  String get inventoryMovementTypeRentalReturn;
+
+  /// No description provided for @inventoryMovementTypeRefill.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill'**
+  String get inventoryMovementTypeRefill;
+
+  /// No description provided for @inventoryMovementTypeTransferOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer out'**
+  String get inventoryMovementTypeTransferOut;
+
+  /// No description provided for @inventoryMovementTypeTransferIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer in'**
+  String get inventoryMovementTypeTransferIn;
+
+  /// No description provided for @inventoryMovementTypeAdjustmentIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjustment in'**
+  String get inventoryMovementTypeAdjustmentIn;
+
+  /// No description provided for @inventoryMovementTypeAdjustmentOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjustment out'**
+  String get inventoryMovementTypeAdjustmentOut;
+
+  /// No description provided for @inventoryMovementTypeSaleReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sale return'**
+  String get inventoryMovementTypeSaleReturn;
+
+  /// No description provided for @inventoryMovementTypePurchaseReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase return'**
+  String get inventoryMovementTypePurchaseReturn;
+
+  /// No description provided for @inventoryMovementTypeMaintenanceIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintenance in'**
+  String get inventoryMovementTypeMaintenanceIn;
+
+  /// No description provided for @inventoryMovementTypeMaintenanceOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintenance out'**
+  String get inventoryMovementTypeMaintenanceOut;
+
   /// No description provided for @productsSearchHint.
   ///
   /// In en, this message translates to:

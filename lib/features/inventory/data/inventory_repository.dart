@@ -8,6 +8,7 @@ import '../../../domain/validators/inventory_adjustment_validator.dart';
 import '../domain/inventory_adjustment_form_state.dart';
 import '../domain/inventory_balance.dart';
 import '../domain/inventory_movement.dart';
+import '../domain/movement_type.dart';
 
 part 'inventory_repository.g.dart';
 
@@ -65,19 +66,37 @@ class InventoryRepository {
   }
 
   Future<List<InventoryMovement>> fetchInventoryMovements({
-    String? productId,
     String? warehouseId,
+    MovementType? movementType,
+    DateTime? occurredFrom,
+    DateTime? occurredBefore,
+    Set<String>? productIds,
     int limit = _defaultMovementLimit,
   }) async {
     try {
       var query = _requireClient
           .from('inventory_movements')
           .select(_movementColumns);
-      if (productId != null) {
-        query = query.eq('product_id', productId);
-      }
       if (warehouseId != null) {
         query = query.eq('warehouse_id', warehouseId);
+      }
+      if (movementType != null) {
+        query = query.eq('movement_type', movementType.toDb());
+      }
+      if (occurredFrom != null) {
+        query = query.gte(
+          'occurred_at',
+          occurredFrom.toUtc().toIso8601String(),
+        );
+      }
+      if (occurredBefore != null) {
+        query = query.lt(
+          'occurred_at',
+          occurredBefore.toUtc().toIso8601String(),
+        );
+      }
+      if (productIds != null && productIds.isNotEmpty) {
+        query = query.inFilter('product_id', productIds.toList());
       }
       final rows = await query
           .order('occurred_at', ascending: false)

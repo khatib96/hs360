@@ -203,6 +203,36 @@ class ProductRepository {
     }
   }
 
+  /// Resolves product IDs for inventory movements search (no [is_active] filter).
+  Future<Set<String>> searchProductIdsForInventoryMovements(
+    AppSession session,
+    String search,
+  ) async {
+    if (!canViewProductsList(session)) return {};
+
+    final trimmed = search.trim();
+    if (trimmed.isEmpty) return {};
+
+    try {
+      final table = productReadTableForSession(session);
+      final pattern = '%$trimmed%';
+      final rows = await _requireClient
+          .from(table)
+          .select('id')
+          .or(
+            'sku.ilike.$pattern,name_ar.ilike.$pattern,'
+            'name_en.ilike.$pattern',
+          );
+
+      return {
+        for (final row in rows as List)
+          (row as Map<String, dynamic>)['id'] as String,
+      };
+    } catch (e, st) {
+      throw ProductsException.fromSupabase(e, st);
+    }
+  }
+
   Future<Map<String, ProductStockLabel>> fetchProductsByIdsForStockLabels(
     AppSession session,
     Set<String> productIds,

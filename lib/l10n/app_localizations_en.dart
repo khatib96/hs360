@@ -322,6 +322,134 @@ class AppLocalizationsEn extends AppLocalizations {
   String get inventoryTransfers => 'Stock Transfers';
 
   @override
+  String get inventoryMovementsEmpty =>
+      'No inventory movements match your filters.';
+
+  @override
+  String get inventoryMovementsError =>
+      'Could not load inventory movements. Try again.';
+
+  @override
+  String get inventoryMovementsProductLabelsFailed =>
+      'Product names could not be loaded. Movements are shown with limited labels.';
+
+  @override
+  String get inventoryMovementsWarehouseLabelsFailed =>
+      'Warehouse names could not be loaded. Movements are shown with limited labels.';
+
+  @override
+  String get inventoryMovementsSearchHint => 'Search product name or SKU';
+
+  @override
+  String get inventoryMovementsSearchRequiresProducts =>
+      'Product name or SKU search requires products.view permission. You can still search by movement IDs and notes.';
+
+  @override
+  String get inventoryMovementsFilterWarehouse => 'Warehouse';
+
+  @override
+  String get inventoryMovementsFilterWarehouseAll => 'All warehouses';
+
+  @override
+  String get inventoryMovementsFilterMovementType => 'Movement type';
+
+  @override
+  String get inventoryMovementsFilterMovementTypeAll => 'All types';
+
+  @override
+  String get inventoryMovementsFilterDateFrom => 'From date';
+
+  @override
+  String get inventoryMovementsFilterDateTo => 'To date';
+
+  @override
+  String get inventoryMovementsFilterPageSize => 'Page size';
+
+  @override
+  String get inventoryMovementOccurredAt => 'Occurred';
+
+  @override
+  String get inventoryMovementType => 'Type';
+
+  @override
+  String get inventoryMovementProduct => 'Product';
+
+  @override
+  String get inventoryMovementWarehouse => 'Warehouse';
+
+  @override
+  String get inventoryMovementQuantity => 'Quantity';
+
+  @override
+  String get inventoryMovementReference => 'Reference';
+
+  @override
+  String get inventoryMovementCreatedBy => 'Created by';
+
+  @override
+  String get inventoryMovementNotes => 'Notes';
+
+  @override
+  String get inventoryMovementUnitCost => 'Unit cost';
+
+  @override
+  String get inventoryMovementNotesNone => '—';
+
+  @override
+  String get inventoryMovementReferenceNone => '—';
+
+  @override
+  String get inventoryMovementCreatedByNotRecorded => 'Not recorded';
+
+  @override
+  String get inventoryMovementReferenceAdjustment => 'Adjustment';
+
+  @override
+  String get inventoryMovementReferenceTransfer => 'Transfer';
+
+  @override
+  String get inventoryMovementReferenceProductUnit => 'Product unit';
+
+  @override
+  String get inventoryMovementTypePurchase => 'Purchase';
+
+  @override
+  String get inventoryMovementTypeSale => 'Sale';
+
+  @override
+  String get inventoryMovementTypeRentalOut => 'Rental out';
+
+  @override
+  String get inventoryMovementTypeRentalReturn => 'Rental return';
+
+  @override
+  String get inventoryMovementTypeRefill => 'Refill';
+
+  @override
+  String get inventoryMovementTypeTransferOut => 'Transfer out';
+
+  @override
+  String get inventoryMovementTypeTransferIn => 'Transfer in';
+
+  @override
+  String get inventoryMovementTypeAdjustmentIn => 'Adjustment in';
+
+  @override
+  String get inventoryMovementTypeAdjustmentOut => 'Adjustment out';
+
+  @override
+  String get inventoryMovementTypeSaleReturn => 'Sale return';
+
+  @override
+  String get inventoryMovementTypePurchaseReturn => 'Purchase return';
+
+  @override
+  String get inventoryMovementTypeMaintenanceIn => 'Maintenance in';
+
+  @override
+  String get inventoryMovementTypeMaintenanceOut => 'Maintenance out';
+
+  @override
   String get productsSearchHint => 'Search SKU, name, or barcode';
 
   @override

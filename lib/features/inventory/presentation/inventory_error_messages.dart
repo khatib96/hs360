@@ -21,6 +21,14 @@ String inventoryErrorMessage(AppLocalizations l10n, String code) {
   };
 }
 
+String inventoryMovementsErrorMessage(AppLocalizations l10n, String code) {
+  return switch (code) {
+    InventoryException.permissionDenied => l10n.productErrorPermissionDenied,
+    InventoryException.validationFailed => l10n.productValidationFailed,
+    _ => l10n.inventoryMovementsError,
+  };
+}
+
 String inventoryHydrationWarningMessage(AppLocalizations l10n, String code) {
   return switch (code) {
     ProductsException.permissionDenied => l10n.productErrorPermissionDenied,

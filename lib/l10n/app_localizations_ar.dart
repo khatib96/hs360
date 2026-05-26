@@ -322,6 +322,133 @@ class AppLocalizationsAr extends AppLocalizations {
   String get inventoryTransfers => 'تحويلات المخزون';
 
   @override
+  String get inventoryMovementsEmpty => 'لا توجد حركات مخزون مطابقة للفلاتر.';
+
+  @override
+  String get inventoryMovementsError =>
+      'تعذر تحميل حركات المخزون. حاول مرة أخرى.';
+
+  @override
+  String get inventoryMovementsProductLabelsFailed =>
+      'تعذر تحميل أسماء المنتجات. تُعرض الحركات بتسميات محدودة.';
+
+  @override
+  String get inventoryMovementsWarehouseLabelsFailed =>
+      'تعذر تحميل أسماء المستودعات. تُعرض الحركات بتسميات محدودة.';
+
+  @override
+  String get inventoryMovementsSearchHint => 'بحث باسم المنتج أو الرمز';
+
+  @override
+  String get inventoryMovementsSearchRequiresProducts =>
+      'بحث الاسم أو الرمز يتطلب صلاحية عرض المنتجات. يمكنك البحث بمعرّفات الحركة والملاحظات.';
+
+  @override
+  String get inventoryMovementsFilterWarehouse => 'المستودع';
+
+  @override
+  String get inventoryMovementsFilterWarehouseAll => 'كل المستودعات';
+
+  @override
+  String get inventoryMovementsFilterMovementType => 'نوع الحركة';
+
+  @override
+  String get inventoryMovementsFilterMovementTypeAll => 'كل الأنواع';
+
+  @override
+  String get inventoryMovementsFilterDateFrom => 'من تاريخ';
+
+  @override
+  String get inventoryMovementsFilterDateTo => 'إلى تاريخ';
+
+  @override
+  String get inventoryMovementsFilterPageSize => 'حجم الصفحة';
+
+  @override
+  String get inventoryMovementOccurredAt => 'وقت الحركة';
+
+  @override
+  String get inventoryMovementType => 'النوع';
+
+  @override
+  String get inventoryMovementProduct => 'المنتج';
+
+  @override
+  String get inventoryMovementWarehouse => 'المستودع';
+
+  @override
+  String get inventoryMovementQuantity => 'الكمية';
+
+  @override
+  String get inventoryMovementReference => 'المرجع';
+
+  @override
+  String get inventoryMovementCreatedBy => 'معرّف المنشئ';
+
+  @override
+  String get inventoryMovementNotes => 'ملاحظات';
+
+  @override
+  String get inventoryMovementUnitCost => 'تكلفة الوحدة';
+
+  @override
+  String get inventoryMovementNotesNone => '—';
+
+  @override
+  String get inventoryMovementReferenceNone => '—';
+
+  @override
+  String get inventoryMovementCreatedByNotRecorded => 'غير مسجل';
+
+  @override
+  String get inventoryMovementReferenceAdjustment => 'تعديل مخزون';
+
+  @override
+  String get inventoryMovementReferenceTransfer => 'تحويل';
+
+  @override
+  String get inventoryMovementReferenceProductUnit => 'وحدة منتج';
+
+  @override
+  String get inventoryMovementTypePurchase => 'شراء';
+
+  @override
+  String get inventoryMovementTypeSale => 'بيع';
+
+  @override
+  String get inventoryMovementTypeRentalOut => 'إيجار خارج';
+
+  @override
+  String get inventoryMovementTypeRentalReturn => 'إرجاع إيجار';
+
+  @override
+  String get inventoryMovementTypeRefill => 'تعبئة';
+
+  @override
+  String get inventoryMovementTypeTransferOut => 'تحويل خارج';
+
+  @override
+  String get inventoryMovementTypeTransferIn => 'تحويل داخل';
+
+  @override
+  String get inventoryMovementTypeAdjustmentIn => 'تعديل داخل';
+
+  @override
+  String get inventoryMovementTypeAdjustmentOut => 'تعديل خارج';
+
+  @override
+  String get inventoryMovementTypeSaleReturn => 'مرتجع بيع';
+
+  @override
+  String get inventoryMovementTypePurchaseReturn => 'مرتجع شراء';
+
+  @override
+  String get inventoryMovementTypeMaintenanceIn => 'صيانة داخل';
+
+  @override
+  String get inventoryMovementTypeMaintenanceOut => 'صيانة خارج';
+
+  @override
   String get productsSearchHint => 'بحث بالرمز أو الاسم أو الباركود';
 
   @override
