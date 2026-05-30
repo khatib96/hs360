@@ -4,7 +4,7 @@ import '../domain/warehouse_type.dart';
 
 String localizedWarehouseName(Warehouse warehouse, String languageCode) {
   if (languageCode.toLowerCase() == 'ar') {
-    return warehouse.nameAr;
+    return _localizedText(warehouse.nameAr, warehouse.nameEn);
   }
   return warehouse.nameEn;
 }
@@ -14,7 +14,7 @@ String localizedEmployeeName(
   String languageCode,
 ) {
   if (languageCode.toLowerCase() == 'ar') {
-    return employee.nameAr;
+    return _localizedText(employee.nameAr, employee.nameEn);
   }
   return employee.nameEn.isNotEmpty ? employee.nameEn : employee.nameAr;
 }
@@ -74,4 +74,12 @@ String? employeeLabelForAgentId({
     return '$label ($inactiveHint)';
   }
   return label;
+}
+
+String _localizedText(String preferred, String fallback) {
+  final value = preferred.trim();
+  if (value.isEmpty || value.contains('?')) {
+    return fallback.isNotEmpty ? fallback : preferred;
+  }
+  return preferred;
 }

@@ -53,7 +53,7 @@ class ProductTable extends StatelessWidget {
   }
 }
 
-class _DesktopProductTable extends StatelessWidget {
+class _DesktopProductTable extends StatefulWidget {
   const _DesktopProductTable({
     required this.products,
     required this.stockByProductId,
@@ -71,12 +71,30 @@ class _DesktopProductTable extends StatelessWidget {
   final String languageCode;
 
   @override
+  State<_DesktopProductTable> createState() => _DesktopProductTableState();
+}
+
+class _DesktopProductTableState extends State<_DesktopProductTable> {
+  final _verticalController = ScrollController();
+  final _horizontalController = ScrollController();
+
+  @override
+  void dispose() {
+    _verticalController.dispose();
+    _horizontalController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
     return Scrollbar(
+      controller: _verticalController,
       child: SingleChildScrollView(
+        controller: _verticalController,
         child: SingleChildScrollView(
+          controller: _horizontalController,
           scrollDirection: Axis.horizontal,
           child: DataTable(
             showCheckboxColumn: false,
@@ -91,19 +109,21 @@ class _DesktopProductTable extends StatelessWidget {
               DataColumn(label: Text(l10n.productColumnSalePrice)),
               DataColumn(label: Text(l10n.productColumnStock)),
               DataColumn(label: Text(l10n.productColumnActive)),
-              if (canViewCosts) ...[
+              if (widget.canViewCosts) ...[
                 DataColumn(label: Text(l10n.productColumnAvgCost)),
                 DataColumn(label: Text(l10n.productColumnLastPurchaseCost)),
                 DataColumn(label: Text(l10n.productColumnMinSalePrice)),
               ],
             ],
-            rows: products.map((product) {
+            rows: widget.products.map((product) {
               return DataRow(
                 onSelectChanged: (_) => context.go('/products/${product.id}'),
                 cells: [
                   DataCell(Text(product.sku)),
-                  DataCell(Text(localizedProductName(product, languageCode))),
-                  DataCell(Text(groupLabelFor(product.groupId))),
+                  DataCell(
+                    Text(localizedProductName(product, widget.languageCode)),
+                  ),
+                  DataCell(Text(widget.groupLabelFor(product.groupId))),
                   DataCell(ProductTypeBadge(
                     type: product.productType,
                     canBeSold: product.canBeSold,
@@ -112,13 +132,13 @@ class _DesktopProductTable extends StatelessWidget {
                   DataCell(Text(_formatMoney(product.salePrice))),
                   DataCell(
                     ProductStockBadge(
-                      canViewStock: canViewStock,
-                      summary: stockByProductId[product.id],
+                      canViewStock: widget.canViewStock,
+                      summary: widget.stockByProductId[product.id],
                       reorderPoint: product.reorderPoint,
                     ),
                   ),
                   DataCell(ProductActiveBadge(isActive: product.isActive)),
-                  if (canViewCosts) ...[
+                  if (widget.canViewCosts) ...[
                     DataCell(_optionalMoney(product.avgCost)),
                     DataCell(_optionalMoney(product.lastPurchaseCost)),
                     DataCell(_optionalMoney(product.minSalePrice)),
@@ -133,7 +153,7 @@ class _DesktopProductTable extends StatelessWidget {
   }
 
   String _formatMoney(Decimal value) {
-    return _formatMoneyForLanguage(value, languageCode);
+    return _formatMoneyForLanguage(value, widget.languageCode);
   }
 
   Widget _optionalMoney(Decimal? value) {

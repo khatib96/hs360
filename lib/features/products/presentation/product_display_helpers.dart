@@ -6,7 +6,7 @@ import '../domain/unit_of_measure.dart';
 /// Locale-aware product display name (pure — no providers).
 String localizedProductName(Product product, String languageCode) {
   if (languageCode.toLowerCase() == 'ar') {
-    return product.nameAr;
+    return _localizedText(product.nameAr, product.nameEn);
   }
   return product.nameEn;
 }
@@ -14,7 +14,7 @@ String localizedProductName(Product product, String languageCode) {
 /// Locale-aware group display name (pure — no providers).
 String localizedGroupName(ProductGroup group, String languageCode) {
   if (languageCode.toLowerCase() == 'ar') {
-    return group.nameAr;
+    return _localizedText(group.nameAr, group.nameEn);
   }
   return group.nameEn;
 }
@@ -32,4 +32,12 @@ String localizedProductTypeLabel(
 
 String unitOfMeasureLabel(UnitOfMeasure unit) {
   return unit.dbValue;
+}
+
+String _localizedText(String preferred, String fallback) {
+  final value = preferred.trim();
+  if (value.isEmpty || value.contains('?')) {
+    return fallback;
+  }
+  return preferred;
 }

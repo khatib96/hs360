@@ -19,7 +19,12 @@ import 'widgets/inventory_balance_table.dart';
 import 'widgets/inventory_balances_filters_bar.dart';
 
 class InventoryScreen extends ConsumerWidget {
-  const InventoryScreen({super.key});
+  const InventoryScreen({
+    this.initialWarehouseId,
+    super.key,
+  });
+
+  final String? initialWarehouseId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -36,6 +41,12 @@ class InventoryScreen extends ConsumerWidget {
         session != null && canCreateInventoryMovements(session);
 
     final filtered = state.filteredRows;
+    final initialFilter = initialWarehouseId;
+    if (initialFilter != null &&
+        initialFilter.isNotEmpty &&
+        state.warehouseId != initialFilter) {
+      Future.microtask(() => controller.setWarehouseId(initialFilter));
+    }
 
     Widget body;
     if (state.isLoading && state.allRows.isEmpty) {

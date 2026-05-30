@@ -263,61 +263,68 @@ Login screen works. After login, user is routed to the right place based on role
 
 ## Phase 3 — Products & Inventory (≈ 2 weeks)
 
+**Status:** [x] Complete as of 2026-05-30. Closed through Phase 3 M8 verification.
+
 ### Goal
 Admin can manage products, units, and warehouses. Stock balances are visible.
 
 ### Tasks
 
 **3.1 Models & Repositories**
-- `Product` model, `ProductGroup` model, `ProductUnit` model
-- `ProductRepository`, `ProductGroupRepository`, `ProductUnitRepository`
-- All using Riverpod-generated providers
+- [x] `Product` model, `ProductGroup` model, `ProductUnit` model
+- [x] `ProductRepository`, `ProductGroupRepository`, `ProductUnitRepository`
+- [x] All using Riverpod-generated providers
 
 **3.2 Product List Screen (Desktop)**
-- Tab bar: by group
-- Search field
-- Filter chips: type (sale/asset_rental/consumable_rental), active/inactive
-- Data table with: SKU | Name | Group | Type | Sale Price | Cost (requires cost field permission) | Stock
-- Click row → product detail
+- [x] Tab bar/group panel: by group
+- [x] Search field
+- [x] Filter chips: sale/rental modes, stock, active/inactive
+- [x] Data table with SKU, Name, Group, Type, Sale Price, permission-gated cost fields, Stock
+- [x] Click row -> product detail
 
 **3.3 Product Detail Screen (Desktop)**
-- Form with all product fields
-- Image upload
-- Pricing block: sale_price, cost fields, min prices. No product-level rental price; contract monthly value is entered on the contract.
-- Cost block (requires cost field permissions): avg_cost, last_purchase_cost
-- Stock block: balances per warehouse
-- For asset_rental: list of `product_units` with statuses
+- [x] Form with product fields
+- [x] Image upload
+- [x] Pricing block: sale_price, cost fields, min prices. No product-level rental price; contract monthly value is entered on the contract.
+- [x] Cost block (requires cost field permissions): avg_cost, last_purchase_cost
+- [x] Stock block: balances per warehouse
+- [x] For serialized/rental assets: list of `product_units` with statuses
 
 **3.4 Add Product Wizard**
-- Step 1: name + group + type
-- Step 2: unit of measure + pricing
-- Step 3: rental specifics (if rental type)
-- Step 4: serial-tracked? barcode? maintenance-trackable?
-- Save → fires INSERT
+- [x] Step 1: name + group + sale/rental mode
+- [x] Step 2: unit of measure + pricing
+- [x] Step 3: rental specifics (if rental type)
+- [x] Step 4: serial-tracked? barcode? maintenance-trackable?
+- [x] Save -> fires INSERT through repository
 
 **3.5 Product Units Management**
-- Add unit: serial number + barcode + initial cost
-- Bulk add: paste a CSV of serial numbers
-- Each unit shows its history (which contracts it's been on)
+- [x] Add unit: serial number + barcode + initial cost
+- [x] Bulk add: paste serial numbers
+- [x] Units tab shows current unit records/statuses
+- [ ] Contract history per unit - deferred until contracts/rentals phase
 
 **3.6 Warehouses Screen**
-- List + add warehouse
-- For van warehouses, link to an employee
+- [x] List + add/edit/deactivate warehouse
+- [x] For van warehouses, link to an employee
+- [x] Open inventory balances filtered by warehouse
 
 **3.7 Inventory Movements Log**
-- Filterable table of all movements
-- Adjustments: manual stock-in / stock-out with reason
+- [x] Filterable table of movements
+- [x] Adjustments: manual stock-in / stock-out with reason
+- [x] Internal warehouse transfers with paired movements
 
 ### Deliverables
-- Admin can fully manage products
-- Stock balances update correctly
-- Field agents see `products_safe` view (no costs)
+- [x] Admin can fully manage products
+- [x] Stock balances update correctly
+- [x] Field/safe users see `products_safe` view (no costs)
 
 ### Acceptance
-- Create a product → it appears in list
-- Add 10 product units → they appear in unit list
-- Manual stock-in → balance increases
-- Sample purchase invoice → balance increases + WAC updates
+- [x] Create a product -> it appears in list
+- [x] Add product units -> they appear in unit list
+- [x] Manual stock-in -> balance increases
+- [x] Manual stock-out -> balance decreases
+- [x] Transfer between warehouses -> source/destination balances update
+- [ ] Sample purchase invoice -> deferred to Phase 5 purchase invoice RPC
 
 ---
 

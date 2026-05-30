@@ -76,7 +76,9 @@ class ProductListScreen extends ConsumerWidget {
         message: _errorMessage(l10n, listState.errorCode),
         onRetry: controller.refresh,
       );
-    } else if (!listState.isLoading && listState.products.isEmpty) {
+    } else if (!listState.isLoading &&
+        listState.products.isEmpty &&
+        !listState.filters.hasActiveFilters) {
       body = ProductListEmptyState(canCreateProduct: showNewProductAction);
     } else {
       body = _ProductListBody(
@@ -277,14 +279,19 @@ class _ProductListBody extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           Expanded(
-            child: ProductTable(
-              products: listState.products,
-              stockByProductId: listState.stockByProductId,
-              groupLabelFor: groupLabelFor,
-              canViewCosts: canViewCosts,
-              canViewStock: canViewStock,
-              languageCode: languageCode,
-            ),
+            child: listState.products.isEmpty
+                ? ProductListEmptyState(
+                    canCreateProduct: false,
+                    onClearFilters: controller.clearFilters,
+                  )
+                : ProductTable(
+                    products: listState.products,
+                    stockByProductId: listState.stockByProductId,
+                    groupLabelFor: groupLabelFor,
+                    canViewCosts: canViewCosts,
+                    canViewStock: canViewStock,
+                    languageCode: languageCode,
+                  ),
           ),
         ],
       ),

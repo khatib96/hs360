@@ -7,7 +7,7 @@ import '../../domain/product_unit_edit_policy.dart';
 import '../product_unit_display_helpers.dart';
 import 'edit_product_unit_dialog.dart';
 
-class ProductUnitTable extends StatelessWidget {
+class ProductUnitTable extends StatefulWidget {
   const ProductUnitTable({
     required this.units,
     required this.languageCode,
@@ -29,66 +29,79 @@ class ProductUnitTable extends StatelessWidget {
   ) onEdit;
 
   @override
+  State<ProductUnitTable> createState() => _ProductUnitTableState();
+}
+
+class _ProductUnitTableState extends State<ProductUnitTable> {
+  final _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (units.isEmpty) {
-      return Center(child: Text(l10n.productUnitsEmpty));
+    if (widget.units.isEmpty) {
+      return Center(child: Text(widget.l10n.productUnitsEmpty));
     }
 
     return Scrollbar(
+      controller: _scrollController,
       child: SingleChildScrollView(
+        controller: _scrollController,
         scrollDirection: Axis.horizontal,
         child: DataTable(
           columns: [
-            DataColumn(label: Text(l10n.productUnitFieldSerial)),
-            DataColumn(label: Text(l10n.productUnitFieldBarcode)),
-            DataColumn(label: Text(l10n.productUnitFieldStatus)),
-            DataColumn(label: Text(l10n.productUnitFieldWarehouse)),
-            if (canViewCosts)
-              DataColumn(label: Text(l10n.productUnitFieldPurchaseCost)),
-            DataColumn(label: Text(l10n.productUnitFieldHealth)),
-            DataColumn(label: Text(l10n.productUnitFieldAcquired)),
-            DataColumn(label: Text(l10n.productUnitFieldNotes)),
-            if (canEdit) const DataColumn(label: Text('')),
+            DataColumn(label: Text(widget.l10n.productUnitFieldSerial)),
+            DataColumn(label: Text(widget.l10n.productUnitFieldBarcode)),
+            DataColumn(label: Text(widget.l10n.productUnitFieldStatus)),
+            DataColumn(label: Text(widget.l10n.productUnitFieldWarehouse)),
+            if (widget.canViewCosts)
+              DataColumn(label: Text(widget.l10n.productUnitFieldPurchaseCost)),
+            DataColumn(label: Text(widget.l10n.productUnitFieldHealth)),
+            DataColumn(label: Text(widget.l10n.productUnitFieldAcquired)),
+            DataColumn(label: Text(widget.l10n.productUnitFieldNotes)),
+            if (widget.canEdit) const DataColumn(label: Text('')),
           ],
-          rows: units.map((unit) => _row(context, unit)).toList(),
+          rows: widget.units.map((unit) => _row(context, unit)).toList(),
         ),
       ),
     );
   }
 
   DataRow _row(BuildContext context, ProductUnit unit) {
-    final editable = canEdit && isUnitSafeEditable(unit.status);
+    final editable = widget.canEdit && isUnitSafeEditable(unit.status);
     return DataRow(
       cells: [
         DataCell(Text(unit.serialNumber)),
-        DataCell(Text(unit.barcode ?? '—')),
-        DataCell(Text(unitStatusLabel(l10n, unit.status))),
-        DataCell(Text(productUnitWarehouseLabel(unit, languageCode))),
-        if (canViewCosts)
+        DataCell(Text(unit.barcode ?? '-')),
+        DataCell(Text(unitStatusLabel(widget.l10n, unit.status))),
+        DataCell(Text(productUnitWarehouseLabel(unit, widget.languageCode))),
+        if (widget.canViewCosts)
           DataCell(
             Text(
-              unit.purchaseCost != null
-                  ? formatMoney(unit.purchaseCost!)
-                  : '—',
+              unit.purchaseCost != null ? formatMoney(unit.purchaseCost!) : '-',
             ),
           ),
-        DataCell(Text(unitHealthLabel(l10n, unit.healthStatus))),
+        DataCell(Text(unitHealthLabel(widget.l10n, unit.healthStatus))),
         DataCell(Text(_formatDate(unit.acquiredAt))),
-        DataCell(Text(unit.notes ?? '—')),
-        if (canEdit)
+        DataCell(Text(unit.notes ?? '-')),
+        if (widget.canEdit)
           DataCell(
             editable
                 ? IconButton(
                     icon: const Icon(Icons.edit_outlined),
-                    tooltip: l10n.productUnitEdit,
+                    tooltip: widget.l10n.productUnitEdit,
                     onPressed: () async {
                       final result = await showEditProductUnitDialog(
                         context: context,
                         unit: unit,
-                        l10n: l10n,
+                        l10n: widget.l10n,
                       );
                       if (result != null && context.mounted) {
-                        await onEdit(unit.id, result);
+                        await widget.onEdit(unit.id, result);
                       }
                     },
                   )

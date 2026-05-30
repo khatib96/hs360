@@ -1,6 +1,6 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-05-30 (Phase 3 M7.5 cleanup/performance pass complete).
+> Updated 2026-05-30 (Phase 3 M8 verification complete; Phase 3 ready to raise).
 > Keep this file short. It is for continuity between AI tools, not full project documentation.
 
 ---
@@ -19,9 +19,23 @@
 - **Phase 3 M7D complete** - manual stock-in/out dialog on `/inventory`; migration `043` cost gate on `adjustment_in`.
 - **Phase 3 M7E complete** - inventory transfers UI/RPC and SQL verification fixtures.
 - **Phase 3 M7.5 complete** - inventory performance seed, adjustment dialog cleanup/tests, low-stock semantics hardened.
+- **Phase 3 M8 complete** - verification/close pass, UI blocker fixes, Arabic fallback for bad seed text, warehouse-to-inventory navigation.
 - Migrations `001`-`044` apply cleanly when applied directly; `npx --yes supabase db reset` is currently blocked by a Supabase CLI 2.102 internal service migration duplicate before project migrations.
 - **Canonical inventory rules:** [`docs/PHASE_3_M1_5_INVENTORY_RULES.md`](docs/PHASE_3_M1_5_INVENTORY_RULES.md)
-- **Next:** Phase 3 M8 - Verification & Phase Close.
+- **Next:** Raise Phase 3 to GitHub, then start Phase 4 / M8-equivalent next scope as planned.
+
+---
+
+## Phase 3 M8 - Verification & Close
+
+- Fixed product table scrollbar controller ownership so the desktop `Scrollbar` always attaches to the scroll view it controls.
+- Fixed filtered-empty product state: group/filter selection no longer replaces the full products page with a dead-end empty state; user can clear filters.
+- Added Arabic display fallback for product, warehouse, and employee names when local seed data contains `?` placeholders from terminal encoding.
+- Added warehouse row stock action that opens inventory balances filtered by `warehouseId`; inventory route accepts the query parameter.
+- Cleaned local optional M7.5 performance seed rows from the dev database after verification; seed remains optional and should not be present in normal UI unless manually run.
+- Verification passed: `flutter pub get`, `flutter pub run build_runner build --delete-conflicting-outputs --verbose`, `flutter analyze`, `flutter test` (220 tests), `flutter test integration_test`, `phase_1d_rls.sql`, `phase_3_products_inventory.sql`, and `git diff --check`.
+- `npx --yes supabase db reset` was intentionally not re-run in this pass to avoid wiping local test data; prior reset failure is a Supabase CLI 2.102 internal duplicate service migration before project migrations, not a project migration failure.
+- Quality scan: no widget-level Supabase access found, no money/quantity `double` usage found, no critical TODO/FIXME blocker found. Several files are now refactor candidates after Phase 3, but not M8 blockers.
 
 ---
 

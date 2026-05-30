@@ -7,10 +7,12 @@ import '../../../../core/routing/app_routes.dart';
 class ProductListEmptyState extends StatelessWidget {
   const ProductListEmptyState({
     required this.canCreateProduct,
+    this.onClearFilters,
     super.key,
   });
 
   final bool canCreateProduct;
+  final VoidCallback? onClearFilters;
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +42,14 @@ class ProductListEmptyState extends StatelessWidget {
                 onPressed: () => context.go(AppRoutes.productsNew),
                 icon: const Icon(Icons.add),
                 label: Text(l10n.productsNew),
+              ),
+            ],
+            if (onClearFilters != null) ...[
+              const SizedBox(height: 24),
+              OutlinedButton.icon(
+                onPressed: onClearFilters,
+                icon: const Icon(Icons.filter_alt_off),
+                label: Text(l10n.productsFilterClear),
               ),
             ],
           ],

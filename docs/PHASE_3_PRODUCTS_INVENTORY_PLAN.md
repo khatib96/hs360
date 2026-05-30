@@ -51,6 +51,26 @@
 | M7.5 | Performance & Stock Optimization | فهارس، seed ضغط، ومراجعة أداء المخزون |
 | M8 | Verification & Phase Close | إغلاق المرحلة باختبارات تقنية ومحاسبية |
 
+### Completion Status - 2026-05-30
+
+- [x] M0 - Phase 3 Baseline
+- [x] M0.5 - Safety Snapshot & Rollback Plan
+- [x] M1 - Database Gap Review & Inventory Helpers
+- [x] M1.5 - Inventory Business Rules & Engine Boundaries
+- [x] M2 - Domain Models & Repositories
+- [x] M3 - Routes, Permissions & Navigation
+- [x] M4 - Product Groups & Product List
+- [x] M5 - Product Detail, Edit & Wizard
+- [x] M6 - Product Units Management
+- [x] M6.5 - Product Sale/Rental Modes
+- [x] M7A - Warehouses
+- [x] M7B - Stock Balances
+- [x] M7C - Movements Log
+- [x] M7D - Manual Adjustments
+- [x] M7E - Transfers
+- [x] M7.5 - Performance & Stock Optimization
+- [x] M8 - Verification & Phase Close
+
 ---
 
 ## مراجعة الوضع الحالي
@@ -1190,38 +1210,50 @@ If practical:
 flutter test integration_test
 ```
 
+### Verification Result - 2026-05-30
+
+- [x] `flutter pub get`
+- [x] `flutter pub run build_runner build --delete-conflicting-outputs --verbose`
+- [x] `flutter analyze`
+- [x] `flutter test` - 220 tests passed
+- [x] `flutter test integration_test`
+- [x] `phase_1d_rls.sql` verification passed
+- [x] `phase_3_products_inventory.sql` verification passed
+- [x] `git diff --check`
+- [ ] `npx --yes supabase db reset` - intentionally not re-run for M8 close because it wipes local data and is currently blocked by Supabase CLI 2.102 internal duplicate service migration before project migrations.
+
 ### Manual Acceptance Matrix
 
-| Case | Expected |
-|---|---|
-| Manager opens `/products` | list visible with cost fields |
-| Products user opens `/products` | list visible without cost fields |
-| Products user opens `/inventory` without permission | redirected or blocked |
-| Zero user opens `/products` | blocked |
-| Field user logs in | still goes to `/field/today` |
-| Create product | appears in list |
-| Add serialized units | units appear and stock summary updates |
-| Manual stock-in | balance increases and movement appears |
-| Manual stock-out | balance decreases and movement appears |
-| Stock-out above balance | localized business error |
-| Transfer main -> van | source decreases, destination increases, two movements appear |
-| Transfer above balance | localized business error |
-| Switch Arabic/English | layout remains readable |
+| Done | Case | Expected |
+|---|---|---|
+| [x] | Manager opens `/products` | list visible with cost fields |
+| [x] | Products user opens `/products` | list visible without cost fields |
+| [x] | Products user opens `/inventory` without permission | redirected or blocked |
+| [x] | Zero user opens `/products` | blocked |
+| [x] | Field user logs in | still goes to `/field/today` |
+| [x] | Create product | appears in list |
+| [x] | Add serialized units | units appear and stock summary updates |
+| [x] | Manual stock-in | balance increases and movement appears |
+| [x] | Manual stock-out | balance decreases and movement appears |
+| [x] | Stock-out above balance | localized business error |
+| [x] | Transfer main -> van | source decreases, destination increases, two movements appear |
+| [x] | Transfer above balance | localized business error |
+| [x] | Switch Arabic/English | layout remains readable; bad local seed Arabic falls back to English instead of `?` placeholders |
 
 ### Quality Checklist
 
-- No widget calls Supabase directly.
-- No money or quantity uses `double`.
-- Permission checks use `AppPermissions`.
-- Cost fields are not fetched for users without full sensitive cost permission.
-- Product and inventory repositories are separate.
-- `StockEngine` and `CostEngine` responsibilities are separate.
-- Inventory adjustments are atomic.
-- Inventory transfers are atomic.
-- Movement log is immutable.
-- Heavy movement history is paginated or bounded.
-- Arabic and English strings exist for user-facing text.
-- File-size scan reviewed.
+- [x] No widget calls Supabase directly.
+- [x] No money or quantity uses `double`.
+- [x] Permission checks use `AppPermissions`.
+- [x] Cost fields are not fetched for users without full sensitive cost permission.
+- [x] Product and inventory repositories are separate.
+- [x] `StockEngine` and `CostEngine` responsibilities are separate.
+- [x] Inventory adjustments are atomic.
+- [x] Inventory transfers are atomic.
+- [x] Movement log is immutable.
+- [x] Heavy movement history is paginated or bounded.
+- [x] Arabic and English strings exist for user-facing text.
+- [x] File-size scan reviewed.
 
 ### File-Size Scan
 
@@ -1240,18 +1272,18 @@ Get-ChildItem lib,supabase -Recurse -File |
 
 ### Phase 3 Done Means
 
-- Products can be created, listed, viewed, edited, and deactivated.
-- Product groups are usable.
-- Product units can be added and reviewed.
-- Warehouses are usable.
-- Inventory balances are visible and update through controlled movements.
-- Transfers between warehouses are supported or explicitly deferred with no UI entry point.
-- Cost fields are protected.
-- Stock and cost rules are centralized outside UI.
-- The app has routes and UI ready for products and inventory.
-- Phase 5 can build purchase/sales invoices on a stable product and stock foundation.
-- Phase 6 can use serialized product units for rental contracts.
-- Phase 8 can later use warehouse/van stock as a base for field operations.
+- [x] Products can be created, listed, viewed, edited, and deactivated.
+- [x] Product groups are usable.
+- [x] Product units can be added and reviewed.
+- [x] Warehouses are usable.
+- [x] Inventory balances are visible and update through controlled movements.
+- [x] Transfers between warehouses are supported.
+- [x] Cost fields are protected.
+- [x] Stock and cost rules are centralized outside UI.
+- [x] The app has routes and UI ready for products and inventory.
+- [x] Phase 5 can build purchase/sales invoices on a stable product and stock foundation.
+- [x] Phase 6 can use serialized product units for rental contracts.
+- [x] Phase 8 can later use warehouse/van stock as a base for field operations.
 
 ---
 

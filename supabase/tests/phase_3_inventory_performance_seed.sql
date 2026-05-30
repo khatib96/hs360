@@ -29,19 +29,19 @@ begin
   select id into v_user_id from auth.users order by created_at limit 1;
 
   insert into product_groups (tenant_id, name_ar, name_en, is_active)
-  values (v_tenant_id, 'مجموعة أداء M7.5', 'M7.5 Performance Group', true)
+  values (v_tenant_id, 'M7.5 Performance Group', 'M7.5 Performance Group', true)
   returning id into v_group_id;
 
   insert into warehouses (tenant_id, name_ar, name_en, type, is_active)
-  values (v_tenant_id, 'مستودع أداء رئيسي', 'M7.5 Main Performance Warehouse', 'main', true)
+  values (v_tenant_id, 'M7.5 Main Performance Warehouse', 'M7.5 Main Performance Warehouse', 'main', true)
   returning id into v_main_wh;
 
   insert into warehouses (tenant_id, name_ar, name_en, type, is_active)
-  values (v_tenant_id, 'مستودع أداء احتياطي', 'M7.5 Overflow Performance Warehouse', 'main', true)
+  values (v_tenant_id, 'M7.5 Overflow Performance Warehouse', 'M7.5 Overflow Performance Warehouse', 'main', true)
   returning id into v_overflow_wh;
 
   insert into warehouses (tenant_id, name_ar, name_en, type, is_active)
-  values (v_tenant_id, 'مستودع أداء فرعي', 'M7.5 Spare Performance Warehouse', 'branch', true)
+  values (v_tenant_id, 'M7.5 Spare Performance Warehouse', 'M7.5 Spare Performance Warehouse', 'branch', true)
   returning id into v_spare_wh;
 
   for v_idx in 1..100 loop
@@ -67,7 +67,7 @@ begin
     values (
       v_tenant_id,
       'M75-PERF-' || lpad(v_idx::text, 3, '0'),
-      'منتج أداء ' || v_idx,
+      'M7.5 Performance Product ' || v_idx,
       'M7.5 Performance Product ' || v_idx,
       v_group_id,
       'sale_only',

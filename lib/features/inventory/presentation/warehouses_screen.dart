@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
 import '../../../core/errors/products_exception.dart';
@@ -8,6 +9,7 @@ import '../../../core/routing/app_routes.dart';
 import '../../../shared/widgets/app_shell.dart';
 import '../../../shared/widgets/message_banner.dart';
 import '../../auth/presentation/auth_controller.dart';
+import '../domain/inventory_permissions.dart';
 import '../domain/warehouse.dart';
 import '../domain/warehouse_form_state.dart';
 import '../domain/warehouse_permissions.dart';
@@ -32,6 +34,7 @@ class WarehousesScreen extends ConsumerWidget {
     final canCreate =
         session != null && canCreateWarehouse(session);
     final canEdit = session != null && canEditWarehouse(session);
+    final canViewStock = session != null && canViewInventoryBalances(session);
 
     Widget body;
     if (state.isLoading && state.warehouses.isEmpty) {
@@ -80,6 +83,10 @@ class WarehousesScreen extends ConsumerWidget {
               employeesById: state.employeesById,
               inactiveEmployeeHint: l10n.warehouseEmployeeInactiveHint,
               canEdit: canEdit,
+              canViewStock: canViewStock,
+              onViewStock: (warehouse) => context.go(
+                '${AppRoutes.inventory}?warehouseId=${Uri.encodeComponent(warehouse.id)}',
+              ),
               onEdit: (warehouse) => _showFormDialog(
                 context,
                 ref,

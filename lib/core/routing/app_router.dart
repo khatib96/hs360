@@ -87,7 +87,9 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.inventory,
         name: AppRoutes.inventoryName,
-        builder: (context, state) => const InventoryScreen(),
+        builder: (context, state) => InventoryScreen(
+          initialWarehouseId: state.uri.queryParameters['warehouseId'],
+        ),
       ),
       GoRoute(
         path: AppRoutes.inventoryMovements,

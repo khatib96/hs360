@@ -14,6 +14,8 @@ class WarehouseTable extends StatelessWidget {
     required this.employeesById,
     required this.inactiveEmployeeHint,
     required this.canEdit,
+    required this.canViewStock,
+    required this.onViewStock,
     required this.onEdit,
     required this.onDeactivate,
     super.key,
@@ -24,6 +26,8 @@ class WarehouseTable extends StatelessWidget {
   final Map<String, WarehouseAssignableEmployee> employeesById;
   final String inactiveEmployeeHint;
   final bool canEdit;
+  final bool canViewStock;
+  final ValueChanged<Warehouse> onViewStock;
   final ValueChanged<Warehouse> onEdit;
   final ValueChanged<Warehouse> onDeactivate;
 
@@ -42,7 +46,8 @@ class WarehouseTable extends StatelessWidget {
           DataColumn(label: Text(l10n.warehouseColumnEmployee)),
           DataColumn(label: Text(l10n.warehouseColumnAddress)),
           DataColumn(label: Text(l10n.warehouseColumnStatus)),
-          if (canEdit) const DataColumn(label: SizedBox(width: 72)),
+          if (canViewStock || canEdit)
+            const DataColumn(label: SizedBox(width: 112)),
         ],
         rows: warehouses.map((warehouse) {
           final employeeLabel = employeeLabelForAgentId(
@@ -90,22 +95,30 @@ class WarehouseTable extends StatelessWidget {
                       : l10n.warehouseInactive,
                 ),
               ),
-              if (canEdit)
+              if (canViewStock || canEdit)
                 DataCell(
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      IconButton(
-                        icon: const Icon(Icons.edit_outlined, size: 20),
-                        tooltip: l10n.warehouseEdit,
-                        onPressed: () => onEdit(warehouse),
-                      ),
-                      if (warehouse.isActive)
+                      if (canViewStock)
                         IconButton(
-                          icon: const Icon(Icons.block, size: 20),
-                          tooltip: l10n.warehouseDeactivate,
-                          onPressed: () => onDeactivate(warehouse),
+                          icon: const Icon(Icons.inventory_2_outlined, size: 20),
+                          tooltip: l10n.inventory,
+                          onPressed: () => onViewStock(warehouse),
                         ),
+                      if (canEdit) ...[
+                        IconButton(
+                          icon: const Icon(Icons.edit_outlined, size: 20),
+                          tooltip: l10n.warehouseEdit,
+                          onPressed: () => onEdit(warehouse),
+                        ),
+                        if (warehouse.isActive)
+                          IconButton(
+                            icon: const Icon(Icons.block, size: 20),
+                            tooltip: l10n.warehouseDeactivate,
+                            onPressed: () => onDeactivate(warehouse),
+                          ),
+                      ],
                     ],
                   ),
                 ),

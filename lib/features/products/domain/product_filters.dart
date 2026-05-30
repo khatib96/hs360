@@ -21,4 +21,11 @@ class ProductFilters {
   final ProductType? productType;
   final bool? isActive;
   final ProductStockFilter? stockFilter;
+
+  bool get hasActiveFilters =>
+      search?.trim().isNotEmpty == true ||
+      groupId != null ||
+      productType != null ||
+      isActive != null ||
+      stockFilter != null;
 }
