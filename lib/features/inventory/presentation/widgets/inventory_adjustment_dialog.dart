@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,13 +13,13 @@ import '../../../auth/presentation/auth_controller.dart';
 import '../../../products/domain/product.dart';
 import '../../../products/domain/product_cost_access.dart';
 import '../../../products/domain/product_permissions.dart';
-import '../../../products/presentation/product_display_helpers.dart';
 import '../../domain/movement_type.dart';
 import '../inventory_adjustment_controller.dart';
 import '../inventory_adjustment_display_helpers.dart';
 import '../inventory_error_messages.dart';
 import '../inventory_movement_display_helpers.dart';
 import '../warehouse_display_helpers.dart';
+import 'inventory_adjustment_product_picker.dart';
 
 Future<bool?> showInventoryAdjustmentDialog({
   required BuildContext context,
@@ -62,8 +60,6 @@ class _InventoryAdjustmentDialogState
   final _qtyController = TextEditingController();
   final _unitCostController = TextEditingController();
   final _notesController = TextEditingController();
-  final _productSearchController = TextEditingController();
-  Timer? _searchDebounce;
 
   MovementType _movementType = MovementType.adjustmentOut;
   String? _warehouseId;
@@ -103,11 +99,9 @@ class _InventoryAdjustmentDialogState
 
   @override
   void dispose() {
-    _searchDebounce?.cancel();
     _qtyController.dispose();
     _unitCostController.dispose();
     _notesController.dispose();
-    _productSearchController.dispose();
     super.dispose();
   }
 
@@ -124,15 +118,6 @@ class _InventoryAdjustmentDialogState
   bool get _canViewProducts {
     final session = ref.read(authControllerProvider).valueOrNull;
     return session != null && canViewProductsList(session);
-  }
-
-  void _onSearchChanged(String value) {
-    _searchDebounce?.cancel();
-    _searchDebounce = Timer(const Duration(milliseconds: 300), () {
-      ref
-          .read(inventoryAdjustmentControllerProvider.notifier)
-          .searchProducts(value);
-    });
   }
 
   Future<void> _submit() async {
@@ -306,87 +291,28 @@ class _InventoryAdjustmentDialogState
                 },
               ),
               const SizedBox(height: 12),
-              if (!_canViewProducts)
-                Text(
-                  l10n.inventoryAdjustmentProductsViewRequired,
-                  style: Theme.of(context).textTheme.bodySmall,
-                )
-              else ...[
-                TextField(
-                  controller: _productSearchController,
-                  decoration: InputDecoration(
-                    labelText: l10n.inventoryAdjustmentSelectProduct,
-                  ),
-                  onChanged: _onSearchChanged,
-                ),
-                if (adjState.isSearching)
-                  const Padding(
-                    padding: EdgeInsets.only(top: 8),
-                    child: LinearProgressIndicator(minHeight: 2),
-                  ),
-                if (_selectedProduct != null)
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(
-                      localizedProductName(
-                        _selectedProduct!,
-                        widget.languageCode,
-                      ),
-                    ),
-                    subtitle: Text(_selectedProduct!.sku),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () {
-                        setState(() => _selectedProduct = null);
-                        _productSearchController.clear();
-                        ref
-                            .read(inventoryAdjustmentControllerProvider.notifier)
-                            .clearProductSelection();
-                      },
-                    ),
-                  ),
-                if (_selectedProduct == null && adjState.searchResults.isNotEmpty)
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxHeight: 160),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: adjState.searchResults.length,
-                      itemBuilder: (context, index) {
-                        final product = adjState.searchResults[index];
-                        return ListTile(
-                          dense: true,
-                          title: Text(
-                            localizedProductName(product, widget.languageCode),
-                          ),
-                          subtitle: Text(product.sku),
-                          onTap: () async {
-                            setState(() {
-                              _selectedProduct = product;
-                              _productSearchController.text =
-                                  localizedProductName(
-                                product,
-                                widget.languageCode,
-                              );
-                            });
-                            await ref
-                                .read(
-                                  inventoryAdjustmentControllerProvider.notifier,
-                                )
-                                .selectProduct(product);
-                            if (_warehouseId != null) {
-                              await ref
-                                  .read(
-                                    inventoryAdjustmentControllerProvider
-                                        .notifier,
-                                  )
-                                  .onWarehouseChanged(_warehouseId);
-                            }
-                          },
-                        );
-                      },
-                    ),
-                  ),
-              ],
+              InventoryAdjustmentProductPicker(
+                languageCode: widget.languageCode,
+                canViewProducts: _canViewProducts,
+                selectedProduct: _selectedProduct,
+                onProductCleared: () {
+                  setState(() => _selectedProduct = null);
+                  ref
+                      .read(inventoryAdjustmentControllerProvider.notifier)
+                      .clearProductSelection();
+                },
+                onProductSelected: (product) async {
+                  setState(() => _selectedProduct = product);
+                  await ref
+                      .read(inventoryAdjustmentControllerProvider.notifier)
+                      .selectProduct(product);
+                  if (_warehouseId != null) {
+                    await ref
+                        .read(inventoryAdjustmentControllerProvider.notifier)
+                        .onWarehouseChanged(_warehouseId);
+                  }
+                },
+              ),
               if (adjState.isSerialized) ...[
                 const SizedBox(height: 8),
                 Text(

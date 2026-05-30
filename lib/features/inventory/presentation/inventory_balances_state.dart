@@ -45,7 +45,7 @@ class InventoryBalancesState {
     }
 
     if (lowStockOnly) {
-      final totals = _totalsByProduct(rows);
+      final totals = _totalsByProduct(allRows);
       rows = rows
           .where(
             (r) => isLowStock(

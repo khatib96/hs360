@@ -1,6 +1,6 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-05-27 (Phase 3 M7D complete; M7.5 cleanup notes recorded).
+> Updated 2026-05-30 (Phase 3 M7.5 cleanup/performance pass complete).
 > Keep this file short. It is for continuity between AI tools, not full project documentation.
 
 ---
@@ -17,22 +17,25 @@
 - **Phase 3 M7B complete** - inventory balances screen, product detail stock card, partial hydration failures.
 - **Phase 3 M7C complete** - read-only movements log at `/inventory/movements`.
 - **Phase 3 M7D complete** - manual stock-in/out dialog on `/inventory`; migration `043` cost gate on `adjustment_in`.
-- Migrations `001`-`043` apply cleanly with `supabase db reset`.
+- **Phase 3 M7E complete** - inventory transfers UI/RPC and SQL verification fixtures.
+- **Phase 3 M7.5 complete** - inventory performance seed, adjustment dialog cleanup/tests, low-stock semantics hardened.
+- Migrations `001`-`044` apply cleanly when applied directly; `npx --yes supabase db reset` is currently blocked by a Supabase CLI 2.102 internal service migration duplicate before project migrations.
 - **Canonical inventory rules:** [`docs/PHASE_3_M1_5_INVENTORY_RULES.md`](docs/PHASE_3_M1_5_INVENTORY_RULES.md)
-- **Next:** Phase 3 M7E - Transfers.
-- **Before M8:** Phase 3 M7.5 cleanup/hardening pass.
+- **Next:** Phase 3 M8 - Verification & Phase Close.
 
 ---
 
 ## Phase 3 M7.5 - Cleanup Before M8
 
-- Split `inventory_adjustment_dialog.dart` (currently large) by extracting product search / selection into a focused widget.
-- Add direct dialog widget tests for M7D cost gates:
+- Extracted product search / selection from `inventory_adjustment_dialog.dart` into `InventoryAdjustmentProductPicker`.
+- Added direct dialog widget tests for M7D cost gates:
   - stock-in type hidden without `canWriteProductCosts`.
   - unit cost field absent without `canWriteProductCosts`.
   - WAC preview absent without `canViewFullProductCosts`.
-- Revisit M7B low-stock filter semantics: currently evaluates after active UI filters; decide whether low-stock should use product total across all warehouses independent of search/warehouse filters.
-- Run full verification before M8: `flutter analyze`, `flutter test`, `supabase db reset`, and `phase_3_products_inventory.sql`.
+- Low-stock filter now calculates product totals from all balance rows before warehouse/search filters, so a low single warehouse does not mark a product low when total stock is healthy.
+- Added optional local performance seed: [`supabase/tests/phase_3_inventory_performance_seed.sql`](supabase/tests/phase_3_inventory_performance_seed.sql) creates 100 products, 3 warehouses, 1,000 movements, and 300 balances.
+- Index review: required M7.5 indexes already exist in `015_inventory.sql`; no extra composite indexes added because the seed-size query plan did not justify them.
+- Verification: `flutter analyze`, `flutter test` (220 tests), `phase_1d_rls.sql`, `phase_3_products_inventory.sql`, and M7.5 performance seed all passed. Official `npx --yes supabase db reset` is blocked by Supabase CLI 2.102 internal duplicate migration; local DB was restored by applying migrations `001`-`044` directly via `psql`.
 
 ---
 
