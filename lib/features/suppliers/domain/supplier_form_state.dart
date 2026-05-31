@@ -1,3 +1,5 @@
+import 'supplier.dart';
+
 /// Full create/edit supplier form. Repository maps to M2 RPC payloads.
 class SupplierFormState {
   const SupplierFormState({
@@ -7,6 +9,18 @@ class SupplierFormState {
     this.email,
     this.address,
   });
+
+  /// Maps an existing [Supplier] to a form state for editing.
+  /// Excludes generated code/account.
+  factory SupplierFormState.fromSupplier(Supplier supplier) {
+    return SupplierFormState(
+      nameAr: supplier.nameAr,
+      nameEn: supplier.nameEn,
+      phone: supplier.phone,
+      email: supplier.email,
+      address: supplier.address,
+    );
+  }
 
   final String nameAr;
   final String? nameEn;

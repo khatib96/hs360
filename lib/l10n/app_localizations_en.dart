@@ -1087,4 +1087,314 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get moduleAccessUnavailable =>
       'You do not have permission to view this section.';
+
+  @override
+  String get createCustomerTitle => 'New customer';
+
+  @override
+  String get customerSearchHint =>
+      'Search by code, name, phone, WhatsApp, email';
+
+  @override
+  String get customerFilterStatus => 'Status';
+
+  @override
+  String get customerFilterAll => 'All';
+
+  @override
+  String get customerStatusActive => 'Active';
+
+  @override
+  String get customerStatusInactive => 'Inactive';
+
+  @override
+  String get customerFilterVip => 'VIP';
+
+  @override
+  String get customerVip => 'VIP';
+
+  @override
+  String get customerNonVip => 'Standard';
+
+  @override
+  String get customerClearFilters => 'Clear filters';
+
+  @override
+  String get customerTypeLabel => 'Type';
+
+  @override
+  String get customerTypeIndividual => 'Individual';
+
+  @override
+  String get customerTypeCompany => 'Company';
+
+  @override
+  String get customerColumnCode => 'Code';
+
+  @override
+  String get customerColumnName => 'Name';
+
+  @override
+  String get customerColumnPhone => 'Phone';
+
+  @override
+  String get customerColumnWhatsapp => 'WhatsApp';
+
+  @override
+  String get customerColumnLocation => 'Area / City';
+
+  @override
+  String get customerColumnPaymentTerms => 'Payment terms';
+
+  @override
+  String get customerColumnCreditLimit => 'Credit limit';
+
+  @override
+  String get customerColumnStatus => 'Status';
+
+  @override
+  String get customerActionView => 'View';
+
+  @override
+  String get customerActionEdit => 'Edit';
+
+  @override
+  String get customerActionDeactivate => 'Deactivate';
+
+  @override
+  String get customerAdd => 'Add customer';
+
+  @override
+  String get customerListEmpty => 'No customers yet.';
+
+  @override
+  String get customerListEmptyFiltered => 'No customers match your filters.';
+
+  @override
+  String get customerDeactivateConfirmTitle => 'Deactivate customer';
+
+  @override
+  String get customerDeactivateConfirmBody =>
+      'This customer will be hidden from the active list. You can still find them by switching the status filter. Continue?';
+
+  @override
+  String get customerCreated => 'Customer created.';
+
+  @override
+  String get customerUpdated => 'Customer saved.';
+
+  @override
+  String get customerDeactivated => 'Customer deactivated.';
+
+  @override
+  String get customerFieldCode => 'Code';
+
+  @override
+  String get customerFieldAccount => 'Account';
+
+  @override
+  String get customerFieldNameAr => 'Name (Arabic)';
+
+  @override
+  String get customerFieldNameEn => 'Name (English)';
+
+  @override
+  String get customerFieldContactName => 'Contact person';
+
+  @override
+  String get customerFieldContactTitle => 'Contact title';
+
+  @override
+  String get customerFieldContactPhone => 'Contact phone';
+
+  @override
+  String get customerFieldPhonePrimary => 'Primary phone';
+
+  @override
+  String get customerFieldPhoneSecondary => 'Secondary phone';
+
+  @override
+  String get customerFieldWhatsapp => 'WhatsApp';
+
+  @override
+  String get customerFieldEmail => 'Email';
+
+  @override
+  String get customerFieldAddress => 'Address';
+
+  @override
+  String get customerFieldArea => 'Area';
+
+  @override
+  String get customerFieldCity => 'City';
+
+  @override
+  String get customerFieldCountry => 'Country';
+
+  @override
+  String get customerFieldGpsLat => 'GPS latitude';
+
+  @override
+  String get customerFieldGpsLng => 'GPS longitude';
+
+  @override
+  String get customerFieldPaymentTerms => 'Payment terms (days)';
+
+  @override
+  String get customerFieldCreditLimit => 'Credit limit';
+
+  @override
+  String get customerFieldVip => 'VIP customer';
+
+  @override
+  String get customerFieldNotes => 'Notes';
+
+  @override
+  String get customerValidationNameArRequired => 'Arabic name is required.';
+
+  @override
+  String get customerValidationPhoneRequired => 'Primary phone is required.';
+
+  @override
+  String get customerValidationNegativeCredit =>
+      'Credit limit cannot be negative.';
+
+  @override
+  String get customerValidationNegativePayment =>
+      'Payment terms cannot be negative.';
+
+  @override
+  String get customerValidationGpsInvalid =>
+      'Enter a valid GPS latitude and longitude pair.';
+
+  @override
+  String get customerValidationEmailInvalid => 'Enter a valid email address.';
+
+  @override
+  String get customerInvalidDecimal => 'Enter a valid number.';
+
+  @override
+  String get customerInvalidInteger => 'Enter a valid whole number.';
+
+  @override
+  String get customerValidationFailed =>
+      'Could not save the customer. Please check the values.';
+
+  @override
+  String get customerErrorPermissionDenied =>
+      'You do not have permission to perform this action.';
+
+  @override
+  String get customerErrorUnknown => 'Something went wrong. Please try again.';
+
+  @override
+  String get createSupplierTitle => 'New supplier';
+
+  @override
+  String get editSupplierTitle => 'Edit supplier';
+
+  @override
+  String get supplierSearchHint => 'Search by code, name, phone, email';
+
+  @override
+  String get supplierFilterStatus => 'Status';
+
+  @override
+  String get supplierFilterAll => 'All';
+
+  @override
+  String get supplierStatusActive => 'Active';
+
+  @override
+  String get supplierStatusInactive => 'Inactive';
+
+  @override
+  String get supplierClearFilters => 'Clear filters';
+
+  @override
+  String get supplierColumnCode => 'Code';
+
+  @override
+  String get supplierColumnName => 'Name';
+
+  @override
+  String get supplierColumnPhone => 'Phone';
+
+  @override
+  String get supplierColumnEmail => 'Email';
+
+  @override
+  String get supplierColumnStatus => 'Status';
+
+  @override
+  String get supplierActionView => 'View';
+
+  @override
+  String get supplierActionEdit => 'Edit';
+
+  @override
+  String get supplierActionDeactivate => 'Deactivate';
+
+  @override
+  String get supplierAdd => 'Add supplier';
+
+  @override
+  String get supplierListEmpty => 'No suppliers yet.';
+
+  @override
+  String get supplierListEmptyFiltered => 'No suppliers match your filters.';
+
+  @override
+  String get supplierDeactivateConfirmTitle => 'Deactivate supplier';
+
+  @override
+  String get supplierDeactivateConfirmBody =>
+      'This supplier will be hidden from the active list. You can still find them by switching the status filter. Continue?';
+
+  @override
+  String get supplierCreated => 'Supplier created.';
+
+  @override
+  String get supplierUpdated => 'Supplier saved.';
+
+  @override
+  String get supplierDeactivated => 'Supplier deactivated.';
+
+  @override
+  String get supplierFieldCode => 'Code';
+
+  @override
+  String get supplierFieldAccount => 'Account';
+
+  @override
+  String get supplierFieldNameAr => 'Name (Arabic)';
+
+  @override
+  String get supplierFieldNameEn => 'Name (English)';
+
+  @override
+  String get supplierFieldPhone => 'Phone';
+
+  @override
+  String get supplierFieldEmail => 'Email';
+
+  @override
+  String get supplierFieldAddress => 'Address';
+
+  @override
+  String get supplierValidationNameArRequired => 'Arabic name is required.';
+
+  @override
+  String get supplierValidationEmailInvalid => 'Enter a valid email address.';
+
+  @override
+  String get supplierValidationFailed =>
+      'Could not save the supplier. Please check the values.';
+
+  @override
+  String get supplierErrorPermissionDenied =>
+      'You do not have permission to perform this action.';
+
+  @override
+  String get supplierErrorUnknown => 'Something went wrong. Please try again.';
 }

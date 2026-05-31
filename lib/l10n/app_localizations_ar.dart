@@ -1077,4 +1077,315 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get moduleAccessUnavailable => 'لا تملك صلاحية عرض هذا القسم.';
+
+  @override
+  String get createCustomerTitle => 'عميل جديد';
+
+  @override
+  String get customerSearchHint =>
+      'ابحث بالكود أو الاسم أو الهاتف أو واتساب أو البريد';
+
+  @override
+  String get customerFilterStatus => 'الحالة';
+
+  @override
+  String get customerFilterAll => 'الكل';
+
+  @override
+  String get customerStatusActive => 'نشط';
+
+  @override
+  String get customerStatusInactive => 'غير نشط';
+
+  @override
+  String get customerFilterVip => 'مميز';
+
+  @override
+  String get customerVip => 'مميز';
+
+  @override
+  String get customerNonVip => 'عادي';
+
+  @override
+  String get customerClearFilters => 'مسح عوامل التصفية';
+
+  @override
+  String get customerTypeLabel => 'النوع';
+
+  @override
+  String get customerTypeIndividual => 'فرد';
+
+  @override
+  String get customerTypeCompany => 'شركة';
+
+  @override
+  String get customerColumnCode => 'الكود';
+
+  @override
+  String get customerColumnName => 'الاسم';
+
+  @override
+  String get customerColumnPhone => 'الهاتف';
+
+  @override
+  String get customerColumnWhatsapp => 'واتساب';
+
+  @override
+  String get customerColumnLocation => 'المنطقة / المدينة';
+
+  @override
+  String get customerColumnPaymentTerms => 'مدة السداد';
+
+  @override
+  String get customerColumnCreditLimit => 'حد الائتمان';
+
+  @override
+  String get customerColumnStatus => 'الحالة';
+
+  @override
+  String get customerActionView => 'عرض';
+
+  @override
+  String get customerActionEdit => 'تعديل';
+
+  @override
+  String get customerActionDeactivate => 'إلغاء التنشيط';
+
+  @override
+  String get customerAdd => 'إضافة عميل';
+
+  @override
+  String get customerListEmpty => 'لا يوجد عملاء بعد.';
+
+  @override
+  String get customerListEmptyFiltered =>
+      'لا يوجد عملاء مطابقون لعوامل التصفية.';
+
+  @override
+  String get customerDeactivateConfirmTitle => 'إلغاء تنشيط العميل';
+
+  @override
+  String get customerDeactivateConfirmBody =>
+      'سيتم إخفاء هذا العميل من القائمة النشطة. يمكنك إيجاده بتغيير عامل تصفية الحالة. هل تريد المتابعة؟';
+
+  @override
+  String get customerCreated => 'تم إنشاء العميل.';
+
+  @override
+  String get customerUpdated => 'تم حفظ العميل.';
+
+  @override
+  String get customerDeactivated => 'تم إلغاء تنشيط العميل.';
+
+  @override
+  String get customerFieldCode => 'الكود';
+
+  @override
+  String get customerFieldAccount => 'الحساب';
+
+  @override
+  String get customerFieldNameAr => 'الاسم (عربي)';
+
+  @override
+  String get customerFieldNameEn => 'الاسم (إنجليزي)';
+
+  @override
+  String get customerFieldContactName => 'الشخص المسؤول';
+
+  @override
+  String get customerFieldContactTitle => 'المسمى الوظيفي';
+
+  @override
+  String get customerFieldContactPhone => 'هاتف المسؤول';
+
+  @override
+  String get customerFieldPhonePrimary => 'الهاتف الأساسي';
+
+  @override
+  String get customerFieldPhoneSecondary => 'الهاتف الثانوي';
+
+  @override
+  String get customerFieldWhatsapp => 'واتساب';
+
+  @override
+  String get customerFieldEmail => 'البريد الإلكتروني';
+
+  @override
+  String get customerFieldAddress => 'العنوان';
+
+  @override
+  String get customerFieldArea => 'المنطقة';
+
+  @override
+  String get customerFieldCity => 'المدينة';
+
+  @override
+  String get customerFieldCountry => 'الدولة';
+
+  @override
+  String get customerFieldGpsLat => 'خط العرض GPS';
+
+  @override
+  String get customerFieldGpsLng => 'خط الطول GPS';
+
+  @override
+  String get customerFieldPaymentTerms => 'مدة السداد (أيام)';
+
+  @override
+  String get customerFieldCreditLimit => 'حد الائتمان';
+
+  @override
+  String get customerFieldVip => 'عميل مميز';
+
+  @override
+  String get customerFieldNotes => 'ملاحظات';
+
+  @override
+  String get customerValidationNameArRequired => 'الاسم بالعربية مطلوب.';
+
+  @override
+  String get customerValidationPhoneRequired => 'الهاتف الأساسي مطلوب.';
+
+  @override
+  String get customerValidationNegativeCredit =>
+      'لا يمكن أن يكون حد الائتمان سالبًا.';
+
+  @override
+  String get customerValidationNegativePayment =>
+      'لا يمكن أن تكون مدة السداد سالبة.';
+
+  @override
+  String get customerValidationGpsInvalid =>
+      'أدخل قيمة صحيحة لخطي العرض والطول معًا.';
+
+  @override
+  String get customerValidationEmailInvalid => 'أدخل بريدًا إلكترونيًا صحيحًا.';
+
+  @override
+  String get customerInvalidDecimal => 'أدخل رقمًا صحيحًا.';
+
+  @override
+  String get customerInvalidInteger => 'أدخل عددًا صحيحًا.';
+
+  @override
+  String get customerValidationFailed => 'تعذّر حفظ العميل. يرجى مراجعة القيم.';
+
+  @override
+  String get customerErrorPermissionDenied =>
+      'لا تملك صلاحية تنفيذ هذا الإجراء.';
+
+  @override
+  String get customerErrorUnknown => 'حدث خطأ ما. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get createSupplierTitle => 'مورّد جديد';
+
+  @override
+  String get editSupplierTitle => 'تعديل المورّد';
+
+  @override
+  String get supplierSearchHint => 'ابحث بالكود أو الاسم أو الهاتف أو البريد';
+
+  @override
+  String get supplierFilterStatus => 'الحالة';
+
+  @override
+  String get supplierFilterAll => 'الكل';
+
+  @override
+  String get supplierStatusActive => 'نشط';
+
+  @override
+  String get supplierStatusInactive => 'غير نشط';
+
+  @override
+  String get supplierClearFilters => 'مسح عوامل التصفية';
+
+  @override
+  String get supplierColumnCode => 'الكود';
+
+  @override
+  String get supplierColumnName => 'الاسم';
+
+  @override
+  String get supplierColumnPhone => 'الهاتف';
+
+  @override
+  String get supplierColumnEmail => 'البريد الإلكتروني';
+
+  @override
+  String get supplierColumnStatus => 'الحالة';
+
+  @override
+  String get supplierActionView => 'عرض';
+
+  @override
+  String get supplierActionEdit => 'تعديل';
+
+  @override
+  String get supplierActionDeactivate => 'إلغاء التنشيط';
+
+  @override
+  String get supplierAdd => 'إضافة مورّد';
+
+  @override
+  String get supplierListEmpty => 'لا يوجد موردون بعد.';
+
+  @override
+  String get supplierListEmptyFiltered =>
+      'لا يوجد موردون مطابقون لعوامل التصفية.';
+
+  @override
+  String get supplierDeactivateConfirmTitle => 'إلغاء تنشيط المورّد';
+
+  @override
+  String get supplierDeactivateConfirmBody =>
+      'سيتم إخفاء هذا المورّد من القائمة النشطة. يمكنك إيجاده بتغيير عامل تصفية الحالة. هل تريد المتابعة؟';
+
+  @override
+  String get supplierCreated => 'تم إنشاء المورّد.';
+
+  @override
+  String get supplierUpdated => 'تم حفظ المورّد.';
+
+  @override
+  String get supplierDeactivated => 'تم إلغاء تنشيط المورّد.';
+
+  @override
+  String get supplierFieldCode => 'الكود';
+
+  @override
+  String get supplierFieldAccount => 'الحساب';
+
+  @override
+  String get supplierFieldNameAr => 'الاسم (عربي)';
+
+  @override
+  String get supplierFieldNameEn => 'الاسم (إنجليزي)';
+
+  @override
+  String get supplierFieldPhone => 'الهاتف';
+
+  @override
+  String get supplierFieldEmail => 'البريد الإلكتروني';
+
+  @override
+  String get supplierFieldAddress => 'العنوان';
+
+  @override
+  String get supplierValidationNameArRequired => 'الاسم بالعربية مطلوب.';
+
+  @override
+  String get supplierValidationEmailInvalid => 'أدخل بريدًا إلكترونيًا صحيحًا.';
+
+  @override
+  String get supplierValidationFailed =>
+      'تعذّر حفظ المورّد. يرجى مراجعة القيم.';
+
+  @override
+  String get supplierErrorPermissionDenied =>
+      'لا تملك صلاحية تنفيذ هذا الإجراء.';
+
+  @override
+  String get supplierErrorUnknown => 'حدث خطأ ما. يرجى المحاولة مرة أخرى.';
 }

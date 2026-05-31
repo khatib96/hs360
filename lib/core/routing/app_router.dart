@@ -12,7 +12,7 @@ import '../../features/products/presentation/product_list_screen.dart';
 import '../../features/products/presentation/product_wizard_screen.dart';
 import '../../features/accounting/presentation/chart_of_accounts_placeholder_screen.dart';
 import '../../features/customers/presentation/customer_detail_placeholder_screen.dart';
-import '../../features/customers/presentation/customer_edit_placeholder_screen.dart';
+import '../../features/customers/presentation/customer_edit_screen.dart';
 import '../../features/customers/presentation/customers_hub_screen.dart';
 import '../../features/suppliers/presentation/supplier_detail_placeholder_screen.dart';
 import '../../features/inventory/presentation/inventory_movements_screen.dart';
@@ -99,7 +99,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.customersEdit,
         name: AppRoutes.customersEditName,
-        builder: (context, state) => CustomerEditPlaceholderScreen(
+        builder: (context, state) => CustomerEditScreen(
           customerId: state.pathParameters['id']!,
         ),
       ),

@@ -11,3 +11,12 @@ bool canViewCustomersArea(AppSession session) =>
 bool canAccessCustomerEdit(AppSession session) =>
     canViewCustomers(session) &&
     (session.isManager || session.permissions.can('customers.edit'));
+
+bool canCreateCustomer(AppSession session) =>
+    session.isManager || session.permissions.can('customers.create');
+
+bool canEditCustomer(AppSession session) =>
+    session.isManager || session.permissions.can('customers.edit');
+
+bool canDeactivateCustomer(AppSession session) =>
+    session.isManager || session.permissions.can('customers.delete');

@@ -2137,6 +2137,606 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You do not have permission to view this section.'**
   String get moduleAccessUnavailable;
+
+  /// No description provided for @createCustomerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New customer'**
+  String get createCustomerTitle;
+
+  /// No description provided for @customerSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by code, name, phone, WhatsApp, email'**
+  String get customerSearchHint;
+
+  /// No description provided for @customerFilterStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get customerFilterStatus;
+
+  /// No description provided for @customerFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get customerFilterAll;
+
+  /// No description provided for @customerStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get customerStatusActive;
+
+  /// No description provided for @customerStatusInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get customerStatusInactive;
+
+  /// No description provided for @customerFilterVip.
+  ///
+  /// In en, this message translates to:
+  /// **'VIP'**
+  String get customerFilterVip;
+
+  /// No description provided for @customerVip.
+  ///
+  /// In en, this message translates to:
+  /// **'VIP'**
+  String get customerVip;
+
+  /// No description provided for @customerNonVip.
+  ///
+  /// In en, this message translates to:
+  /// **'Standard'**
+  String get customerNonVip;
+
+  /// No description provided for @customerClearFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear filters'**
+  String get customerClearFilters;
+
+  /// No description provided for @customerTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get customerTypeLabel;
+
+  /// No description provided for @customerTypeIndividual.
+  ///
+  /// In en, this message translates to:
+  /// **'Individual'**
+  String get customerTypeIndividual;
+
+  /// No description provided for @customerTypeCompany.
+  ///
+  /// In en, this message translates to:
+  /// **'Company'**
+  String get customerTypeCompany;
+
+  /// No description provided for @customerColumnCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get customerColumnCode;
+
+  /// No description provided for @customerColumnName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get customerColumnName;
+
+  /// No description provided for @customerColumnPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get customerColumnPhone;
+
+  /// No description provided for @customerColumnWhatsapp.
+  ///
+  /// In en, this message translates to:
+  /// **'WhatsApp'**
+  String get customerColumnWhatsapp;
+
+  /// No description provided for @customerColumnLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Area / City'**
+  String get customerColumnLocation;
+
+  /// No description provided for @customerColumnPaymentTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment terms'**
+  String get customerColumnPaymentTerms;
+
+  /// No description provided for @customerColumnCreditLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit limit'**
+  String get customerColumnCreditLimit;
+
+  /// No description provided for @customerColumnStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get customerColumnStatus;
+
+  /// No description provided for @customerActionView.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get customerActionView;
+
+  /// No description provided for @customerActionEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get customerActionEdit;
+
+  /// No description provided for @customerActionDeactivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate'**
+  String get customerActionDeactivate;
+
+  /// No description provided for @customerAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add customer'**
+  String get customerAdd;
+
+  /// No description provided for @customerListEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No customers yet.'**
+  String get customerListEmpty;
+
+  /// No description provided for @customerListEmptyFiltered.
+  ///
+  /// In en, this message translates to:
+  /// **'No customers match your filters.'**
+  String get customerListEmptyFiltered;
+
+  /// No description provided for @customerDeactivateConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate customer'**
+  String get customerDeactivateConfirmTitle;
+
+  /// No description provided for @customerDeactivateConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This customer will be hidden from the active list. You can still find them by switching the status filter. Continue?'**
+  String get customerDeactivateConfirmBody;
+
+  /// No description provided for @customerCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer created.'**
+  String get customerCreated;
+
+  /// No description provided for @customerUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer saved.'**
+  String get customerUpdated;
+
+  /// No description provided for @customerDeactivated.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer deactivated.'**
+  String get customerDeactivated;
+
+  /// No description provided for @customerFieldCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get customerFieldCode;
+
+  /// No description provided for @customerFieldAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get customerFieldAccount;
+
+  /// No description provided for @customerFieldNameAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Name (Arabic)'**
+  String get customerFieldNameAr;
+
+  /// No description provided for @customerFieldNameEn.
+  ///
+  /// In en, this message translates to:
+  /// **'Name (English)'**
+  String get customerFieldNameEn;
+
+  /// No description provided for @customerFieldContactName.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact person'**
+  String get customerFieldContactName;
+
+  /// No description provided for @customerFieldContactTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact title'**
+  String get customerFieldContactTitle;
+
+  /// No description provided for @customerFieldContactPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact phone'**
+  String get customerFieldContactPhone;
+
+  /// No description provided for @customerFieldPhonePrimary.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary phone'**
+  String get customerFieldPhonePrimary;
+
+  /// No description provided for @customerFieldPhoneSecondary.
+  ///
+  /// In en, this message translates to:
+  /// **'Secondary phone'**
+  String get customerFieldPhoneSecondary;
+
+  /// No description provided for @customerFieldWhatsapp.
+  ///
+  /// In en, this message translates to:
+  /// **'WhatsApp'**
+  String get customerFieldWhatsapp;
+
+  /// No description provided for @customerFieldEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get customerFieldEmail;
+
+  /// No description provided for @customerFieldAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get customerFieldAddress;
+
+  /// No description provided for @customerFieldArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Area'**
+  String get customerFieldArea;
+
+  /// No description provided for @customerFieldCity.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get customerFieldCity;
+
+  /// No description provided for @customerFieldCountry.
+  ///
+  /// In en, this message translates to:
+  /// **'Country'**
+  String get customerFieldCountry;
+
+  /// No description provided for @customerFieldGpsLat.
+  ///
+  /// In en, this message translates to:
+  /// **'GPS latitude'**
+  String get customerFieldGpsLat;
+
+  /// No description provided for @customerFieldGpsLng.
+  ///
+  /// In en, this message translates to:
+  /// **'GPS longitude'**
+  String get customerFieldGpsLng;
+
+  /// No description provided for @customerFieldPaymentTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment terms (days)'**
+  String get customerFieldPaymentTerms;
+
+  /// No description provided for @customerFieldCreditLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit limit'**
+  String get customerFieldCreditLimit;
+
+  /// No description provided for @customerFieldVip.
+  ///
+  /// In en, this message translates to:
+  /// **'VIP customer'**
+  String get customerFieldVip;
+
+  /// No description provided for @customerFieldNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get customerFieldNotes;
+
+  /// No description provided for @customerValidationNameArRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic name is required.'**
+  String get customerValidationNameArRequired;
+
+  /// No description provided for @customerValidationPhoneRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary phone is required.'**
+  String get customerValidationPhoneRequired;
+
+  /// No description provided for @customerValidationNegativeCredit.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit limit cannot be negative.'**
+  String get customerValidationNegativeCredit;
+
+  /// No description provided for @customerValidationNegativePayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment terms cannot be negative.'**
+  String get customerValidationNegativePayment;
+
+  /// No description provided for @customerValidationGpsInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid GPS latitude and longitude pair.'**
+  String get customerValidationGpsInvalid;
+
+  /// No description provided for @customerValidationEmailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address.'**
+  String get customerValidationEmailInvalid;
+
+  /// No description provided for @customerInvalidDecimal.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid number.'**
+  String get customerInvalidDecimal;
+
+  /// No description provided for @customerInvalidInteger.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid whole number.'**
+  String get customerInvalidInteger;
+
+  /// No description provided for @customerValidationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the customer. Please check the values.'**
+  String get customerValidationFailed;
+
+  /// No description provided for @customerErrorPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have permission to perform this action.'**
+  String get customerErrorPermissionDenied;
+
+  /// No description provided for @customerErrorUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get customerErrorUnknown;
+
+  /// No description provided for @createSupplierTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New supplier'**
+  String get createSupplierTitle;
+
+  /// No description provided for @editSupplierTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit supplier'**
+  String get editSupplierTitle;
+
+  /// No description provided for @supplierSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by code, name, phone, email'**
+  String get supplierSearchHint;
+
+  /// No description provided for @supplierFilterStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get supplierFilterStatus;
+
+  /// No description provided for @supplierFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get supplierFilterAll;
+
+  /// No description provided for @supplierStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get supplierStatusActive;
+
+  /// No description provided for @supplierStatusInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get supplierStatusInactive;
+
+  /// No description provided for @supplierClearFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear filters'**
+  String get supplierClearFilters;
+
+  /// No description provided for @supplierColumnCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get supplierColumnCode;
+
+  /// No description provided for @supplierColumnName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get supplierColumnName;
+
+  /// No description provided for @supplierColumnPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get supplierColumnPhone;
+
+  /// No description provided for @supplierColumnEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get supplierColumnEmail;
+
+  /// No description provided for @supplierColumnStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get supplierColumnStatus;
+
+  /// No description provided for @supplierActionView.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get supplierActionView;
+
+  /// No description provided for @supplierActionEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get supplierActionEdit;
+
+  /// No description provided for @supplierActionDeactivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate'**
+  String get supplierActionDeactivate;
+
+  /// No description provided for @supplierAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add supplier'**
+  String get supplierAdd;
+
+  /// No description provided for @supplierListEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No suppliers yet.'**
+  String get supplierListEmpty;
+
+  /// No description provided for @supplierListEmptyFiltered.
+  ///
+  /// In en, this message translates to:
+  /// **'No suppliers match your filters.'**
+  String get supplierListEmptyFiltered;
+
+  /// No description provided for @supplierDeactivateConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate supplier'**
+  String get supplierDeactivateConfirmTitle;
+
+  /// No description provided for @supplierDeactivateConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This supplier will be hidden from the active list. You can still find them by switching the status filter. Continue?'**
+  String get supplierDeactivateConfirmBody;
+
+  /// No description provided for @supplierCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplier created.'**
+  String get supplierCreated;
+
+  /// No description provided for @supplierUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplier saved.'**
+  String get supplierUpdated;
+
+  /// No description provided for @supplierDeactivated.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplier deactivated.'**
+  String get supplierDeactivated;
+
+  /// No description provided for @supplierFieldCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get supplierFieldCode;
+
+  /// No description provided for @supplierFieldAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get supplierFieldAccount;
+
+  /// No description provided for @supplierFieldNameAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Name (Arabic)'**
+  String get supplierFieldNameAr;
+
+  /// No description provided for @supplierFieldNameEn.
+  ///
+  /// In en, this message translates to:
+  /// **'Name (English)'**
+  String get supplierFieldNameEn;
+
+  /// No description provided for @supplierFieldPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get supplierFieldPhone;
+
+  /// No description provided for @supplierFieldEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get supplierFieldEmail;
+
+  /// No description provided for @supplierFieldAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get supplierFieldAddress;
+
+  /// No description provided for @supplierValidationNameArRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic name is required.'**
+  String get supplierValidationNameArRequired;
+
+  /// No description provided for @supplierValidationEmailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address.'**
+  String get supplierValidationEmailInvalid;
+
+  /// No description provided for @supplierValidationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the supplier. Please check the values.'**
+  String get supplierValidationFailed;
+
+  /// No description provided for @supplierErrorPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have permission to perform this action.'**
+  String get supplierErrorPermissionDenied;
+
+  /// No description provided for @supplierErrorUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get supplierErrorUnknown;
 }
 
 class _AppLocalizationsDelegate

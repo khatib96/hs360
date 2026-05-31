@@ -6,8 +6,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hs360/features/auth/domain/app_permissions.dart';
 import 'package:hs360/features/auth/domain/app_session.dart';
 import 'package:hs360/features/auth/presentation/auth_controller.dart';
+import 'package:hs360/features/customers/data/customer_repository.dart';
 import 'package:hs360/features/customers/presentation/customers_hub_screen.dart';
+import 'package:hs360/features/suppliers/data/supplier_repository.dart';
 import 'package:hs360/l10n/app_localizations.dart';
+
+import '../fake_customer_repository.dart';
+import '../../suppliers/fake_supplier_repository.dart';
 
 void main() {
   AppSession session({Set<String> permissions = const {}}) {
@@ -32,6 +37,10 @@ void main() {
         authControllerProvider.overrideWith(
           () => TestAuthController(appSession),
         ),
+        customerRepositoryProvider
+            .overrideWith((ref) => FakeCustomerRepository()),
+        supplierRepositoryProvider
+            .overrideWith((ref) => FakeSupplierRepository()),
       ],
       child: MaterialApp(
         locale: const Locale('en'),
@@ -45,7 +54,7 @@ void main() {
     );
   }
 
-  testWidgets('suppliers.view only shows supplier placeholder without tabs', (
+  testWidgets('suppliers.view only shows supplier list body without tabs', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -53,13 +62,15 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const Key('suppliers-placeholder-body')), findsOneWidget);
-    expect(find.byKey(const Key('customers-placeholder-body')), findsNothing);
+    expect(find.byKey(const Key('suppliers-tab-body')), findsOneWidget);
+    expect(find.byKey(const Key('customers-tab-body')), findsNothing);
     expect(find.byKey(const Key('customers-tab')), findsNothing);
     expect(find.byKey(const Key('suppliers-tab')), findsNothing);
   });
 
-  testWidgets('both customer and supplier grants show tab keys', (tester) async {
+  testWidgets('both grants show tab keys and customer list body', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       buildHub(
         appSession: session(
@@ -71,12 +82,12 @@ void main() {
 
     expect(find.byKey(const Key('customers-tab')), findsOneWidget);
     expect(find.byKey(const Key('suppliers-tab')), findsOneWidget);
-    expect(find.byKey(const Key('customers-placeholder-body')), findsOneWidget);
+    expect(find.byKey(const Key('customers-tab-body')), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('suppliers-tab')));
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const Key('suppliers-placeholder-body')), findsOneWidget);
+    expect(find.byKey(const Key('suppliers-tab-body')), findsOneWidget);
   });
 
   testWidgets('no tab grants shows module access unavailable', (tester) async {

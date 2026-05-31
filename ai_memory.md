@@ -1,6 +1,6 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-05-31 (Phase 4 M4 routes, guards, navigation, localization complete).
+> Updated 2026-06-01 (Phase 4 M5 complete; next is M5.5 customer/supplier profile cleanup before GitHub/M6).
 > Keep this file short. It is for continuity between AI tools, not full project documentation.
 
 ---
@@ -12,9 +12,41 @@
 - **Phase 3 complete** - products and inventory (M0-M8).
 - **Phase 4 M0-M3 complete** - DB RPCs, domain models, validators, repositories for customers, suppliers, chart of accounts.
 - **Phase 4 M4 complete** - routes, guards, AppShell navigation, AR/EN l10n, placeholder screens (no CRUD/repository imports in presentation).
+- **Phase 4 M5 complete** - customer/supplier lists, filters, and create/edit/deactivate forms wired through Riverpod controllers + existing repositories.
+- **Phase 4 M5.5 planned before M6** - clean customer/supplier profile fields, DB schema/RPCs, and forms before publishing/continuing.
 - Migrations `001`-`044` apply cleanly when applied directly; `npx --yes supabase db reset` is currently blocked by a Supabase CLI 2.102 internal service migration duplicate before project migrations.
 - **Canonical inventory rules:** [`docs/PHASE_3_M1_5_INVENTORY_RULES.md`](docs/PHASE_3_M1_5_INVENTORY_RULES.md)
-- **Next:** Phase 4 M5 - customer/supplier lists and forms.
+- **Next:** Phase 4 M5.5 - Customer/Supplier Profile Cleanup (then M6 Customer Detail, Statement & Timeline).
+
+---
+
+## Phase 4 M5.5 - Customer/Supplier Profile Cleanup Plan
+
+Goal: fix the M5 profile UX/data model before GitHub/M6. M5 works technically, but the create/edit forms currently expose too many low-value fields and the DB still contains fields the business does not want to keep.
+
+- **DB cleanup:** add a new migration (likely `046_customer_supplier_profile_cleanup.sql`) and update RPCs/domain/tests. Remove from `customers`: `phone_secondary`, `whatsapp`, `contact_person_title`, `gps_lat`, `gps_lng`, `payment_terms_days`, `credit_limit`. These must disappear from both app and DB, not just be hidden.
+- **Customer fields:** individual customers should only capture name, phone, optional email, country, governorate, area, address details, Google Maps URL, notes, and VIP flag. Company customers should capture company Arabic name, optional English name, phone, optional email, optional tax number, optional contact person name, optional contact person phone, address fields, Google Maps URL, notes, and VIP flag.
+- **Supplier fields:** keep supplier profiles similarly clean: name, phone, optional email, optional tax number, country/governorate/area/address details, Google Maps URL, notes. Avoid generic/ambiguous address-only storage if the customer schema is structured.
+- **Accounting account decision:** current M2 RPCs always create linked A/R or A/P accounts and `account_id` is required. M5.5 should change this to an explicit `create_account` choice (recommended default `false`) and make `account_id` nullable where needed, so POS/one-time customers are not forced into the chart of accounts. If `create_account = true`, keep the atomic subaccount generation rules.
+- **Form redesign:** widen customer/supplier dialogs (around 900-1000px desktop), replace long single-column forms with grouped rows/sections, and conditionally show company-only fields only when customer type is company. Do not show empty/irrelevant fields for individuals.
+- **Location UX:** replace GPS latitude/longitude with a simple Google Maps URL field. Add a local Kuwait location catalog (country -> governorate -> areas) from the user's table image; first row is governorate names and each column contains its areas. Use dropdowns for country/governorate/area, then free-text address details.
+- **Filters/list toolbar:** keep filters in one compact toolbar row where desktop space allows; make the Add Customer/Supplier action compact and aligned with filters. Allow wrapping only on smaller widths.
+- **Out of scope:** payment terms, credit limits, visit schedules, oil replacement/service dates, and contract-specific cadence belong to contracts/accounting/visits, not the customer creation card.
+- **Verification:** update fake repositories, validators, l10n, route/list/form tests; run migration checks as applicable plus `flutter gen-l10n`, `flutter analyze`, `flutter test`, and `git diff --check`. Update this memory when M5.5 is complete.
+
+---
+
+## Phase 4 M5 - Customers & Suppliers Lists & Forms
+
+- Path helpers on [`app_routes.dart`](lib/core/routing/app_routes.dart): `customerDetailPath`, `customerEditPath`, `supplierDetailPath` (all use `Uri.encodeComponent`); route template constants unchanged.
+- Controllers (`@Riverpod(keepAlive: true)`): [`customer_list_controller.dart`](lib/features/customers/presentation/customer_list_controller.dart), [`supplier_list_controller.dart`](lib/features/suppliers/presentation/supplier_list_controller.dart). Default filters are **active-only** (`isActive: true`); `clearFilters()` resets to active-only. Mutations require `canView*` **and** the action permission, return `String?` error code (`null` = success), read repository directly (work before list loads), then `refresh()`. Catch `CustomerException`/`SupplierException`, else `unknown`.
+- Drafts validate before building form state (no silent numeric coercion): [`customer_form_draft.dart`](lib/features/customers/presentation/customer_form_draft.dart) (UI-only `invalid_decimal`/`invalid_integer`, GPS pair, negative credit/payment), [`supplier_form_draft.dart`](lib/features/suppliers/presentation/supplier_form_draft.dart) (name_ar required, email format). `credit_limit`/GPS are `Decimal`; `payment_terms_days` is `int`.
+- Shared form widgets are the single source of fields: [`customer_form.dart`](lib/features/customers/presentation/widgets/customer_form.dart), [`supplier_form.dart`](lib/features/suppliers/presentation/widgets/supplier_form.dart). Dialogs and `CustomerEditScreen` are shells embedding them; dialogs close on success + SnackBar, stay open on error. `CustomerEditScreen` prefills via `fetchCustomerById` but saves via `CustomerListController.updateCustomer`.
+- Tab bodies replace M4 placeholders: [`customers_tab_body.dart`](lib/features/customers/presentation/customers_tab_body.dart), [`suppliers_tab_body.dart`](lib/features/suppliers/presentation/suppliers_tab_body.dart) (keys `customers-tab-body` / `suppliers-tab-body`). Desktop `DataTable` uses owned scroll controllers + `Scrollbar`; mobile uses cards. Search is `onSubmitted` + clear (no debounce). Removed `customer_edit_placeholder_screen.dart`.
+- Post-review UX fix: empty-state copy now uses `hasNonDefaultFilters` so the M5 default active-only view is not treated as a user-applied filter; covered by customer/supplier filter tests.
+- l10n: added customer/supplier list/filter/table/form/validation AR+EN keys; kept unused M4 `customersListUnavailable`/`suppliersListUnavailable` keys.
+- No statement/balance/timeline/CoA/migrations. Tests use local fakes (`super(null)`, no Supabase) and assert statement/balance call counts stay 0.
+- Verification: `build_runner`, `flutter gen-l10n`, `flutter analyze` (clean), `flutter test` (313 tests after post-review filter tests).
 
 ---
 

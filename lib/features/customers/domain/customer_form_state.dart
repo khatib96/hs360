@@ -1,5 +1,6 @@
 import 'package:decimal/decimal.dart';
 
+import 'customer.dart';
 import 'customer_type.dart';
 
 /// Full create/edit customer form. Repository maps to M2 RPC payloads.
@@ -28,6 +29,33 @@ class CustomerFormState {
     this.acquiredBy,
     this.acquiredAt,
   }) : creditLimit = creditLimit ?? Decimal.zero;
+
+  /// Maps an existing [Customer] to a form state for editing.
+  /// Excludes generated code/account and acquired_by/acquired_at (M2 update scope).
+  factory CustomerFormState.fromCustomer(Customer customer) {
+    return CustomerFormState(
+      customerType: customer.customerType,
+      nameAr: customer.nameAr,
+      nameEn: customer.nameEn,
+      contactPersonName: customer.contactPersonName,
+      contactPersonTitle: customer.contactPersonTitle,
+      contactPersonPhone: customer.contactPersonPhone,
+      phonePrimary: customer.phonePrimary,
+      phoneSecondary: customer.phoneSecondary,
+      whatsapp: customer.whatsapp,
+      email: customer.email,
+      addressLine: customer.addressLine,
+      area: customer.area,
+      city: customer.city,
+      country: customer.country,
+      gpsLat: customer.gpsLat,
+      gpsLng: customer.gpsLng,
+      paymentTermsDays: customer.paymentTermsDays,
+      creditLimit: customer.creditLimit,
+      isVip: customer.isVip,
+      notes: customer.notes,
+    );
+  }
 
   final CustomerType customerType;
   final String nameAr;

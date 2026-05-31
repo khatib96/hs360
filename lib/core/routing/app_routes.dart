@@ -39,4 +39,13 @@ abstract final class AppRoutes {
   static const suppliersName = 'suppliers';
   static const suppliersDetailName = 'suppliersDetail';
   static const accountsName = 'accounts';
+
+  static String customerDetailPath(String id) =>
+      '/customers/${Uri.encodeComponent(id)}';
+
+  static String customerEditPath(String id) =>
+      '/customers/${Uri.encodeComponent(id)}/edit';
+
+  static String supplierDetailPath(String id) =>
+      '/suppliers/${Uri.encodeComponent(id)}';
 }

@@ -5,8 +5,10 @@ import 'package:hs360/l10n/app_localizations.dart';
 import '../../../core/routing/app_routes.dart';
 import '../../../shared/widgets/app_shell.dart';
 import '../../auth/presentation/auth_controller.dart';
-import '../domain/customer_permissions.dart';
 import '../../suppliers/domain/supplier_permissions.dart';
+import '../../suppliers/presentation/suppliers_tab_body.dart';
+import '../domain/customer_permissions.dart';
+import 'customers_tab_body.dart';
 
 enum CustomersHubTab { customers, suppliers }
 
@@ -20,10 +22,8 @@ class CustomersHubScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final session = ref.watch(authControllerProvider).valueOrNull;
 
-    final showCustomers =
-        session != null && canViewCustomers(session);
-    final showSuppliers =
-        session != null && canViewSuppliers(session);
+    final showCustomers = session != null && canViewCustomers(session);
+    final showSuppliers = session != null && canViewSuppliers(session);
 
     final visibleTabCount =
         (showCustomers ? 1 : 0) + (showSuppliers ? 1 : 0);
@@ -33,14 +33,8 @@ class CustomersHubScreen extends ConsumerWidget {
       body = _PlaceholderBody(message: l10n.moduleAccessUnavailable);
     } else if (visibleTabCount == 1) {
       body = showCustomers
-          ? _PlaceholderBody(
-              key: const Key('customers-placeholder-body'),
-              message: l10n.customersListUnavailable,
-            )
-          : _PlaceholderBody(
-              key: const Key('suppliers-placeholder-body'),
-              message: l10n.suppliersListUnavailable,
-            );
+          ? const CustomersTabBody()
+          : const SuppliersTabBody();
     } else {
       final initialIndex = _resolveInitialIndex(
         showCustomers: showCustomers,
@@ -59,17 +53,11 @@ class CustomersHubScreen extends ConsumerWidget {
                 Tab(key: const Key('suppliers-tab'), text: l10n.suppliers),
               ],
             ),
-            Expanded(
+            const Expanded(
               child: TabBarView(
                 children: [
-                  _PlaceholderBody(
-                    key: const Key('customers-placeholder-body'),
-                    message: l10n.customersListUnavailable,
-                  ),
-                  _PlaceholderBody(
-                    key: const Key('suppliers-placeholder-body'),
-                    message: l10n.suppliersListUnavailable,
-                  ),
+                  CustomersTabBody(),
+                  SuppliersTabBody(),
                 ],
               ),
             ),
@@ -98,7 +86,7 @@ class CustomersHubScreen extends ConsumerWidget {
 }
 
 class _PlaceholderBody extends StatelessWidget {
-  const _PlaceholderBody({required this.message, super.key});
+  const _PlaceholderBody({required this.message});
 
   final String message;
 
