@@ -322,5 +322,22 @@
   "productUnitParserDuplicate": "رقم تسلسلي مكرر في القائمة",
   "productUnitParserInvalidCost": "تكلفة شراء غير صالحة في القائمة",
   "productUnitSectionHistory": "سجل العقود",
-  "productUnitWarehouseTransferHint": "استخدم تحويلات المخزون لنقل المخزون بين المستودعات."
+  "productUnitWarehouseTransferHint": "استخدم تحويلات المخزون لنقل المخزون بين المستودعات.",
+  "customers": "العملاء",
+  "suppliers": "الموردون",
+  "customerDetails": "تفاصيل العميل",
+  "editCustomer": "تعديل العميل",
+  "customerOverview": "نظرة عامة",
+  "customerStatement": "كشف الحساب",
+  "customerTimeline": "السجل الزمني",
+  "chartOfAccounts": "دليل الحسابات",
+  "referenceId": "المرجع",
+  "customersListUnavailable": "قائمة العملاء غير متاحة في هذا الإصدار.",
+  "suppliersListUnavailable": "قائمة الموردين غير متاحة في هذا الإصدار.",
+  "customerDetailsUnavailable": "التفاصيل ستُفعّل عند اكتمال هذا القسم.",
+  "customerEditUnavailable": "تعديل العميل غير متاح في هذا الإصدار.",
+  "supplierDetailsUnavailable": "تفاصيل المورد غير متاحة في هذا الإصدار.",
+  "chartOfAccountsUnavailable": "عرض دليل الحسابات غير متاح في هذا الإصدار.",
+  "moduleSectionUnavailable": "هذا القسم غير متاح في هذا الإصدار.",
+  "moduleAccessUnavailable": "لا تملك صلاحية عرض هذا القسم."
 }

@@ -13,6 +13,12 @@ abstract final class AppRoutes {
   static const inventory = '/inventory';
   static const inventoryMovements = '/inventory/movements';
   static const inventoryTransfers = '/inventory/transfers';
+  static const customers = '/customers';
+  static const customersEdit = '/customers/:id/edit';
+  static const customersDetail = '/customers/:id';
+  static const suppliers = '/suppliers';
+  static const suppliersDetail = '/suppliers/:id';
+  static const accounts = '/accounts';
 
   static const loginName = 'login';
   static const forgotPasswordName = 'forgotPassword';
@@ -27,4 +33,10 @@ abstract final class AppRoutes {
   static const inventoryName = 'inventory';
   static const inventoryMovementsName = 'inventoryMovements';
   static const inventoryTransfersName = 'inventoryTransfers';
+  static const customersName = 'customers';
+  static const customersEditName = 'customersEdit';
+  static const customersDetailName = 'customersDetail';
+  static const suppliersName = 'suppliers';
+  static const suppliersDetailName = 'suppliersDetail';
+  static const accountsName = 'accounts';
 }

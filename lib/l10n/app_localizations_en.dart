@@ -1028,4 +1028,63 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get productUnitWarehouseTransferHint =>
       'Use Stock Transfers to move stock between warehouses.';
+
+  @override
+  String get customers => 'Customers';
+
+  @override
+  String get suppliers => 'Suppliers';
+
+  @override
+  String get customerDetails => 'Customer details';
+
+  @override
+  String get editCustomer => 'Edit customer';
+
+  @override
+  String get customerOverview => 'Overview';
+
+  @override
+  String get customerStatement => 'Statement';
+
+  @override
+  String get customerTimeline => 'Timeline';
+
+  @override
+  String get chartOfAccounts => 'Chart of accounts';
+
+  @override
+  String get referenceId => 'Reference ID';
+
+  @override
+  String get customersListUnavailable =>
+      'Customer list is not available in this build.';
+
+  @override
+  String get suppliersListUnavailable =>
+      'Supplier list is not available in this build.';
+
+  @override
+  String get customerDetailsUnavailable =>
+      'Details will be enabled when this module is completed.';
+
+  @override
+  String get customerEditUnavailable =>
+      'Customer editing is not available in this build.';
+
+  @override
+  String get supplierDetailsUnavailable =>
+      'Supplier details are not available in this build.';
+
+  @override
+  String get chartOfAccountsUnavailable =>
+      'Chart of accounts view is not available in this build.';
+
+  @override
+  String get moduleSectionUnavailable =>
+      'This section is not available in this build.';
+
+  @override
+  String get moduleAccessUnavailable =>
+      'You do not have permission to view this section.';
 }

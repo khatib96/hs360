@@ -369,5 +369,200 @@ void main() {
         AppRoutes.dashboard,
       );
     });
+
+    test('suppliers.view only resolves home to dashboard', () {
+      expect(
+        resolveHomeRoute(
+          session(accountType: 'user', permissions: {'suppliers.view'}),
+        ),
+        AppRoutes.dashboard,
+      );
+    });
+
+    test('chart_of_accounts.view only resolves home to dashboard', () {
+      expect(
+        resolveHomeRoute(
+          session(
+            accountType: 'user',
+            permissions: {'chart_of_accounts.view'},
+          ),
+        ),
+        AppRoutes.dashboard,
+      );
+    });
+
+    test('Phase 4 path matchers reject new and extra segments', () {
+      expect(isCustomerEditPath('/customers/c1/edit'), isTrue);
+      expect(isCustomerEditPath('/customers/new/edit'), isFalse);
+      expect(isCustomerDetailPath('/customers/c1'), isTrue);
+      expect(isCustomerDetailPath('/customers/new'), isFalse);
+      expect(isCustomerDetailPath('/customers/a/b'), isFalse);
+      expect(isSupplierDetailPath('/suppliers/s1'), isTrue);
+      expect(isSupplierDetailPath('/suppliers/new'), isFalse);
+    });
+
+    test('manager can access all Phase 4 routes', () {
+      final manager = session(accountType: 'manager');
+      for (final path in [
+        AppRoutes.customers,
+        '/customers/c1',
+        '/customers/c1/edit',
+        AppRoutes.suppliers,
+        '/suppliers/s1',
+        AppRoutes.accounts,
+      ]) {
+        expect(
+          guardRedirectForPath(
+            path: path,
+            hasSupabaseSession: true,
+            authState: loaded(manager),
+          ),
+          isNull,
+          reason: path,
+        );
+      }
+    });
+
+    test('customers.view can access /customers and /customers/:id', () {
+      final customerViewer = session(
+        accountType: 'user',
+        permissions: {'customers.view'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.customers,
+          hasSupabaseSession: true,
+          authState: loaded(customerViewer),
+        ),
+        isNull,
+      );
+      expect(
+        guardRedirectForPath(
+          path: '/customers/c1',
+          hasSupabaseSession: true,
+          authState: loaded(customerViewer),
+        ),
+        isNull,
+      );
+    });
+
+    test('customers.view alone cannot access /customers/:id/edit', () {
+      final viewOnly = session(
+        accountType: 'user',
+        permissions: {'customers.view'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: '/customers/c1/edit',
+          hasSupabaseSession: true,
+          authState: loaded(viewOnly),
+        ),
+        AppRoutes.dashboard,
+      );
+    });
+
+    test('customers.view and customers.edit can access /customers/:id/edit', () {
+      final editor = session(
+        accountType: 'user',
+        permissions: {'customers.view', 'customers.edit'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: '/customers/c1/edit',
+          hasSupabaseSession: true,
+          authState: loaded(editor),
+        ),
+        isNull,
+      );
+    });
+
+    test('customers.edit only cannot access /customers/:id/edit', () {
+      final editOnly = session(
+        accountType: 'user',
+        permissions: {'customers.edit'},
+      );
+      expect(resolveHomeRoute(editOnly), AppRoutes.blocked);
+      expect(
+        guardRedirectForPath(
+          path: '/customers/c1/edit',
+          hasSupabaseSession: true,
+          authState: loaded(editOnly),
+        ),
+        AppRoutes.blocked,
+      );
+    });
+
+    test('suppliers.view can access /customers and /suppliers', () {
+      final supplierViewer = session(
+        accountType: 'user',
+        permissions: {'suppliers.view'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.customers,
+          hasSupabaseSession: true,
+          authState: loaded(supplierViewer),
+        ),
+        isNull,
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.suppliers,
+          hasSupabaseSession: true,
+          authState: loaded(supplierViewer),
+        ),
+        isNull,
+      );
+    });
+
+    test('suppliers.view cannot access /customers/:id', () {
+      final supplierViewer = session(
+        accountType: 'user',
+        permissions: {'suppliers.view'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: '/customers/c1',
+          hasSupabaseSession: true,
+          authState: loaded(supplierViewer),
+        ),
+        AppRoutes.dashboard,
+      );
+    });
+
+    test('chart_of_accounts.view can access /accounts', () {
+      final coaViewer = session(
+        accountType: 'user',
+        permissions: {'chart_of_accounts.view'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.accounts,
+          hasSupabaseSession: true,
+          authState: loaded(coaViewer),
+        ),
+        isNull,
+      );
+    });
+
+    test('zero-permission user is blocked from Phase 4 routes', () {
+      final zeroUser = session(accountType: 'user');
+      for (final path in [
+        AppRoutes.customers,
+        '/customers/c1',
+        AppRoutes.suppliers,
+        AppRoutes.accounts,
+      ]) {
+        expect(
+          guardRedirectForPath(
+            path: path,
+            hasSupabaseSession: true,
+            authState: loaded(zeroUser),
+          ),
+          AppRoutes.blocked,
+          reason: path,
+        );
+      }
+    });
   });
 }

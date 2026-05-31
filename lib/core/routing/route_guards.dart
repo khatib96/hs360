@@ -25,6 +25,8 @@ const _officePermissionIds = [
   'warehouses.view',
   'inventory_movements.view',
   'inventory_movements.create',
+  'suppliers.view',
+  'chart_of_accounts.view',
 ];
 
 bool isPublicRoute(String path) =>
@@ -55,6 +57,35 @@ bool isProductEditPath(String path) {
   return match.group(1)! != 'new';
 }
 
+/// True for `/customers/{segment}/edit` where segment is not `new`.
+bool isCustomerEditPath(String path) {
+  final match =
+      RegExp(r'^/customers/([^/]+)/edit$').firstMatch(_normalizePath(path));
+  if (match == null) return false;
+  return match.group(1)! != 'new';
+}
+
+/// True for `/customers/{segment}` where segment is not `new`.
+bool isCustomerDetailPath(String path) {
+  final match = RegExp(r'^/customers/([^/]+)$').firstMatch(_normalizePath(path));
+  if (match == null) return false;
+  return match.group(1)! != 'new';
+}
+
+/// True for `/suppliers/{segment}` where segment is not `new`.
+bool isSupplierDetailPath(String path) {
+  final match = RegExp(r'^/suppliers/([^/]+)$').firstMatch(_normalizePath(path));
+  if (match == null) return false;
+  return match.group(1)! != 'new';
+}
+
+bool _canViewCustomersInline(AppSession session) =>
+    session.permissions.can('customers.view');
+
+bool _canAccessCustomerEditInline(AppSession session) =>
+    _canViewCustomersInline(session) &&
+    session.permissions.can('customers.edit');
+
 /// Inner path permission validation helper.
 bool _isPathAllowed(String path, AppSession session) {
   if (session.isManager) return true;
@@ -80,6 +111,26 @@ bool _isPathAllowed(String path, AppSession session) {
   }
   if (path == AppRoutes.inventory) {
     return session.permissions.can('inventory.view');
+  }
+
+  if (isCustomerEditPath(path)) {
+    return _canAccessCustomerEditInline(session);
+  }
+  if (isCustomerDetailPath(path)) {
+    return _canViewCustomersInline(session);
+  }
+  if (path == AppRoutes.customers) {
+    return session.permissions.can('customers.view') ||
+        session.permissions.can('suppliers.view');
+  }
+  if (isSupplierDetailPath(path)) {
+    return session.permissions.can('suppliers.view');
+  }
+  if (path == AppRoutes.suppliers) {
+    return session.permissions.can('suppliers.view');
+  }
+  if (path == AppRoutes.accounts) {
+    return session.permissions.can('chart_of_accounts.view');
   }
 
   // Dashboard and Field specific permissions

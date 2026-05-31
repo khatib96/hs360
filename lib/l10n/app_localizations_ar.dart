@@ -1021,4 +1021,60 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get productUnitWarehouseTransferHint =>
       'استخدم تحويلات المخزون لنقل المخزون بين المستودعات.';
+
+  @override
+  String get customers => 'العملاء';
+
+  @override
+  String get suppliers => 'الموردون';
+
+  @override
+  String get customerDetails => 'تفاصيل العميل';
+
+  @override
+  String get editCustomer => 'تعديل العميل';
+
+  @override
+  String get customerOverview => 'نظرة عامة';
+
+  @override
+  String get customerStatement => 'كشف الحساب';
+
+  @override
+  String get customerTimeline => 'السجل الزمني';
+
+  @override
+  String get chartOfAccounts => 'دليل الحسابات';
+
+  @override
+  String get referenceId => 'المرجع';
+
+  @override
+  String get customersListUnavailable =>
+      'قائمة العملاء غير متاحة في هذا الإصدار.';
+
+  @override
+  String get suppliersListUnavailable =>
+      'قائمة الموردين غير متاحة في هذا الإصدار.';
+
+  @override
+  String get customerDetailsUnavailable =>
+      'التفاصيل ستُفعّل عند اكتمال هذا القسم.';
+
+  @override
+  String get customerEditUnavailable => 'تعديل العميل غير متاح في هذا الإصدار.';
+
+  @override
+  String get supplierDetailsUnavailable =>
+      'تفاصيل المورد غير متاحة في هذا الإصدار.';
+
+  @override
+  String get chartOfAccountsUnavailable =>
+      'عرض دليل الحسابات غير متاح في هذا الإصدار.';
+
+  @override
+  String get moduleSectionUnavailable => 'هذا القسم غير متاح في هذا الإصدار.';
+
+  @override
+  String get moduleAccessUnavailable => 'لا تملك صلاحية عرض هذا القسم.';
 }

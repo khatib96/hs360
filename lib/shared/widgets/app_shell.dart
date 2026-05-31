@@ -6,8 +6,10 @@ import 'package:hs360/l10n/app_localizations.dart';
 import '../../core/routing/app_routes.dart';
 import '../../core/routing/route_guards.dart';
 import '../../core/theme/app_theme.dart';
+import '../../features/accounting/domain/accounting_permissions.dart';
 import '../../features/auth/domain/app_session.dart';
 import '../../features/auth/presentation/auth_controller.dart';
+import '../../features/customers/domain/customer_permissions.dart';
 
 class _NavItem {
   const _NavItem({
@@ -85,6 +87,19 @@ class AppShell extends ConsumerWidget {
         icon: Icons.add_box_outlined,
         route: AppRoutes.productsNew,
         isVisible: (session) => _can(session, 'products.create'),
+      ),
+      _NavItem(
+        titleGetter: (l) => l.customers,
+        icon: Icons.people_outline,
+        route: AppRoutes.customers,
+        isVisible: canViewCustomersArea,
+        matchChildren: true,
+      ),
+      _NavItem(
+        titleGetter: (l) => l.chartOfAccounts,
+        icon: Icons.account_tree_outlined,
+        route: AppRoutes.accounts,
+        isVisible: canViewChartOfAccounts,
       ),
       _NavItem(
         titleGetter: (l) => l.warehouses,

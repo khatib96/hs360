@@ -1,6 +1,6 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-05-30 (Phase 3 M8 verification complete; Phase 3 ready to raise).
+> Updated 2026-05-31 (Phase 4 M4 routes, guards, navigation, localization complete).
 > Keep this file short. It is for continuity between AI tools, not full project documentation.
 
 ---
@@ -9,20 +9,25 @@
 
 - **Phase 0-1D complete** - local Supabase database foundation is verified.
 - **Phase 2 complete** - auth, routing, permissions, locale (M0-M8).
-- **Phase 3 M0–M4 complete** - DB, domain/data, routes, product list.
-- **Phase 3 M5 complete** - product detail, 5-step create/edit wizard, primary image upload.
-- **Phase 3 M6 complete** - serialized product units in product detail Units tab.
-- **Phase 3 M6.5 complete** - product sale/rental modes split before M7.
-- **Phase 3 M7A complete** - warehouse CRUD screen, van rules, assignable employees RPC.
-- **Phase 3 M7B complete** - inventory balances screen, product detail stock card, partial hydration failures.
-- **Phase 3 M7C complete** - read-only movements log at `/inventory/movements`.
-- **Phase 3 M7D complete** - manual stock-in/out dialog on `/inventory`; migration `043` cost gate on `adjustment_in`.
-- **Phase 3 M7E complete** - inventory transfers UI/RPC and SQL verification fixtures.
-- **Phase 3 M7.5 complete** - inventory performance seed, adjustment dialog cleanup/tests, low-stock semantics hardened.
-- **Phase 3 M8 complete** - verification/close pass, UI blocker fixes, Arabic fallback for bad seed text, warehouse-to-inventory navigation.
+- **Phase 3 complete** - products and inventory (M0-M8).
+- **Phase 4 M0-M3 complete** - DB RPCs, domain models, validators, repositories for customers, suppliers, chart of accounts.
+- **Phase 4 M4 complete** - routes, guards, AppShell navigation, AR/EN l10n, placeholder screens (no CRUD/repository imports in presentation).
 - Migrations `001`-`044` apply cleanly when applied directly; `npx --yes supabase db reset` is currently blocked by a Supabase CLI 2.102 internal service migration duplicate before project migrations.
 - **Canonical inventory rules:** [`docs/PHASE_3_M1_5_INVENTORY_RULES.md`](docs/PHASE_3_M1_5_INVENTORY_RULES.md)
-- **Next:** Raise Phase 3 to GitHub, then start Phase 4 / M8-equivalent next scope as planned.
+- **Next:** Phase 4 M5 - customer/supplier lists and forms.
+
+---
+
+## Phase 4 M4 - Routes, Guards, Navigation & Localization
+
+- Routes: `/customers`, `/customers/:id`, `/customers/:id/edit`, `/suppliers`, `/suppliers/:id`, `/accounts` in [`lib/core/routing/app_routes.dart`](lib/core/routing/app_routes.dart) + [`app_router.dart`](lib/core/routing/app_router.dart).
+- Guards: strict path matchers (`isCustomerEditPath`, `isCustomerDetailPath`, `isSupplierDetailPath`) reserve `new`; inline permission checks in [`route_guards.dart`](lib/core/routing/route_guards.dart); `_officePermissionIds` adds `suppliers.view` and `chart_of_accounts.view` only.
+- Permission helpers (UI/tests): [`customer_permissions.dart`](lib/features/customers/domain/customer_permissions.dart), [`supplier_permissions.dart`](lib/features/suppliers/domain/supplier_permissions.dart), [`accounting_permissions.dart`](lib/features/accounting/domain/accounting_permissions.dart).
+- Presentation placeholders only: `CustomersHubScreen` (Customers/Suppliers tabs with stable Keys, zero-tab fallback), customer detail/edit placeholders, supplier detail placeholder, chart of accounts placeholder - no repository imports.
+- AppShell nav: Customers (customers.view or suppliers.view), Chart of Accounts (chart_of_accounts.view).
+- l10n: 16 new AR/EN keys including `moduleAccessUnavailable`, professional placeholder copy (no milestone jargon in UI).
+- Tests: Phase 4 route guard cases, AppShell nav permission cases, `customers_hub_screen_test.dart`.
+- Verification: `flutter gen-l10n`, `flutter analyze` (clean), `flutter test` (278 tests).
 
 ---
 

@@ -151,6 +151,87 @@ void main() {
     expect(find.text(l10n.inventoryTransfers), findsNothing);
     expect(find.text(l10n.inventoryMovements), findsNothing);
   });
+
+  testWidgets('customers.view shows customers navigation item', (tester) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+
+    await tester.pumpWidget(
+      buildTestApp(
+        appSession: session(permissions: {'customers.view'}),
+        child: const AppShell(title: 'Shell', body: SizedBox.shrink()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.customers), findsOneWidget);
+    expect(find.text(l10n.chartOfAccounts), findsNothing);
+  });
+
+  testWidgets('suppliers.view shows customers navigation item', (tester) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+
+    await tester.pumpWidget(
+      buildTestApp(
+        appSession: session(permissions: {'suppliers.view'}),
+        child: const AppShell(title: 'Shell', body: SizedBox.shrink()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.customers), findsOneWidget);
+  });
+
+  testWidgets('chart_of_accounts.view shows chart of accounts nav item', (
+    tester,
+  ) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+
+    await tester.pumpWidget(
+      buildTestApp(
+        appSession: session(permissions: {'chart_of_accounts.view'}),
+        child: const AppShell(title: 'Shell', body: SizedBox.shrink()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.chartOfAccounts), findsOneWidget);
+    expect(find.text(l10n.customers), findsNothing);
+  });
+
+  testWidgets('zero-permission user does not see Phase 4 nav items', (
+    tester,
+  ) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+
+    await tester.pumpWidget(
+      buildTestApp(
+        appSession: session(),
+        child: const AppShell(title: 'Shell', body: SizedBox.shrink()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.customers), findsNothing);
+    expect(find.text(l10n.chartOfAccounts), findsNothing);
+  });
+
+  testWidgets('products.view only does not show Phase 4 nav items', (
+    tester,
+  ) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+
+    await tester.pumpWidget(
+      buildTestApp(
+        appSession: session(permissions: {'products.view'}),
+        child: const AppShell(title: 'Shell', body: SizedBox.shrink()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.products), findsOneWidget);
+    expect(find.text(l10n.customers), findsNothing);
+    expect(find.text(l10n.chartOfAccounts), findsNothing);
+  });
 }
 
 class TestAuthController extends AuthController {

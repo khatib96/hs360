@@ -2035,6 +2035,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Use Stock Transfers to move stock between warehouses.'**
   String get productUnitWarehouseTransferHint;
+
+  /// Customers module title and navigation label
+  ///
+  /// In en, this message translates to:
+  /// **'Customers'**
+  String get customers;
+
+  /// Suppliers tab label
+  ///
+  /// In en, this message translates to:
+  /// **'Suppliers'**
+  String get suppliers;
+
+  /// Customer detail screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Customer details'**
+  String get customerDetails;
+
+  /// Customer edit screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Edit customer'**
+  String get editCustomer;
+
+  /// Customer detail overview tab
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get customerOverview;
+
+  /// Customer detail statement tab
+  ///
+  /// In en, this message translates to:
+  /// **'Statement'**
+  String get customerStatement;
+
+  /// Customer detail timeline tab
+  ///
+  /// In en, this message translates to:
+  /// **'Timeline'**
+  String get customerTimeline;
+
+  /// Chart of accounts module title and navigation label
+  ///
+  /// In en, this message translates to:
+  /// **'Chart of accounts'**
+  String get chartOfAccounts;
+
+  /// Secondary label for route entity id in placeholder screens
+  ///
+  /// In en, this message translates to:
+  /// **'Reference ID'**
+  String get referenceId;
+
+  /// Placeholder when customer list UI is not yet available
+  ///
+  /// In en, this message translates to:
+  /// **'Customer list is not available in this build.'**
+  String get customersListUnavailable;
+
+  /// Placeholder when supplier list UI is not yet available
+  ///
+  /// In en, this message translates to:
+  /// **'Supplier list is not available in this build.'**
+  String get suppliersListUnavailable;
+
+  /// Placeholder when customer detail content is not yet available
+  ///
+  /// In en, this message translates to:
+  /// **'Details will be enabled when this module is completed.'**
+  String get customerDetailsUnavailable;
+
+  /// Placeholder when customer edit form is not yet available
+  ///
+  /// In en, this message translates to:
+  /// **'Customer editing is not available in this build.'**
+  String get customerEditUnavailable;
+
+  /// Placeholder when supplier detail content is not yet available
+  ///
+  /// In en, this message translates to:
+  /// **'Supplier details are not available in this build.'**
+  String get supplierDetailsUnavailable;
+
+  /// Placeholder when chart of accounts tree is not yet available
+  ///
+  /// In en, this message translates to:
+  /// **'Chart of accounts view is not available in this build.'**
+  String get chartOfAccountsUnavailable;
+
+  /// Generic placeholder for unavailable module sections or tabs
+  ///
+  /// In en, this message translates to:
+  /// **'This section is not available in this build.'**
+  String get moduleSectionUnavailable;
+
+  /// Shown when user has no visible tabs in customers hub
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have permission to view this section.'**
+  String get moduleAccessUnavailable;
 }
 
 class _AppLocalizationsDelegate

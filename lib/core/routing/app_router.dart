@@ -10,6 +10,11 @@ import '../../features/field_ops/presentation/field_today_screen.dart';
 import '../../features/products/presentation/product_detail_screen.dart';
 import '../../features/products/presentation/product_list_screen.dart';
 import '../../features/products/presentation/product_wizard_screen.dart';
+import '../../features/accounting/presentation/chart_of_accounts_placeholder_screen.dart';
+import '../../features/customers/presentation/customer_detail_placeholder_screen.dart';
+import '../../features/customers/presentation/customer_edit_placeholder_screen.dart';
+import '../../features/customers/presentation/customers_hub_screen.dart';
+import '../../features/suppliers/presentation/supplier_detail_placeholder_screen.dart';
 import '../../features/inventory/presentation/inventory_movements_screen.dart';
 import '../../features/inventory/presentation/inventory_transfers_screen.dart';
 import '../../features/inventory/presentation/inventory_screen.dart';
@@ -90,6 +95,44 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => InventoryScreen(
           initialWarehouseId: state.uri.queryParameters['warehouseId'],
         ),
+      ),
+      GoRoute(
+        path: AppRoutes.customersEdit,
+        name: AppRoutes.customersEditName,
+        builder: (context, state) => CustomerEditPlaceholderScreen(
+          customerId: state.pathParameters['id']!,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.customersDetail,
+        name: AppRoutes.customersDetailName,
+        builder: (context, state) => CustomerDetailPlaceholderScreen(
+          customerId: state.pathParameters['id']!,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.customers,
+        name: AppRoutes.customersName,
+        builder: (context, state) => const CustomersHubScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.suppliersDetail,
+        name: AppRoutes.suppliersDetailName,
+        builder: (context, state) => SupplierDetailPlaceholderScreen(
+          supplierId: state.pathParameters['id']!,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.suppliers,
+        name: AppRoutes.suppliersName,
+        builder: (context, state) => const CustomersHubScreen(
+          initialTab: CustomersHubTab.suppliers,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.accounts,
+        name: AppRoutes.accountsName,
+        builder: (context, state) => const ChartOfAccountsPlaceholderScreen(),
       ),
       GoRoute(
         path: AppRoutes.inventoryMovements,

@@ -471,5 +471,73 @@
   "productUnitParserDuplicate": "Duplicate serial in pasted list",
   "productUnitParserInvalidCost": "Invalid purchase cost in pasted list",
   "productUnitSectionHistory": "Contract history",
-  "productUnitWarehouseTransferHint": "Use Stock Transfers to move stock between warehouses."
+  "productUnitWarehouseTransferHint": "Use Stock Transfers to move stock between warehouses.",
+  "customers": "Customers",
+  "@customers": {
+    "description": "Customers module title and navigation label"
+  },
+  "suppliers": "Suppliers",
+  "@suppliers": {
+    "description": "Suppliers tab label"
+  },
+  "customerDetails": "Customer details",
+  "@customerDetails": {
+    "description": "Customer detail screen title"
+  },
+  "editCustomer": "Edit customer",
+  "@editCustomer": {
+    "description": "Customer edit screen title"
+  },
+  "customerOverview": "Overview",
+  "@customerOverview": {
+    "description": "Customer detail overview tab"
+  },
+  "customerStatement": "Statement",
+  "@customerStatement": {
+    "description": "Customer detail statement tab"
+  },
+  "customerTimeline": "Timeline",
+  "@customerTimeline": {
+    "description": "Customer detail timeline tab"
+  },
+  "chartOfAccounts": "Chart of accounts",
+  "@chartOfAccounts": {
+    "description": "Chart of accounts module title and navigation label"
+  },
+  "referenceId": "Reference ID",
+  "@referenceId": {
+    "description": "Secondary label for route entity id in placeholder screens"
+  },
+  "customersListUnavailable": "Customer list is not available in this build.",
+  "@customersListUnavailable": {
+    "description": "Placeholder when customer list UI is not yet available"
+  },
+  "suppliersListUnavailable": "Supplier list is not available in this build.",
+  "@suppliersListUnavailable": {
+    "description": "Placeholder when supplier list UI is not yet available"
+  },
+  "customerDetailsUnavailable": "Details will be enabled when this module is completed.",
+  "@customerDetailsUnavailable": {
+    "description": "Placeholder when customer detail content is not yet available"
+  },
+  "customerEditUnavailable": "Customer editing is not available in this build.",
+  "@customerEditUnavailable": {
+    "description": "Placeholder when customer edit form is not yet available"
+  },
+  "supplierDetailsUnavailable": "Supplier details are not available in this build.",
+  "@supplierDetailsUnavailable": {
+    "description": "Placeholder when supplier detail content is not yet available"
+  },
+  "chartOfAccountsUnavailable": "Chart of accounts view is not available in this build.",
+  "@chartOfAccountsUnavailable": {
+    "description": "Placeholder when chart of accounts tree is not yet available"
+  },
+  "moduleSectionUnavailable": "This section is not available in this build.",
+  "@moduleSectionUnavailable": {
+    "description": "Generic placeholder for unavailable module sections or tabs"
+  },
+  "moduleAccessUnavailable": "You do not have permission to view this section.",
+  "@moduleAccessUnavailable": {
+    "description": "Shown when user has no visible tabs in customers hub"
+  }
 }
