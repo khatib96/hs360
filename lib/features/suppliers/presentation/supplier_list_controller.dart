@@ -129,6 +129,18 @@ class SupplierListController extends _$SupplierListController {
         .updateSupplier(session, id, input));
   }
 
+  Future<String?> ensureAccount(String id) async {
+    final session = _session;
+    if (session == null ||
+        !canViewSuppliers(session) ||
+        !canEditSupplier(session)) {
+      return SupplierException.permissionDenied;
+    }
+    return _mutate(() => ref
+        .read(supplierRepositoryProvider)
+        .ensureSupplierAccount(session, id));
+  }
+
   Future<String?> deactivateSupplier(String id) async {
     final session = _session;
     if (session == null ||

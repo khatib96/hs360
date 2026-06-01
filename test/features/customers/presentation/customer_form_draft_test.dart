@@ -16,71 +16,6 @@ void main() {
       expect(codes, contains(CustomerException.phonePrimaryRequired));
     });
 
-    test('unparseable credit limit reports invalid_decimal (not silent)', () {
-      const draft = CustomerFormDraft(
-        nameAr: 'عميل',
-        phonePrimary: '1',
-        creditLimit: 'abc',
-      );
-      expect(draft.validate(), contains(CustomerFormDraft.invalidDecimal));
-    });
-
-    test('negative credit limit reports negative_credit_limit', () {
-      const draft = CustomerFormDraft(
-        nameAr: 'عميل',
-        phonePrimary: '1',
-        creditLimit: '-5',
-      );
-      expect(draft.validate(), contains(CustomerException.negativeCreditLimit));
-    });
-
-    test('unparseable payment terms reports invalid_integer', () {
-      const draft = CustomerFormDraft(
-        nameAr: 'عميل',
-        phonePrimary: '1',
-        paymentTermsDays: '3.5',
-      );
-      expect(draft.validate(), contains(CustomerFormDraft.invalidInteger));
-    });
-
-    test('negative payment terms reports negative_payment_terms', () {
-      const draft = CustomerFormDraft(
-        nameAr: 'عميل',
-        phonePrimary: '1',
-        paymentTermsDays: '-1',
-      );
-      expect(draft.validate(), contains(CustomerException.negativePaymentTerms));
-    });
-
-    test('one GPS field without the other is invalid', () {
-      const draft = CustomerFormDraft(
-        nameAr: 'عميل',
-        phonePrimary: '1',
-        gpsLat: '29.3',
-      );
-      expect(draft.validate(), contains(CustomerException.gpsInvalid));
-    });
-
-    test('unparseable GPS pair is invalid', () {
-      const draft = CustomerFormDraft(
-        nameAr: 'عميل',
-        phonePrimary: '1',
-        gpsLat: 'x',
-        gpsLng: 'y',
-      );
-      expect(draft.validate(), contains(CustomerException.gpsInvalid));
-    });
-
-    test('out-of-range GPS is invalid', () {
-      const draft = CustomerFormDraft(
-        nameAr: 'عميل',
-        phonePrimary: '1',
-        gpsLat: '200',
-        gpsLng: '50',
-      );
-      expect(draft.validate(), contains(CustomerException.gpsInvalid));
-    });
-
     test('invalid email is reported', () {
       const draft = CustomerFormDraft(
         nameAr: 'عميل',
@@ -90,20 +25,33 @@ void main() {
       expect(draft.validate(), contains(CustomerException.emailInvalid));
     });
 
-    test('toFormState parses numeric fields after a valid draft', () {
+    test('toFormState maps location and create_account', () {
       const draft = CustomerFormDraft(
         nameAr: 'عميل',
         phonePrimary: '99',
-        creditLimit: '150.5',
-        paymentTermsDays: '30',
-        gpsLat: '29.3',
-        gpsLng: '48.0',
+        governorate: 'hawalli',
+        area: 'salmiya',
+        googleMapsUrl: 'https://maps.example',
+        createAccount: true,
       );
       expect(draft.validate(), isEmpty);
       final state = draft.toFormState();
-      expect(state.creditLimit.toString(), '150.5');
-      expect(state.paymentTermsDays, 30);
-      expect(state.gpsLat?.toString(), '29.3');
+      expect(state.governorate, 'hawalli');
+      expect(state.area, 'salmiya');
+      expect(state.googleMapsUrl, 'https://maps.example');
+      expect(state.createAccount, isTrue);
+    });
+
+    test('custom area is resolved when useCustomArea is true', () {
+      const draft = CustomerFormDraft(
+        nameAr: 'عميل',
+        phonePrimary: '99',
+        governorate: 'hawalli',
+        useCustomArea: true,
+        customArea: 'منطقة خاصة',
+      );
+      final state = draft.toFormState();
+      expect(state.area, 'منطقة خاصة');
     });
   });
 }

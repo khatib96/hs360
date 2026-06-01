@@ -17,7 +17,7 @@ declare
   v_ar_parent uuid;
   v_sub record;
 begin
-  v_id := create_customer('{"name_ar":"عميل اختبار","name_en":"Test Customer","phone_primary":"+96550000111"}'::jsonb);
+  v_id := create_customer('{"name_ar":"عميل اختبار","name_en":"Test Customer","phone_primary":"+96550000111","create_account":true}'::jsonb);
   if v_id is null then
     raise exception 'case1 failed: create_customer returned null';
   end if;
@@ -63,7 +63,7 @@ declare
   v_ap_parent uuid;
   v_sub record;
 begin
-  v_id := create_supplier('{"name_ar":"مورد اختبار","phone":"+96550000222"}'::jsonb);
+  v_id := create_supplier('{"name_ar":"مورد اختبار","phone":"+96550000222","create_account":true}'::jsonb);
   if v_id is null then
     raise exception 'case5 failed: create_supplier returned null';
   end if;
@@ -178,7 +178,7 @@ do $$
 declare
   v_id uuid;
 begin
-  v_id := create_customer('{"name_ar":"عميل المندوب","phone_primary":"+96550000333"}'::jsonb);
+  v_id := create_customer('{"name_ar":"عميل المندوب","phone_primary":"+96550000333","create_account":true}'::jsonb);
   if v_id is null then
     raise exception 'case12 failed: create-only user could not create';
   end if;
@@ -191,7 +191,7 @@ set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
 begin
-  perform set_config('test.phase4.cust', create_customer('{"name_ar":"عميل دفتر","phone_primary":"+96550000444"}'::jsonb)::text, true);
+  perform set_config('test.phase4.cust', create_customer('{"name_ar":"عميل دفتر","phone_primary":"+96550000444","create_account":true}'::jsonb)::text, true);
 end $$;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000202';
 do $$
@@ -226,7 +226,7 @@ set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
 begin
-  perform set_config('test.phase4.cust', create_customer('{"name_ar":"عميل فارغ","phone_primary":"+96550000555"}'::jsonb)::text, true);
+  perform set_config('test.phase4.cust', create_customer('{"name_ar":"عميل فارغ","phone_primary":"+96550000555","create_account":true}'::jsonb)::text, true);
 end $$;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000203';
 do $$
@@ -247,47 +247,6 @@ begin
 end $$;
 rollback;
 
--- 15. Negative credit_limit / payment_terms_days rejected (create and update).
-begin;
-set local role authenticated;
-set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
-do $$
-declare
-  v_id uuid;
-begin
-  begin
-    perform create_customer('{"name_ar":"x","phone_primary":"1","credit_limit":-5}'::jsonb);
-    raise exception 'case15 failed: negative credit_limit accepted on create';
-  exception
-    when others then
-      if sqlerrm <> 'validation_failed' then
-        raise exception 'case15 failed: expected validation_failed, got %', sqlerrm;
-      end if;
-  end;
-
-  begin
-    perform create_customer('{"name_ar":"x","phone_primary":"1","payment_terms_days":-1}'::jsonb);
-    raise exception 'case15 failed: negative payment_terms accepted on create';
-  exception
-    when others then
-      if sqlerrm <> 'validation_failed' then
-        raise exception 'case15 failed: expected validation_failed, got %', sqlerrm;
-      end if;
-  end;
-
-  v_id := create_customer('{"name_ar":"عميل تحديث","phone_primary":"+96550000666"}'::jsonb);
-  begin
-    perform update_customer(v_id, '{"credit_limit":-3}'::jsonb);
-    raise exception 'case15 failed: negative credit_limit accepted on update';
-  exception
-    when others then
-      if sqlerrm <> 'validation_failed' then
-        raise exception 'case15 failed: expected validation_failed on update, got %', sqlerrm;
-      end if;
-  end;
-end $$;
-rollback;
-
 -- 16. RPC-only writes: direct UPDATE cannot modify rows (RLS filters to 0 rows).
 begin;
 set local role authenticated;
@@ -299,8 +258,8 @@ declare
   v_sup uuid;
   v_cnt int;
 begin
-  v_cust := create_customer('{"name_ar":"عميل تحديث مباشر","phone_primary":"+96550000777"}'::jsonb);
-  v_sup := create_supplier('{"name_ar":"مورد تحديث مباشر"}'::jsonb);
+  v_cust := create_customer('{"name_ar":"عميل تحديث مباشر","phone_primary":"+96550000777","create_account":true}'::jsonb);
+  v_sup := create_supplier('{"name_ar":"مورد تحديث مباشر","create_account":true}'::jsonb);
 
   update customers set name_ar = 'hack' where id = v_cust;
   get diagnostics v_cnt = row_count;
@@ -328,8 +287,8 @@ set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
 begin
-  perform set_config('test.phase4.cust', create_customer('{"name_ar":"عميل ثابت","phone_primary":"+96550000888"}'::jsonb)::text, true);
-  perform set_config('test.phase4.sup', create_supplier('{"name_ar":"مورد ثابت"}'::jsonb)::text, true);
+  perform set_config('test.phase4.cust', create_customer('{"name_ar":"عميل ثابت","phone_primary":"+96550000888","create_account":true}'::jsonb)::text, true);
+  perform set_config('test.phase4.sup', create_supplier('{"name_ar":"مورد ثابت","create_account":true}'::jsonb)::text, true);
 end $$;
 reset role;
 do $$
@@ -380,8 +339,8 @@ declare
   v_manual uuid;
   v_cnt int;
 begin
-  v_cust := create_customer('{"name_ar":"عميل حذف","phone_primary":"+96550000999"}'::jsonb);
-  v_sup := create_supplier('{"name_ar":"مورد حذف"}'::jsonb);
+  v_cust := create_customer('{"name_ar":"عميل حذف","phone_primary":"+96550000999","create_account":true}'::jsonb);
+  v_sup := create_supplier('{"name_ar":"مورد حذف","create_account":true}'::jsonb);
   select account_id into v_cust_acct from customers where id = v_cust;
   v_manual := create_chart_account('{"code":"9001","name_ar":"يدوي","name_en":"Manual","type":"expense"}'::jsonb);
 
@@ -457,7 +416,7 @@ declare
   v_cust uuid;
   v_acct uuid;
 begin
-  v_cust := create_customer('{"name_ar":"عميل مرتبط","phone_primary":"+96550001000"}'::jsonb);
+  v_cust := create_customer('{"name_ar":"عميل مرتبط","phone_primary":"+96550001000","create_account":true}'::jsonb);
   select account_id into v_acct from customers where id = v_cust;
   perform set_config('test.phase4.acct', v_acct::text, true);
 
@@ -623,7 +582,7 @@ declare
   v_cust uuid;
   v_acct_tenant uuid;
 begin
-  v_cust := create_customer('{"name_ar":"عميل عزل","phone_primary":"+96550001100"}'::jsonb);
+  v_cust := create_customer('{"name_ar":"عميل عزل","phone_primary":"+96550001100","create_account":true}'::jsonb);
   select coa.tenant_id into v_acct_tenant
   from customers c join chart_of_accounts coa on coa.id = c.account_id
   where c.id = v_cust;
@@ -649,7 +608,7 @@ set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
 begin
-  perform set_config('test.phase4.cust', create_customer('{"name_ar":"عميل عبر مستأجر","phone_primary":"+96550001200"}'::jsonb)::text, true);
+  perform set_config('test.phase4.cust', create_customer('{"name_ar":"عميل عبر مستأجر","phone_primary":"+96550001200","create_account":true}'::jsonb)::text, true);
 end $$;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000204';
 do $$
@@ -679,22 +638,38 @@ begin
 end $$;
 rollback;
 
--- 27. Parent missing: tenant B has no 1201/2101.
+-- 27. Parent missing: tenant B has no 1201/2101; only account creation needs parents.
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000204';
 do $$
+declare
+  v_customer uuid;
+  v_supplier uuid;
+  v_account_id uuid;
 begin
+  v_customer := create_customer('{"name_ar":"Tenant B customer","phone_primary":"1"}'::jsonb);
+  select account_id into v_account_id from customers where id = v_customer;
+  if v_account_id is not null then
+    raise exception 'case27 failed: tenant B default customer should not link account';
+  end if;
+
   begin
-    perform create_customer('{"name_ar":"عميل","phone_primary":"1"}'::jsonb);
-    raise exception 'case27 failed: tenant B created customer without A/R parent';
+    perform create_customer('{"name_ar":"Tenant B customer with account","phone_primary":"2","create_account":true}'::jsonb);
+    raise exception 'case27 failed: tenant B created customer account without A/R parent';
   exception when others then
     if sqlerrm <> 'ar_parent_missing' then raise exception 'case27 failed: expected ar_parent_missing, got %', sqlerrm; end if;
   end;
 
+  v_supplier := create_supplier('{"name_ar":"Tenant B supplier"}'::jsonb);
+  select account_id into v_account_id from suppliers where id = v_supplier;
+  if v_account_id is not null then
+    raise exception 'case27 failed: tenant B default supplier should not link account';
+  end if;
+
   begin
-    perform create_supplier('{"name_ar":"مورد"}'::jsonb);
-    raise exception 'case27 failed: tenant B created supplier without A/P parent';
+    perform create_supplier('{"name_ar":"Tenant B supplier with account","create_account":true}'::jsonb);
+    raise exception 'case27 failed: tenant B created supplier account without A/P parent';
   exception when others then
     if sqlerrm <> 'ap_parent_missing' then raise exception 'case27 failed: expected ap_parent_missing, got %', sqlerrm; end if;
   end;
@@ -835,6 +810,307 @@ begin
   exception when others then
     if sqlerrm <> 'immutable_column' then
       raise exception 'case31 failed: expected immutable_column, got %', sqlerrm;
+    end if;
+  end;
+end $$;
+rollback;
+
+-- 32. M5.5: default create_customer has null account_id (no subaccount).
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+do $$
+declare
+  v_id uuid;
+  v_account_id uuid;
+  v_sub_count int;
+begin
+  v_id := create_customer('{"name_ar":"عميل بدون حساب","phone_primary":"+96550002001"}'::jsonb);
+  select account_id into v_account_id from customers where id = v_id;
+  if v_account_id is not null then
+    raise exception 'case32 failed: expected null account_id';
+  end if;
+  select count(*) into v_sub_count
+  from chart_of_accounts
+  where related_entity_table = 'customers' and related_entity_id = v_id;
+  if v_sub_count <> 0 then
+    raise exception 'case32 failed: unexpected customer subaccount rows %', v_sub_count;
+  end if;
+end $$;
+rollback;
+
+-- 33. M5.5: ledger zero-safe when account_id is null.
+begin;
+do $$
+declare
+  v_tenant_a uuid := '00000000-0000-0000-0000-000000000101';
+  v_products_tu uuid := '00000000-0000-0000-0000-000000000303';
+  v_owner uuid := '00000000-0000-0000-0000-000000000201';
+begin
+  insert into user_permissions (tenant_id, tenant_user_id, permission_id, granted_by)
+  values (v_tenant_a, v_products_tu, 'customers.view_ledger', v_owner)
+  on conflict (tenant_user_id, permission_id) do nothing;
+end $$;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+do $$
+begin
+  perform set_config('test.phase4.cust_null', create_customer('{"name_ar":"عميل بلا حساب","phone_primary":"+96550002002"}'::jsonb)::text, true);
+end $$;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000203';
+do $$
+declare
+  v_id uuid := current_setting('test.phase4.cust_null')::uuid;
+  v_rows int;
+  v_balance numeric(15, 3);
+begin
+  select count(*) into v_rows from get_customer_statement(v_id);
+  if v_rows <> 0 then
+    raise exception 'case33 failed: expected empty statement, got % rows', v_rows;
+  end if;
+  select balance into v_balance from get_customer_balance_summary(v_id);
+  if v_balance <> 0 then
+    raise exception 'case33 failed: expected balance 0, got %', v_balance;
+  end if;
+end $$;
+rollback;
+
+-- 34. M5.5: ensure_customer_account links account; rejects when already linked.
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+do $$
+declare
+  v_id uuid;
+  v_account_id uuid;
+begin
+  v_id := create_customer('{"name_ar":"عميل ربط لاحق","phone_primary":"+96550002003"}'::jsonb);
+  perform ensure_customer_account(v_id);
+  select account_id into v_account_id from customers where id = v_id;
+  if v_account_id is null then
+    raise exception 'case34 failed: ensure did not link account';
+  end if;
+  begin
+    perform ensure_customer_account(v_id);
+    raise exception 'case34 failed: ensure succeeded twice';
+  exception when others then
+    if sqlerrm <> 'account_already_linked' then
+      raise exception 'case34 failed: expected account_already_linked, got %', sqlerrm;
+    end if;
+  end;
+end $$;
+rollback;
+
+-- 35. M5.5: individual customer clears company-only fields on create.
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+do $$
+declare
+  v_id uuid;
+  v_tax text;
+  v_contact text;
+begin
+  v_id := create_customer(jsonb_build_object(
+    'name_ar', 'فرد',
+    'phone_primary', '+96550002004',
+    'customer_type', 'individual',
+    'tax_number', 'TN-1',
+    'contact_person_name', 'مدير',
+    'contact_person_phone', '999'
+  ));
+  select tax_number, contact_person_name
+  into v_tax, v_contact
+  from customers where id = v_id;
+  if v_tax is not null or v_contact is not null then
+    raise exception 'case35 failed: company fields not cleared for individual';
+  end if;
+end $$;
+rollback;
+
+-- 36. M5.5: trigger rejects wrong account_id link (owner-level).
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+do $$
+declare
+  v_manual uuid;
+begin
+  perform set_config('test.phase4.cust_link', create_customer('{"name_ar":"عميل ربط","phone_primary":"+96550002005"}'::jsonb)::text, true);
+  perform set_config('test.phase4.cust_other', create_customer('{"name_ar":"عميل آخر","phone_primary":"+96550002006","create_account":true}'::jsonb)::text, true);
+  perform set_config('test.phase4.sup_ap', create_supplier('{"name_ar":"مورد AP","create_account":true}'::jsonb)::text, true);
+  v_manual := create_chart_account('{"code":"9901","name_ar":"يدوي","name_en":"Manual","type":"expense"}'::jsonb);
+  perform set_config('test.phase4.manual_acct', v_manual::text, true);
+end $$;
+reset role;
+do $$
+declare
+  v_cust uuid := current_setting('test.phase4.cust_link')::uuid;
+  v_other_acct uuid;
+  v_ap_acct uuid;
+  v_tenant_b uuid := '00000000-0000-0000-0000-000000000102';
+  v_wrong_tenant_acct uuid;
+  v_manual uuid := current_setting('test.phase4.manual_acct')::uuid;
+begin
+  select account_id into v_other_acct from customers where id = current_setting('test.phase4.cust_other')::uuid;
+
+  begin
+    update customers set account_id = v_other_acct where id = v_cust;
+    raise exception 'case36a failed: linked other customer account';
+  exception when others then
+    if sqlerrm <> 'immutable_column' then
+      raise exception 'case36a failed: expected immutable_column, got %', sqlerrm;
+    end if;
+  end;
+
+  select id into v_wrong_tenant_acct
+  from chart_of_accounts
+  where tenant_id = v_tenant_b and code = '1101';
+
+  begin
+    update customers set account_id = v_wrong_tenant_acct where id = v_cust;
+    raise exception 'case36b failed: linked other tenant account';
+  exception when others then
+    if sqlerrm <> 'immutable_column' then
+      raise exception 'case36b failed: expected immutable_column, got %', sqlerrm;
+    end if;
+  end;
+
+  begin
+    update customers set account_id = v_manual where id = v_cust;
+    raise exception 'case36c failed: linked manual unlinked account';
+  exception when others then
+    if sqlerrm <> 'immutable_column' then
+      raise exception 'case36c failed: expected immutable_column, got %', sqlerrm;
+    end if;
+  end;
+
+  select account_id into v_ap_acct from suppliers where id = current_setting('test.phase4.sup_ap')::uuid;
+  begin
+    update customers set account_id = v_ap_acct where id = v_cust;
+    raise exception 'case36d failed: linked supplier A/P account to customer';
+  exception when others then
+    if sqlerrm <> 'immutable_column' then
+      raise exception 'case36d failed: expected immutable_column, got %', sqlerrm;
+    end if;
+  end;
+end $$;
+rollback;
+
+-- 37. M5.5: default create_supplier has null account_id (no subaccount).
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+do $$
+declare
+  v_id uuid;
+  v_account_id uuid;
+  v_sub_count int;
+begin
+  v_id := create_supplier('{"name_ar":"Supplier without account"}'::jsonb);
+  select account_id into v_account_id from suppliers where id = v_id;
+  if v_account_id is not null then
+    raise exception 'case37 failed: expected null supplier account_id';
+  end if;
+  select count(*) into v_sub_count
+  from chart_of_accounts
+  where related_entity_table = 'suppliers' and related_entity_id = v_id;
+  if v_sub_count <> 0 then
+    raise exception 'case37 failed: unexpected supplier subaccount rows %', v_sub_count;
+  end if;
+end $$;
+rollback;
+
+-- 38. M5.5: ensure_supplier_account links account; rejects when already linked.
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+do $$
+declare
+  v_id uuid;
+  v_account_id uuid;
+begin
+  v_id := create_supplier('{"name_ar":"Supplier late link"}'::jsonb);
+  perform ensure_supplier_account(v_id);
+  select account_id into v_account_id from suppliers where id = v_id;
+  if v_account_id is null then
+    raise exception 'case38 failed: ensure did not link supplier account';
+  end if;
+  begin
+    perform ensure_supplier_account(v_id);
+    raise exception 'case38 failed: ensure supplier succeeded twice';
+  exception when others then
+    if sqlerrm <> 'account_already_linked' then
+      raise exception 'case38 failed: expected account_already_linked, got %', sqlerrm;
+    end if;
+  end;
+end $$;
+rollback;
+
+-- 39. M5.5: supplier trigger rejects wrong account_id link (owner-level).
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+do $$
+declare
+  v_manual uuid;
+begin
+  perform set_config('test.phase4.sup_link', create_supplier('{"name_ar":"Supplier link"}'::jsonb)::text, true);
+  perform set_config('test.phase4.sup_other', create_supplier('{"name_ar":"Supplier other","create_account":true}'::jsonb)::text, true);
+  perform set_config('test.phase4.cust_ar', create_customer('{"name_ar":"Customer AR","phone_primary":"+96550002007","create_account":true}'::jsonb)::text, true);
+  v_manual := create_chart_account('{"code":"9902","name_ar":"Manual supplier test","name_en":"Manual supplier test","type":"expense"}'::jsonb);
+  perform set_config('test.phase4.manual_supplier_acct', v_manual::text, true);
+end $$;
+reset role;
+do $$
+declare
+  v_sup uuid := current_setting('test.phase4.sup_link')::uuid;
+  v_other_acct uuid;
+  v_ar_acct uuid;
+  v_tenant_b uuid := '00000000-0000-0000-0000-000000000102';
+  v_wrong_tenant_acct uuid;
+  v_manual uuid := current_setting('test.phase4.manual_supplier_acct')::uuid;
+begin
+  select account_id into v_other_acct from suppliers where id = current_setting('test.phase4.sup_other')::uuid;
+
+  begin
+    update suppliers set account_id = v_other_acct where id = v_sup;
+    raise exception 'case39a failed: linked other supplier account';
+  exception when others then
+    if sqlerrm <> 'immutable_column' then
+      raise exception 'case39a failed: expected immutable_column, got %', sqlerrm;
+    end if;
+  end;
+
+  select id into v_wrong_tenant_acct
+  from chart_of_accounts
+  where tenant_id = v_tenant_b and code = '1101';
+
+  begin
+    update suppliers set account_id = v_wrong_tenant_acct where id = v_sup;
+    raise exception 'case39b failed: linked other tenant account';
+  exception when others then
+    if sqlerrm <> 'immutable_column' then
+      raise exception 'case39b failed: expected immutable_column, got %', sqlerrm;
+    end if;
+  end;
+
+  begin
+    update suppliers set account_id = v_manual where id = v_sup;
+    raise exception 'case39c failed: linked manual unlinked account';
+  exception when others then
+    if sqlerrm <> 'immutable_column' then
+      raise exception 'case39c failed: expected immutable_column, got %', sqlerrm;
+    end if;
+  end;
+
+  select account_id into v_ar_acct from customers where id = current_setting('test.phase4.cust_ar')::uuid;
+  begin
+    update suppliers set account_id = v_ar_acct where id = v_sup;
+    raise exception 'case39d failed: linked customer A/R account to supplier';
+  exception when others then
+    if sqlerrm <> 'immutable_column' then
+      raise exception 'case39d failed: expected immutable_column, got %', sqlerrm;
     end if;
   end;
 end $$;

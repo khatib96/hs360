@@ -1,9 +1,8 @@
-import 'package:decimal/decimal.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hs360/features/customers/domain/customer.dart';
 import 'package:hs360/features/customers/domain/customer_type.dart';
 
-Customer _customer({String? nameEn}) {
+Customer _customer({String? nameEn, String? accountId}) {
   return Customer(
     id: 'c-1',
     tenantId: 't-1',
@@ -12,9 +11,7 @@ Customer _customer({String? nameEn}) {
     nameAr: 'عميل',
     nameEn: nameEn,
     phonePrimary: '+96550000111',
-    paymentTermsDays: 0,
-    creditLimit: Decimal.zero,
-    accountId: 'a-1',
+    accountId: accountId,
     isActive: true,
     isVip: false,
   );
@@ -50,6 +47,16 @@ void main() {
 
     test('falls back to Arabic when English missing', () {
       expect(_customer().displayName('en'), 'عميل');
+    });
+  });
+
+  group('Customer.hasLinkedAccount', () {
+    test('false when account_id is null', () {
+      expect(_customer(accountId: null).hasLinkedAccount, isFalse);
+    });
+
+    test('true when account_id is set', () {
+      expect(_customer(accountId: 'a-1').hasLinkedAccount, isTrue);
     });
   });
 }

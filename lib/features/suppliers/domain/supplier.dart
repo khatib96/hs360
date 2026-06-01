@@ -8,8 +8,14 @@ class Supplier {
     this.nameEn,
     this.phone,
     this.email,
-    this.address,
-    required this.accountId,
+    this.country,
+    this.governorate,
+    this.area,
+    this.addressLine,
+    this.googleMapsUrl,
+    this.taxNumber,
+    this.notes,
+    this.accountId,
     required this.isActive,
     this.createdAt,
   });
@@ -23,10 +29,18 @@ class Supplier {
   final String? nameEn;
   final String? phone;
   final String? email;
-  final String? address;
-  final String accountId;
+  final String? country;
+  final String? governorate;
+  final String? area;
+  final String? addressLine;
+  final String? googleMapsUrl;
+  final String? taxNumber;
+  final String? notes;
+  final String? accountId;
   final bool isActive;
   final DateTime? createdAt;
+
+  bool get hasLinkedAccount => accountId != null && accountId!.isNotEmpty;
 
   static bool isStandardCodeFormat(String code) => _codePattern.hasMatch(code);
 
@@ -46,8 +60,14 @@ class Supplier {
       nameEn: row['name_en'] as String?,
       phone: row['phone'] as String?,
       email: row['email'] as String?,
-      address: row['address'] as String?,
-      accountId: row['account_id'] as String,
+      country: row['country'] as String?,
+      governorate: row['governorate'] as String?,
+      area: row['area'] as String?,
+      addressLine: row['address_line'] as String?,
+      googleMapsUrl: row['google_maps_url'] as String?,
+      taxNumber: row['tax_number'] as String?,
+      notes: row['notes'] as String?,
+      accountId: row['account_id'] as String?,
       isActive: row['is_active'] as bool? ?? true,
       createdAt: row['created_at'] != null
           ? DateTime.parse(row['created_at'] as String)
@@ -56,10 +76,10 @@ class Supplier {
   }
 }
 
-/// Explicit column list for [suppliers] (no updated_at column).
 abstract final class SupplierColumns {
   static const list = '''
-id, tenant_id, code, name_ar, name_en, phone, email, address,
-account_id, is_active, created_at
+id, tenant_id, code, name_ar, name_en, phone, email,
+country, governorate, area, address_line, google_maps_url,
+tax_number, notes, account_id, is_active, created_at
 ''';
 }

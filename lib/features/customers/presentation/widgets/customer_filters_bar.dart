@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
+import '../../../../core/localization/locale_controller.dart';
+import '../../../../core/location/kuwait_locations.dart';
 import '../../domain/customer_filters.dart';
 import '../../domain/customer_type.dart';
 
-/// Customer list filters. Search/area/city commit on submit (no debounce);
-/// dropdowns commit on change.
-class CustomerFiltersBar extends StatefulWidget {
+class CustomerFiltersBar extends ConsumerStatefulWidget {
   const CustomerFiltersBar({
     required this.filters,
     required this.onSearchSubmitted,
     required this.onActiveChanged,
     required this.onVipChanged,
     required this.onTypeChanged,
+    required this.onGovernorateChanged,
     required this.onAreaSubmitted,
-    required this.onCitySubmitted,
     required this.onClear,
     super.key,
   });
@@ -24,25 +25,23 @@ class CustomerFiltersBar extends StatefulWidget {
   final ValueChanged<bool?> onActiveChanged;
   final ValueChanged<bool?> onVipChanged;
   final ValueChanged<CustomerType?> onTypeChanged;
+  final ValueChanged<String?> onGovernorateChanged;
   final ValueChanged<String?> onAreaSubmitted;
-  final ValueChanged<String?> onCitySubmitted;
   final VoidCallback onClear;
 
   @override
-  State<CustomerFiltersBar> createState() => _CustomerFiltersBarState();
+  ConsumerState<CustomerFiltersBar> createState() => _CustomerFiltersBarState();
 }
 
-class _CustomerFiltersBarState extends State<CustomerFiltersBar> {
+class _CustomerFiltersBarState extends ConsumerState<CustomerFiltersBar> {
   late final TextEditingController _search;
   late final TextEditingController _area;
-  late final TextEditingController _city;
 
   @override
   void initState() {
     super.initState();
     _search = TextEditingController(text: widget.filters.search ?? '');
     _area = TextEditingController(text: widget.filters.area ?? '');
-    _city = TextEditingController(text: widget.filters.city ?? '');
   }
 
   @override
@@ -50,7 +49,6 @@ class _CustomerFiltersBarState extends State<CustomerFiltersBar> {
     super.didUpdateWidget(oldWidget);
     _syncController(_search, widget.filters.search);
     _syncController(_area, widget.filters.area);
-    _syncController(_city, widget.filters.city);
   }
 
   void _syncController(TextEditingController controller, String? value) {
@@ -62,13 +60,13 @@ class _CustomerFiltersBarState extends State<CustomerFiltersBar> {
   void dispose() {
     _search.dispose();
     _area.dispose();
-    _city.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final languageCode = ref.watch(localeProvider).languageCode;
     final filters = widget.filters;
 
     return Wrap(
@@ -169,6 +167,32 @@ class _CustomerFiltersBarState extends State<CustomerFiltersBar> {
           ),
         ),
         SizedBox(
+          width: 180,
+          child: DropdownButtonFormField<String?>(
+            isExpanded: true,
+            initialValue: filters.governorate,
+            decoration: InputDecoration(
+              isDense: true,
+              labelText: l10n.customerFieldGovernorate,
+            ),
+            items: [
+              DropdownMenuItem<String?>(
+                value: null,
+                child: Text(l10n.customerFilterAll),
+              ),
+              ...kuwaitGovernorates.map(
+                (g) => DropdownMenuItem(
+                  value: g.canonical,
+                  child: Text(
+                    languageCode == 'en' ? g.nameEn : g.nameAr,
+                  ),
+                ),
+              ),
+            ],
+            onChanged: widget.onGovernorateChanged,
+          ),
+        ),
+        SizedBox(
           width: 150,
           child: TextField(
             controller: _area,
@@ -178,18 +202,6 @@ class _CustomerFiltersBarState extends State<CustomerFiltersBar> {
               labelText: l10n.customerFieldArea,
             ),
             onSubmitted: widget.onAreaSubmitted,
-          ),
-        ),
-        SizedBox(
-          width: 150,
-          child: TextField(
-            controller: _city,
-            textInputAction: TextInputAction.search,
-            decoration: InputDecoration(
-              isDense: true,
-              labelText: l10n.customerFieldCity,
-            ),
-            onSubmitted: widget.onCitySubmitted,
           ),
         ),
         TextButton.icon(

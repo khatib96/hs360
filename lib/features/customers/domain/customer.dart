@@ -1,6 +1,3 @@
-import 'package:decimal/decimal.dart';
-
-import '../../../core/utils/decimal_parser.dart';
 import 'customer_type.dart';
 
 /// Customer row from [customers].
@@ -13,21 +10,16 @@ class Customer {
     required this.nameAr,
     this.nameEn,
     this.contactPersonName,
-    this.contactPersonTitle,
     this.contactPersonPhone,
     required this.phonePrimary,
-    this.phoneSecondary,
-    this.whatsapp,
     this.email,
     this.addressLine,
     this.area,
-    this.city,
+    this.governorate,
     this.country,
-    this.gpsLat,
-    this.gpsLng,
-    required this.paymentTermsDays,
-    required this.creditLimit,
-    required this.accountId,
+    this.googleMapsUrl,
+    this.taxNumber,
+    this.accountId,
     required this.isActive,
     required this.isVip,
     this.notes,
@@ -48,21 +40,16 @@ class Customer {
   final String nameAr;
   final String? nameEn;
   final String? contactPersonName;
-  final String? contactPersonTitle;
   final String? contactPersonPhone;
   final String phonePrimary;
-  final String? phoneSecondary;
-  final String? whatsapp;
   final String? email;
   final String? addressLine;
   final String? area;
-  final String? city;
+  final String? governorate;
   final String? country;
-  final Decimal? gpsLat;
-  final Decimal? gpsLng;
-  final int paymentTermsDays;
-  final Decimal creditLimit;
-  final String accountId;
+  final String? googleMapsUrl;
+  final String? taxNumber;
+  final String? accountId;
   final bool isActive;
   final bool isVip;
   final String? notes;
@@ -72,6 +59,8 @@ class Customer {
   final String? createdBy;
   final DateTime? updatedAt;
   final String? updatedBy;
+
+  bool get hasLinkedAccount => accountId != null && accountId!.isNotEmpty;
 
   static bool isStandardCodeFormat(String code) => _codePattern.hasMatch(code);
 
@@ -91,21 +80,16 @@ class Customer {
       nameAr: row['name_ar'] as String,
       nameEn: row['name_en'] as String?,
       contactPersonName: row['contact_person_name'] as String?,
-      contactPersonTitle: row['contact_person_title'] as String?,
       contactPersonPhone: row['contact_person_phone'] as String?,
       phonePrimary: row['phone_primary'] as String,
-      phoneSecondary: row['phone_secondary'] as String?,
-      whatsapp: row['whatsapp'] as String?,
       email: row['email'] as String?,
       addressLine: row['address_line'] as String?,
       area: row['area'] as String?,
-      city: row['city'] as String?,
+      governorate: row['governorate'] as String?,
       country: row['country'] as String?,
-      gpsLat: tryParseDecimal(row['gps_lat']),
-      gpsLng: tryParseDecimal(row['gps_lng']),
-      paymentTermsDays: row['payment_terms_days'] as int? ?? 0,
-      creditLimit: parseDecimal(row['credit_limit']),
-      accountId: row['account_id'] as String,
+      googleMapsUrl: row['google_maps_url'] as String?,
+      taxNumber: row['tax_number'] as String?,
+      accountId: row['account_id'] as String?,
       isActive: row['is_active'] as bool? ?? true,
       isVip: row['is_vip'] as bool? ?? false,
       notes: row['notes'] as String?,
@@ -130,10 +114,10 @@ abstract final class CustomerColumns {
   static const list = '''
 id, tenant_id, code, customer_type,
 name_ar, name_en,
-contact_person_name, contact_person_title, contact_person_phone,
-phone_primary, phone_secondary, whatsapp, email,
-address_line, area, city, country, gps_lat, gps_lng,
-payment_terms_days, credit_limit, account_id,
+contact_person_name, contact_person_phone,
+phone_primary, email,
+address_line, area, governorate, country, google_maps_url,
+tax_number, account_id,
 is_active, is_vip, notes, acquired_by, acquired_at,
 created_at, created_by, updated_at, updated_by
 ''';

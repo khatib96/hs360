@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
+import '../../../../core/location/kuwait_locations.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../domain/supplier.dart';
 
@@ -109,16 +110,25 @@ class _DesktopSupplierTableState extends State<_DesktopSupplierTable> {
                 DataColumn(label: Text(l10n.supplierColumnName)),
                 DataColumn(label: Text(l10n.supplierColumnPhone)),
                 DataColumn(label: Text(l10n.supplierColumnEmail)),
+                DataColumn(label: Text(l10n.supplierColumnLocation)),
                 DataColumn(label: Text(l10n.supplierColumnStatus)),
                 const DataColumn(label: SizedBox(width: 120)),
               ],
               rows: widget.suppliers.map((supplier) {
+                final location = _locationLabel(supplier, widget.languageCode);
                 return DataRow(
                   cells: [
                     DataCell(Text(supplier.code)),
                     DataCell(Text(supplier.displayName(widget.languageCode))),
                     DataCell(Text(supplier.phone ?? l10n.productsNotAvailable)),
                     DataCell(Text(supplier.email ?? l10n.productsNotAvailable)),
+                    DataCell(
+                      Text(
+                        location.isEmpty
+                            ? l10n.productsNotAvailable
+                            : location,
+                      ),
+                    ),
                     DataCell(
                       Text(
                         supplier.isActive
@@ -149,6 +159,19 @@ class _DesktopSupplierTableState extends State<_DesktopSupplierTable> {
       ),
     );
   }
+}
+
+String _locationLabel(Supplier supplier, String languageCode) {
+  final parts = <String>[];
+  final gov = supplier.governorate;
+  if (gov != null && gov.isNotEmpty) {
+    parts.add(governorateLabel(gov, languageCode));
+  }
+  final ar = supplier.area;
+  if (ar != null && ar.isNotEmpty) {
+    parts.add(areaLabel(gov, ar, languageCode));
+  }
+  return parts.join(' / ');
 }
 
 class _RowActions extends StatelessWidget {
@@ -223,6 +246,7 @@ class _MobileSupplierList extends StatelessWidget {
       separatorBuilder: (_, _) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
         final supplier = suppliers[index];
+        final location = _locationLabel(supplier, languageCode);
         return Card(
           margin: EdgeInsets.zero,
           child: ListTile(
@@ -232,6 +256,7 @@ class _MobileSupplierList extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('${supplier.code} · ${supplier.phone ?? l10n.productsNotAvailable}'),
+                if (location.isNotEmpty) Text(location),
                 Text(
                   supplier.isActive
                       ? l10n.supplierStatusActive

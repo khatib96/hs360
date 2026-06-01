@@ -65,7 +65,7 @@ class CustomerRepository {
         query = query.or(
           'code.ilike.$pattern,name_ar.ilike.$pattern,'
           'name_en.ilike.$pattern,phone_primary.ilike.$pattern,'
-          'whatsapp.ilike.$pattern,email.ilike.$pattern',
+          'email.ilike.$pattern',
         );
       }
       if (filters.isActive != null) {
@@ -80,8 +80,8 @@ class CustomerRepository {
       if (filters.area?.trim().isNotEmpty == true) {
         query = query.eq('area', filters.area!.trim());
       }
-      if (filters.city?.trim().isNotEmpty == true) {
-        query = query.eq('city', filters.city!.trim());
+      if (filters.governorate?.trim().isNotEmpty == true) {
+        query = query.eq('governorate', filters.governorate!.trim());
       }
 
       final rows = await query.order('code');
@@ -153,6 +153,21 @@ class CustomerRepository {
           'p_data': input.toUpdatePayload(),
         },
       );
+      final updated = await fetchCustomerById(session, id);
+      if (updated == null) {
+        throw const CustomerException(code: CustomerException.validationFailed);
+      }
+      return updated;
+    } catch (e, st) {
+      throw CustomerException.fromSupabase(e, st);
+    }
+  }
+
+  Future<Customer> ensureCustomerAccount(AppSession session, String id) async {
+    _assertCanMutateAndView(session, actionPerm: 'customers.edit');
+
+    try {
+      await _requireClient.rpc('ensure_customer_account', params: {'p_id': id});
       final updated = await fetchCustomerById(session, id);
       if (updated == null) {
         throw const CustomerException(code: CustomerException.validationFailed);

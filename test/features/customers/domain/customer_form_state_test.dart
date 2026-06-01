@@ -1,4 +1,3 @@
-import 'package:decimal/decimal.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hs360/features/customers/domain/customer_form_state.dart';
 import 'package:hs360/features/customers/domain/customer_type.dart';
@@ -9,7 +8,10 @@ void main() {
     nameAr: 'عميل',
     nameEn: 'Customer',
     phonePrimary: '+96550000111',
-    creditLimit: Decimal.fromInt(50),
+    governorate: 'hawalli',
+    area: 'salmiya',
+    googleMapsUrl: 'https://maps.example',
+    createAccount: true,
     acquiredBy: 'emp-1',
     acquiredAt: DateTime(2024, 1, 15),
   );
@@ -18,6 +20,14 @@ void main() {
     final payload = form.toCreatePayload();
     expect(payload['acquired_by'], 'emp-1');
     expect(payload['acquired_at'], '2024-01-15');
+  });
+
+  test('toCreatePayload includes create_account and location', () {
+    final payload = form.toCreatePayload();
+    expect(payload['create_account'], isTrue);
+    expect(payload['governorate'], 'hawalli');
+    expect(payload['area'], 'salmiya');
+    expect(payload['google_maps_url'], 'https://maps.example');
   });
 
   test('toCreatePayload omits forbidden keys', () {
@@ -36,20 +46,24 @@ void main() {
     expect(payload.containsKey('account_id'), isFalse);
     expect(payload.containsKey('code'), isFalse);
     expect(payload.containsKey('is_active'), isFalse);
+    expect(payload.containsKey('create_account'), isFalse);
   });
 
-  test('toUpdatePayload includes M2 update fields', () {
+  test('toUpdatePayload includes M5.5 update fields', () {
     final payload = form.toUpdatePayload();
     expect(payload['name_ar'], 'عميل');
     expect(payload['phone_primary'], '+96550000111');
-    expect(payload['credit_limit'], '50');
+    expect(payload['governorate'], 'hawalli');
+    expect(payload['google_maps_url'], 'https://maps.example');
   });
 
-  test('toUpdatePayload includes nullable gps keys so edits can clear them', () {
-    final payload = form.toUpdatePayload();
-    expect(payload.containsKey('gps_lat'), isTrue);
-    expect(payload.containsKey('gps_lng'), isTrue);
-    expect(payload['gps_lat'], isNull);
-    expect(payload['gps_lng'], isNull);
+  test('individual update clears company-only tax_number', () {
+    final companyForm = CustomerFormState(
+      customerType: CustomerType.individual,
+      nameAr: 'عميل',
+      phonePrimary: '+96550000111',
+      taxNumber: '123',
+    );
+    expect(companyForm.toUpdatePayload()['tax_number'], isNull);
   });
 }

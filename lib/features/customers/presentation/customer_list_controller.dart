@@ -122,14 +122,27 @@ class CustomerListController extends _$CustomerListController {
     );
   }
 
-  void setCity(String? city) {
-    final trimmed = city?.trim();
+  void setGovernorate(String? governorate) {
+    final trimmed = governorate?.trim();
     _applyFilters(
       _copyFilters(
-        city: trimmed == null || trimmed.isEmpty ? null : trimmed,
-        clearCity: trimmed == null || trimmed.isEmpty,
+        governorate: trimmed == null || trimmed.isEmpty ? null : trimmed,
+        clearGovernorate: trimmed == null || trimmed.isEmpty,
+        clearArea: true,
       ),
     );
+  }
+
+  Future<String?> ensureAccount(String id) async {
+    final session = _session;
+    if (session == null ||
+        !canViewCustomers(session) ||
+        !canEditCustomer(session)) {
+      return CustomerException.permissionDenied;
+    }
+    return _mutate(() => ref
+        .read(customerRepositoryProvider)
+        .ensureCustomerAccount(session, id));
   }
 
   void clearFilters() {
@@ -146,10 +159,10 @@ class CustomerListController extends _$CustomerListController {
     bool clearIsVip = false,
     CustomerType? customerType,
     bool clearCustomerType = false,
+    String? governorate,
+    bool clearGovernorate = false,
     String? area,
     bool clearArea = false,
-    String? city,
-    bool clearCity = false,
   }) {
     final current = state.filters;
     return CustomerFilters(
@@ -158,8 +171,9 @@ class CustomerListController extends _$CustomerListController {
       isVip: clearIsVip ? null : (isVip ?? current.isVip),
       customerType:
           clearCustomerType ? null : (customerType ?? current.customerType),
+      governorate:
+          clearGovernorate ? null : (governorate ?? current.governorate),
       area: clearArea ? null : (area ?? current.area),
-      city: clearCity ? null : (city ?? current.city),
     );
   }
 

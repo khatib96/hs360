@@ -51,7 +51,7 @@ void main() {
       expect(
         const CustomerFilters(
           isActive: true,
-          city: 'Kuwait City',
+          governorate: 'hawalli',
         ).hasNonDefaultFilters,
         isTrue,
       );

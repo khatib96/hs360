@@ -1092,8 +1092,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createCustomerTitle => 'New customer';
 
   @override
-  String get customerSearchHint =>
-      'Search by code, name, phone, WhatsApp, email';
+  String get customerSearchHint => 'Search by code, name, phone, email';
 
   @override
   String get customerFilterStatus => 'Status';
@@ -1138,16 +1137,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get customerColumnPhone => 'Phone';
 
   @override
-  String get customerColumnWhatsapp => 'WhatsApp';
+  String get customerColumnType => 'Type';
 
   @override
-  String get customerColumnLocation => 'Area / City';
-
-  @override
-  String get customerColumnPaymentTerms => 'Payment terms';
-
-  @override
-  String get customerColumnCreditLimit => 'Credit limit';
+  String get customerColumnLocation => 'Location';
 
   @override
   String get customerColumnStatus => 'Status';
@@ -1190,10 +1183,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get customerFieldCode => 'Code';
 
   @override
-  String get customerFieldAccount => 'Account';
-
-  @override
-  String get customerFieldNameAr => 'Name (Arabic)';
+  String get customerFieldNameAr => 'Name';
 
   @override
   String get customerFieldNameEn => 'Name (English)';
@@ -1202,46 +1192,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get customerFieldContactName => 'Contact person';
 
   @override
-  String get customerFieldContactTitle => 'Contact title';
-
-  @override
   String get customerFieldContactPhone => 'Contact phone';
 
   @override
   String get customerFieldPhonePrimary => 'Primary phone';
 
   @override
-  String get customerFieldPhoneSecondary => 'Secondary phone';
-
-  @override
-  String get customerFieldWhatsapp => 'WhatsApp';
-
-  @override
   String get customerFieldEmail => 'Email';
 
   @override
-  String get customerFieldAddress => 'Address';
+  String get customerFieldTaxNumber => 'Tax number';
+
+  @override
+  String get customerFieldAddress => 'Address details';
 
   @override
   String get customerFieldArea => 'Area';
 
   @override
-  String get customerFieldCity => 'City';
+  String get customerFieldGovernorate => 'Governorate';
 
   @override
   String get customerFieldCountry => 'Country';
 
   @override
-  String get customerFieldGpsLat => 'GPS latitude';
-
-  @override
-  String get customerFieldGpsLng => 'GPS longitude';
-
-  @override
-  String get customerFieldPaymentTerms => 'Payment terms (days)';
-
-  @override
-  String get customerFieldCreditLimit => 'Credit limit';
+  String get customerFieldGoogleMapsUrl => 'Google Maps link';
 
   @override
   String get customerFieldVip => 'VIP customer';
@@ -1250,31 +1225,44 @@ class AppLocalizationsEn extends AppLocalizations {
   String get customerFieldNotes => 'Notes';
 
   @override
+  String get customerFieldCreateAccount => 'Create accounting account';
+
+  @override
+  String get customerFieldCreateAccountHint =>
+      'Links an A/R subaccount under receivables.';
+
+  @override
+  String get customerLinkedAccountYes => 'Linked accounting account';
+
+  @override
+  String get customerLinkedAccountNo => 'No accounting account';
+
+  @override
+  String get customerEnsureAccount => 'Create accounting account';
+
+  @override
+  String get customerAccountLinked => 'Accounting account linked.';
+
+  @override
+  String get customerSectionIdentity => 'Identity';
+
+  @override
+  String get customerSectionContact => 'Contact';
+
+  @override
+  String get customerSectionLocation => 'Location';
+
+  @override
+  String get customerSectionAccounting => 'Accounting';
+
+  @override
   String get customerValidationNameArRequired => 'Arabic name is required.';
 
   @override
   String get customerValidationPhoneRequired => 'Primary phone is required.';
 
   @override
-  String get customerValidationNegativeCredit =>
-      'Credit limit cannot be negative.';
-
-  @override
-  String get customerValidationNegativePayment =>
-      'Payment terms cannot be negative.';
-
-  @override
-  String get customerValidationGpsInvalid =>
-      'Enter a valid GPS latitude and longitude pair.';
-
-  @override
   String get customerValidationEmailInvalid => 'Enter a valid email address.';
-
-  @override
-  String get customerInvalidDecimal => 'Enter a valid number.';
-
-  @override
-  String get customerInvalidInteger => 'Enter a valid whole number.';
 
   @override
   String get customerValidationFailed =>
@@ -1285,7 +1273,20 @@ class AppLocalizationsEn extends AppLocalizations {
       'You do not have permission to perform this action.';
 
   @override
+  String get customerErrorAccountAlreadyLinked =>
+      'This profile already has a linked accounting account.';
+
+  @override
   String get customerErrorUnknown => 'Something went wrong. Please try again.';
+
+  @override
+  String get locationAreaOther => 'Other (custom)';
+
+  @override
+  String get locationEnterCustomArea => 'Enter area manually';
+
+  @override
+  String get locationUseCatalogArea => 'Choose from list';
 
   @override
   String get createSupplierTitle => 'New supplier';
@@ -1322,6 +1323,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get supplierColumnEmail => 'Email';
+
+  @override
+  String get supplierColumnLocation => 'Location';
 
   @override
   String get supplierColumnStatus => 'Status';
@@ -1364,9 +1368,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get supplierFieldCode => 'Code';
 
   @override
-  String get supplierFieldAccount => 'Account';
-
-  @override
   String get supplierFieldNameAr => 'Name (Arabic)';
 
   @override
@@ -1379,7 +1380,47 @@ class AppLocalizationsEn extends AppLocalizations {
   String get supplierFieldEmail => 'Email';
 
   @override
-  String get supplierFieldAddress => 'Address';
+  String get supplierFieldTaxNumber => 'Tax number';
+
+  @override
+  String get supplierFieldAddress => 'Address details';
+
+  @override
+  String get supplierFieldGoogleMapsUrl => 'Google Maps link';
+
+  @override
+  String get supplierFieldNotes => 'Notes';
+
+  @override
+  String get supplierFieldCreateAccount => 'Create accounting account';
+
+  @override
+  String get supplierFieldCreateAccountHint =>
+      'Links an A/P subaccount under payables.';
+
+  @override
+  String get supplierLinkedAccountYes => 'Linked accounting account';
+
+  @override
+  String get supplierLinkedAccountNo => 'No accounting account';
+
+  @override
+  String get supplierEnsureAccount => 'Create accounting account';
+
+  @override
+  String get supplierAccountLinked => 'Accounting account linked.';
+
+  @override
+  String get supplierSectionIdentity => 'Identity';
+
+  @override
+  String get supplierSectionContact => 'Contact';
+
+  @override
+  String get supplierSectionLocation => 'Location';
+
+  @override
+  String get supplierSectionAccounting => 'Accounting';
 
   @override
   String get supplierValidationNameArRequired => 'Arabic name is required.';
@@ -1394,6 +1435,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get supplierErrorPermissionDenied =>
       'You do not have permission to perform this action.';
+
+  @override
+  String get supplierErrorAccountAlreadyLinked =>
+      'This profile already has a linked accounting account.';
 
   @override
   String get supplierErrorUnknown => 'Something went wrong. Please try again.';

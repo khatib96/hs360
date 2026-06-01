@@ -1,12 +1,11 @@
-import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
+import '../../../../core/location/kuwait_locations.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../core/utils/money_formatter.dart';
 import '../../domain/customer.dart';
+import '../../domain/customer_type.dart';
 
-/// Renders the customer list as a dense desktop table or mobile cards.
 class CustomerTable extends StatelessWidget {
   const CustomerTable({
     required this.customers,
@@ -53,8 +52,24 @@ class CustomerTable extends StatelessWidget {
   }
 }
 
-String _formatCredit(Decimal value, String languageCode) =>
-    formatMoney(value, locale: languageCode);
+String _locationLabel(Customer customer, String languageCode) {
+  final parts = <String>[];
+  final gov = customer.governorate;
+  if (gov != null && gov.isNotEmpty) {
+    parts.add(governorateLabel(gov, languageCode));
+  }
+  final ar = customer.area;
+  if (ar != null && ar.isNotEmpty) {
+    parts.add(areaLabel(gov, ar, languageCode));
+  }
+  return parts.isEmpty ? '' : parts.join(' / ');
+}
+
+String _typeLabel(Customer customer, AppLocalizations l10n) {
+  return customer.customerType == CustomerType.company
+      ? l10n.customerTypeCompany
+      : l10n.customerTypeIndividual;
+}
 
 class _DesktopCustomerTable extends StatefulWidget {
   const _DesktopCustomerTable({
@@ -113,14 +128,13 @@ class _DesktopCustomerTableState extends State<_DesktopCustomerTable> {
                 DataColumn(label: Text(l10n.customerColumnCode)),
                 DataColumn(label: Text(l10n.customerColumnName)),
                 DataColumn(label: Text(l10n.customerColumnPhone)),
-                DataColumn(label: Text(l10n.customerColumnWhatsapp)),
+                DataColumn(label: Text(l10n.customerColumnType)),
                 DataColumn(label: Text(l10n.customerColumnLocation)),
-                DataColumn(label: Text(l10n.customerColumnPaymentTerms)),
-                DataColumn(label: Text(l10n.customerColumnCreditLimit)),
                 DataColumn(label: Text(l10n.customerColumnStatus)),
                 const DataColumn(label: SizedBox(width: 120)),
               ],
               rows: widget.customers.map((customer) {
+                final location = _locationLabel(customer, widget.languageCode);
                 return DataRow(
                   cells: [
                     DataCell(Text(customer.code)),
@@ -132,11 +146,13 @@ class _DesktopCustomerTableState extends State<_DesktopCustomerTable> {
                       ),
                     ),
                     DataCell(Text(customer.phonePrimary)),
-                    DataCell(Text(customer.whatsapp ?? l10n.productsNotAvailable)),
-                    DataCell(Text(_location(customer, l10n))),
-                    DataCell(Text(customer.paymentTermsDays.toString())),
+                    DataCell(Text(_typeLabel(customer, l10n))),
                     DataCell(
-                      Text(_formatCredit(customer.creditLimit, widget.languageCode)),
+                      Text(
+                        location.isEmpty
+                            ? l10n.productsNotAvailable
+                            : location,
+                      ),
                     ),
                     DataCell(
                       Text(
@@ -168,14 +184,6 @@ class _DesktopCustomerTableState extends State<_DesktopCustomerTable> {
       ),
     );
   }
-}
-
-String _location(Customer customer, AppLocalizations l10n) {
-  final parts = [customer.area, customer.city]
-      .where((p) => p != null && p.trim().isNotEmpty)
-      .cast<String>()
-      .toList();
-  return parts.isEmpty ? l10n.productsNotAvailable : parts.join(' / ');
 }
 
 class _NameCell extends StatelessWidget {
@@ -300,6 +308,7 @@ class _MobileCustomerList extends StatelessWidget {
       separatorBuilder: (_, _) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
         final customer = customers[index];
+        final location = _locationLabel(customer, languageCode);
         return Card(
           margin: EdgeInsets.zero,
           child: ListTile(
@@ -313,7 +322,7 @@ class _MobileCustomerList extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('${customer.code} · ${customer.phonePrimary}'),
-                Text(_location(customer, l10n)),
+                if (location.isNotEmpty) Text(location),
                 Text(
                   customer.isActive
                       ? l10n.customerStatusActive

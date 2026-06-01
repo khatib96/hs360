@@ -1082,8 +1082,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get createCustomerTitle => 'عميل جديد';
 
   @override
-  String get customerSearchHint =>
-      'ابحث بالكود أو الاسم أو الهاتف أو واتساب أو البريد';
+  String get customerSearchHint => 'ابحث بالكود أو الاسم أو الهاتف أو البريد';
 
   @override
   String get customerFilterStatus => 'الحالة';
@@ -1128,16 +1127,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get customerColumnPhone => 'الهاتف';
 
   @override
-  String get customerColumnWhatsapp => 'واتساب';
+  String get customerColumnType => 'النوع';
 
   @override
-  String get customerColumnLocation => 'المنطقة / المدينة';
-
-  @override
-  String get customerColumnPaymentTerms => 'مدة السداد';
-
-  @override
-  String get customerColumnCreditLimit => 'حد الائتمان';
+  String get customerColumnLocation => 'الموقع';
 
   @override
   String get customerColumnStatus => 'الحالة';
@@ -1181,10 +1174,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get customerFieldCode => 'الكود';
 
   @override
-  String get customerFieldAccount => 'الحساب';
-
-  @override
-  String get customerFieldNameAr => 'الاسم (عربي)';
+  String get customerFieldNameAr => 'الاسم';
 
   @override
   String get customerFieldNameEn => 'الاسم (إنجليزي)';
@@ -1193,46 +1183,31 @@ class AppLocalizationsAr extends AppLocalizations {
   String get customerFieldContactName => 'الشخص المسؤول';
 
   @override
-  String get customerFieldContactTitle => 'المسمى الوظيفي';
-
-  @override
   String get customerFieldContactPhone => 'هاتف المسؤول';
 
   @override
   String get customerFieldPhonePrimary => 'الهاتف الأساسي';
 
   @override
-  String get customerFieldPhoneSecondary => 'الهاتف الثانوي';
-
-  @override
-  String get customerFieldWhatsapp => 'واتساب';
-
-  @override
   String get customerFieldEmail => 'البريد الإلكتروني';
 
   @override
-  String get customerFieldAddress => 'العنوان';
+  String get customerFieldTaxNumber => 'الرقم الضريبي';
+
+  @override
+  String get customerFieldAddress => 'تفاصيل العنوان';
 
   @override
   String get customerFieldArea => 'المنطقة';
 
   @override
-  String get customerFieldCity => 'المدينة';
+  String get customerFieldGovernorate => 'المحافظة';
 
   @override
   String get customerFieldCountry => 'الدولة';
 
   @override
-  String get customerFieldGpsLat => 'خط العرض GPS';
-
-  @override
-  String get customerFieldGpsLng => 'خط الطول GPS';
-
-  @override
-  String get customerFieldPaymentTerms => 'مدة السداد (أيام)';
-
-  @override
-  String get customerFieldCreditLimit => 'حد الائتمان';
+  String get customerFieldGoogleMapsUrl => 'رابط خرائط Google';
 
   @override
   String get customerFieldVip => 'عميل مميز';
@@ -1241,31 +1216,44 @@ class AppLocalizationsAr extends AppLocalizations {
   String get customerFieldNotes => 'ملاحظات';
 
   @override
+  String get customerFieldCreateAccount => 'إنشاء حساب محاسبي';
+
+  @override
+  String get customerFieldCreateAccountHint =>
+      'يربط حسابًا فرعيًا للذمم المدينة تحت حساب المدينين.';
+
+  @override
+  String get customerLinkedAccountYes => 'حساب محاسبي مرتبط';
+
+  @override
+  String get customerLinkedAccountNo => 'لا يوجد حساب محاسبي';
+
+  @override
+  String get customerEnsureAccount => 'إنشاء حساب محاسبي';
+
+  @override
+  String get customerAccountLinked => 'تم ربط الحساب المحاسبي.';
+
+  @override
+  String get customerSectionIdentity => 'الهوية';
+
+  @override
+  String get customerSectionContact => 'التواصل';
+
+  @override
+  String get customerSectionLocation => 'الموقع';
+
+  @override
+  String get customerSectionAccounting => 'المحاسبة';
+
+  @override
   String get customerValidationNameArRequired => 'الاسم بالعربية مطلوب.';
 
   @override
   String get customerValidationPhoneRequired => 'الهاتف الأساسي مطلوب.';
 
   @override
-  String get customerValidationNegativeCredit =>
-      'لا يمكن أن يكون حد الائتمان سالبًا.';
-
-  @override
-  String get customerValidationNegativePayment =>
-      'لا يمكن أن تكون مدة السداد سالبة.';
-
-  @override
-  String get customerValidationGpsInvalid =>
-      'أدخل قيمة صحيحة لخطي العرض والطول معًا.';
-
-  @override
   String get customerValidationEmailInvalid => 'أدخل بريدًا إلكترونيًا صحيحًا.';
-
-  @override
-  String get customerInvalidDecimal => 'أدخل رقمًا صحيحًا.';
-
-  @override
-  String get customerInvalidInteger => 'أدخل عددًا صحيحًا.';
 
   @override
   String get customerValidationFailed => 'تعذّر حفظ العميل. يرجى مراجعة القيم.';
@@ -1275,7 +1263,20 @@ class AppLocalizationsAr extends AppLocalizations {
       'لا تملك صلاحية تنفيذ هذا الإجراء.';
 
   @override
+  String get customerErrorAccountAlreadyLinked =>
+      'هذا الملف مرتبط بحساب محاسبي بالفعل.';
+
+  @override
   String get customerErrorUnknown => 'حدث خطأ ما. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get locationAreaOther => 'أخرى (إدخال يدوي)';
+
+  @override
+  String get locationEnterCustomArea => 'إدخال المنطقة يدويًا';
+
+  @override
+  String get locationUseCatalogArea => 'اختيار من القائمة';
 
   @override
   String get createSupplierTitle => 'مورّد جديد';
@@ -1312,6 +1313,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get supplierColumnEmail => 'البريد الإلكتروني';
+
+  @override
+  String get supplierColumnLocation => 'الموقع';
 
   @override
   String get supplierColumnStatus => 'الحالة';
@@ -1355,9 +1359,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get supplierFieldCode => 'الكود';
 
   @override
-  String get supplierFieldAccount => 'الحساب';
-
-  @override
   String get supplierFieldNameAr => 'الاسم (عربي)';
 
   @override
@@ -1370,7 +1371,47 @@ class AppLocalizationsAr extends AppLocalizations {
   String get supplierFieldEmail => 'البريد الإلكتروني';
 
   @override
-  String get supplierFieldAddress => 'العنوان';
+  String get supplierFieldTaxNumber => 'الرقم الضريبي';
+
+  @override
+  String get supplierFieldAddress => 'تفاصيل العنوان';
+
+  @override
+  String get supplierFieldGoogleMapsUrl => 'رابط خرائط Google';
+
+  @override
+  String get supplierFieldNotes => 'ملاحظات';
+
+  @override
+  String get supplierFieldCreateAccount => 'إنشاء حساب محاسبي';
+
+  @override
+  String get supplierFieldCreateAccountHint =>
+      'يربط حسابًا فرعيًا للذمم الدائنة تحت حساب الدائنين.';
+
+  @override
+  String get supplierLinkedAccountYes => 'حساب محاسبي مرتبط';
+
+  @override
+  String get supplierLinkedAccountNo => 'لا يوجد حساب محاسبي';
+
+  @override
+  String get supplierEnsureAccount => 'إنشاء حساب محاسبي';
+
+  @override
+  String get supplierAccountLinked => 'تم ربط الحساب المحاسبي.';
+
+  @override
+  String get supplierSectionIdentity => 'الهوية';
+
+  @override
+  String get supplierSectionContact => 'التواصل';
+
+  @override
+  String get supplierSectionLocation => 'الموقع';
+
+  @override
+  String get supplierSectionAccounting => 'المحاسبة';
 
   @override
   String get supplierValidationNameArRequired => 'الاسم بالعربية مطلوب.';
@@ -1385,6 +1426,10 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get supplierErrorPermissionDenied =>
       'لا تملك صلاحية تنفيذ هذا الإجراء.';
+
+  @override
+  String get supplierErrorAccountAlreadyLinked =>
+      'هذا الملف مرتبط بحساب محاسبي بالفعل.';
 
   @override
   String get supplierErrorUnknown => 'حدث خطأ ما. يرجى المحاولة مرة أخرى.';

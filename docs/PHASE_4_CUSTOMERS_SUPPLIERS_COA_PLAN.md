@@ -13,13 +13,23 @@ Phase 4 looks smaller than Phase 3, but it sits directly on the accounting bound
 
 - customer and supplier identity data.
 - automatic customer/supplier codes.
-- automatic A/R and A/P subaccounts in `chart_of_accounts`.
+- optional A/R and A/P subaccounts in `chart_of_accounts`.
 - customer ledger and statement surfaces.
 - future contracts, invoices, vouchers, visits, and reports.
 - sensitive accounting permissions.
 - mobile and desktop workflows.
 
 The safe approach is to implement Phase 4 as milestones: `M0` through `M8`. Each milestone should end with targeted tests and a clean acceptance check.
+
+### M5.5 profile cleanup (2026-06-01) — implemented
+
+Migration `046_customer_supplier_profile_cleanup.sql`:
+
+- Removed low-value customer columns (`whatsapp`, GPS, credit/payment terms, `city`, etc.); added `governorate`, `google_maps_url`, `tax_number`.
+- Supplier `address` → `address_line` plus structured location + notes.
+- `customers.account_id` / `suppliers.account_id` are **nullable**; `create_customer` / `create_supplier` accept `create_account` (default `false`).
+- `ensure_customer_account` / `ensure_supplier_account` link A/R or A/P when `account_id` is null; immutable triggers allow only validated `null → account_id` transitions.
+- Statement/balance RPCs are zero-safe when no linked account.
 
 ---
 
@@ -54,10 +64,9 @@ Phase 1 already created:
 - `contracts`
 - `visits`
 
-Key schema facts:
+Key schema facts (post-M5.5):
 
-- `customers.account_id` is `not null` and references `chart_of_accounts`.
-- `suppliers.account_id` is `not null` and references `chart_of_accounts`.
+- `customers.account_id` and `suppliers.account_id` are **nullable** FKs to `chart_of_accounts` (linked subaccount optional at create; `ensure_*_account` for later linking).
 - `customers.code` is unique per tenant.
 - `suppliers.code` is unique per tenant.
 - `chart_of_accounts.code` is unique per tenant.
@@ -94,7 +103,7 @@ Seeded permissions include:
 
 Existing RLS policies allow tenant-scoped access based on the permissions above.
 
-Important gap: direct `customers_insert` and `suppliers_insert` currently allow a user with create permission to insert rows if they provide an `account_id`. Phase 4 should make RPCs the canonical create path so account creation and customer/supplier creation happen atomically.
+Closed in M2: direct `customers_insert` and `suppliers_insert` were removed so RPCs are the canonical create path. M5.5 keeps account creation atomic when `create_account = true`, and also supports a later ensure-account action for profiles created without ledger accounts.
 
 ### Existing Gaps Phase 4 Must Close
 
@@ -106,8 +115,9 @@ Important gap: direct `customers_insert` and `suppliers_insert` currently allow 
 - No RPC exists for:
   - generating `CUST-0001`.
   - generating `SUP-0001`.
-  - creating A/R subaccount automatically.
-  - creating A/P subaccount automatically.
+  - creating A/R subaccount when requested.
+  - creating A/P subaccount when requested.
+  - linking A/R/A/P later when a profile starts without an account.
   - preventing client-controlled `account_id` creation.
 - No Phase 4 SQL test exists.
 - Customer ledger/statement views or RPCs are not implemented yet.
@@ -124,8 +134,8 @@ Important gap: direct `customers_insert` and `suppliers_insert` currently allow 
 2. Supplier list, search, filters, create, edit, deactivate.
 3. Automatic customer code generation: `CUST-0001`, `CUST-0002`, ...
 4. Automatic supplier code generation: `SUP-0001`, `SUP-0002`, ...
-5. Automatic A/R subaccount creation when a customer is created.
-6. Automatic A/P subaccount creation when a supplier is created.
+5. Optional A/R subaccount creation when a customer needs a ledger account.
+6. Optional A/P subaccount creation when a supplier needs a ledger account.
 7. CoA tree view with hierarchy.
 8. CoA add/edit/deactivate for non-system accounts.
 9. Protect system accounts and entity-linked subaccounts from unsafe edits.
@@ -287,7 +297,7 @@ These were confirmed by inspecting `010`, `016`, `017`, `018`, `026`, `027`, `02
 
 - Seeded parent accounts (`031_seed.sql`): A/R is `1201` "Accounts receivable" (`asset`), A/P is `2101` "Accounts payable" (`liability`). Both are seeded with `is_system = true`.
 - The seed creates `1201`/`2101` for tenant A only. Tenant B has only `1101`. There is no column flagging "this is the A/R/A/P parent"; the only stable handle is `(tenant_id, code)`.
-- `customers.account_id` and `suppliers.account_id` are `not null` FKs to `chart_of_accounts`; both tables enforce `unique (tenant_id, code)`. `chart_of_accounts` enforces `unique (tenant_id, code)`.
+- `customers.account_id` and `suppliers.account_id` started as `not null` FKs in `016`/`017`; M5.5 migration `046` makes them nullable so ledger accounts are optional. Both tables enforce `unique (tenant_id, code)`. `chart_of_accounts` enforces `unique (tenant_id, code)`.
 - `chart_of_accounts` already has `parent_id`, `is_subaccount`, `is_system`, `related_entity_table`, `related_entity_id`, `is_active`. No `updated_at` column.
 - Current RLS (`030`) lets any user with `customers.create` / `suppliers.create` directly `INSERT` a row **with a client-supplied `account_id`**, and `*_update` lets `*.edit` users change any column including `account_id`/`code`/`tenant_id`. This is the gap M2 must close (mirrors the M6 pattern in `040` that dropped direct `product_units` insert/update/delete).
 - `chart_of_accounts_delete` already blocks system rows (`and not is_system`) but **does not** block entity-linked subaccounts (those are `is_system = false`), and `chart_of_accounts_update` has no protection for system or linked rows.
@@ -299,14 +309,14 @@ These were confirmed by inspecting `010`, `016`, `017`, `018`, `026`, `027`, `02
 
 1. **Customer creation = RPC only.** `create_customer(...)` (security definer). Drop the `customers_insert` RLS policy so direct inserts are impossible.
 2. **Supplier creation = RPC only.** `create_supplier(...)` (security definer). Drop the `suppliers_insert` RLS policy.
-3. **Client never sends `tenant_id` or `account_id`.** RPCs derive `tenant_id` from `current_tenant_id()` and create the account server-side. Any client-supplied account/tenant is ignored/rejected.
+3. **Client never sends `tenant_id` or `account_id`.** RPCs derive `tenant_id` from `current_tenant_id()` and create/link the account server-side only when requested. Any client-supplied account/tenant is ignored/rejected.
 4. **Customer code:** `CUST-0001`, `CUST-0002`, ... zero-padded to 4 digits, per tenant, generated inside the RPC transaction. Rely on `unique (tenant_id, code)` as the hard guard; lock the parent A/R row `FOR UPDATE` (or use `pg_advisory_xact_lock`) to serialize numbering and avoid races.
 5. **Supplier code:** `SUP-0001`, `SUP-0002`, ... same rules as customers.
-6. **Customer A/R subaccount** is created automatically under the tenant's A/R parent, in the same transaction, and linked via `customers.account_id`.
-7. **Supplier A/P subaccount** is created automatically under the tenant's A/P parent, in the same transaction, and linked via `suppliers.account_id`.
+6. **Customer A/R subaccount** is created under the tenant's A/R parent only when `create_account = true`, or later via `ensure_customer_account`, and linked via `customers.account_id`.
+7. **Supplier A/P subaccount** is created under the tenant's A/P parent only when `create_account = true`, or later via `ensure_supplier_account`, and linked via `suppliers.account_id`.
 8. **Parent account codes are confirmed: A/R = `1201`, A/P = `2101`.** RPCs resolve the parent by `(tenant_id, code)` = `1201` / `2101`. If the parent is missing for the tenant, the RPC raises a clear error (`ar_parent_missing` / `ap_parent_missing`) rather than guessing. **Gap to close:** tenant onboarding/seed must guarantee every tenant has `1201` and `2101` before any customer/supplier is created (today only tenant A does).
 9. **Linked subaccount code format:** `<parent_code>.NNNN`, zero-padded to 4 digits, e.g. `1201.0001`, `2101.0001`. Sequence is derived per parent from existing subaccounts of that parent within the tenant. New subaccount inherits the parent's `type` (`asset` for A/R, `liability` for A/P), sets `parent_id = parent`, `is_subaccount = true`, `is_system = false`, `related_entity_table = 'customers'|'suppliers'`, `related_entity_id = <entity id>`, `is_active = true`.
-10. **Immutable after creation** (enforced by `BEFORE UPDATE` guard triggers, not just UI): on `customers`/`suppliers` → `tenant_id`, generated `code`, `account_id`; on `chart_of_accounts` → `tenant_id`, `related_entity_table`, `related_entity_id`, and the generated subaccount `code`. Profile fields (name, phone, etc.) remain editable via `update_customer` / `update_supplier`.
+10. **Immutable after creation** (enforced by `BEFORE UPDATE` guard triggers, not just UI): on `customers`/`suppliers` → `tenant_id` and generated `code`; `account_id` can only move from `null` to a validated account for the same tenant/entity/type/parent, and any later change is blocked. On `chart_of_accounts` → `tenant_id`, `related_entity_table`, `related_entity_id`, and the generated subaccount `code`. Profile fields (name, phone, etc.) remain editable via `update_customer` / `update_supplier`.
 11. **Deactivation, not hard delete.** UI path sets `is_active = false` via `deactivate_customer` / `deactivate_supplier`. Deactivating an entity does **not** delete or deactivate its linked A/R/A/P account (the account may carry balances and is needed for the ledger). Hard delete stays unavailable from the app.
 12. **CoA protections** (enforced in RLS + guard trigger):
     - System rows (`is_system = true`) are read-only: no manual update, deactivate, or delete.
@@ -323,7 +333,7 @@ In `supabase/migrations/045_customers_suppliers_coa_rpc.sql`:
 
 1. Helper `get_or_resolve_entity_parent_account(p_kind)` (or inline) that returns the tenant's `1201`/`2101` row id, raising `ar_parent_missing`/`ap_parent_missing` if absent.
 2. Helper to generate the next entity code (`CUST-`/`SUP-`) and the next `<parent_code>.NNNN` subaccount code, race-safe.
-3. `create_customer(...)` and `create_supplier(...)`: validate tenant + permission, generate codes, insert linked subaccount + entity atomically, return new id. Ignore any client `tenant_id`/`account_id`.
+3. `create_customer(...)` and `create_supplier(...)`: validate tenant + permission, generate codes, optionally insert a linked subaccount when `create_account = true`, insert the entity atomically, return new id. Ignore any client `tenant_id`/`account_id`.
 4. `update_customer(...)` / `update_supplier(...)`: mutable profile fields only.
 5. `deactivate_customer(...)` / `deactivate_supplier(...)`: set `is_active = false`; leave linked account intact.
 6. `create_chart_account(...)` / `update_chart_account(...)` / `deactivate_chart_account(...)`: manual non-system, non-linked accounts only.
@@ -572,20 +582,18 @@ Make customer and supplier management usable.
 
 Required:
 
-- search by code, Arabic name, English name, phone, WhatsApp, email.
+- search by code, Arabic name, English name, phone, and email.
 - filters:
   - active/inactive.
   - VIP.
   - customer type: individual/company.
-  - area/city if useful.
+  - governorate.
+  - area.
 - columns:
   - code.
   - name.
   - phone.
-  - WhatsApp.
-  - area/city.
-  - payment terms.
-  - credit limit.
+  - location summary.
   - status.
 - actions:
   - view.
@@ -605,13 +613,10 @@ Optional fields:
 
 - `name_en`.
 - contact person fields.
-- phone secondary.
-- WhatsApp.
 - email.
-- address, area, city, country.
-- GPS lat/lng.
-- payment terms.
-- credit limit.
+- tax number for companies.
+- address, area, governorate, country.
+- Google Maps URL.
 - VIP flag.
 - notes.
 - acquired_by/acquired_at if employee data is available.
@@ -619,11 +624,8 @@ Optional fields:
 Rules:
 
 - code is generated, not editable.
-- account is generated, not editable.
+- account is optional. It is not client-selected; it is created via `create_account` on create or later by `ensure_*_account`.
 - phone validation is practical, not over-strict.
-- GPS values must be valid if entered.
-- credit limit cannot be negative.
-- payment terms cannot be negative.
 
 ### Supplier List/Form
 
@@ -633,7 +635,7 @@ Required:
 - active/inactive filter.
 - create/edit/deactivate.
 - generated supplier code.
-- generated A/P subaccount.
+- optional A/P subaccount (`create_account` or later ensure action).
 
 Supplier form fields:
 
@@ -641,7 +643,10 @@ Supplier form fields:
 - `name_en` optional.
 - `phone` optional.
 - `email` optional.
-- `address` optional.
+- `tax_number` optional.
+- `country`, `governorate`, `area`, `address_line` optional.
+- `google_maps_url` optional.
+- `notes` optional.
 
 ### Responsive UX
 
@@ -667,7 +672,7 @@ Supplier form fields:
 - Deactivate customer -> no longer appears in active-only view.
 - Create supplier -> appears in supplier list.
 - User without create permission cannot create.
-- Generated codes/account IDs are visible but not editable.
+- Generated codes are visible but not editable. Linked account status is visible; account IDs are not edited by the user.
 
 ---
 
@@ -686,11 +691,8 @@ Show:
 - customer type.
 - active/VIP status.
 - primary phone.
-- WhatsApp.
 - email.
 - location summary.
-- payment terms.
-- credit limit.
 - linked A/R account.
 
 ### Tabs
@@ -882,7 +884,7 @@ If `supabase db reset` is still blocked by the known local CLI issue, document i
 | [ ] | User with `suppliers.view` opens Suppliers tab | suppliers visible |
 | [ ] | Zero user opens Customers | blocked/redirected |
 | [ ] | Create customer | customer row and A/R subaccount created atomically |
-| [ ] | Create supplier | supplier row and A/P subaccount created atomically |
+| [ ] | Create supplier | supplier row created; A/P subaccount created atomically only when requested |
 | [ ] | Customer detail Statement tab with permission | opens, empty-safe |
 | [ ] | Customer detail Statement tab without permission | denied state |
 | [ ] | Customer created account appears in CoA tree | under A/R parent |
@@ -912,7 +914,7 @@ If `supabase db reset` is still blocked by the known local CLI issue, document i
 - Customers can be created, listed, viewed, edited, and deactivated.
 - Suppliers can be created, listed, edited, and deactivated.
 - Customer and supplier codes are generated consistently.
-- Customer A/R and supplier A/P subaccounts are created automatically.
+- Customer A/R and supplier A/P subaccounts are created only when requested on create, or later through the ensure-account action.
 - CoA is visible as a tree and safe to customize.
 - Customer detail is ready for contracts, invoices, vouchers, and statements.
 - Ledger/statement surfaces are empty-safe before Phase 5.

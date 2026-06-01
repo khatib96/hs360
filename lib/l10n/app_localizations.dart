@@ -2147,7 +2147,7 @@ abstract class AppLocalizations {
   /// No description provided for @customerSearchHint.
   ///
   /// In en, this message translates to:
-  /// **'Search by code, name, phone, WhatsApp, email'**
+  /// **'Search by code, name, phone, email'**
   String get customerSearchHint;
 
   /// No description provided for @customerFilterStatus.
@@ -2234,29 +2234,17 @@ abstract class AppLocalizations {
   /// **'Phone'**
   String get customerColumnPhone;
 
-  /// No description provided for @customerColumnWhatsapp.
+  /// No description provided for @customerColumnType.
   ///
   /// In en, this message translates to:
-  /// **'WhatsApp'**
-  String get customerColumnWhatsapp;
+  /// **'Type'**
+  String get customerColumnType;
 
   /// No description provided for @customerColumnLocation.
   ///
   /// In en, this message translates to:
-  /// **'Area / City'**
+  /// **'Location'**
   String get customerColumnLocation;
-
-  /// No description provided for @customerColumnPaymentTerms.
-  ///
-  /// In en, this message translates to:
-  /// **'Payment terms'**
-  String get customerColumnPaymentTerms;
-
-  /// No description provided for @customerColumnCreditLimit.
-  ///
-  /// In en, this message translates to:
-  /// **'Credit limit'**
-  String get customerColumnCreditLimit;
 
   /// No description provided for @customerColumnStatus.
   ///
@@ -2336,16 +2324,10 @@ abstract class AppLocalizations {
   /// **'Code'**
   String get customerFieldCode;
 
-  /// No description provided for @customerFieldAccount.
-  ///
-  /// In en, this message translates to:
-  /// **'Account'**
-  String get customerFieldAccount;
-
   /// No description provided for @customerFieldNameAr.
   ///
   /// In en, this message translates to:
-  /// **'Name (Arabic)'**
+  /// **'Name'**
   String get customerFieldNameAr;
 
   /// No description provided for @customerFieldNameEn.
@@ -2360,12 +2342,6 @@ abstract class AppLocalizations {
   /// **'Contact person'**
   String get customerFieldContactName;
 
-  /// No description provided for @customerFieldContactTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Contact title'**
-  String get customerFieldContactTitle;
-
   /// No description provided for @customerFieldContactPhone.
   ///
   /// In en, this message translates to:
@@ -2378,28 +2354,22 @@ abstract class AppLocalizations {
   /// **'Primary phone'**
   String get customerFieldPhonePrimary;
 
-  /// No description provided for @customerFieldPhoneSecondary.
-  ///
-  /// In en, this message translates to:
-  /// **'Secondary phone'**
-  String get customerFieldPhoneSecondary;
-
-  /// No description provided for @customerFieldWhatsapp.
-  ///
-  /// In en, this message translates to:
-  /// **'WhatsApp'**
-  String get customerFieldWhatsapp;
-
   /// No description provided for @customerFieldEmail.
   ///
   /// In en, this message translates to:
   /// **'Email'**
   String get customerFieldEmail;
 
+  /// No description provided for @customerFieldTaxNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Tax number'**
+  String get customerFieldTaxNumber;
+
   /// No description provided for @customerFieldAddress.
   ///
   /// In en, this message translates to:
-  /// **'Address'**
+  /// **'Address details'**
   String get customerFieldAddress;
 
   /// No description provided for @customerFieldArea.
@@ -2408,11 +2378,11 @@ abstract class AppLocalizations {
   /// **'Area'**
   String get customerFieldArea;
 
-  /// No description provided for @customerFieldCity.
+  /// No description provided for @customerFieldGovernorate.
   ///
   /// In en, this message translates to:
-  /// **'City'**
-  String get customerFieldCity;
+  /// **'Governorate'**
+  String get customerFieldGovernorate;
 
   /// No description provided for @customerFieldCountry.
   ///
@@ -2420,29 +2390,11 @@ abstract class AppLocalizations {
   /// **'Country'**
   String get customerFieldCountry;
 
-  /// No description provided for @customerFieldGpsLat.
+  /// No description provided for @customerFieldGoogleMapsUrl.
   ///
   /// In en, this message translates to:
-  /// **'GPS latitude'**
-  String get customerFieldGpsLat;
-
-  /// No description provided for @customerFieldGpsLng.
-  ///
-  /// In en, this message translates to:
-  /// **'GPS longitude'**
-  String get customerFieldGpsLng;
-
-  /// No description provided for @customerFieldPaymentTerms.
-  ///
-  /// In en, this message translates to:
-  /// **'Payment terms (days)'**
-  String get customerFieldPaymentTerms;
-
-  /// No description provided for @customerFieldCreditLimit.
-  ///
-  /// In en, this message translates to:
-  /// **'Credit limit'**
-  String get customerFieldCreditLimit;
+  /// **'Google Maps link'**
+  String get customerFieldGoogleMapsUrl;
 
   /// No description provided for @customerFieldVip.
   ///
@@ -2456,6 +2408,66 @@ abstract class AppLocalizations {
   /// **'Notes'**
   String get customerFieldNotes;
 
+  /// No description provided for @customerFieldCreateAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create accounting account'**
+  String get customerFieldCreateAccount;
+
+  /// No description provided for @customerFieldCreateAccountHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Links an A/R subaccount under receivables.'**
+  String get customerFieldCreateAccountHint;
+
+  /// No description provided for @customerLinkedAccountYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked accounting account'**
+  String get customerLinkedAccountYes;
+
+  /// No description provided for @customerLinkedAccountNo.
+  ///
+  /// In en, this message translates to:
+  /// **'No accounting account'**
+  String get customerLinkedAccountNo;
+
+  /// No description provided for @customerEnsureAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create accounting account'**
+  String get customerEnsureAccount;
+
+  /// No description provided for @customerAccountLinked.
+  ///
+  /// In en, this message translates to:
+  /// **'Accounting account linked.'**
+  String get customerAccountLinked;
+
+  /// No description provided for @customerSectionIdentity.
+  ///
+  /// In en, this message translates to:
+  /// **'Identity'**
+  String get customerSectionIdentity;
+
+  /// No description provided for @customerSectionContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get customerSectionContact;
+
+  /// No description provided for @customerSectionLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get customerSectionLocation;
+
+  /// No description provided for @customerSectionAccounting.
+  ///
+  /// In en, this message translates to:
+  /// **'Accounting'**
+  String get customerSectionAccounting;
+
   /// No description provided for @customerValidationNameArRequired.
   ///
   /// In en, this message translates to:
@@ -2468,41 +2480,11 @@ abstract class AppLocalizations {
   /// **'Primary phone is required.'**
   String get customerValidationPhoneRequired;
 
-  /// No description provided for @customerValidationNegativeCredit.
-  ///
-  /// In en, this message translates to:
-  /// **'Credit limit cannot be negative.'**
-  String get customerValidationNegativeCredit;
-
-  /// No description provided for @customerValidationNegativePayment.
-  ///
-  /// In en, this message translates to:
-  /// **'Payment terms cannot be negative.'**
-  String get customerValidationNegativePayment;
-
-  /// No description provided for @customerValidationGpsInvalid.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter a valid GPS latitude and longitude pair.'**
-  String get customerValidationGpsInvalid;
-
   /// No description provided for @customerValidationEmailInvalid.
   ///
   /// In en, this message translates to:
   /// **'Enter a valid email address.'**
   String get customerValidationEmailInvalid;
-
-  /// No description provided for @customerInvalidDecimal.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter a valid number.'**
-  String get customerInvalidDecimal;
-
-  /// No description provided for @customerInvalidInteger.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter a valid whole number.'**
-  String get customerInvalidInteger;
 
   /// No description provided for @customerValidationFailed.
   ///
@@ -2516,11 +2498,35 @@ abstract class AppLocalizations {
   /// **'You do not have permission to perform this action.'**
   String get customerErrorPermissionDenied;
 
+  /// No description provided for @customerErrorAccountAlreadyLinked.
+  ///
+  /// In en, this message translates to:
+  /// **'This profile already has a linked accounting account.'**
+  String get customerErrorAccountAlreadyLinked;
+
   /// No description provided for @customerErrorUnknown.
   ///
   /// In en, this message translates to:
   /// **'Something went wrong. Please try again.'**
   String get customerErrorUnknown;
+
+  /// No description provided for @locationAreaOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other (custom)'**
+  String get locationAreaOther;
+
+  /// No description provided for @locationEnterCustomArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter area manually'**
+  String get locationEnterCustomArea;
+
+  /// No description provided for @locationUseCatalogArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from list'**
+  String get locationUseCatalogArea;
 
   /// No description provided for @createSupplierTitle.
   ///
@@ -2593,6 +2599,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Email'**
   String get supplierColumnEmail;
+
+  /// No description provided for @supplierColumnLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get supplierColumnLocation;
 
   /// No description provided for @supplierColumnStatus.
   ///
@@ -2672,12 +2684,6 @@ abstract class AppLocalizations {
   /// **'Code'**
   String get supplierFieldCode;
 
-  /// No description provided for @supplierFieldAccount.
-  ///
-  /// In en, this message translates to:
-  /// **'Account'**
-  String get supplierFieldAccount;
-
   /// No description provided for @supplierFieldNameAr.
   ///
   /// In en, this message translates to:
@@ -2702,11 +2708,89 @@ abstract class AppLocalizations {
   /// **'Email'**
   String get supplierFieldEmail;
 
+  /// No description provided for @supplierFieldTaxNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Tax number'**
+  String get supplierFieldTaxNumber;
+
   /// No description provided for @supplierFieldAddress.
   ///
   /// In en, this message translates to:
-  /// **'Address'**
+  /// **'Address details'**
   String get supplierFieldAddress;
+
+  /// No description provided for @supplierFieldGoogleMapsUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Maps link'**
+  String get supplierFieldGoogleMapsUrl;
+
+  /// No description provided for @supplierFieldNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get supplierFieldNotes;
+
+  /// No description provided for @supplierFieldCreateAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create accounting account'**
+  String get supplierFieldCreateAccount;
+
+  /// No description provided for @supplierFieldCreateAccountHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Links an A/P subaccount under payables.'**
+  String get supplierFieldCreateAccountHint;
+
+  /// No description provided for @supplierLinkedAccountYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked accounting account'**
+  String get supplierLinkedAccountYes;
+
+  /// No description provided for @supplierLinkedAccountNo.
+  ///
+  /// In en, this message translates to:
+  /// **'No accounting account'**
+  String get supplierLinkedAccountNo;
+
+  /// No description provided for @supplierEnsureAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create accounting account'**
+  String get supplierEnsureAccount;
+
+  /// No description provided for @supplierAccountLinked.
+  ///
+  /// In en, this message translates to:
+  /// **'Accounting account linked.'**
+  String get supplierAccountLinked;
+
+  /// No description provided for @supplierSectionIdentity.
+  ///
+  /// In en, this message translates to:
+  /// **'Identity'**
+  String get supplierSectionIdentity;
+
+  /// No description provided for @supplierSectionContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get supplierSectionContact;
+
+  /// No description provided for @supplierSectionLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get supplierSectionLocation;
+
+  /// No description provided for @supplierSectionAccounting.
+  ///
+  /// In en, this message translates to:
+  /// **'Accounting'**
+  String get supplierSectionAccounting;
 
   /// No description provided for @supplierValidationNameArRequired.
   ///
@@ -2731,6 +2815,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You do not have permission to perform this action.'**
   String get supplierErrorPermissionDenied;
+
+  /// No description provided for @supplierErrorAccountAlreadyLinked.
+  ///
+  /// In en, this message translates to:
+  /// **'This profile already has a linked accounting account.'**
+  String get supplierErrorAccountAlreadyLinked;
 
   /// No description provided for @supplierErrorUnknown.
   ///

@@ -614,6 +614,9 @@ create index idx_movements_ref on inventory_movements(reference_table, reference
 ## 9. Customers & Suppliers
 
 ### 9.1 `customers`
+
+> **M5.5 (`046_customer_supplier_profile_cleanup.sql`):** removed `phone_secondary`, `whatsapp`, `contact_person_title`, `gps_lat`/`gps_lng`, `payment_terms_days`, `credit_limit`, `city` (backfilled to `governorate`). Added `governorate`, `google_maps_url`, `tax_number`. `account_id` is nullable; linked A/R subaccount is created only when `create_customer(..., create_account => true)` or via `ensure_customer_account`.
+
 ```sql
 create type customer_type as enum ('individual', 'company');
 
@@ -628,24 +631,19 @@ create table customers (
 
   -- For companies
   contact_person_name text,
-  contact_person_title text,
   contact_person_phone text,
 
   phone_primary text not null,
-  phone_secondary text,
-  whatsapp text,
   email text,                                     -- OPTIONAL
 
   address_line text,
   area text,
-  city text,
+  governorate text,
   country text default 'Kuwait',
-  gps_lat numeric(10,7),
-  gps_lng numeric(10,7),
+  google_maps_url text,
+  tax_number text,
 
-  payment_terms_days int default 0,
-  credit_limit numeric(15,3) default 0,
-  account_id uuid not null references chart_of_accounts(id),
+  account_id uuid references chart_of_accounts(id),
 
   is_active boolean default true,
   is_vip boolean default false,
@@ -667,6 +665,9 @@ create index idx_customers_phone on customers(tenant_id, phone_primary);
 ```
 
 ### 9.2 `suppliers`
+
+> **M5.5:** `address` → `address_line`; added `country`, `governorate`, `area`, `google_maps_url`, `tax_number`, `notes`. `account_id` nullable; optional `create_account` on create + `ensure_supplier_account` RPC.
+
 ```sql
 create table suppliers (
   id uuid primary key default gen_random_uuid(),
@@ -676,8 +677,14 @@ create table suppliers (
   name_en text,
   phone text,
   email text,
-  address text,
-  account_id uuid not null references chart_of_accounts(id),
+  country text default 'Kuwait',
+  governorate text,
+  area text,
+  address_line text,
+  google_maps_url text,
+  tax_number text,
+  notes text,
+  account_id uuid references chart_of_accounts(id),
   is_active boolean default true,
   created_at timestamptz default now(),
   unique(tenant_id, code)

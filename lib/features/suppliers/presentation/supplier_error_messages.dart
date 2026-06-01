@@ -7,6 +7,8 @@ String supplierErrorMessage(AppLocalizations l10n, String code) {
     SupplierException.permissionDenied => l10n.supplierErrorPermissionDenied,
     SupplierException.nameArRequired => l10n.supplierValidationNameArRequired,
     SupplierException.emailInvalid => l10n.supplierValidationEmailInvalid,
+    SupplierException.accountAlreadyLinked =>
+      l10n.supplierErrorAccountAlreadyLinked,
     SupplierException.validationFailed => l10n.supplierValidationFailed,
     SupplierException.supabaseNotConfigured =>
       l10n.authErrorSupabaseNotConfigured,

@@ -12,6 +12,7 @@ class SupplierException extends AppException {
   static const nameArRequired = 'name_ar_required';
   static const emailInvalid = 'email_invalid';
   static const apParentMissing = 'ap_parent_missing';
+  static const accountAlreadyLinked = 'account_already_linked';
   static const immutableColumn = 'immutable_column';
   static const supabaseNotConfigured = 'supabaseNotConfigured';
   static const unknown = 'unknown';
@@ -29,6 +30,12 @@ class SupplierException extends AppException {
     }
     if (message.contains('ap_parent_missing')) {
       return SupplierException(code: apParentMissing, technicalDetail: message);
+    }
+    if (message.contains('account_already_linked')) {
+      return SupplierException(
+        code: accountAlreadyLinked,
+        technicalDetail: message,
+      );
     }
     if (message.contains('immutable_column')) {
       return SupplierException(code: immutableColumn, technicalDetail: message);

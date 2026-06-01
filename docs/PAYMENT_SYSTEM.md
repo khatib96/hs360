@@ -57,7 +57,7 @@ For each active rental contract with billing_day = current_day_of_month:
     customer_id = contract.customer_id
     contract_id = contract.id
     date = today
-    due_date = today + customer.payment_terms_days
+    due_date = today + <payment_terms_days>  -- from contract/invoice terms (removed from customer profile in M5.5)
     
   Insert single invoice_line:
     product_id = NULL (or a synthetic "rental" product)

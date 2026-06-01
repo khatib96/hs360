@@ -394,7 +394,7 @@ A multi-step form. **Each step must be valid to proceed.**
 - If agent and profit < min: button "Request approval"
 
 **Step 5 — Location & Signing**
-- GPS pin (auto-filled from customer.gps_lat/lng if available, editable)
+- Location pin (optional Google Maps URL from customer profile `google_maps_url`, editable)
 - Address text (free-form)
 - Customer signature (canvas) — if tenant setting requires
 

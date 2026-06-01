@@ -1,4 +1,3 @@
-import 'package:decimal/decimal.dart';
 import 'package:hs360/core/errors/customer_exception.dart';
 import 'package:hs360/features/auth/domain/app_session.dart';
 import 'package:hs360/features/customers/data/customer_repository.dart';
@@ -27,6 +26,7 @@ class FakeCustomerRepository extends CustomerRepository {
   CustomerFormState? lastUpdateInput;
   String? lastUpdatedId;
   String? lastDeactivatedId;
+  String? lastEnsureAccountId;
   int fetchCount = 0;
   int statementCallCount = 0;
   int balanceCallCount = 0;
@@ -50,6 +50,16 @@ class FakeCustomerRepository extends CustomerRepository {
       if (filters.isVip != null && c.isVip != filters.isVip) return false;
       if (filters.customerType != null &&
           c.customerType != filters.customerType) {
+        return false;
+      }
+      if (filters.governorate != null &&
+          filters.governorate!.isNotEmpty &&
+          c.governorate != filters.governorate) {
+        return false;
+      }
+      if (filters.area != null &&
+          filters.area!.isNotEmpty &&
+          c.area != filters.area) {
         return false;
       }
       return true;
@@ -84,6 +94,7 @@ class FakeCustomerRepository extends CustomerRepository {
       id: 'new-customer',
       nameAr: input.nameAr,
       isVip: input.isVip,
+      accountId: input.createAccount ? 'acc-new' : null,
     );
     customers = [...customers, created];
     return created;
@@ -121,6 +132,21 @@ class FakeCustomerRepository extends CustomerRepository {
   }
 
   @override
+  Future<Customer> ensureCustomerAccount(AppSession session, String id) async {
+    final error = mutationError;
+    if (error != null) {
+      if (error is CustomerException) throw error;
+      throw const CustomerException(code: CustomerException.unknown);
+    }
+    lastEnsureAccountId = id;
+    final linked = sampleCustomer(id: id, accountId: 'acc-$id');
+    customers = [
+      for (final c in customers) if (c.id == id) linked else c,
+    ];
+    return linked;
+  }
+
+  @override
   Future<List<CustomerStatementRow>> fetchCustomerStatement(
     AppSession session,
     String customerId, {
@@ -148,6 +174,9 @@ Customer sampleCustomer({
   bool isActive = true,
   bool isVip = false,
   CustomerType customerType = CustomerType.individual,
+  String? accountId,
+  String? governorate,
+  String? area,
 }) {
   return Customer(
     id: id,
@@ -156,9 +185,9 @@ Customer sampleCustomer({
     customerType: customerType,
     nameAr: nameAr,
     phonePrimary: '99000000',
-    paymentTermsDays: 0,
-    creditLimit: Decimal.zero,
-    accountId: 'acc-$id',
+    accountId: accountId,
+    governorate: governorate,
+    area: area,
     isActive: isActive,
     isVip: isVip,
   );

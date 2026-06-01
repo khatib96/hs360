@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
+import '../../../auth/presentation/auth_controller.dart';
 import '../../domain/supplier.dart';
 import '../../domain/supplier_form_state.dart';
+import '../../domain/supplier_permissions.dart';
 import '../supplier_error_messages.dart';
 import '../supplier_form_draft.dart';
 import '../supplier_list_controller.dart';
 import 'supplier_form.dart';
 
-/// Shell only: wraps [SupplierForm] in an [AlertDialog] and routes
-/// create/update through [SupplierListController]. Closes on success; stays
-/// open and shows a localized error on failure.
 class SupplierFormDialog extends ConsumerStatefulWidget {
   const SupplierFormDialog({this.initial, super.key});
 
@@ -23,6 +22,7 @@ class SupplierFormDialog extends ConsumerStatefulWidget {
 
 class _SupplierFormDialogState extends ConsumerState<SupplierFormDialog> {
   bool _isSubmitting = false;
+  bool _isEnsuringAccount = false;
 
   bool get _isEdit => widget.initial != null;
 
@@ -49,9 +49,30 @@ class _SupplierFormDialogState extends ConsumerState<SupplierFormDialog> {
     setState(() => _isSubmitting = false);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content:
-            Text(supplierErrorMessage(AppLocalizations.of(context)!, errorCode)),
+        content: Text(supplierErrorMessage(AppLocalizations.of(context)!, errorCode)),
       ),
+    );
+  }
+
+  Future<void> _onEnsureAccount() async {
+    final supplier = widget.initial;
+    if (supplier == null) return;
+    setState(() => _isEnsuringAccount = true);
+    final errorCode = await ref
+        .read(supplierListControllerProvider.notifier)
+        .ensureAccount(supplier.id);
+    if (!mounted) return;
+    setState(() => _isEnsuringAccount = false);
+    final l10n = AppLocalizations.of(context)!;
+    if (errorCode == null) {
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.supplierAccountLinked)),
+      );
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(supplierErrorMessage(l10n, errorCode))),
     );
   }
 
@@ -62,17 +83,23 @@ class _SupplierFormDialogState extends ConsumerState<SupplierFormDialog> {
     final draft = initial == null
         ? SupplierFormDraft.empty()
         : SupplierFormDraft.fromSupplier(initial);
+    final session = ref.watch(authControllerProvider).valueOrNull;
+    final width = MediaQuery.sizeOf(context).width;
+    final dialogWidth = width >= 1000 ? 960.0 : (width >= 720 ? 900.0 : width * 0.95);
 
     return AlertDialog(
       title: Text(_isEdit ? l10n.editSupplierTitle : l10n.createSupplierTitle),
       content: SizedBox(
-        width: 460,
+        width: dialogWidth,
         child: SingleChildScrollView(
           child: SupplierForm(
             initialDraft: draft,
             isEdit: _isEdit,
             code: initial?.code,
-            accountId: initial?.accountId,
+            hasLinkedAccount: initial?.hasLinkedAccount ?? false,
+            canEnsureAccount: session != null && canEditSupplier(session),
+            isEnsuringAccount: _isEnsuringAccount,
+            onEnsureAccount: _isEdit ? _onEnsureAccount : null,
             isSubmitting: _isSubmitting,
             submitLabel: MaterialLocalizations.of(context).saveButtonLabel,
             onSubmit: _onSubmit,

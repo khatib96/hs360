@@ -23,6 +23,7 @@ class FakeSupplierRepository extends SupplierRepository {
   SupplierFormState? lastUpdateInput;
   String? lastUpdatedId;
   String? lastDeactivatedId;
+  String? lastEnsureAccountId;
   int fetchCount = 0;
 
   @override
@@ -64,7 +65,11 @@ class FakeSupplierRepository extends SupplierRepository {
       throw const SupplierException(code: SupplierException.unknown);
     }
     lastCreateInput = input;
-    final created = sampleSupplier(id: 'new-supplier', nameAr: input.nameAr);
+    final created = sampleSupplier(
+      id: 'new-supplier',
+      nameAr: input.nameAr,
+      accountId: input.createAccount ? 'acc-new' : null,
+    );
     suppliers = [...suppliers, created];
     return created;
   }
@@ -99,6 +104,21 @@ class FakeSupplierRepository extends SupplierRepository {
     ];
     return sampleSupplier(id: id, isActive: false);
   }
+
+  @override
+  Future<Supplier> ensureSupplierAccount(AppSession session, String id) async {
+    final error = mutationError;
+    if (error != null) {
+      if (error is SupplierException) throw error;
+      throw const SupplierException(code: SupplierException.unknown);
+    }
+    lastEnsureAccountId = id;
+    final linked = sampleSupplier(id: id, accountId: 'acc-$id');
+    suppliers = [
+      for (final s in suppliers) if (s.id == id) linked else s,
+    ];
+    return linked;
+  }
 }
 
 Supplier sampleSupplier({
@@ -106,13 +126,18 @@ Supplier sampleSupplier({
   String code = 'SUP-0001',
   String nameAr = 'مورّد',
   bool isActive = true,
+  String? accountId,
+  String? governorate,
+  String? area,
 }) {
   return Supplier(
     id: id,
     tenantId: 'tenant',
     code: code,
     nameAr: nameAr,
-    accountId: 'acc-$id',
+    accountId: accountId,
+    governorate: governorate,
+    area: area,
     isActive: isActive,
   );
 }

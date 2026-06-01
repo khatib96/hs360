@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
+import '../../../../core/localization/locale_controller.dart';
+import '../../../../core/location/kuwait_locations.dart';
 import '../../../../shared/widgets/app_text_field.dart';
+import '../../../../shared/widgets/kuwait_location_fields.dart';
 import '../../../../shared/widgets/message_banner.dart';
+import '../../../../shared/widgets/profile_form_layout.dart';
 import '../../domain/supplier_form_state.dart';
 import '../supplier_error_messages.dart';
 import '../supplier_form_draft.dart';
 
-/// Single source of truth for supplier form fields, shared by the dialog and
-/// any future supplier edit surface. Builds and validates a [SupplierFormDraft]
-/// before calling [onSubmit].
-class SupplierForm extends StatefulWidget {
+class SupplierForm extends ConsumerStatefulWidget {
   const SupplierForm({
     required this.initialDraft,
     required this.isEdit,
@@ -19,7 +21,10 @@ class SupplierForm extends StatefulWidget {
     required this.onSubmit,
     required this.onCancel,
     this.code,
-    this.accountId,
+    this.hasLinkedAccount = false,
+    this.canEnsureAccount = false,
+    this.isEnsuringAccount = false,
+    this.onEnsureAccount,
     super.key,
   });
 
@@ -30,18 +35,30 @@ class SupplierForm extends StatefulWidget {
   final ValueChanged<SupplierFormState> onSubmit;
   final VoidCallback onCancel;
   final String? code;
-  final String? accountId;
+  final bool hasLinkedAccount;
+  final bool canEnsureAccount;
+  final bool isEnsuringAccount;
+  final Future<void> Function()? onEnsureAccount;
 
   @override
-  State<SupplierForm> createState() => _SupplierFormState();
+  ConsumerState<SupplierForm> createState() => _SupplierFormState();
 }
 
-class _SupplierFormState extends State<SupplierForm> {
+class _SupplierFormState extends ConsumerState<SupplierForm> {
   late final TextEditingController _nameAr;
   late final TextEditingController _nameEn;
   late final TextEditingController _phone;
   late final TextEditingController _email;
+  late final TextEditingController _taxNumber;
   late final TextEditingController _address;
+  late final TextEditingController _googleMaps;
+  late final TextEditingController _notes;
+  late final TextEditingController _customArea;
+
+  late bool _createAccount;
+  late bool _useCustomArea;
+  String? _governorate;
+  String? _area;
   List<String> _errorCodes = const [];
 
   @override
@@ -52,7 +69,15 @@ class _SupplierFormState extends State<SupplierForm> {
     _nameEn = TextEditingController(text: d.nameEn);
     _phone = TextEditingController(text: d.phone);
     _email = TextEditingController(text: d.email);
-    _address = TextEditingController(text: d.address);
+    _taxNumber = TextEditingController(text: d.taxNumber);
+    _address = TextEditingController(text: d.addressLine);
+    _googleMaps = TextEditingController(text: d.googleMapsUrl);
+    _notes = TextEditingController(text: d.notes);
+    _customArea = TextEditingController(text: d.customArea);
+    _createAccount = d.createAccount;
+    _useCustomArea = d.useCustomArea;
+    _governorate = d.governorate.isEmpty ? null : d.governorate;
+    _area = d.area.isEmpty ? null : d.area;
   }
 
   @override
@@ -61,7 +86,11 @@ class _SupplierFormState extends State<SupplierForm> {
     _nameEn.dispose();
     _phone.dispose();
     _email.dispose();
+    _taxNumber.dispose();
     _address.dispose();
+    _googleMaps.dispose();
+    _notes.dispose();
+    _customArea.dispose();
     super.dispose();
   }
 
@@ -71,7 +100,16 @@ class _SupplierFormState extends State<SupplierForm> {
       nameEn: _nameEn.text,
       phone: _phone.text,
       email: _email.text,
-      address: _address.text,
+      taxNumber: _taxNumber.text,
+      addressLine: _address.text,
+      governorate: _governorate ?? '',
+      area: _area ?? '',
+      country: kuwaitCountryCanonical,
+      googleMapsUrl: _googleMaps.text,
+      notes: _notes.text,
+      createAccount: _createAccount,
+      useCustomArea: _useCustomArea,
+      customArea: _customArea.text,
     );
   }
 
@@ -89,6 +127,7 @@ class _SupplierFormState extends State<SupplierForm> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final languageCode = ref.watch(localeProvider).languageCode;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -105,31 +144,139 @@ class _SupplierFormState extends State<SupplierForm> {
           const SizedBox(height: 12),
         ],
         if (widget.isEdit) ...[
-          _ReadOnlyField(label: l10n.supplierFieldCode, value: widget.code),
-          const SizedBox(height: 12),
-          _ReadOnlyField(
-            label: l10n.supplierFieldAccount,
-            value: widget.accountId,
+          ProfileMetadataRow(label: l10n.supplierFieldCode, value: widget.code),
+          const SizedBox(height: 8),
+          ProfileMetadataRow(
+            label: l10n.supplierSectionAccounting,
+            value: widget.hasLinkedAccount
+                ? l10n.supplierLinkedAccountYes
+                : l10n.supplierLinkedAccountNo,
           ),
-          const SizedBox(height: 12),
+          if (!widget.hasLinkedAccount &&
+              widget.canEnsureAccount &&
+              widget.onEnsureAccount != null) ...[
+            const SizedBox(height: 8),
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: TextButton(
+                key: const Key('supplier-ensure-account'),
+                onPressed: widget.isSubmitting || widget.isEnsuringAccount
+                    ? null
+                    : widget.onEnsureAccount,
+                child: widget.isEnsuringAccount
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Text(l10n.supplierEnsureAccount),
+              ),
+            ),
+          ],
+          const SizedBox(height: 16),
         ],
-        AppTextField(label: l10n.supplierFieldNameAr, controller: _nameAr),
-        const SizedBox(height: 12),
-        AppTextField(label: l10n.supplierFieldNameEn, controller: _nameEn),
-        const SizedBox(height: 12),
-        AppTextField(
-          label: l10n.supplierFieldPhone,
-          controller: _phone,
-          keyboardType: TextInputType.phone,
+        ProfileFormSection(
+          title: l10n.supplierSectionIdentity,
+          children: [
+            ProfileFormLayout(
+              children: [
+                AppTextField(
+                  label: l10n.supplierFieldNameAr,
+                  controller: _nameAr,
+                ),
+                AppTextField(
+                  label: l10n.supplierFieldNameEn,
+                  controller: _nameEn,
+                ),
+              ],
+            ),
+          ],
         ),
-        const SizedBox(height: 12),
-        AppTextField(
-          label: l10n.supplierFieldEmail,
-          controller: _email,
-          keyboardType: TextInputType.emailAddress,
+        ProfileFormSection(
+          title: l10n.supplierSectionContact,
+          children: [
+            ProfileFormLayout(
+              children: [
+                AppTextField(
+                  label: l10n.supplierFieldPhone,
+                  controller: _phone,
+                  keyboardType: TextInputType.phone,
+                ),
+                AppTextField(
+                  label: l10n.supplierFieldEmail,
+                  controller: _email,
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                AppTextField(
+                  label: l10n.supplierFieldTaxNumber,
+                  controller: _taxNumber,
+                ),
+              ],
+            ),
+          ],
         ),
-        const SizedBox(height: 12),
-        AppTextField(label: l10n.supplierFieldAddress, controller: _address),
+        ProfileFormSection(
+          title: l10n.supplierSectionLocation,
+          children: [
+            KuwaitLocationFields(
+              languageCode: languageCode,
+              governorate: _governorate,
+              area: _area,
+              useCustomArea: _useCustomArea,
+              customAreaController: _customArea,
+              onGovernorateChanged: (value) {
+                setState(() {
+                  _governorate = value;
+                  _area = null;
+                  _useCustomArea = false;
+                });
+              },
+              onAreaChanged: (value) {
+                setState(() {
+                  if (value == kuwaitAreaOtherCanonical) {
+                    _useCustomArea = true;
+                    _area = null;
+                  } else {
+                    _area = value;
+                    _useCustomArea = false;
+                  }
+                });
+              },
+              onUseCustomAreaChanged: (useCustom) {
+                setState(() {
+                  _useCustomArea = useCustom;
+                  if (!useCustom) _customArea.clear();
+                });
+              },
+            ),
+            const SizedBox(height: 12),
+            AppTextField(
+              label: l10n.supplierFieldAddress,
+              controller: _address,
+            ),
+            const SizedBox(height: 12),
+            AppTextField(
+              label: l10n.supplierFieldGoogleMapsUrl,
+              controller: _googleMaps,
+              keyboardType: TextInputType.url,
+            ),
+          ],
+        ),
+        if (!widget.isEdit)
+          ProfileFormSection(
+            title: l10n.supplierSectionAccounting,
+            children: [
+              SwitchListTile(
+                key: const Key('supplier-create-account-field'),
+                contentPadding: EdgeInsets.zero,
+                title: Text(l10n.supplierFieldCreateAccount),
+                subtitle: Text(l10n.supplierFieldCreateAccountHint),
+                value: _createAccount,
+                onChanged: (v) => setState(() => _createAccount = v),
+              ),
+            ],
+          ),
+        AppTextField(label: l10n.supplierFieldNotes, controller: _notes),
         const SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -145,37 +292,6 @@ class _SupplierFormState extends State<SupplierForm> {
               child: Text(widget.submitLabel),
             ),
           ],
-        ),
-      ],
-    );
-  }
-}
-
-class _ReadOnlyField extends StatelessWidget {
-  const _ReadOnlyField({required this.label, required this.value});
-
-  final String label;
-  final String? value;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final display = (value == null || value!.trim().isEmpty) ? '—' : value!;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(label, style: theme.textTheme.titleSmall),
-        const SizedBox(height: 8),
-        InputDecorator(
-          decoration: const InputDecoration(
-            isDense: true,
-            enabled: false,
-            contentPadding: EdgeInsetsDirectional.symmetric(
-              horizontal: 12,
-              vertical: 12,
-            ),
-          ),
-          child: Text(display),
         ),
       ],
     );

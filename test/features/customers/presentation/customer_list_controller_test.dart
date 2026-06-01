@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:decimal/decimal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hs360/core/errors/customer_exception.dart';
@@ -50,13 +49,17 @@ ProviderContainer _container(
   return container;
 }
 
-CustomerFormState _formState({String nameAr = 'عميل', bool isVip = false}) {
+CustomerFormState _formState({
+  String nameAr = 'عميل',
+  bool isVip = false,
+  bool createAccount = false,
+}) {
   return CustomerFormState(
     customerType: CustomerType.individual,
     nameAr: nameAr,
     phonePrimary: '99000000',
-    creditLimit: Decimal.zero,
     isVip: isVip,
+    createAccount: createAccount,
   );
 }
 

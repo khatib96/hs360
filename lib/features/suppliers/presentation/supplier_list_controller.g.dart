@@ -7,7 +7,7 @@ part of 'supplier_list_controller.dart';
 // **************************************************************************
 
 String _$supplierListControllerHash() =>
-    r'9a043a9f587d9395e5c7074c92cdfb646ced325d';
+    r'c00a733373b5a9822ba7deb90f8bc7d396fb4ffb';
 
 /// See also [SupplierListController].
 @ProviderFor(SupplierListController)

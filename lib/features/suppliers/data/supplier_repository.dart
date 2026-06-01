@@ -148,6 +148,21 @@ class SupplierRepository {
     }
   }
 
+  Future<Supplier> ensureSupplierAccount(AppSession session, String id) async {
+    _assertCanMutateAndView(session, actionPerm: 'suppliers.edit');
+
+    try {
+      await _requireClient.rpc('ensure_supplier_account', params: {'p_id': id});
+      final updated = await fetchSupplierById(session, id);
+      if (updated == null) {
+        throw const SupplierException(code: SupplierException.validationFailed);
+      }
+      return updated;
+    } catch (e, st) {
+      throw SupplierException.fromSupabase(e, st);
+    }
+  }
+
   Future<Supplier> deactivateSupplier(AppSession session, String id) async {
     _assertCanMutateAndView(session, actionPerm: 'suppliers.delete');
 
