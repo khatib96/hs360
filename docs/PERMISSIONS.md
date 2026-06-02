@@ -138,7 +138,7 @@ insert into permissions values
 The full catalog includes permissions for:
 
 - `dashboard`
-- `customers`, `customers.ledger`
+- `customers`, `customers.ledger`, `customer_service_locations` (read via `customers.view`, mutate via `customers.edit` unless dedicated permissions are introduced)
 - `suppliers`
 - `products`, `product_units`, `product_groups`
 - `inventory`, `warehouses`, `inventory_movements`
@@ -283,13 +283,14 @@ create or replace view contracts_safe
 with (security_invoker = true) as
   select
     id, tenant_id, contract_number, type, status,
-    customer_id, contact_person_name, contact_phone, contact_email,
+    customer_id, service_location_id, contact_person_name, contact_phone, contact_email,
     start_date, end_date, trial_days, trial_end_date, trial_outcome,
     billing_day, refill_day,
     monthly_rental_value,
     total_contract_value,
     -- snapshot_* columns OMITTED
-    location_lat, location_lng, location_address,
+    location_name, location_governorate, location_area,
+    location_lat, location_lng, location_address, location_google_maps_url,
     signed_by_customer_at, signature_url,
     created_by_agent_id,
     closed_at, closure_reason,

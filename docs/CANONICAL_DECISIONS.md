@@ -64,7 +64,7 @@ create or replace view contracts_safe
 with (security_invoker = true) as
   select
     id, tenant_id, contract_number, type, status,
-    customer_id, monthly_rental_value,
+    customer_id, service_location_id, monthly_rental_value,
     start_date, end_date, billing_day, refill_day,
     created_at, updated_at
   from contracts;
@@ -79,10 +79,27 @@ Do not describe this as view-level RLS. RLS belongs on the base tables; `securit
 Contract cost snapshots are frozen forever.
 
 - Contract creation stores device monthly cost, oil monthly cost, total monthly cost, and expected monthly profit.
+- Contract creation also snapshots selected service-location contact/address/map fields.
 - Profit reports use snapshots, not current product cost.
 - Later WAC changes do not rewrite historical contract economics.
+- Later service-location edits do not rewrite historical contract location data.
 
 This is a business rule, not an implementation detail.
+
+---
+
+## 4.5 Customer Service Locations
+
+The customer is the company/account. Branches, offices, homes, warehouses, and installation addresses are service locations under the customer.
+
+- Do not create duplicate customer records for customer branches.
+- Use `customer_service_locations` for operational addresses.
+- Contracts, visits, calendar events, and rented product units should reference `service_location_id` when the work happens at a physical site.
+- Enforce tenant/customer/location alignment with **composite foreign keys only** (no parallel simple FK on `customer_id` or `service_location_id`).
+- `product_units.current_service_location_id` is the **current** operational site only; movement history belongs in a future `product_unit_location_history` table (not Phase 4).
+- Phase 6+ RPCs that move a device must update `current_customer_id` and `current_service_location_id` together in one transaction.
+- Customer balance, statement, invoices, and vouchers stay at customer level.
+- Contracts keep frozen location snapshots at signing.
 
 ---
 

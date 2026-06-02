@@ -161,6 +161,27 @@ Each line has its own `snapshot_unit_cost` and `snapshot_monthly_cost`, even tho
 
 ---
 
+## 4.5 Customer And Service Location Boundary
+
+A contract belongs to one customer/account and one operational service location.
+
+- `customer_id` is the company/account that owns the ledger, invoices, vouchers, and statement.
+- `service_location_id` is the branch/site/address where the device is installed and visits happen.
+- If the customer has one active service location, contract creation may auto-select it.
+- If the customer has multiple active service locations, contract creation must require explicit location selection.
+- If the customer has no active service location, contract creation should offer inline service-location creation before continuing.
+
+The contract stores a frozen location snapshot at signing:
+
+- location name.
+- country, governorate, area, city/address.
+- Google Maps URL and latitude/longitude if available.
+- contact person and phone for that site.
+
+Changing the service location profile later must not rewrite old contract documents or historical visit context.
+
+---
+
 ## 5. Oil-Type Switching Over Time
 
 Customers change their minds. "I want to switch from Hilton to Vanilla starting next refill."
@@ -256,18 +277,18 @@ ACTIVE                           ← create_rental_contract RPC fires
 
 `create_rental_contract` is the atomic operation. It must do all of these in a single transaction:
 
-1. Insert `contracts` row with snapshots computed
+1. Insert `contracts` row with snapshots computed, `customer_id`, `service_location_id`, and frozen service-location/contact snapshot fields
 2. Insert `contract_lines` rows
 3. Insert initial `contract_oil_changes` rows (one per consumable line, `effective_from = start_date`)
 4. Update `product_units.status` for selected devices to `rented` or `trial`
-5. Update `product_units.current_contract_id` and `current_customer_id`
+5. Update `product_units.current_contract_id`, `current_customer_id`, and `current_service_location_id`
 6. Decrement `inventory_balances.qty_available`, increment `qty_rented` (or `qty_trial`)
 7. Insert `inventory_movements` records (`rental_out`)
 8. **For rental contracts:** create first month's `invoices` row (`type = rental_monthly`)
 9. **For rental contracts:** create the matching `journal_entries`:
    - Dr Accounts Receivable (customer)
    - Cr Rental Income
-10. Seed initial `calendar_events` (first refill, billing date, end-of-trial if trial, contract end if fixed-term)
+10. Seed initial `calendar_events` with `customer_id` and `service_location_id` (first refill, billing date, end-of-trial if trial, contract end if fixed-term)
 11. Insert `audit_log` row
 
 Any step failing rolls back everything.
@@ -339,6 +360,7 @@ The calendar aggregates all date-bound events across the system:
 - **Month view** — calendar grid with event dots
 - **Agent view** — filtered by `assigned_agent_id`
 - **Customer view** — all events for one customer (in customer detail screen)
+- **Service location view** — all events for one customer branch/site, useful for multi-location customers
 
 ### 10.2 Reminders
 
@@ -362,7 +384,7 @@ A daily job materializes the next 30 days of recurring events into concrete `cal
 ### 11.1 Contracts List
 - Filter chips: All | Active | Trial | Expired | Pending Approval
 - Search by contract #, customer name, phone
-- Columns: # | Customer | Type | Start | End | Monthly Value | Status
+- Columns: # | Customer | Service Location | Type | Start | End | Monthly Value | Status
 - Row tap → contract detail
 - Top-right: **+ New Contract** button
 
@@ -372,7 +394,14 @@ A multi-step form. **Each step must be valid to proceed.**
 **Step 1 — Customer**
 - Pick existing customer OR create new (inline form)
 - Required: name, primary phone
-- Optional: email, address, WhatsApp
+- Optional: email and company-level contact fields
+
+**Step 1.5 — Service Location**
+- Choose the customer's active service location.
+- If there is exactly one active service location, auto-select it.
+- If there are multiple active service locations, require the user to choose one.
+- If none exist, open inline service-location creation before proceeding.
+- The selected location fills the contract contact/address/map snapshot fields.
 
 **Step 2 — Type & Term**
 - Type: Trial | Rental (radio)
@@ -394,8 +423,8 @@ A multi-step form. **Each step must be valid to proceed.**
 - If agent and profit < min: button "Request approval"
 
 **Step 5 — Location & Signing**
-- Location pin (optional Google Maps URL from customer profile `google_maps_url`, editable)
-- Address text (free-form)
+- Location pin and address are pre-filled from the selected service location.
+- Address/map/contact fields remain editable as a contract snapshot for this signing only.
 - Customer signature (canvas) — if tenant setting requires
 
 **Final — Review & Save**

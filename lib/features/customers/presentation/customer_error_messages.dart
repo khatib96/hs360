@@ -12,6 +12,10 @@ String customerErrorMessage(AppLocalizations l10n, String code) {
     CustomerException.accountAlreadyLinked =>
       l10n.customerErrorAccountAlreadyLinked,
     CustomerException.validationFailed => l10n.customerValidationFailed,
+    CustomerException.serviceLocationNameRequired =>
+      l10n.serviceLocationValidationNameRequired,
+    CustomerException.locationInUse => l10n.serviceLocationInUse,
+    CustomerException.primaryRequired => l10n.serviceLocationPrimaryRequired,
     CustomerException.supabaseNotConfigured =>
       l10n.authErrorSupabaseNotConfigured,
     _ => l10n.customerErrorUnknown,

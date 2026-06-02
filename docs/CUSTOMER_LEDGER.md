@@ -56,6 +56,19 @@ Each customer has a comprehensive **ledger** — a single screen showing complet
 
 ---
 
+### 1.3 Service Locations In The Ledger
+
+The ledger belongs to the customer/company account, not to an individual branch. Service locations are displayed inside the customer profile so the user can answer:
+
+- Which branches/sites does this customer have?
+- Which contracts belong to each site?
+- Which devices are installed at each site?
+- Which visits happened at each site?
+
+The customer balance, statement, invoices, and vouchers stay at customer level. Contracts, visits, calendar entries, and rented product units can be filtered by `service_location_id`.
+
+---
+
 ## 2. Database Implementation
 
 ### 2.1 Customer Balance — Live View
@@ -130,6 +143,15 @@ Generated via Edge Function using a PDF template. Sent to customer via email/Wha
 List of all contracts for this customer:
 - Active, suspended, completed, terminated
 - Quick stats: total contracts, currently active, monthly recurring revenue from this customer
+- Filter/group by service location when the customer has more than one active site.
+
+### 3.1.1 Locations Tab
+List of service locations under this customer:
+- Active/inactive sites.
+- Primary location badge.
+- Governorate, area, address, map link.
+- Contact person and phone for the site.
+- Counts for active contracts, installed devices, and upcoming visits when later phases provide them.
 
 ### 3.2 Ledger Tab (Default)
 The detailed account ledger view shown above.
@@ -144,10 +166,11 @@ All receipt vouchers (payments) for this customer, sorted by date desc.
 Quick stats: total collected this year, average days to pay.
 
 ### 3.5 Visits Tab
-All service visits to this customer's location. Useful for:
+All service visits to this customer's service locations. Useful for:
 - Service history audit
 - "When was the last refill?"
 - Visit photos gallery view
+- Filtering visits by branch/site.
 
 ### 3.6 Statement Tab
 - Date range selector

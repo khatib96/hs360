@@ -133,6 +133,7 @@ create policy "T_delete_with_permission" on T
 | `inventory_balances` | `inventory.view` | system functions only | system functions only | n/a |
 | `inventory_movements` | `inventory_movements.view` | system functions or `inventory_movements.create` | n/a (immutable) | `inventory_movements.delete` |
 | `customers` | `customers.view` | `customers.create` | `customers.edit` | `customers.delete` |
+| `customer_service_locations` | `customers.view` | `customers.edit` | `customers.edit` | `customers.edit` (deactivate only) |
 | `suppliers` | `suppliers.view` | `suppliers.create` | `suppliers.edit` | `suppliers.delete` |
 | `contracts` | `contracts.view` | `contracts.create` | `contracts.edit` | `contracts.delete` |
 | `contract_lines` | `contracts.view` | `contracts.create` | `contracts.edit` | n/a |
@@ -179,11 +180,12 @@ create or replace view contracts_safe
 with (security_invoker = true) as
   select
     id, tenant_id, contract_number, type, status,
-    customer_id, contact_person_name, contact_phone, contact_email,
+    customer_id, service_location_id, contact_person_name, contact_phone, contact_email,
     start_date, end_date, billing_day, refill_day,
     monthly_rental_value,
     total_contract_value,
-    location_lat, location_lng, location_address,
+    location_name, location_governorate, location_area,
+    location_lat, location_lng, location_address, location_google_maps_url,
     signed_by_customer_at, signature_url,
     created_by_agent_id,
     closed_at, closure_reason,
@@ -360,6 +362,8 @@ Triggers on these tables write to `audit_log`:
 
 | Table | Actions logged |
 |-------|----------------|
+| `customers` | insert, update, deactivate/account link |
+| `customer_service_locations` | insert, update, deactivate, set primary |
 | `contracts` | insert, update, delete |
 | `contract_lines` | insert, update, delete |
 | `invoices` | insert, update (limited), cancellation |
@@ -418,7 +422,7 @@ The frontend enforces presence; the backend rejects empty values.
 ## 12. Data Retention & Deletion
 
 ### 12.1 Soft Delete by Default
-Customers, products, employees, contracts: never hard-deleted. `is_active = false` instead.
+Customers, customer service locations, products, employees, contracts: never hard-deleted. `is_active = false` instead.
 
 ### 12.2 Tenant Deletion
 Per request, an admin tool can:

@@ -35,6 +35,7 @@ Creates contract, lines, snapshots, asset movement, first rental invoice, journa
 create or replace function create_rental_contract(
   p_client_id text,
   p_customer_id uuid,
+  p_service_location_id uuid,
   p_start_date date,
   p_end_date date,
   p_billing_day int,
@@ -62,6 +63,12 @@ Requires:
 
 - `contracts.create`
 - `contracts.approve_override` if profit is below threshold and override is requested
+
+Rules:
+
+- `p_service_location_id` must belong to `p_customer_id` in the current tenant.
+- The RPC copies service-location address/contact/map fields into the contract snapshot fields.
+- `p_location_*` values are optional overrides to the snapshot, not the source of truth for customer site identity.
 
 Returns: `contracts.id`
 
@@ -175,6 +182,11 @@ Requires:
 - `visits.complete_refill`
 - `vouchers.create_receipt` if payment is collected
 
+Rules:
+
+- The visit must carry or derive `service_location_id` from its contract.
+- GPS validation compares check-in coordinates against the service location first, then the contract location snapshot if the service location has no coordinates.
+
 Returns: `visits.id`
 
 Errors:
@@ -268,4 +280,3 @@ Returns:
 ```json
 {"created": 12, "skipped": 3, "errors": []}
 ```
-

@@ -66,19 +66,21 @@ The system must:
 - One monthly value entered manually (not per-line)
 - System auto-computes profitability snapshot at creation
 - Tenant-wide minimum-profit threshold enforced at save
+- Contract is linked to one customer account and one customer service location/branch/site
 - Tracks oil-type changes over contract lifetime
 - Open-ended or fixed-term contracts
 - Trial conversion workflow
 
 **Calendar & Scheduling**
 - Unified calendar view: refills due, contract endings, trial expiries, follow-ups
-- Filterable by agent, date range, status
+- Filterable by agent, customer, service location, date range, status
 - Daily/weekly/monthly views
 - Reminders (push + email + WhatsApp)
 - Auto-generated refill schedule based on each contract's `refill_day`
 
 **Field Operations (Mobile)**
 - Daily visit schedule per agent
+- Visit address/map/GPS comes from the customer service location tied to the contract/visit
 - Live-camera-only photo proof (gallery uploads blocked)
 - GPS check-in/check-out with distance verification
 - Van stock (each agent = sub-warehouse)
@@ -93,6 +95,11 @@ The system must:
 - Inventory adjustments
 - Customer/supplier statements
 - Debt aging reports (30/60/90/120+)
+
+**Customers & Service Locations**
+- Customer is the main company/account and is counted once.
+- Customer service locations model branches, offices, warehouses, homes, or installation sites.
+- Contracts, visits, calendar events, and rented devices can point to a service location under the customer.
 
 **Collections (Separate from Visits)**
 - A refill creates a charge; payment is separate
@@ -138,7 +145,7 @@ The system must:
 ### 3.2 Out of Scope (v1)
 - Tax authority integration
 - Multi-currency per tenant (each tenant has one currency)
-- Multi-branch within a tenant (single branch first)
+- Multi-branch operating structure for the tenant itself (customer service locations are in v1)
 - Customer self-service portal
 - Loyalty program
 - E-commerce storefront
@@ -190,7 +197,7 @@ The oil a contract uses is **a time-bounded record**, not a fixed column. A cont
 
 1. **No price below threshold** — system blocks save; Manager/approver override logged.
 2. **Live capture only** — refill photos from camera, never gallery; enforced at OS level.
-3. **GPS must match** — within `gps_accuracy_threshold_m` (tenant setting, default 200m) of contract location.
+3. **GPS must match** — within `gps_accuracy_threshold_m` (tenant setting, default 200m) of the service location, falling back to the contract snapshot when needed.
 4. **Costs are permission-only** — RLS and safe views enforce it at the database level.
 5. **Money is exact** — `numeric(15,3)` and `Decimal`, never `float` or `double`.
 

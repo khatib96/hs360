@@ -1,6 +1,6 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-06-01 (Phase 4 M5.5 complete; next is M6 Customer Detail, Statement & Timeline).
+> Updated 2026-06-02 (Phase 4 M5.6 complete; next is M6 Customer Detail shell).
 > Keep this file short. It is for continuity between AI tools, not full project documentation.
 
 ---
@@ -14,9 +14,21 @@
 - **Phase 4 M4 complete** - routes, guards, AppShell navigation, AR/EN l10n, placeholder screens.
 - **Phase 4 M5 complete** - customer/supplier lists, filters, and create/edit/deactivate forms.
 - **Phase 4 M5.5 complete** - profile field cleanup (DB `046`), optional `create_account`, `ensure_*_account`, Kuwait location catalog, responsive sectioned forms, governorate/area filters.
-- Migrations `001`-`046` apply when applied directly; `phase_4_customers_suppliers_coa.sql` passed after applying `046` to local Postgres on 2026-06-01. `npx --yes supabase db reset` remains avoided/blocked by Supabase CLI 2.102 internal service migration duplicate.
+- **Phase 4 M5.6 complete** - `047_customer_service_locations.sql`, composite FKs (no simple duplicate FKs), location RPCs, customer detail **Locations** tab, `create_customer` auto-primary when address present.
+- Migrations `001`-`047` on local Postgres; `phase_4_customer_service_locations.sql` + `phase_4_customers_suppliers_coa.sql` pass when 047 applied. `npx --yes supabase db reset` remains avoided/blocked by Supabase CLI 2.102 internal service migration duplicate.
 - **Canonical inventory rules:** [`docs/PHASE_3_M1_5_INVENTORY_RULES.md`](docs/PHASE_3_M1_5_INVENTORY_RULES.md)
-- **Next:** Phase 4 M6 - Customer Detail, Statement & Timeline.
+- **Next:** Phase 4 M6 - Customer Detail shell (statement/timeline/360 tabs beyond Locations).
+
+---
+
+## Phase 4 M5.6 - Customer Service Locations (done)
+
+- **Model:** customer = company/account; `customer_service_locations` = branches/sites (not separate customers).
+- **DB:** migration [`047`](supabase/migrations/047_customer_service_locations.sql); `ux_customers(tenant_id,id)`; locations use **composite FK only** to customers; child tables use composite FK to `(tenant_id, customer_id, service_location_id)`; contract snapshot columns added; `product_units.current_service_location_id` is **current pointer only** (not history).
+- **RPCs:** `list/create/update/deactivate/set_primary_customer_service_location`; read `customers.view`, write `customers.edit`; internal helpers `generate_service_location_code`, `insert_primary_service_location_from_customer` (no public grant).
+- **`create_customer`:** still `returns uuid`; creates primary location in same transaction when address/governorate/area/maps present.
+- **Flutter:** domain/repository/controller; [`customer_detail_placeholder_screen.dart`](lib/features/customers/presentation/customer_detail_placeholder_screen.dart) Locations tab functional; other detail tabs remain placeholders.
+- **Tests:** [`phase_4_customer_service_locations.sql`](supabase/tests/phase_4_customer_service_locations.sql); Dart parsing/validator tests; `flutter test` green after M5.6.
 
 ---
 

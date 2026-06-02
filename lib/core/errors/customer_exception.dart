@@ -15,6 +15,9 @@ class CustomerException extends AppException {
   static const arParentMissing = 'ar_parent_missing';
   static const accountAlreadyLinked = 'account_already_linked';
   static const immutableColumn = 'immutable_column';
+  static const serviceLocationNameRequired = 'service_location_name_required';
+  static const locationInUse = 'location_in_use';
+  static const primaryRequired = 'primary_required';
   static const supabaseNotConfigured = 'supabaseNotConfigured';
   static const unknown = 'unknown';
 
@@ -43,6 +46,12 @@ class CustomerException extends AppException {
     }
     if (message.contains('validation_failed')) {
       return CustomerException(code: validationFailed, technicalDetail: message);
+    }
+    if (message.contains('location_in_use')) {
+      return CustomerException(code: locationInUse, technicalDetail: message);
+    }
+    if (message.contains('primary_required')) {
+      return CustomerException(code: primaryRequired, technicalDetail: message);
     }
 
     return CustomerException(code: unknown, technicalDetail: message);

@@ -90,6 +90,7 @@ This is what the agent sees first thing in the morning.
 │  ← Refill — Cafe Bloom                  │
 ├─────────────────────────────────────────┤
 │  Customer: Cafe Bloom                   │
+│  Site: Salmiya branch                   │
 │  Contract: CON-2026-00042 (active)      │
 │                                         │
 │  Address: Salmiya Block 5, Street 8     │
@@ -111,7 +112,7 @@ This is what the agent sees first thing in the morning.
 Tap "Begin visit" → app:
 1. Requests GPS permission if not granted
 2. Captures `check_in_lat`, `check_in_lng`
-3. Compares against contract location
+3. Compares against the visit's `service_location_id` coordinates, falling back to the contract location snapshot when needed
 4. If within `gps_accuracy_threshold_m` (tenant setting): ✓ verified
 5. If outside: warning shown but visit can proceed (Manager sees flag in report)
 
@@ -182,7 +183,7 @@ Send receipt to customer?
 ### 4.6 Complete Visit
 Tap **Complete visit** → fires `record_refill_visit` RPC, which:
 
-1. Inserts visit row (with photo URL, GPS, timestamps, oil info)
+1. Inserts/updates visit row (with `customer_id`, `service_location_id`, photo URL, GPS, timestamps, oil info)
 2. Updates inventory: van warehouse `qty_available -= 500 ml` of the oil
 3. Inserts inventory_movement (`type = refill`)
 4. **If no payment:** generates an open invoice (charge) for this refill
@@ -205,13 +206,14 @@ If no signal:
 
 Sales agents can create contracts in the field. Same multi-step flow as desktop (see `CONTRACTS_LOGIC.md` section 11), but optimized for one-handed phone use:
 
-1. **Customer** — pick existing or quick-create (name + phone required)
-2. **Type & term** — Trial or Rental, dates
-3. **Products** — scan device barcode → auto-fills; add oil + qty
-4. **Pricing** — single number (monthly rental value)
-5. **Location** — auto-fills with current GPS
-6. **Signature** — customer signs on screen
-7. **Review & save**
+1. **Customer** - pick existing or quick-create (name + phone required)
+2. **Service location** - auto-select the only active location, require a choice when multiple exist, or quick-create a site/address
+3. **Type & term** - Trial or Rental, dates
+4. **Products** - scan device barcode to auto-fill; add oil + qty
+5. **Pricing** - single number (monthly rental value)
+6. **Location snapshot** - auto-fills from the selected service location and may capture current GPS for that site
+7. **Signature** - customer signs on screen
+8. **Review & save**
 
 If the entered price triggers min-profit warning, the agent gets two options:
 - "Request Manager approval" (saves as draft + pending)
@@ -363,11 +365,12 @@ A daily Edge Function `daily_calendar_seed_job()` runs at 00:30 tenant time:
 For each active rental contract with refill_day set:
   Look at next 30 days
   For each day where day_of_month = contract.refill_day:
-    If no calendar_event exists yet for that date/contract:
+    If no calendar_event exists yet for that date/contract/service_location:
       INSERT calendar_events (
         type = 'refill_due',
         contract_id = contract.id,
         customer_id = contract.customer_id,
+        service_location_id = contract.service_location_id,
         scheduled_date = that_date,
         assigned_agent_id = (default refill agent for this customer, configurable),
         is_recurring = true,
@@ -434,6 +437,7 @@ On Day and Week views, users with `calendar.view_all_agents` can split by agent 
 - By agent
 - By event type
 - By customer
+- By service location
 - By area
 - By status (pending / done / missed / etc.)
 
@@ -508,8 +512,8 @@ Agent taps "Device issue":
 - Customer gets a notification (per tenant settings)
 
 ### 13.3 GPS Way Off
-If GPS is more than 5km from contract location:
-- App shows hard warning: "You appear to be far from {contract location}. Are you sure?"
+If GPS is more than 5km from the service location or contract snapshot:
+- App shows hard warning: "You appear to be far from {service location}. Are you sure?"
 - Agent must enter a reason to proceed
 - Visit gets a `location_match = false` flag
 - Admin sees it highlighted in reports

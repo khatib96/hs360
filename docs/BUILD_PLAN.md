@@ -337,19 +337,22 @@ Customer and supplier management fully working. CoA visible and customizable.
 1. Customer CRUD screens (desktop + mobile)
 2. Auto-generate customer code (CUST-0001)
 3. Auto-create A/R subaccount when customer is created
-4. Customer detail tabs: Profile | Contracts | Invoices | Vouchers | Statement
-5. Customer 360 Timeline: chronological stream of contracts, visits, invoices, vouchers, messages, notes
-6. Supplier CRUD
-7. CoA tree view (requires `chart_of_accounts.view`)
-8. CoA: add/edit non-system accounts
+4. Customer service locations: multiple branches/sites/addresses under one customer account
+5. Customer detail tabs: Profile | Locations | Contracts | Invoices | Vouchers | Statement
+6. Customer 360 Timeline: chronological stream of contracts, visits, invoices, vouchers, messages, notes
+7. Supplier CRUD
+8. CoA tree view (requires `chart_of_accounts.view`)
+9. CoA: add/edit non-system accounts
 
 ### Deliverables
 - Customers and suppliers fully managed
+- Multi-site customers modeled through service locations, not duplicate customer records
 - Chart of accounts visible and editable
 - Customer 360 Timeline gives a single operational history per customer
 
 ### Acceptance
 - Create a customer → A/R subaccount auto-created
+- Add multiple service locations under one customer without changing the customer count
 - View customer statement (initially empty) without error
 - Customer timeline shows new invoice/payment/contract events in order
 
@@ -422,6 +425,7 @@ The core of the system: contracts can be created, billed, refilled, and closed.
 - `create_rental_contract` (atomic, per `CONTRACTS_LOGIC.md` section 7)
 - `close_contract`
 - `contract_profitability`
+- Require `service_location_id` and snapshot selected location/contact/address fields at contract creation
 
 **6.2 Contracts List Screen (Desktop)**
 - Filter chips per `CONTRACTS_LOGIC.md` section 11.1
@@ -429,6 +433,7 @@ The core of the system: contracts can be created, billed, refilled, and closed.
 
 **6.3 New Contract Form (Desktop)**
 - Multi-step wizard per `CONTRACTS_LOGIC.md` section 11.2
+- Customer step must select a service location: auto-select the only active location, require choice for multiple, or inline-create when none exist
 - Live profitability preview (requires `contracts.field.snapshot_profit`)
 - Min-profit enforcement
 
@@ -457,6 +462,7 @@ The core of the system: contracts can be created, billed, refilled, and closed.
 
 ### Acceptance
 - Create a contract with profit just above min → saves
+- Create a contract for a multi-location customer -> requires service-location selection and snapshots the chosen site
 - Create with profit below min → rejected (or override flow if user has `contracts.approve_override`)
 - Wait for billing day → invoice appears (or trigger manually for test)
 - Close a contract → device returns to inventory
@@ -477,7 +483,7 @@ A unified calendar showing all date-bound events, with reminders.
 6. Manual event creation (follow-ups, custom)
 7. Drag-and-drop rescheduling (desktop)
 8. Agent assignment / reassignment
-9. Route View: map of a user's daily visits by area and time, display-only in v1 planning
+9. Route View: map of a user's daily visits by service location, area, and time, display-only in v1 planning
 10. Filters
 
 ### Deliverables
@@ -488,6 +494,7 @@ A unified calendar showing all date-bound events, with reminders.
 
 ### Acceptance
 - Active contracts produce calendar events for next 30 days
+- Calendar events carry `service_location_id` when generated from contracts
 - An event 1 hour from now triggers a notification
 - A day's visits can be viewed on a map without route optimization
 
@@ -504,7 +511,7 @@ Field agents can do their full daily workflow on the mobile app, online and offl
 - Bottom nav (5 tabs)
 - Today screen (default home)
 - Calendar screen (mobile version)
-- Customers screen
+- Customers screen with service locations
 - Van Stock screen
 - More screen
 
@@ -513,6 +520,7 @@ Field agents can do their full daily workflow on the mobile app, online and offl
 - Per `FIELD_OPS.md` section 4
 - Photo via camera only
 - GPS check-in
+- Visit detail uses the selected service location for address, map, and GPS verification
 
 **8.3 New Contract on Mobile**
 - Multi-step flow optimized for phone
@@ -553,7 +561,7 @@ Field agents can do their full daily workflow on the mobile app, online and offl
 ### Acceptance
 - Complete 5 refills offline → all sync correctly when online
 - Take a 3-day-old photo → visit flagged in Manager report
-- GPS 1km from contract location → visit flagged
+- GPS 1km from service location or contract snapshot → visit flagged
 
 ---
 

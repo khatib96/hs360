@@ -19,7 +19,7 @@ Phase 4 looks smaller than Phase 3, but it sits directly on the accounting bound
 - sensitive accounting permissions.
 - mobile and desktop workflows.
 
-The safe approach is to implement Phase 4 as milestones: `M0` through `M8`. Each milestone should end with targeted tests and a clean acceptance check.
+The safe approach is to implement Phase 4 as milestones: `M0` through `M8`, with one inserted milestone `M5.6` for customer service locations before the Customer 360 shell. Each milestone should end with targeted tests and a clean acceptance check.
 
 ### M5.5 profile cleanup (2026-06-01) — implemented
 
@@ -30,6 +30,16 @@ Migration `046_customer_supplier_profile_cleanup.sql`:
 - `customers.account_id` / `suppliers.account_id` are **nullable**; `create_customer` / `create_supplier` accept `create_account` (default `false`).
 - `ensure_customer_account` / `ensure_supplier_account` link A/R or A/P when `account_id` is null; immutable triggers allow only validated `null → account_id` transitions.
 - Statement/balance RPCs are zero-safe when no linked account.
+
+### M5.6 customer service locations (2026-06-02) - planned
+
+This milestone must run before M6.
+
+- A customer remains the main company/account and is counted once.
+- Branches, offices, warehouses, homes, and installation addresses are stored as `customer_service_locations`.
+- Existing customer address fields are backfilled into one primary service location when present.
+- Contracts, visits, calendar events, and rented devices will later point to a service location.
+- Contracts still keep frozen location/contact/address snapshots at signing.
 
 ---
 
@@ -67,6 +77,7 @@ Phase 1 already created:
 Key schema facts (post-M5.5):
 
 - `customers.account_id` and `suppliers.account_id` are **nullable** FKs to `chart_of_accounts` (linked subaccount optional at create; `ensure_*_account` for later linking).
+- `customers` currently carries one profile-level address only. M5.6 replaces this operationally with `customer_service_locations`; customer address fields may remain as compatibility/default display fields but must no longer be the only source for contract and visit addresses.
 - `customers.code` is unique per tenant.
 - `suppliers.code` is unique per tenant.
 - `chart_of_accounts.code` is unique per tenant.
@@ -112,6 +123,7 @@ Closed in M2: direct `customers_insert` and `suppliers_insert` were removed so R
 - No customer/supplier repositories or validators exist yet.
 - No customer/supplier route constants or GoRouter routes exist yet.
 - No customer/supplier navigation entries exist yet.
+- No `customer_service_locations` table exists yet. Contracts, visits, calendar events, and rented units currently cannot distinguish a customer's head office from a specific branch/site.
 - No RPC exists for:
   - generating `CUST-0001`.
   - generating `SUP-0001`.
@@ -141,16 +153,18 @@ Closed in M2: direct `customers_insert` and `suppliers_insert` were removed so R
 9. Protect system accounts and entity-linked subaccounts from unsafe edits.
 10. Customer detail screen with:
     - profile.
+    - service locations tab.
     - contracts tab.
     - invoices tab.
     - vouchers tab.
     - statement/ledger tab.
     - timeline tab.
-11. Empty-safe customer statement before Phase 5 data exists.
-12. Permission-aware routes and navigation.
-13. Responsive desktop/mobile layouts for customers and suppliers.
-14. SQL, domain, repository, route, and widget tests.
-15. Phase close verification.
+11. Customer service locations for branch/site/address management before contracts and visits.
+12. Empty-safe customer statement before Phase 5 data exists.
+13. Permission-aware routes and navigation.
+14. Responsive desktop/mobile layouts for customers and suppliers.
+15. SQL, domain, repository, route, and widget tests.
+16. Phase close verification.
 
 ### Out of Scope
 
@@ -194,7 +208,10 @@ Phase 4 may show empty or read-only tabs that will later be populated by Phase 5
 12. Deactivate instead of hard delete for customers/suppliers/CoA rows in normal UI.
 13. System CoA rows must not be deleted. Default Phase 4 rule: system CoA rows are read-only from the UI.
 14. Money values remain `numeric(15,3)` in Postgres and `Decimal` in Dart.
-15. Widgets must not call Supabase directly.
+15. A customer is the account/company. Branches, offices, homes, warehouses, or installation addresses are `customer_service_locations`, not separate customers.
+16. Contract and visit workflows must use `service_location_id` when a real operational site is involved. The customer profile address is not sufficient for multi-site customers.
+17. Contracts must snapshot selected service location fields at signing so historical contracts do not change when the customer updates a branch address later.
+18. Widgets must not call Supabase directly.
 
 ---
 
@@ -209,6 +226,7 @@ Phase 4 may show empty or read-only tabs that will later be populated by Phase 5
 | M3 | Domain Models, Validators & Repositories | Testable Dart layer with no UI business rules |
 | M4 | Routes, Guards, Navigation & Localization | App can route to Phase 4 modules with correct permissions |
 | M5 | Customers & Suppliers Lists/Forms | Operational customer/supplier CRUD on desktop/mobile |
+| M5.6 | Customer Service Locations | Multi-site customers are modeled before detail, contracts, and visits |
 | M6 | Customer Detail, Statement & Timeline | Customer 360 shell works, empty-safe before Phase 5 |
 | M7 | Chart Of Accounts Tree | CoA hierarchy view and safe non-system account editing |
 | M7.5 | Hardening, Performance & UX Pass | Search, pagination, file size, permission edge cases |
@@ -676,11 +694,201 @@ Supplier form fields:
 
 ---
 
+## M5.6 - Customer Service Locations
+
+### Goal
+
+Model multi-site customers before Customer 360, contracts, calendar, and field visits depend on customer location data.
+
+The business rule is: **customer = company/account; service location = branch/site/address where devices, contracts, and visits happen**.
+
+### Database
+
+Add migration:
+
+```text
+supabase/migrations/047_customer_service_locations.sql
+```
+
+Create:
+
+```sql
+create type service_location_type as enum (
+  'branch', 'office', 'warehouse', 'home', 'installation_site', 'other'
+);
+
+create table customer_service_locations (
+  id uuid primary key default gen_random_uuid(),
+  tenant_id uuid not null references tenants(id),
+  customer_id uuid not null,
+  code text not null,
+  name text not null,
+  location_type service_location_type not null default 'branch',
+  is_primary boolean default false,
+  is_active boolean default true,
+
+  country text default 'Kuwait',
+  governorate text,
+  area text,
+  address_line text,
+  google_maps_url text,
+  latitude numeric(10,7),
+  longitude numeric(10,7),
+
+  contact_person_name text,
+  contact_person_phone text,
+  contact_person_email text,
+  notes text,
+
+  created_at timestamptz default now(),
+  created_by uuid references auth.users(id),
+  updated_at timestamptz,
+  updated_by uuid references auth.users(id),
+
+  unique (tenant_id, customer_id, code),
+  unique (tenant_id, customer_id, id),
+  foreign key (tenant_id, customer_id)
+    references customers(tenant_id, id) on delete cascade
+);
+```
+
+Add indexes:
+
+- `customer_service_locations(tenant_id, customer_id)`.
+- `customer_service_locations(tenant_id, is_active)`.
+- partial unique index for one primary active location per customer, if possible:
+  `unique (tenant_id, customer_id) where is_primary = true and is_active = true`.
+
+Add forward-looking nullable UUID columns with composite FKs only:
+
+- `contracts.service_location_id` with `(tenant_id, customer_id, service_location_id)` referencing `customer_service_locations(tenant_id, customer_id, id)`.
+- `visits.service_location_id` with `(tenant_id, customer_id, service_location_id)` referencing `customer_service_locations(tenant_id, customer_id, id)`.
+- `calendar_events.service_location_id` with `(tenant_id, customer_id, service_location_id)` referencing `customer_service_locations(tenant_id, customer_id, id)`.
+- `product_units.current_service_location_id` with `(tenant_id, current_customer_id, current_service_location_id)` referencing `customer_service_locations(tenant_id, customer_id, id)`.
+
+Do not add parallel simple FKs such as `service_location_id references customer_service_locations(id)`.
+
+Keep existing `contracts.location_*` fields as frozen signing snapshots. Do not remove them in M5.6.
+
+### Backfill
+
+For each existing customer with any of:
+
+- `address_line`
+- `area`
+- `governorate`
+- `google_maps_url`
+
+create one primary service location:
+
+- `name = 'Primary location'` or localized equivalent in the UI.
+- `code = LOC-0001` per customer.
+- copy location/contact fields from the customer.
+- `is_primary = true`.
+- `is_active = true`.
+
+Customers without any location data may have no service location until the user adds one.
+
+### RPCs
+
+Create security-definer RPCs:
+
+```text
+create_customer_service_location(p_customer_id uuid, p_data jsonb)
+update_customer_service_location(p_id uuid, p_data jsonb)
+deactivate_customer_service_location(p_id uuid)
+set_primary_customer_service_location(p_id uuid)
+list_customer_service_locations(p_customer_id uuid)
+```
+
+Rules:
+
+- All RPCs derive tenant from `current_tenant_id()`.
+- View/list require `customers.view`.
+- Create/update/deactivate/set primary require `customers.edit` or a future dedicated `customer_locations.*` permission if added.
+- A service location must belong to a customer in the same tenant.
+- Only one active primary location per customer.
+- Deactivation is blocked when active contracts or scheduled visits still depend on the location, unless a replacement location is provided in a later migration.
+
+### Dart Layer
+
+Add:
+
+```text
+lib/features/customers/domain/customer_service_location.dart
+lib/features/customers/domain/customer_service_location_form_state.dart
+lib/features/customers/data/customer_service_location_repository.dart
+lib/features/customers/presentation/widgets/customer_service_locations_section.dart
+```
+
+Update:
+
+- `Customer` may keep profile-level location fields for list summary/backward compatibility.
+- `CustomerRepository` should not own service-location RPCs unless the local pattern strongly favors one repository. Prefer a dedicated repository for bounded responsibility.
+- Customer detail should load customer profile and locations separately.
+
+### UX
+
+Customer create:
+
+- Keep company/account identity fields in the main form.
+- If the user enters address/location data, create the customer and a primary service location in the same user flow.
+- If no location is entered, allow customer creation without a location.
+
+Customer detail:
+
+- Add a `Locations` tab or section.
+- Show active service locations with name, governorate, area, address, contact person, phone, and map action.
+- Support add/edit/deactivate/set-primary actions based on permissions.
+
+Contract creation in Phase 6:
+
+- Step 1 selects customer.
+- Step 2 selects service location.
+- If the customer has one active location, auto-select it.
+- If multiple active locations exist, require explicit selection.
+- If none exist, offer inline create location before continuing.
+- Copy selected location fields into contract snapshot fields.
+
+Visits and calendar in Phase 7/8:
+
+- Visits should display and verify against `service_location_id`.
+- Calendar events should support filtering by customer and service location.
+- Route planning uses service location governorate/area and map/GPS fields.
+
+### Tests
+
+Add SQL tests:
+
+- Manager can create a service location for a customer.
+- User without `customers.edit` cannot create/update/deactivate.
+- Tenant isolation blocks cross-tenant customer/location links.
+- Only one active primary location exists per customer.
+- Backfill creates a primary location from existing customer location fields.
+- Active contract/visit protection blocks unsafe deactivation when references exist.
+
+Add Dart tests:
+
+- service location model parsing.
+- form validation for name and practical location fields.
+- repository permission failure mapping.
+- customer detail renders empty, single-location, and multi-location states.
+
+### Acceptance
+
+- A company customer can have multiple service locations without creating duplicate customers.
+- Existing customer address data is preserved as a primary service location.
+- Customer detail clearly separates company profile from service locations.
+- Contracts, visits, calendar events, and product units have nullable service-location FK columns ready for later phases.
+- M6 can build Customer 360 without inventing a separate location model.
+
+---
+
 ## M6 - Customer Detail, Statement & Timeline
 
 ### Goal
 
-Create the Customer 360 shell that later phases will populate.
+Create the Customer 360 shell that later phases will populate, using service locations as the operational location model.
 
 ### Detail Header
 
@@ -692,7 +900,7 @@ Show:
 - active/VIP status.
 - primary phone.
 - email.
-- location summary.
+- primary service location summary.
 - linked A/R account.
 
 ### Tabs
@@ -700,6 +908,7 @@ Show:
 Use in-screen tabs:
 
 - Profile.
+- Locations.
 - Contracts.
 - Invoices.
 - Vouchers.
@@ -709,6 +918,7 @@ Use in-screen tabs:
 ### Phase 4 Behavior
 
 - Profile tab is fully functional.
+- Locations tab is fully functional for active service locations.
 - Contracts tab is read-only and may be empty until Phase 6.
 - Invoices tab is read-only and may be empty until Phase 5.
 - Vouchers tab is read-only and may be empty until Phase 5.
@@ -727,6 +937,7 @@ Use in-screen tabs:
 
 - customer detail not found.
 - tabs render.
+- locations tab handles empty, one-location, and multi-location states.
 - statement permission denied state.
 - empty statement does not error.
 - future data tabs show permission-aware empty states.
@@ -735,6 +946,7 @@ Use in-screen tabs:
 
 - Open customer detail from list.
 - Customer profile is readable.
+- Service locations are readable and manageable with customer edit permission.
 - Statement tab opens without error for permitted user.
 - Unauthorized user cannot view ledger/statement.
 - Empty future tabs do not look broken.
@@ -814,6 +1026,7 @@ Make Phase 4 robust with realistic data and edge cases.
 
 1. Add local performance seed if needed:
    - 200 customers.
+   - 300 customer service locations.
    - 50 suppliers.
    - 300 CoA rows.
 2. Confirm list queries are bounded/paginated.
@@ -884,6 +1097,8 @@ If `supabase db reset` is still blocked by the known local CLI issue, document i
 | [ ] | User with `suppliers.view` opens Suppliers tab | suppliers visible |
 | [ ] | Zero user opens Customers | blocked/redirected |
 | [ ] | Create customer | customer row and A/R subaccount created atomically |
+| [ ] | Add customer service location | location appears under the same customer, not as a separate customer |
+| [ ] | Customer with multiple locations | Customer detail separates profile, locations, contracts, and visits clearly |
 | [ ] | Create supplier | supplier row created; A/P subaccount created atomically only when requested |
 | [ ] | Customer detail Statement tab with permission | opens, empty-safe |
 | [ ] | Customer detail Statement tab without permission | denied state |
@@ -901,6 +1116,8 @@ If `supabase db reset` is still blocked by the known local CLI issue, document i
 - [ ] Permission checks use `AppPermissions`.
 - [ ] Customer/supplier creation uses RPCs.
 - [ ] Customer/supplier `account_id` is not client-selected.
+- [ ] Customer service locations are tenant-scoped, permission-checked, and not modeled as duplicate customers.
+- [ ] Contract/visit/calendar/product-unit service-location FKs exist before Phase 6/7/8 implementation.
 - [ ] Customer statement uses `customers.view_ledger`, not raw journal access.
 - [ ] CoA system rows are protected.
 - [ ] Entity-linked accounts are protected.
@@ -912,15 +1129,16 @@ If `supabase db reset` is still blocked by the known local CLI issue, document i
 ### Phase 4 Done Means
 
 - Customers can be created, listed, viewed, edited, and deactivated.
+- Customer service locations can be created, listed, edited, set primary, and deactivated safely.
 - Suppliers can be created, listed, edited, and deactivated.
 - Customer and supplier codes are generated consistently.
 - Customer A/R and supplier A/P subaccounts are created only when requested on create, or later through the ensure-account action.
 - CoA is visible as a tree and safe to customize.
-- Customer detail is ready for contracts, invoices, vouchers, and statements.
+- Customer detail is ready for service locations, contracts, invoices, vouchers, visits, and statements.
 - Ledger/statement surfaces are empty-safe before Phase 5.
 - Phase 5 can build invoices/vouchers on a reliable customer/supplier/account foundation.
-- Phase 6 can require customer selection confidently.
-- Phase 8 can search/view customers on mobile later without redesigning the data layer.
+- Phase 6 can require customer + service location selection confidently.
+- Phase 8 can search/view customers and service locations on mobile later without redesigning the data layer.
 
 ---
 
@@ -932,9 +1150,10 @@ If `supabase db reset` is still blocked by the known local CLI issue, document i
 | Chunk 2 | M2 | database RPCs/views/tests before Flutter UI |
 | Chunk 3 | M3 + M4 | Dart data layer, routing, permissions, localization |
 | Chunk 4 | M5 | customer/supplier operational UI |
-| Chunk 5 | M6 | customer 360 shell and empty-safe ledger |
-| Chunk 6 | M7 | chart of accounts tree and account safeguards |
-| Chunk 7 | M7.5 + M8 | hardening and phase close |
+| Chunk 5 | M5.6 | service-location data model before customer detail/contracts/visits |
+| Chunk 6 | M6 | customer 360 shell and empty-safe ledger |
+| Chunk 7 | M7 | chart of accounts tree and account safeguards |
+| Chunk 8 | M7.5 + M8 | hardening and phase close |
 
 Every chunk should end with:
 
@@ -977,9 +1196,13 @@ Permissions and routes must be correct before screens are useful. A screen that 
 
 Customers and suppliers are daily operational data. Lists and forms must be efficient, searchable, and permission-aware.
 
+### Why M5.6?
+
+Multi-site customers are a core operational case. If service locations are delayed until contracts or mobile visits, Phase 6 and Phase 8 will either duplicate customers or store addresses as one-off text. M5.6 keeps customer count, contract count, device location, and visit routing clean before those modules depend on the data.
+
 ### Why M6?
 
-Customer detail is the bridge to contracts, invoices, vouchers, visits, and statements. Building the shell now prevents Phase 5/6 from inventing separate customer views.
+Customer detail is the bridge to service locations, contracts, invoices, vouchers, visits, and statements. Building the shell after M5.6 prevents Phase 5/6/8 from inventing separate customer or branch views.
 
 ### Why M7?
 
@@ -993,15 +1216,13 @@ Phase close means the database rules, UI, permissions, localization, tests, and 
 
 ## Starting Point For Next Coding Session
 
-Start with M0.
+Current project state is after M5.5. Start with M5.6.
 
-If M0 passes, do M0.5 and M1 in the same session. Do not start customer screens until the RPC/accounting decisions in M1 are fixed and the M2 database layer is planned.
-
-The first implementation target after this plan should be:
+The first implementation target should be:
 
 ```text
-supabase/migrations/045_customers_suppliers_coa_rpc.sql
-supabase/tests/phase_4_customers_suppliers_coa.sql
+supabase/migrations/047_customer_service_locations.sql
+supabase/tests/phase_4_customer_service_locations.sql
 ```
 
-After M2 passes, move to Dart domain/repositories and only then build UI.
+After the database layer passes, add the Dart service-location domain/repository layer, then update customer detail/forms. Do not start M6 Customer Detail as a full shell until M5.6 is implemented and verified.

@@ -28,13 +28,15 @@
 
 - Customer CRUD.
 - Customer account link in chart of accounts.
-- Basic customer detail with balance, contracts, invoices, and vouchers.
+- Customer service locations for branches/sites/addresses under one customer account.
+- Basic customer detail with profile, locations, balance, contracts, invoices, and vouchers.
 
 ### Contracts
 
 - Rental contracts only.
 - One monthly rental value.
 - Cost snapshot at creation.
+- Customer + service location selection.
 - Minimum-profit validation.
 - Asset assignment and consumable line setup.
 - Contract list and contract detail.
@@ -57,6 +59,7 @@
 ### Mobile Refill Flow
 
 - Today's assigned refill visits.
+- Visit address/map/GPS from the tied service location.
 - GPS check-in.
 - Camera-only photo.
 - Refill quantity and oil product.
@@ -67,6 +70,7 @@
 
 - Calendar view only.
 - Generated refill events.
+- Calendar events carry service location when generated from contracts.
 - Basic reassignment can be manual in the database or Manager screen if time allows.
 
 ### Reports
@@ -100,8 +104,8 @@ v1 is acceptable when:
 
 - A Manager can configure products, customers, users, and permissions.
 - A User sees only granted modules and actions.
+- A customer can have multiple service locations without being counted as multiple customers.
 - A rental contract can be created with correct snapshots and minimum-profit validation.
 - Monthly rental invoices and receipt vouchers post balanced journal entries.
 - A field user can complete a refill with GPS and camera proof.
 - Customer balance is answerable without Google Sheets.
-

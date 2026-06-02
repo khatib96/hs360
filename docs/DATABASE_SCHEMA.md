@@ -492,6 +492,7 @@ create table product_units (
 
   current_contract_id uuid,                       -- FK after contracts
   current_customer_id uuid,                       -- FK after customers
+  current_service_location_id uuid,               -- FK after customer_service_locations
   current_warehouse_id uuid references warehouses(id),
 
   purchase_cost numeric(15,3),
@@ -664,7 +665,65 @@ create index idx_customers_tenant on customers(tenant_id);
 create index idx_customers_phone on customers(tenant_id, phone_primary);
 ```
 
-### 9.2 `suppliers`
+### 9.2 `customer_service_locations`
+
+> **M5.6 (`047_customer_service_locations.sql`):** customers are the main company/account. Branches, offices, warehouses, homes, and installation addresses are service locations under one customer. Contracts, visits, calendar events, and rented product units reference service locations through nullable composite FKs so the selected location must belong to the same tenant and customer.
+
+```sql
+create type service_location_type as enum (
+  'branch', 'office', 'warehouse', 'home', 'installation_site', 'other'
+);
+
+create table customer_service_locations (
+  id uuid primary key default gen_random_uuid(),
+  tenant_id uuid not null references tenants(id),
+  customer_id uuid not null,
+
+  code text not null,                             -- LOC-0001 per customer
+  name text not null,                             -- e.g. Salmiya branch
+  location_type service_location_type not null default 'branch',
+  is_primary boolean default false,
+  is_active boolean default true,
+
+  country text default 'Kuwait',
+  governorate text,
+  area text,
+  address_line text,
+  google_maps_url text,
+  latitude numeric(10,7),
+  longitude numeric(10,7),
+
+  contact_person_name text,
+  contact_person_phone text,
+  contact_person_email text,
+
+  notes text,
+  created_at timestamptz default now(),
+  created_by uuid references auth.users(id),
+  updated_at timestamptz,
+  updated_by uuid references auth.users(id),
+
+  unique(tenant_id, customer_id, code),
+  unique(tenant_id, customer_id, id),
+  foreign key (tenant_id, customer_id)
+    references customers(tenant_id, id) on delete cascade
+);
+
+create index idx_custloc_tenant on customer_service_locations(tenant_id);
+create index idx_custloc_customer on customer_service_locations(customer_id);
+create index idx_custloc_active on customer_service_locations(tenant_id, is_active);
+
+create unique index idx_custloc_one_primary
+  on customer_service_locations(tenant_id, customer_id)
+  where is_primary = true and is_active = true;
+```
+
+Backfill rule:
+- When a customer already has `address_line`, `area`, `governorate`, or `google_maps_url`, migration `047` creates one active primary service location from those fields.
+- Customer profile location fields are retained for backward compatibility and list summaries, but contract and visit workflows should use `customer_service_locations`.
+- Do not add simple `service_location_id references customer_service_locations(id)` FKs. Downstream tables use nullable composite FKs such as `(tenant_id, customer_id, service_location_id)`.
+
+### 9.3 `suppliers`
 
 > **M5.5:** `address` → `address_line`; added `country`, `governorate`, `area`, `google_maps_url`, `tax_number`, `notes`. `account_id` nullable; optional `create_account` on create + `ensure_supplier_account` RPC.
 
@@ -715,6 +774,7 @@ create table contracts (
   status contract_status not null default 'draft',
 
   customer_id uuid not null references customers(id),
+  service_location_id uuid,
 
   -- Contact snapshot at signing
   contact_person_name text,
@@ -747,10 +807,16 @@ create table contracts (
   snapshot_monthly_profit numeric(15,3) not null default 0,
   snapshot_min_profit_threshold numeric(15,3) not null default 0,
 
-  -- Location
+  -- Location snapshot at signing. These values are copied from the selected
+  -- service location and remain frozen for historical contract documents.
+  location_name text,
+  location_country text,
+  location_governorate text,
+  location_area text,
   location_lat numeric(10,7),
   location_lng numeric(10,7),
   location_address text,
+  location_google_maps_url text,
 
   -- Signing
   signed_by_customer_at timestamptz,
@@ -782,6 +848,7 @@ create table contracts (
 
 create index idx_contracts_tenant on contracts(tenant_id);
 create index idx_contracts_customer on contracts(customer_id);
+create index idx_contracts_service_location on contracts(service_location_id);
 create index idx_contracts_status on contracts(status);
 create index idx_contracts_refill_day on contracts(refill_day);
 create index idx_contracts_trial_end on contracts(trial_end_date);
@@ -875,6 +942,7 @@ create table visits (
 
   contract_id uuid references contracts(id),
   customer_id uuid references customers(id),
+  service_location_id uuid,
   agent_id uuid not null references employees(id),
 
   scheduled_date date not null,
@@ -920,6 +988,7 @@ create table visits (
 create index idx_visits_tenant on visits(tenant_id);
 create index idx_visits_agent on visits(agent_id);
 create index idx_visits_contract on visits(contract_id);
+create index idx_visits_service_location on visits(service_location_id);
 create index idx_visits_date on visits(scheduled_date);
 create index idx_visits_status on visits(status);
 ```
@@ -1186,6 +1255,7 @@ create table calendar_events (
   assigned_agent_id uuid references employees(id),
   contract_id uuid references contracts(id),
   customer_id uuid references customers(id),
+  service_location_id uuid,
   product_unit_id uuid references product_units(id),
   visit_id uuid references visits(id),
 
@@ -1210,6 +1280,7 @@ create index idx_calevents_tenant on calendar_events(tenant_id);
 create index idx_calevents_agent on calendar_events(assigned_agent_id);
 create index idx_calevents_date on calendar_events(scheduled_date);
 create index idx_calevents_contract on calendar_events(contract_id);
+create index idx_calevents_service_location on calendar_events(service_location_id);
 create index idx_calevents_status on calendar_events(status);
 ```
 
@@ -1283,6 +1354,10 @@ Full implementations in `BUILD_PLAN.md`. Names and signatures:
 | `is_manager()` | Manager bypass for permission checks |
 | `user_has_permission(permission_id)` | Explicit permission check for Users |
 | `tenant_default_currency()` | Returns the tenant's active default currency |
+| `create_customer_service_location(...)` | Adds a branch/site/address under an existing customer |
+| `update_customer_service_location(...)` | Updates mutable service-location fields |
+| `deactivate_customer_service_location(...)` | Soft-deactivates a service location when safe |
+| `set_primary_customer_service_location(...)` | Makes one active location the customer's primary site |
 | `create_rental_contract(...)` | Atomic: contract + lines + asset reservation + first invoice + journal |
 | `record_purchase_invoice(...)` | Invoice + WAC recalc + inventory in |
 | `record_sales_invoice(...)` | Invoice + stock out + journal |
@@ -1303,7 +1378,7 @@ Full implementations in `BUILD_PLAN.md`. Names and signatures:
 |------|---------|
 | `v_customer_balances` | Each customer's outstanding A/R |
 | `v_active_contracts` | All active rentals with monthly value & profit |
-| `v_rented_assets` | Where every rented device is right now |
+| `v_rented_assets` | Where every rented device is right now, including customer and service location |
 | `v_inventory_with_value` | Stock × WAC per product |
 | `v_agent_daily_performance` | Visits, collections, contracts per agent per day |
 | `v_overdue_invoices` | Past-due invoices with aging buckets |
@@ -1346,6 +1421,9 @@ Full implementations in `BUILD_PLAN.md`. Names and signatures:
 029_triggers.sql                   -- audit log + WAC + balance updates
 030_rls_policies.sql               -- see SECURITY.md
 031_seed.sql                       -- default CoA, permissions catalog, currencies, system settings
+045_customers_suppliers_coa_rpc.sql
+046_customer_supplier_profile_cleanup.sql
+047_customer_service_locations.sql -- M5.6 service locations + backfill + downstream FKs
 ```
 
-Add FKs that were forward-references (e.g. `product_units.current_contract_id → contracts.id`) at the end of each table's migration once both exist, or batched in a final `032_late_fks.sql`.
+Add FKs that were forward-references (e.g. `product_units.current_contract_id -> contracts.id`, `product_units.current_service_location_id -> customer_service_locations.id`) at the end of each table's migration once both exist, or in the later feature migration that introduces the referenced table.

@@ -118,6 +118,19 @@
 
 ---
 
+## 4.5 Customer Service Locations - M5.6 Update
+
+Customer navigation must treat service locations as a sub-surface of the customer profile, not as a separate sidebar module and not as separate customers.
+
+- Main sidebar stays `Customers`.
+- Customer detail includes an in-screen `Locations` tab/section.
+- A customer may have many service locations; customer count still counts only `customers`.
+- Contract creation selects a customer first, then a service location.
+- Field visits and calendar surfaces should show both customer name and service location name when available.
+- The table behind this surface is `customer_service_locations`, gated by `customers.view` for read and `customers.edit` for create/edit/deactivate unless a dedicated permission is introduced later.
+
+---
+
 ## 5. حسم منطق الفواتير — مطابق للموجود
 
 | نوع الفاتورة | الطرف المطلوب | ملاحظة |

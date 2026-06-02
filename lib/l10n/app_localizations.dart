@@ -2827,6 +2827,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Something went wrong. Please try again.'**
   String get supplierErrorUnknown;
+
+  /// No description provided for @customerLocations.
+  ///
+  /// In en, this message translates to:
+  /// **'Locations'**
+  String get customerLocations;
+
+  /// No description provided for @serviceLocationPrimary.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary'**
+  String get serviceLocationPrimary;
+
+  /// No description provided for @serviceLocationAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add location'**
+  String get serviceLocationAdd;
+
+  /// No description provided for @serviceLocationEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit location'**
+  String get serviceLocationEdit;
+
+  /// No description provided for @serviceLocationDeactivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate'**
+  String get serviceLocationDeactivate;
+
+  /// No description provided for @serviceLocationSetPrimary.
+  ///
+  /// In en, this message translates to:
+  /// **'Set as primary'**
+  String get serviceLocationSetPrimary;
+
+  /// No description provided for @serviceLocationEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No service locations yet.'**
+  String get serviceLocationEmpty;
+
+  /// No description provided for @serviceLocationInUse.
+  ///
+  /// In en, this message translates to:
+  /// **'This location is still used by a contract, visit, calendar event, or device.'**
+  String get serviceLocationInUse;
+
+  /// No description provided for @serviceLocationPrimaryRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Set another active location as primary before deactivating this one.'**
+  String get serviceLocationPrimaryRequired;
+
+  /// No description provided for @serviceLocationValidationNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Location name is required.'**
+  String get serviceLocationValidationNameRequired;
+
+  /// No description provided for @primaryLocationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary location'**
+  String get primaryLocationLabel;
+
+  /// No description provided for @customerAddressBecomesPrimaryLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Address fields create a primary service location for this customer.'**
+  String get customerAddressBecomesPrimaryLocation;
+
+  /// No description provided for @serviceLocationFieldName.
+  ///
+  /// In en, this message translates to:
+  /// **'Location name'**
+  String get serviceLocationFieldName;
+
+  /// No description provided for @serviceLocationFieldType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get serviceLocationFieldType;
+
+  /// No description provided for @serviceLocationFieldContactName.
+  ///
+  /// In en, this message translates to:
+  /// **'Responsible person'**
+  String get serviceLocationFieldContactName;
+
+  /// No description provided for @serviceLocationFieldContactPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Responsible phone'**
+  String get serviceLocationFieldContactPhone;
+
+  /// No description provided for @serviceLocationFieldContactEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Responsible email'**
+  String get serviceLocationFieldContactEmail;
+
+  /// No description provided for @serviceLocationFieldLatitude.
+  ///
+  /// In en, this message translates to:
+  /// **'Latitude'**
+  String get serviceLocationFieldLatitude;
+
+  /// No description provided for @serviceLocationFieldLongitude.
+  ///
+  /// In en, this message translates to:
+  /// **'Longitude'**
+  String get serviceLocationFieldLongitude;
+
+  /// No description provided for @serviceLocationTypeBranch.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch'**
+  String get serviceLocationTypeBranch;
+
+  /// No description provided for @serviceLocationTypeOffice.
+  ///
+  /// In en, this message translates to:
+  /// **'Office'**
+  String get serviceLocationTypeOffice;
+
+  /// No description provided for @serviceLocationTypeWarehouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse'**
+  String get serviceLocationTypeWarehouse;
+
+  /// No description provided for @serviceLocationTypeHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get serviceLocationTypeHome;
+
+  /// No description provided for @serviceLocationTypeInstallationSite.
+  ///
+  /// In en, this message translates to:
+  /// **'Installation site'**
+  String get serviceLocationTypeInstallationSite;
+
+  /// No description provided for @serviceLocationTypeOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get serviceLocationTypeOther;
+
+  /// No description provided for @serviceLocationMapsCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Maps link copied.'**
+  String get serviceLocationMapsCopied;
+
+  /// No description provided for @serviceLocationOpenMaps.
+  ///
+  /// In en, this message translates to:
+  /// **'Open map link'**
+  String get serviceLocationOpenMaps;
 }
 
 class _AppLocalizationsDelegate

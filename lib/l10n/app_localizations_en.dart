@@ -1442,4 +1442,89 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get supplierErrorUnknown => 'Something went wrong. Please try again.';
+
+  @override
+  String get customerLocations => 'Locations';
+
+  @override
+  String get serviceLocationPrimary => 'Primary';
+
+  @override
+  String get serviceLocationAdd => 'Add location';
+
+  @override
+  String get serviceLocationEdit => 'Edit location';
+
+  @override
+  String get serviceLocationDeactivate => 'Deactivate';
+
+  @override
+  String get serviceLocationSetPrimary => 'Set as primary';
+
+  @override
+  String get serviceLocationEmpty => 'No service locations yet.';
+
+  @override
+  String get serviceLocationInUse =>
+      'This location is still used by a contract, visit, calendar event, or device.';
+
+  @override
+  String get serviceLocationPrimaryRequired =>
+      'Set another active location as primary before deactivating this one.';
+
+  @override
+  String get serviceLocationValidationNameRequired =>
+      'Location name is required.';
+
+  @override
+  String get primaryLocationLabel => 'Primary location';
+
+  @override
+  String get customerAddressBecomesPrimaryLocation =>
+      'Address fields create a primary service location for this customer.';
+
+  @override
+  String get serviceLocationFieldName => 'Location name';
+
+  @override
+  String get serviceLocationFieldType => 'Type';
+
+  @override
+  String get serviceLocationFieldContactName => 'Responsible person';
+
+  @override
+  String get serviceLocationFieldContactPhone => 'Responsible phone';
+
+  @override
+  String get serviceLocationFieldContactEmail => 'Responsible email';
+
+  @override
+  String get serviceLocationFieldLatitude => 'Latitude';
+
+  @override
+  String get serviceLocationFieldLongitude => 'Longitude';
+
+  @override
+  String get serviceLocationTypeBranch => 'Branch';
+
+  @override
+  String get serviceLocationTypeOffice => 'Office';
+
+  @override
+  String get serviceLocationTypeWarehouse => 'Warehouse';
+
+  @override
+  String get serviceLocationTypeHome => 'Home';
+
+  @override
+  String get serviceLocationTypeInstallationSite => 'Installation site';
+
+  @override
+  String get serviceLocationTypeOther => 'Other';
+
+  @override
+  String get serviceLocationMapsCopied => 'Maps link copied.';
+
+  @override
+  String get serviceLocationOpenMaps => 'Open map link';
 }

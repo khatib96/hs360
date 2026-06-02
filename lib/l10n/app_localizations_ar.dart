@@ -1433,4 +1433,88 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get supplierErrorUnknown => 'حدث خطأ ما. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get customerLocations => 'المواقع';
+
+  @override
+  String get serviceLocationPrimary => 'أساسي';
+
+  @override
+  String get serviceLocationAdd => 'إضافة موقع';
+
+  @override
+  String get serviceLocationEdit => 'تعديل الموقع';
+
+  @override
+  String get serviceLocationDeactivate => 'تعطيل';
+
+  @override
+  String get serviceLocationSetPrimary => 'تعيين كموقع أساسي';
+
+  @override
+  String get serviceLocationEmpty => 'لا توجد مواقع خدمة بعد.';
+
+  @override
+  String get serviceLocationInUse =>
+      'هذا الموقع ما زال مستخدمًا في عقد أو زيارة أو موعد تقويم أو جهاز.';
+
+  @override
+  String get serviceLocationPrimaryRequired =>
+      'عيّن موقعًا نشطًا آخر كأساسي قبل تعطيل هذا الموقع.';
+
+  @override
+  String get serviceLocationValidationNameRequired => 'اسم الموقع مطلوب.';
+
+  @override
+  String get primaryLocationLabel => 'الموقع الأساسي';
+
+  @override
+  String get customerAddressBecomesPrimaryLocation =>
+      'حقول العنوان تنشئ موقع خدمة أساسي لهذا العميل.';
+
+  @override
+  String get serviceLocationFieldName => 'اسم الموقع';
+
+  @override
+  String get serviceLocationFieldType => 'النوع';
+
+  @override
+  String get serviceLocationFieldContactName => 'اسم المسؤول';
+
+  @override
+  String get serviceLocationFieldContactPhone => 'هاتف المسؤول';
+
+  @override
+  String get serviceLocationFieldContactEmail => 'بريد المسؤول';
+
+  @override
+  String get serviceLocationFieldLatitude => 'خط العرض';
+
+  @override
+  String get serviceLocationFieldLongitude => 'خط الطول';
+
+  @override
+  String get serviceLocationTypeBranch => 'فرع';
+
+  @override
+  String get serviceLocationTypeOffice => 'مكتب';
+
+  @override
+  String get serviceLocationTypeWarehouse => 'مستودع';
+
+  @override
+  String get serviceLocationTypeHome => 'منزل';
+
+  @override
+  String get serviceLocationTypeInstallationSite => 'موقع تركيب';
+
+  @override
+  String get serviceLocationTypeOther => 'أخرى';
+
+  @override
+  String get serviceLocationMapsCopied => 'تم نسخ رابط الخريطة.';
+
+  @override
+  String get serviceLocationOpenMaps => 'فتح رابط الخريطة';
 }
