@@ -354,6 +354,8 @@ This makes the mobile app's offline sync safe against retries.
 | Chart of accounts (system rows) | none — only seed migration |
 | Currency | Manager only (and only before any transactions exist) |
 
+`settings.templates.edit` is a planned Phase 5 permission and must be added to the seed catalog before template settings are implemented.
+
 ---
 
 ## 8. Audit Log — What Gets Recorded

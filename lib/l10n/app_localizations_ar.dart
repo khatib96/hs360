@@ -1044,6 +1044,119 @@ class AppLocalizationsAr extends AppLocalizations {
   String get customerTimeline => 'السجل الزمني';
 
   @override
+  String get customerProfile => 'الملف';
+
+  @override
+  String get customerContracts => 'العقود';
+
+  @override
+  String get customerInvoices => 'الفواتير';
+
+  @override
+  String get customerVouchers => 'السندات';
+
+  @override
+  String get customerNotFound => 'العميل غير موجود.';
+
+  @override
+  String get customerPrimaryLocationSummary => 'الموقع الأساسي';
+
+  @override
+  String get customerAccountNotLinked => 'لا يوجد حساب مدين مرتبط';
+
+  @override
+  String get customerAccountIdLabel => 'معرف الحساب';
+
+  @override
+  String get customerLedgerPermissionDenied =>
+      'لا تملك صلاحية عرض دفتر حسابات هذا العميل.';
+
+  @override
+  String get customerStatementEmpty => 'لا توجد حركات في الدفتر بعد.';
+
+  @override
+  String get customerStatementNotLoaded =>
+      'افتح هذا التبويب لتحميل كشف الحساب.';
+
+  @override
+  String get customerStatementSummaryTitle => 'ملخص الحساب';
+
+  @override
+  String get customerStatementDebit => 'مدين';
+
+  @override
+  String get customerStatementCredit => 'دائن';
+
+  @override
+  String get customerStatementBalance => 'الرصيد';
+
+  @override
+  String get customerStatementColumnDate => 'التاريخ';
+
+  @override
+  String get customerStatementColumnEntry => 'القيد';
+
+  @override
+  String get customerStatementColumnSource => 'المصدر';
+
+  @override
+  String get customerStatementColumnDescription => 'الوصف';
+
+  @override
+  String get customerContractsEmpty => 'لا توجد عقود بعد.';
+
+  @override
+  String get customerInvoicesEmpty => 'لا توجد فواتير بعد.';
+
+  @override
+  String get customerVouchersEmpty => 'لا توجد سندات بعد.';
+
+  @override
+  String get customerTimelineEmpty => 'لا توجد أحداث في السجل بعد.';
+
+  @override
+  String get customerTimelineCreated => 'تم إنشاء العميل';
+
+  @override
+  String get customerTimelineUpdated => 'تم تحديث الملف';
+
+  @override
+  String get customerTimelineAcquired => 'تم اكتساب العميل';
+
+  @override
+  String get journalSourceManual => 'قيد يدوي';
+
+  @override
+  String get journalSourceSalesInvoice => 'فاتورة مبيعات';
+
+  @override
+  String get journalSourcePurchaseInvoice => 'فاتورة مشتريات';
+
+  @override
+  String get journalSourceReceiptVoucher => 'سند قبض';
+
+  @override
+  String get journalSourcePaymentVoucher => 'سند صرف';
+
+  @override
+  String get journalSourceRentalInvoice => 'فاتورة إيجار';
+
+  @override
+  String get journalSourceContractCreation => 'إنشاء عقد';
+
+  @override
+  String get journalSourceContractClosure => 'إغلاق عقد';
+
+  @override
+  String get journalSourceOpeningBalance => 'رصيد افتتاحي';
+
+  @override
+  String get journalSourceInventoryAdjustment => 'تسوية مخزون';
+
+  @override
+  String get journalSourceSalaryPayment => 'دفع راتب';
+
+  @override
   String get chartOfAccounts => 'دليل الحسابات';
 
   @override
@@ -1058,8 +1171,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'قائمة الموردين غير متاحة في هذا الإصدار.';
 
   @override
-  String get customerDetailsUnavailable =>
-      'التفاصيل ستُفعّل عند اكتمال هذا القسم.';
+  String get customerDetailsUnavailable => 'العميل غير موجود أو غير متاح.';
 
   @override
   String get customerEditUnavailable => 'تعديل العميل غير متاح في هذا الإصدار.';

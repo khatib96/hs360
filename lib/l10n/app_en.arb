@@ -500,6 +500,121 @@
   "@customerTimeline": {
     "description": "Customer detail timeline tab"
   },
+  "customerProfile": "Profile",
+  "@customerProfile": {
+    "description": "Customer detail profile tab"
+  },
+  "customerContracts": "Contracts",
+  "@customerContracts": {
+    "description": "Customer detail contracts tab"
+  },
+  "customerInvoices": "Invoices",
+  "@customerInvoices": {
+    "description": "Customer detail invoices tab"
+  },
+  "customerVouchers": "Vouchers",
+  "@customerVouchers": {
+    "description": "Customer detail vouchers tab"
+  },
+  "customerNotFound": "Customer not found.",
+  "@customerNotFound": {
+    "description": "Shown when customer detail id does not resolve"
+  },
+  "customerPrimaryLocationSummary": "Primary location",
+  "@customerPrimaryLocationSummary": {
+    "description": "Header label for primary service location summary"
+  },
+  "customerAccountNotLinked": "No linked A/R account",
+  "@customerAccountNotLinked": {
+    "description": "Header status when customer has no accounting account"
+  },
+  "customerAccountIdLabel": "Account ID",
+  "@customerAccountIdLabel": {
+    "description": "Label for linked accounting account id"
+  },
+  "customerLedgerPermissionDenied": "You do not have permission to view this customer's ledger.",
+  "@customerLedgerPermissionDenied": {
+    "description": "Statement tab when customers.view_ledger is missing"
+  },
+  "customerStatementEmpty": "No ledger movements yet.",
+  "@customerStatementEmpty": {
+    "description": "Statement tab empty state for permitted user"
+  },
+  "customerStatementNotLoaded": "Open this tab to load the statement.",
+  "@customerStatementNotLoaded": {
+    "description": "Statement tab before first load is triggered"
+  },
+  "customerStatementSummaryTitle": "Account summary",
+  "@customerStatementSummaryTitle": {
+    "description": "Statement summary section title"
+  },
+  "customerStatementDebit": "Debit",
+  "@customerStatementDebit": {
+    "description": "Statement debit column/label"
+  },
+  "customerStatementCredit": "Credit",
+  "@customerStatementCredit": {
+    "description": "Statement credit column/label"
+  },
+  "customerStatementBalance": "Balance",
+  "@customerStatementBalance": {
+    "description": "Statement running balance column/label"
+  },
+  "customerStatementColumnDate": "Date",
+  "@customerStatementColumnDate": {
+    "description": "Statement table date column"
+  },
+  "customerStatementColumnEntry": "Entry",
+  "@customerStatementColumnEntry": {
+    "description": "Statement table entry number column"
+  },
+  "customerStatementColumnSource": "Source",
+  "@customerStatementColumnSource": {
+    "description": "Statement table journal source column"
+  },
+  "customerStatementColumnDescription": "Description",
+  "@customerStatementColumnDescription": {
+    "description": "Statement table description column"
+  },
+  "customerContractsEmpty": "No contracts yet.",
+  "@customerContractsEmpty": {
+    "description": "Contracts tab empty state when user can view contracts"
+  },
+  "customerInvoicesEmpty": "No invoices yet.",
+  "@customerInvoicesEmpty": {
+    "description": "Invoices tab empty state when user can view invoices"
+  },
+  "customerVouchersEmpty": "No vouchers yet.",
+  "@customerVouchersEmpty": {
+    "description": "Vouchers tab empty state when user can view vouchers"
+  },
+  "customerTimelineEmpty": "No timeline events yet.",
+  "@customerTimelineEmpty": {
+    "description": "Timeline tab when no metadata events exist"
+  },
+  "customerTimelineCreated": "Customer created",
+  "@customerTimelineCreated": {
+    "description": "Timeline event for customer creation"
+  },
+  "customerTimelineUpdated": "Profile updated",
+  "@customerTimelineUpdated": {
+    "description": "Timeline event for profile update"
+  },
+  "customerTimelineAcquired": "Customer acquired",
+  "@customerTimelineAcquired": {
+    "description": "Timeline event for customer acquisition"
+  },
+  "journalSourceManual": "Manual entry",
+  "journalSourceSalesInvoice": "Sales invoice",
+  "journalSourcePurchaseInvoice": "Purchase invoice",
+  "journalSourceReceiptVoucher": "Receipt voucher",
+  "journalSourcePaymentVoucher": "Payment voucher",
+  "journalSourceRentalInvoice": "Rental invoice",
+  "journalSourceContractCreation": "Contract creation",
+  "journalSourceContractClosure": "Contract closure",
+  "journalSourceOpeningBalance": "Opening balance",
+  "journalSourceInventoryAdjustment": "Inventory adjustment",
+  "journalSourceSalaryPayment": "Salary payment",
   "chartOfAccounts": "Chart of accounts",
   "@chartOfAccounts": {
     "description": "Chart of accounts module title and navigation label"
@@ -516,7 +631,7 @@
   "@suppliersListUnavailable": {
     "description": "Placeholder when supplier list UI is not yet available"
   },
-  "customerDetailsUnavailable": "Details will be enabled when this module is completed.",
+  "customerDetailsUnavailable": "Customer not found or unavailable.",
   "@customerDetailsUnavailable": {
     "description": "Placeholder when customer detail content is not yet available"
   },

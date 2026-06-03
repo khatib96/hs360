@@ -9,24 +9,25 @@
 
 | Phase | Status | Completed |
 |-------|--------|-----------|
-| **0 — Project Setup** | ✅ Done | 2026-05-16 |
-| **1A — Local Supabase Foundation** | ✅ Done | 2026-05-16 |
-| **1B — Core Business Schema** | ✅ Done | 2026-05-16 |
-| **1C — Functions, Views, Triggers, RLS** | ✅ Done | 2026-05-16 |
-| **1D — Seed and Verification** | ✅ Done | 2026-05-16 |
-| 2 — Authentication & Routing | ⬜ Not started | — |
-| 3 — Products & Inventory | ⬜ Not started | — |
-| 4 — Customers & CoA | ⬜ Not started | — |
-| 5 — Invoices & Vouchers | ⬜ Not started | — |
-| 6 — Contracts | ⬜ Not started | — |
-| 7 — Calendar | ⬜ Not started | — |
-| 8 — Mobile Field Ops | ⬜ Not started | — |
-| 9 — POS, Maintenance & HR | ⬜ Not started | — |
-| 10 — Reports | ⬜ Not started | — |
-| 11 — Communications | ⬜ Not started | — |
-| 12 — Polish & Production | ⬜ Not started | — |
+| **0 - Project Setup** | Done | 2026-05-16 |
+| **1A - Local Supabase Foundation** | Done | 2026-05-16 |
+| **1B - Core Business Schema** | Done | 2026-05-16 |
+| **1C - Functions, Views, Triggers, RLS** | Done | 2026-05-16 |
+| **1D - Seed and Verification** | Done | 2026-05-16 |
+| **2 - Authentication & Routing** | Done | not recorded |
+| **3 - Products & Inventory** | Done | 2026-05-30 |
+| **4 - Customers, Suppliers & CoA** | In progress | through M5.6 on 2026-06-02 |
+| **5 - Invoices, Vouchers & Journal** | Not started | - |
+| **6 - Contracts** | Not started | - |
+| **7 - Calendar** | Not started | - |
+| **8 - Mobile Field Ops** | Not started | - |
+| **9 - POS, Maintenance & HR** | Not started | - |
+| **10 - Reports** | Not started | - |
+| **11 - Communications** | Not started | - |
+| **12 - Polish & Production** | Not started | - |
 
 > Phase 0 details: `docs/PHASE_0_SETUP.md`
+> Capability placement: `docs/CAPABILITIES_DECISION_REPORT.md`.
 
 ---
 
@@ -356,6 +357,23 @@ Customer and supplier management fully working. CoA visible and customizable.
 - View customer statement (initially empty) without error
 - Customer timeline shows new invoice/payment/contract events in order
 
+### Phase 4.7 Location Coordinates Foundation
+
+This is a small add-on before closing Phase 4 or at the start of Phase 5. It supports visits, mobile directions, and later operations maps.
+
+Tasks:
+- Store operational coordinates only on `customer_service_locations`, not on `customers`.
+- Add `resolution_source` for service-location coordinates (`map_pick`, `device_gps`, `url`, `manual`) when coordinate capture is implemented.
+- Add `resolved_at`, `coordinate_accuracy_m`, and optional `resolution_status`/`resolution_error` so coordinate quality is auditable.
+- Add "Use current location" on mobile-capable customer/service-location forms.
+- Keep pasted Google Maps URL as a source field; resolve shortened map URLs through a later Edge Function.
+- Defer "choose on map" UI until a map package is selected.
+
+Acceptance:
+- A service location can hold verified `latitude`/`longitude` and the source that produced them.
+- Existing customer/account flows keep working without customer-level GPS fields.
+- Visit and calendar screens can rely on service-location coordinates later without duplicating address data.
+
 ---
 
 ## Phase 5 — Invoices, Vouchers & Journal (≈ 3 weeks)
@@ -365,12 +383,69 @@ Full accounting cycle works. Purchase → Sale → Receipt → P&L.
 
 ### Tasks
 
+**5.0 Asset / Barcode / Print Foundation**
+These foundations must be done before invoice/voucher screens because purchase invoices create serialized assets, labels need printing, and invoices need the same print engine.
+
+- Internal SKU:
+  - Keep `products.sku` in the database.
+  - Generate SKU automatically in product create/edit flows.
+  - Hide SKU from normal product UI; expose only as an internal code if needed for admin diagnostics.
+- Serialized asset enforcement:
+  - Add tenant serial settings (`serial_number_mode`, `serial_number_prefix`) if still absent.
+  - Add serial generation helpers.
+  - Ensure future serialized operations fail at RPC level when `product_unit_id` is missing.
+  - Confirm current serialized transfer limitation before expanding warehouse-transfer RPCs.
+- Asset tracking foundation:
+  - Treat `product_units` as the physical asset lifecycle record, not only a serial-number table.
+  - Track lifecycle from purchase/creation -> available -> rented/trial -> maintenance -> returned/lost/damaged/retired.
+  - Keep current pointers (`current_warehouse_id`, `current_customer_id`, `current_service_location_id`, `current_contract_id`) in sync through RPCs.
+  - Add a lightweight `unit_events` table only for manual/events-without-source records.
+  - Add `v_unit_timeline` as the canonical timeline view from purchase, inventory movements, contracts, visits, maintenance, audit log, and `unit_events`.
+  - If `last_event_at` is added for sorting/performance, maintain it from the same RPC/event writes; do not use it as the timeline source.
+- Generate missing serials:
+  - Manager-only audited reconcile tool.
+  - It compares existing on-hand quantity to existing `product_units`.
+  - It creates missing units for existing stock without increasing `inventory_balances` again.
+  - Do not reuse `create_product_units` directly for this backfill unless it has a no-stock-delta mode.
+- Barcode/QR resolve:
+  - Implement a single scan resolver: unit barcode -> product barcode -> unit serial.
+  - Support desktop scanner input and mobile camera through the same domain service.
+  - QR payload for asset tags is the human-readable serial text.
+- Barcode search everywhere:
+  - The scan resolver is global app infrastructure, not a POS-only helper.
+  - Pattern: scan -> resolve object -> open or apply object in the current screen context.
+  - Support product search, unit lookup, contract device picking, visit detail, maintenance intake, inventory count, return/replacement, and POS later.
+  - Unknown scan shows a clear not-found state and optional create/link action only where the current screen supports it.
+- Document template foundation:
+  - Add `document_templates` with structured JSON body.
+  - Add `tenant_document_settings` for logo, colors, header/footer, language, paper size, and optional columns.
+  - Add/seed template permissions such as `settings.templates.edit`, label print permission, and `product_units.correct_serial`.
+  - Add Flutter `pdf`/`printing` dependencies and a client-side renderer for A4, thermal 80mm, and asset labels.
+  - Use the same JSON model later for server-generated archived/auto-sent PDFs.
+- Initial templates:
+  - Sales invoice A4.
+  - Receipt voucher thermal/A4.
+  - Asset tag label sheet/batch.
+- Unit timeline:
+  - Build `v_unit_timeline` from source events where possible.
+  - Keep `unit_events` only for notes/manual events that have no natural source table.
+  - Show the initial timeline in unit detail during 5.0, even if later phases add richer contract/visit/maintenance events.
+
+Acceptance:
+- Existing serialized stock can be reconciled into physical units without stock double-counting.
+- Scanning a product barcode resolves to the product; scanning a unit QR/serial resolves to the unit.
+- The same scan resolver can be called from product, contract, visit, maintenance, inventory, return/replacement, and POS flows.
+- Unit detail shows a lifecycle/timeline surface backed by `v_unit_timeline`.
+- A4 invoice, receipt voucher, and asset tag can render client-side in Arabic and English from JSON templates.
+- Serial correction is permission-gated, requires a reason, and is audited.
+
 **5.1 Stored Functions**
 Implement all RPCs per `DATABASE_SCHEMA.md` section 19:
 - `record_purchase_invoice`
 - `record_sales_invoice`
 - `recalculate_wac` (called by the above)
 - Each must create the journal entries
+- `record_purchase_invoice` must create `product_units` for serialized purchase lines in the same transaction as balances, WAC, and journal entries.
 
 **5.2 Invoice Screens (Desktop)**
 - Invoices list (filterable by type, status, customer)
@@ -426,6 +501,7 @@ The core of the system: contracts can be created, billed, refilled, and closed.
 - `close_contract`
 - `contract_profitability`
 - Require `service_location_id` and snapshot selected location/contact/address fields at contract creation
+- Require `product_unit_id` for every serialized asset line; product-only contract lines are invalid when `products.is_serialized = true`
 
 **6.2 Contracts List Screen (Desktop)**
 - Filter chips per `CONTRACTS_LOGIC.md` section 11.1
@@ -434,6 +510,7 @@ The core of the system: contracts can be created, billed, refilled, and closed.
 **6.3 New Contract Form (Desktop)**
 - Multi-step wizard per `CONTRACTS_LOGIC.md` section 11.2
 - Customer step must select a service location: auto-select the only active location, require choice for multiple, or inline-create when none exist
+- Device step must select or scan a specific serial/unit for serialized assets
 - Live profitability preview (requires `contracts.field.snapshot_profit`)
 - Min-profit enforcement
 
@@ -485,6 +562,7 @@ A unified calendar showing all date-bound events, with reminders.
 8. Agent assignment / reassignment
 9. Route View: map of a user's daily visits by service location, area, and time, display-only in v1 planning
 10. Filters
+11. Native "Directions" action opens the selected service location in the phone's map app via `url_launcher`
 
 ### Deliverables
 - Calendar shows real upcoming events
@@ -521,10 +599,12 @@ Field agents can do their full daily workflow on the mobile app, online and offl
 - Photo via camera only
 - GPS check-in
 - Visit detail uses the selected service location for address, map, and GPS verification
+- GPS mismatch uses configurable radius + proceed-with-reason; flagged visits feed Suspicious Visits Report
 
 **8.3 New Contract on Mobile**
 - Multi-step flow optimized for phone
 - Barcode scan for device picking
+- Serialized device picking must resolve to one `product_unit_id`
 - Signature capture
 
 **8.4 Collection Flow**
@@ -625,6 +705,8 @@ All key reports work. Managers can answer business questions in under a minute.
 13. Renewal / Increase Suggestions: flags old contracts that may need price review before renewal
 14. Audit Review Dashboard: sensitive changes, overrides, cancellations, permission changes
 15. Data Quality Warnings: missing GPS, products without cost, contracts without refill day, duplicate phone numbers
+16. Operations Map: reusable map widget with typed layers and clustering, starting with service locations/today's visits and later rented assets
+17. Document Template Editor: visual/settings-based editor on top of the Phase 5 JSON template model
 
 ### Deliverables
 - All reports per `PROJECT.md` 3.1 working
@@ -637,6 +719,7 @@ All key reports work. Managers can answer business questions in under a minute.
 - Contract Health Score identifies at-risk contracts without manual spreadsheet work
 - Debt Priority List gives a ranked collection queue
 - Suspicious Visits Report shows all flagged visits with supporting evidence
+- Operations Map can show clustered service-location/rented-asset points without duplicating map logic per report
 
 ---
 

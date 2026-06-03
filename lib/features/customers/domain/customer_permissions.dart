@@ -20,3 +20,15 @@ bool canEditCustomer(AppSession session) =>
 
 bool canDeactivateCustomer(AppSession session) =>
     session.isManager || session.permissions.can('customers.delete');
+
+bool canViewCustomerLedger(AppSession session) =>
+    session.isManager || session.permissions.can('customers.view_ledger');
+
+bool canViewContracts(AppSession session) =>
+    session.isManager || session.permissions.can('contracts.view');
+
+bool canViewInvoices(AppSession session) =>
+    session.isManager || session.permissions.can('invoices.view');
+
+bool canViewVouchers(AppSession session) =>
+    session.isManager || session.permissions.can('vouchers.view');

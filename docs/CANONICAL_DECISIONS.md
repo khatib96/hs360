@@ -1,6 +1,6 @@
 # CANONICAL_DECISIONS.md — Source of Truth
 
-> Updated 2026-05-16 to resolve conflicts before Phase 0.
+> Updated 2026-06-03 with Phase 4 M5.6 capability decisions.
 > If this file conflicts with any older document, this file wins.
 
 ---
@@ -100,6 +100,63 @@ The customer is the company/account. Branches, offices, homes, warehouses, and i
 - Phase 6+ RPCs that move a device must update `current_customer_id` and `current_service_location_id` together in one transaction.
 - Customer balance, statement, invoices, and vouchers stay at customer level.
 - Contracts keep frozen location snapshots at signing.
+
+---
+
+## 4.6 Barcode, Serial, and Asset Identity
+
+SKU, product barcode, and unit serial are separate identities.
+
+- `products.sku` stays in the database as an internal product code for integrity and uniqueness.
+- Normal product UI should generate SKU automatically and hide it from the user.
+- `products.barcode` identifies the product type for sales, purchase entry, POS, and search.
+- `product_units.serial_number` identifies one physical device.
+- `products.is_serialized = true` is the explicit toggle for unit-level tracking; it is independent from `product_type`.
+- Asset labels use QR codes whose payload is the human-readable serial text, not a raw UUID or opaque URL.
+- Printed asset tags should include tenant/company name, product name, serial number, and QR code.
+
+For serialized products, mutating RPCs must require a concrete `product_unit_id` whenever the operation affects one physical asset: contract assignment, return, maintenance, correction, and future serialized transfers. Missing unit identity is a validation error at the RPC boundary, not only a UI concern.
+
+For serialized inventory, `product_units` is the identity and lifecycle source of truth. `inventory_balances` remains the aggregate stock cache and must be updated atomically by RPCs. Backfill tools that generate missing serials for existing stock must reconcile units without increasing stock again.
+
+`product_units` is an asset lifecycle table, not only a serial-number table. RPCs should keep lifecycle state and current pointers in sync:
+
+- purchase/creation -> available
+- contract assignment -> rented or trial
+- return -> available/maintenance as appropriate
+- issue handling -> maintenance, damaged, lost, or retired
+- `current_warehouse_id`, `current_customer_id`, `current_service_location_id`, and `current_contract_id` describe the current location/context
+
+The canonical unit history is `v_unit_timeline`, built from source events such as purchases, inventory movements, contracts, visits, maintenance, audit log, and `unit_events`. Keep `unit_events` for manual events or notes without another natural source. If a maintained `last_event_at` is added, it is only an index/sorting helper and must be derived from event writes.
+
+Barcode scanning is global infrastructure. The pattern is `scan -> resolve object -> open/apply in current context`, and it must support product search, unit lookup, contract device picking, visits, maintenance, inventory count, return/replacement, and POS later.
+
+---
+
+## 4.7 Document Templates and Printing
+
+The canonical document-template representation is structured JSON, not FastReport, Crystal Reports, raw free-form HTML, or runtime AI generation.
+
+- Store templates as JSON blocks/settings so they can be rendered, validated, versioned, and later edited safely.
+- First renderer is Flutter client-side `pdf`/`printing` for A4 invoices, thermal receipts, statements, contracts, and asset labels.
+- A later server/Edge renderer may archive or auto-send PDFs, but it must consume the same JSON template model.
+- v1 template customization is tenant settings only: logo, colors, header/footer, language, paper size, and optional columns.
+- A visual template editor is Phase 10+ and must be built on top of the same JSON model.
+
+---
+
+## 4.8 Service Location Coordinates and Maps
+
+Operational coordinates live on `customer_service_locations.latitude` and `customer_service_locations.longitude`.
+
+- Customer-level GPS columns are not part of the current model.
+- `google_maps_url` is an input/source and convenience link, not the authoritative location.
+- Future capture should store `resolution_source` such as `map_pick`, `device_gps`, `url`, or `manual`.
+- Future capture should also store `resolved_at`, `coordinate_accuracy_m`, and optional `resolution_status`/`resolution_error`.
+- Visit GPS matching uses a configurable radius and the recorded device accuracy.
+- Outside-range visits should proceed with a required reason and be flagged for review, not silently pass or fail.
+- The mobile "Directions" action opens the native maps app through `url_launcher`.
+- The internal operations map is a later reusable map widget with typed layers, not a large generic map engine in early phases.
 
 ---
 

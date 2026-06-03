@@ -1051,6 +1051,119 @@ class AppLocalizationsEn extends AppLocalizations {
   String get customerTimeline => 'Timeline';
 
   @override
+  String get customerProfile => 'Profile';
+
+  @override
+  String get customerContracts => 'Contracts';
+
+  @override
+  String get customerInvoices => 'Invoices';
+
+  @override
+  String get customerVouchers => 'Vouchers';
+
+  @override
+  String get customerNotFound => 'Customer not found.';
+
+  @override
+  String get customerPrimaryLocationSummary => 'Primary location';
+
+  @override
+  String get customerAccountNotLinked => 'No linked A/R account';
+
+  @override
+  String get customerAccountIdLabel => 'Account ID';
+
+  @override
+  String get customerLedgerPermissionDenied =>
+      'You do not have permission to view this customer\'s ledger.';
+
+  @override
+  String get customerStatementEmpty => 'No ledger movements yet.';
+
+  @override
+  String get customerStatementNotLoaded =>
+      'Open this tab to load the statement.';
+
+  @override
+  String get customerStatementSummaryTitle => 'Account summary';
+
+  @override
+  String get customerStatementDebit => 'Debit';
+
+  @override
+  String get customerStatementCredit => 'Credit';
+
+  @override
+  String get customerStatementBalance => 'Balance';
+
+  @override
+  String get customerStatementColumnDate => 'Date';
+
+  @override
+  String get customerStatementColumnEntry => 'Entry';
+
+  @override
+  String get customerStatementColumnSource => 'Source';
+
+  @override
+  String get customerStatementColumnDescription => 'Description';
+
+  @override
+  String get customerContractsEmpty => 'No contracts yet.';
+
+  @override
+  String get customerInvoicesEmpty => 'No invoices yet.';
+
+  @override
+  String get customerVouchersEmpty => 'No vouchers yet.';
+
+  @override
+  String get customerTimelineEmpty => 'No timeline events yet.';
+
+  @override
+  String get customerTimelineCreated => 'Customer created';
+
+  @override
+  String get customerTimelineUpdated => 'Profile updated';
+
+  @override
+  String get customerTimelineAcquired => 'Customer acquired';
+
+  @override
+  String get journalSourceManual => 'Manual entry';
+
+  @override
+  String get journalSourceSalesInvoice => 'Sales invoice';
+
+  @override
+  String get journalSourcePurchaseInvoice => 'Purchase invoice';
+
+  @override
+  String get journalSourceReceiptVoucher => 'Receipt voucher';
+
+  @override
+  String get journalSourcePaymentVoucher => 'Payment voucher';
+
+  @override
+  String get journalSourceRentalInvoice => 'Rental invoice';
+
+  @override
+  String get journalSourceContractCreation => 'Contract creation';
+
+  @override
+  String get journalSourceContractClosure => 'Contract closure';
+
+  @override
+  String get journalSourceOpeningBalance => 'Opening balance';
+
+  @override
+  String get journalSourceInventoryAdjustment => 'Inventory adjustment';
+
+  @override
+  String get journalSourceSalaryPayment => 'Salary payment';
+
+  @override
   String get chartOfAccounts => 'Chart of accounts';
 
   @override
@@ -1065,8 +1178,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Supplier list is not available in this build.';
 
   @override
-  String get customerDetailsUnavailable =>
-      'Details will be enabled when this module is completed.';
+  String get customerDetailsUnavailable => 'Customer not found or unavailable.';
 
   @override
   String get customerEditUnavailable =>

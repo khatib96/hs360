@@ -415,7 +415,7 @@ create type unit_of_measure as enum (
 create table products (
   id uuid primary key default gen_random_uuid(),
   tenant_id uuid not null references tenants(id),
-  sku text not null,
+  sku text not null,                              -- internal generated product code; hidden from normal UI
   barcode text,                                  -- product-level barcode shared by the product type
   name_ar text not null,
   name_en text not null,
@@ -471,9 +471,10 @@ create index idx_products_type on products(product_type);
 ```
 
 Barcode vs serial rule:
-- `products.barcode` identifies the product type, such as one oil SKU or one diffuser model.
+- `products.sku` is an internal generated product code, kept for uniqueness/integrity and hidden from normal UI.
+- `products.barcode` identifies the product type, such as one oil product or one diffuser model.
 - `product_units.serial_number` identifies one physical serialized asset, such as one diffuser device.
-- `product_units.barcode` is optional for unit-specific stickers and can differ from the product-level barcode.
+- `product_units.barcode` is optional for unit-specific stickers/QR labels and can differ from the product-level barcode.
 
 ### 7.3 `product_units` (serialized assets)
 ```sql

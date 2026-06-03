@@ -1,6 +1,6 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-06-02 (Phase 4 M5.6 complete; next is M6 Customer Detail shell).
+> Updated 2026-06-03 (Phase 4 M6 complete; next is M7 Chart of Accounts tree).
 > Keep this file short. It is for continuity between AI tools, not full project documentation.
 
 ---
@@ -14,10 +14,24 @@
 - **Phase 4 M4 complete** - routes, guards, AppShell navigation, AR/EN l10n, placeholder screens.
 - **Phase 4 M5 complete** - customer/supplier lists, filters, and create/edit/deactivate forms.
 - **Phase 4 M5.5 complete** - profile field cleanup (DB `046`), optional `create_account`, `ensure_*_account`, Kuwait location catalog, responsive sectioned forms, governorate/area filters.
-- **Phase 4 M5.6 complete** - `047_customer_service_locations.sql`, composite FKs (no simple duplicate FKs), location RPCs, customer detail **Locations** tab, `create_customer` auto-primary when address present.
-- Migrations `001`-`047` on local Postgres; `phase_4_customer_service_locations.sql` + `phase_4_customers_suppliers_coa.sql` pass when 047 applied. `npx --yes supabase db reset` remains avoided/blocked by Supabase CLI 2.102 internal service migration duplicate.
+- **Phase 4 M5.6 complete** - `047_customer_service_locations.sql`, composite FKs, location RPCs, customer detail **Locations** tab.
+- **Phase 4 M6 complete** - Customer 360 shell at [`customer_detail_screen.dart`](lib/features/customers/presentation/customer_detail_screen.dart): Profile, Locations, Contracts/Invoices/Vouchers placeholders, Statement (`customers.view_ledger` RPCs), Timeline (local metadata only).
+- Migrations `001`-`047` on local Postgres; `npx --yes supabase db reset` remains avoided/blocked by Supabase CLI 2.102 internal service migration duplicate.
 - **Canonical inventory rules:** [`docs/PHASE_3_M1_5_INVENTORY_RULES.md`](docs/PHASE_3_M1_5_INVENTORY_RULES.md)
-- **Next:** Phase 4 M6 - Customer Detail shell (statement/timeline/360 tabs beyond Locations).
+- **Capability decisions:** [`docs/CAPABILITIES_DECISION_REPORT.md`](docs/CAPABILITIES_DECISION_REPORT.md) + [`docs/CANONICAL_DECISIONS.md`](docs/CANONICAL_DECISIONS.md) now fix Barcode/Serial, JSON print templates, and service-location coordinates.
+- **Next:** Phase 4 M7 - Chart of Accounts tree.
+
+---
+
+## Cross-Capability Decisions (captured 2026-06-03)
+
+- SKU remains in DB but becomes internal/generated/hidden from normal product UI.
+- Product barcode identifies product type; unit serial identifies one physical device; asset QR payload is the serial text.
+- Phase 5.0 is **Asset / Barcode / Print Foundation**: product-unit lifecycle, scan resolver everywhere, labels, and JSON print engine.
+- Serialized operations must require `product_unit_id` at RPC level.
+- Existing stock serial backfill must reconcile units without increasing inventory balances again.
+- Document templates use structured JSON; Flutter `pdf`/`printing` renderer first, later server renderer uses the same JSON model.
+- Coordinates belong on `customer_service_locations`; `google_maps_url` is a source/link, not the truth. Store source/quality metadata (`resolution_source`, `resolved_at`, `coordinate_accuracy_m`) when implementing capture.
 
 ---
 
@@ -27,8 +41,19 @@
 - **DB:** migration [`047`](supabase/migrations/047_customer_service_locations.sql); `ux_customers(tenant_id,id)`; locations use **composite FK only** to customers; child tables use composite FK to `(tenant_id, customer_id, service_location_id)`; contract snapshot columns added; `product_units.current_service_location_id` is **current pointer only** (not history).
 - **RPCs:** `list/create/update/deactivate/set_primary_customer_service_location`; read `customers.view`, write `customers.edit`; internal helpers `generate_service_location_code`, `insert_primary_service_location_from_customer` (no public grant).
 - **`create_customer`:** still `returns uuid`; creates primary location in same transaction when address/governorate/area/maps present.
-- **Flutter:** domain/repository/controller; [`customer_detail_placeholder_screen.dart`](lib/features/customers/presentation/customer_detail_placeholder_screen.dart) Locations tab functional; other detail tabs remain placeholders.
+- **Flutter:** domain/repository/controller; Locations tab in customer detail (M5.6); full Customer 360 shell in M6.
 - **Tests:** [`phase_4_customer_service_locations.sql`](supabase/tests/phase_4_customer_service_locations.sql); Dart parsing/validator tests; `flutter test` green after M5.6.
+
+---
+
+## Phase 4 M6 - Customer Detail, Statement & Timeline (done)
+
+- **Screen:** [`customer_detail_screen.dart`](lib/features/customers/presentation/customer_detail_screen.dart) replaces placeholder; route `/customers/:id` unchanged.
+- **Controllers:** `CustomerDetailController` (`fetchCustomerById` only); `CustomerStatementController` (ledger RPCs; load on first Statement tab select; `load(force: true)` for retry; no auto-load in `build()`).
+- **Tabs (7):** Profile (read-only + edit action), Locations (M5.6 unchanged), Contracts/Invoices/Vouchers (permission-aware empty placeholders), Statement (`customers.view_ledger` via `get_customer_balance_summary` + `get_customer_statement`), Timeline (local `createdAt`/`updatedAt`/`acquiredAt` only — no timeline controller/RPC).
+- **Permissions helpers:** `canViewCustomerLedger`, `canViewContracts`, `canViewInvoices`, `canViewVouchers` in [`customer_permissions.dart`](lib/features/customers/domain/customer_permissions.dart).
+- **Tests:** [`customer_detail_screen_test.dart`](test/features/customers/presentation/customer_detail_screen_test.dart), [`customer_statement_controller_test.dart`](test/features/customers/presentation/customer_statement_controller_test.dart); fakes override `customerServiceLocationRepositoryProvider`.
+- **Verification:** `flutter gen-l10n`, `build_runner`, `flutter analyze`, `flutter test` (325 tests) green.
 
 ---
 

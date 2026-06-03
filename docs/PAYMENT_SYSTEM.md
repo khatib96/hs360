@@ -99,7 +99,18 @@ billing_model:
 
 ### 2.5 Invoice PDF
 
-Generated via Edge Function using a template. Stored in Supabase Storage. Path: `{tenant_id}/invoices/{invoice_number}.pdf`.
+Generated from the canonical structured JSON document template.
+
+Phase 5 renderer:
+- Flutter client-side `pdf`/`printing` renderer for desktop/mobile preview and local printing.
+- Stored template body lives in `document_templates.body_json`.
+- Tenant branding and defaults live in `tenant_document_settings`.
+
+Later server renderer:
+- An Edge Function may render and store archived or auto-sent PDFs.
+- It must consume the same JSON template model; do not create a second HTML-only template system.
+
+Storage path for archived PDFs: `{tenant_id}/invoices/{invoice_number}.pdf`.
 
 The PDF includes:
 - Tenant header (logo, name, address, tax ID if applicable)
@@ -184,9 +195,11 @@ journal_entry:
 
 ### 3.5 Voucher PDF (Receipt)
 
-Same template engine as invoice PDF. Path: `{tenant_id}/vouchers/{voucher_number}.pdf`.
+Same JSON template engine as invoice PDF. Path for archived PDFs: `{tenant_id}/vouchers/{voucher_number}.pdf`.
 
 Auto-sent to customer via WhatsApp + email when configured. Field agents can trigger send manually if they don't want auto-send.
+
+Auto-send depends on the later server renderer. Local preview/print in Phase 5 uses the Flutter renderer.
 
 ---
 

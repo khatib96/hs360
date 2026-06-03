@@ -149,6 +149,7 @@ A contract has one or more **lines**, but lines have **no prices** on them. They
 ### 4.1 Asset Lines
 - Exactly one device per contract is typical (but the schema supports more)
 - Each asset line references a specific `product_unit_id` (a real device with a serial number)
+- If the selected product has `is_serialized = true`, `product_unit_id` is mandatory and the RPC must reject product-only asset lines
 - On contract activation, that unit's status changes to `rented`
 
 ### 4.2 Consumable Lines

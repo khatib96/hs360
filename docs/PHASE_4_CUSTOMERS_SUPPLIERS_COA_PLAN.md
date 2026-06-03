@@ -31,9 +31,9 @@ Migration `046_customer_supplier_profile_cleanup.sql`:
 - `ensure_customer_account` / `ensure_supplier_account` link A/R or A/P when `account_id` is null; immutable triggers allow only validated `null → account_id` transitions.
 - Statement/balance RPCs are zero-safe when no linked account.
 
-### M5.6 customer service locations (2026-06-02) - planned
+### M5.6 customer service locations (2026-06-02) - implemented
 
-This milestone must run before M6.
+This milestone is complete and M6 can build the Customer 360 shell on top of it.
 
 - A customer remains the main company/account and is counted once.
 - Branches, offices, warehouses, homes, and installation addresses are stored as `customer_service_locations`.
@@ -116,14 +116,16 @@ Existing RLS policies allow tenant-scoped access based on the permissions above.
 
 Closed in M2: direct `customers_insert` and `suppliers_insert` were removed so RPCs are the canonical create path. M5.5 keeps account creation atomic when `create_account = true`, and also supports a later ensure-account action for profiles created without ledger accounts.
 
-### Existing Gaps Phase 4 Must Close
+### Initial Gaps Phase 4 Was Created To Close
+
+This section is historical from the start of Phase 4. Several items are now closed through M5.6; use `ai_memory.md` for the current live status.
 
 - No customer/supplier Flutter feature exists yet.
 - No chart-of-accounts Flutter feature exists yet.
 - No customer/supplier repositories or validators exist yet.
 - No customer/supplier route constants or GoRouter routes exist yet.
 - No customer/supplier navigation entries exist yet.
-- No `customer_service_locations` table exists yet. Contracts, visits, calendar events, and rented units currently cannot distinguish a customer's head office from a specific branch/site.
+- `customer_service_locations` did not exist at Phase 4 start; this is now closed by migration `047`.
 - No RPC exists for:
   - generating `CUST-0001`.
   - generating `SUP-0001`.
@@ -884,6 +886,31 @@ Add Dart tests:
 
 ---
 
+## M5.7 - Service Location Coordinates Foundation
+
+### Goal
+
+Make service-location coordinates reliable enough for visits, native directions, and later operations maps.
+
+### Scope
+
+- Keep `customer_service_locations.latitude` and `customer_service_locations.longitude` as the operational coordinate truth.
+- Keep `google_maps_url` as a source/link only.
+- Add `resolution_source` when coordinate capture is implemented: `map_pick`, `device_gps`, `url`, or `manual`.
+- Add `resolved_at`, `coordinate_accuracy_m`, and optional `resolution_status`/`resolution_error` so the source and quality of coordinates remain auditable later.
+- Add "Use current location" where the UI runs on a location-capable device.
+- Add a Google Maps URL resolver Edge Function later for shortened links.
+- Defer choose-on-map UI until the map package is selected.
+
+### Acceptance
+
+- A service location can store coordinates and the source that produced them.
+- A service location can show when coordinates were resolved and whether they came from GPS, map pick, URL, or manual entry.
+- Visits and calendar can consume service-location coordinates without customer-level GPS fields.
+- Pasted map links never become the location truth unless resolved into coordinates.
+
+---
+
 ## M6 - Customer Detail, Statement & Timeline
 
 ### Goal
@@ -1216,13 +1243,15 @@ Phase close means the database rules, UI, permissions, localization, tests, and 
 
 ## Starting Point For Next Coding Session
 
-Current project state is after M5.5. Start with M5.6.
+Current project state is after **M5.6 complete** (service locations, Locations tab on customer detail). **Next: M6** Customer Detail, Statement & Timeline (Customer 360 shell).
 
 The first implementation target should be:
 
 ```text
-supabase/migrations/047_customer_service_locations.sql
-supabase/tests/phase_4_customer_service_locations.sql
+lib/features/customers/presentation/customer_detail_screen.dart
+lib/features/customers/presentation/customer_detail_controller.dart
+lib/features/customers/presentation/customer_statement_controller.dart
+test/features/customers/presentation/customer_detail_screen_test.dart
 ```
 
-After the database layer passes, add the Dart service-location domain/repository layer, then update customer detail/forms. Do not start M6 Customer Detail as a full shell until M5.6 is implemented and verified.
+Optional add-on **M5.7 / Phase 4.7** (location coordinates foundation) is not a blocker for M6. Do not mix map/GPS capture into the M6 shell.

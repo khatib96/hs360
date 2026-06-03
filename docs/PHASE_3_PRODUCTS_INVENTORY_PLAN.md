@@ -2,6 +2,7 @@
 
 > Purpose: build the first real business module on top of Phase 2 auth, routing, permissions, and locale foundation.
 > Updated 2026-05-19.
+> 2026-06-03 override: Phase 3 is complete. Older SKU UI mentions in this plan are historical; canonical behavior is that `products.sku` remains an internal generated code hidden from normal product UI. See `docs/CANONICAL_DECISIONS.md` and `docs/CAPABILITIES_DECISION_REPORT.md`.
 
 ---
 

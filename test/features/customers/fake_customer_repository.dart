@@ -14,12 +14,21 @@ class FakeCustomerRepository extends CustomerRepository {
     List<Customer> customers = const [],
     this.fetchError,
     this.mutationError,
+    this.statementRows = const [],
+    CustomerBalanceSummary? balanceSummary,
+    this.statementError,
+    this.balanceError,
   })  : customers = List<Customer>.from(customers),
+        balanceSummary = balanceSummary ?? CustomerBalanceSummary.zero(),
         super(null);
 
   List<Customer> customers;
   final Object? fetchError;
   final Object? mutationError;
+  final List<CustomerStatementRow> statementRows;
+  final CustomerBalanceSummary balanceSummary;
+  Object? statementError;
+  Object? balanceError;
 
   CustomerFilters? lastFilters;
   CustomerFormState? lastCreateInput;
@@ -154,7 +163,16 @@ class FakeCustomerRepository extends CustomerRepository {
     DateTime? to,
   }) async {
     statementCallCount++;
-    throw StateError('M5 must not call fetchCustomerStatement');
+    if (!session.isManager &&
+        !session.permissions.can('customers.view_ledger')) {
+      throw const CustomerException(code: CustomerException.permissionDenied);
+    }
+    final error = statementError;
+    if (error != null) {
+      if (error is CustomerException) throw error;
+      throw const CustomerException(code: CustomerException.unknown);
+    }
+    return statementRows;
   }
 
   @override
@@ -163,7 +181,16 @@ class FakeCustomerRepository extends CustomerRepository {
     String customerId,
   ) async {
     balanceCallCount++;
-    throw StateError('M5 must not call fetchCustomerBalanceSummary');
+    if (!session.isManager &&
+        !session.permissions.can('customers.view_ledger')) {
+      throw const CustomerException(code: CustomerException.permissionDenied);
+    }
+    final error = balanceError ?? statementError;
+    if (error != null) {
+      if (error is CustomerException) throw error;
+      throw const CustomerException(code: CustomerException.unknown);
+    }
+    return balanceSummary;
   }
 }
 

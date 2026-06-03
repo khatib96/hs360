@@ -2078,6 +2078,228 @@ abstract class AppLocalizations {
   /// **'Timeline'**
   String get customerTimeline;
 
+  /// Customer detail profile tab
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get customerProfile;
+
+  /// Customer detail contracts tab
+  ///
+  /// In en, this message translates to:
+  /// **'Contracts'**
+  String get customerContracts;
+
+  /// Customer detail invoices tab
+  ///
+  /// In en, this message translates to:
+  /// **'Invoices'**
+  String get customerInvoices;
+
+  /// Customer detail vouchers tab
+  ///
+  /// In en, this message translates to:
+  /// **'Vouchers'**
+  String get customerVouchers;
+
+  /// Shown when customer detail id does not resolve
+  ///
+  /// In en, this message translates to:
+  /// **'Customer not found.'**
+  String get customerNotFound;
+
+  /// Header label for primary service location summary
+  ///
+  /// In en, this message translates to:
+  /// **'Primary location'**
+  String get customerPrimaryLocationSummary;
+
+  /// Header status when customer has no accounting account
+  ///
+  /// In en, this message translates to:
+  /// **'No linked A/R account'**
+  String get customerAccountNotLinked;
+
+  /// Label for linked accounting account id
+  ///
+  /// In en, this message translates to:
+  /// **'Account ID'**
+  String get customerAccountIdLabel;
+
+  /// Statement tab when customers.view_ledger is missing
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have permission to view this customer\'s ledger.'**
+  String get customerLedgerPermissionDenied;
+
+  /// Statement tab empty state for permitted user
+  ///
+  /// In en, this message translates to:
+  /// **'No ledger movements yet.'**
+  String get customerStatementEmpty;
+
+  /// Statement tab before first load is triggered
+  ///
+  /// In en, this message translates to:
+  /// **'Open this tab to load the statement.'**
+  String get customerStatementNotLoaded;
+
+  /// Statement summary section title
+  ///
+  /// In en, this message translates to:
+  /// **'Account summary'**
+  String get customerStatementSummaryTitle;
+
+  /// Statement debit column/label
+  ///
+  /// In en, this message translates to:
+  /// **'Debit'**
+  String get customerStatementDebit;
+
+  /// Statement credit column/label
+  ///
+  /// In en, this message translates to:
+  /// **'Credit'**
+  String get customerStatementCredit;
+
+  /// Statement running balance column/label
+  ///
+  /// In en, this message translates to:
+  /// **'Balance'**
+  String get customerStatementBalance;
+
+  /// Statement table date column
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get customerStatementColumnDate;
+
+  /// Statement table entry number column
+  ///
+  /// In en, this message translates to:
+  /// **'Entry'**
+  String get customerStatementColumnEntry;
+
+  /// Statement table journal source column
+  ///
+  /// In en, this message translates to:
+  /// **'Source'**
+  String get customerStatementColumnSource;
+
+  /// Statement table description column
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get customerStatementColumnDescription;
+
+  /// Contracts tab empty state when user can view contracts
+  ///
+  /// In en, this message translates to:
+  /// **'No contracts yet.'**
+  String get customerContractsEmpty;
+
+  /// Invoices tab empty state when user can view invoices
+  ///
+  /// In en, this message translates to:
+  /// **'No invoices yet.'**
+  String get customerInvoicesEmpty;
+
+  /// Vouchers tab empty state when user can view vouchers
+  ///
+  /// In en, this message translates to:
+  /// **'No vouchers yet.'**
+  String get customerVouchersEmpty;
+
+  /// Timeline tab when no metadata events exist
+  ///
+  /// In en, this message translates to:
+  /// **'No timeline events yet.'**
+  String get customerTimelineEmpty;
+
+  /// Timeline event for customer creation
+  ///
+  /// In en, this message translates to:
+  /// **'Customer created'**
+  String get customerTimelineCreated;
+
+  /// Timeline event for profile update
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated'**
+  String get customerTimelineUpdated;
+
+  /// Timeline event for customer acquisition
+  ///
+  /// In en, this message translates to:
+  /// **'Customer acquired'**
+  String get customerTimelineAcquired;
+
+  /// No description provided for @journalSourceManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual entry'**
+  String get journalSourceManual;
+
+  /// No description provided for @journalSourceSalesInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Sales invoice'**
+  String get journalSourceSalesInvoice;
+
+  /// No description provided for @journalSourcePurchaseInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase invoice'**
+  String get journalSourcePurchaseInvoice;
+
+  /// No description provided for @journalSourceReceiptVoucher.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt voucher'**
+  String get journalSourceReceiptVoucher;
+
+  /// No description provided for @journalSourcePaymentVoucher.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment voucher'**
+  String get journalSourcePaymentVoucher;
+
+  /// No description provided for @journalSourceRentalInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Rental invoice'**
+  String get journalSourceRentalInvoice;
+
+  /// No description provided for @journalSourceContractCreation.
+  ///
+  /// In en, this message translates to:
+  /// **'Contract creation'**
+  String get journalSourceContractCreation;
+
+  /// No description provided for @journalSourceContractClosure.
+  ///
+  /// In en, this message translates to:
+  /// **'Contract closure'**
+  String get journalSourceContractClosure;
+
+  /// No description provided for @journalSourceOpeningBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening balance'**
+  String get journalSourceOpeningBalance;
+
+  /// No description provided for @journalSourceInventoryAdjustment.
+  ///
+  /// In en, this message translates to:
+  /// **'Inventory adjustment'**
+  String get journalSourceInventoryAdjustment;
+
+  /// No description provided for @journalSourceSalaryPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Salary payment'**
+  String get journalSourceSalaryPayment;
+
   /// Chart of accounts module title and navigation label
   ///
   /// In en, this message translates to:
@@ -2105,7 +2327,7 @@ abstract class AppLocalizations {
   /// Placeholder when customer detail content is not yet available
   ///
   /// In en, this message translates to:
-  /// **'Details will be enabled when this module is completed.'**
+  /// **'Customer not found or unavailable.'**
   String get customerDetailsUnavailable;
 
   /// Placeholder when customer edit form is not yet available

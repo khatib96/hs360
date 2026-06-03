@@ -113,8 +113,11 @@ Tap "Begin visit" → app:
 1. Requests GPS permission if not granted
 2. Captures `check_in_lat`, `check_in_lng`
 3. Compares against the visit's `service_location_id` coordinates, falling back to the contract location snapshot when needed
-4. If within `gps_accuracy_threshold_m` (tenant setting): ✓ verified
-5. If outside: warning shown but visit can proceed (Manager sees flag in report)
+4. Uses tenant `gps_accuracy_threshold_m` plus the captured device accuracy to decide match
+5. If within range: verified
+6. If outside range: warning shown, reason required to proceed, and Manager sees the flag in reports
+
+Visit detail should also expose a "Directions" action that opens the native maps app using the service-location coordinates. This is a `url_launcher` deep link, separate from the later internal operations map.
 
 ### 4.2 Step 2: Refill Form
 
@@ -511,11 +514,12 @@ Agent taps "Device issue":
 - Inventory: qty_rented decreases, qty_maintenance increases
 - Customer gets a notification (per tenant settings)
 
-### 13.3 GPS Way Off
-If GPS is more than 5km from the service location or contract snapshot:
-- App shows hard warning: "You appear to be far from {service location}. Are you sure?"
+### 13.3 GPS Outside Allowed Range
+If GPS is outside the configured radius from the service location or contract snapshot:
+- App shows warning: "You appear to be far from {service location}. Are you sure?"
 - Agent must enter a reason to proceed
 - Visit gets a `location_match = false` flag
+- The captured `check_in_accuracy_m` is stored so weak GPS accuracy can be reviewed fairly
 - Admin sees it highlighted in reports
 
 ### 13.4 Wrong Customer

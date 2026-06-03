@@ -22,6 +22,8 @@
 - Products with dual units: primary, secondary, conversion factor.
 - Serialized product units for rental assets.
 - Product-level barcode and unit-level serial number.
+- Internal generated SKU hidden from normal product UI.
+- Basic QR/asset tag printing for serialized rental units.
 - Basic inventory balances by warehouse.
 
 ### Customers
@@ -48,6 +50,7 @@
 - Manual purchase invoice.
 - Confirm/cancel lifecycle.
 - Journal entries created by RPCs.
+- Basic JSON-template PDF/print output.
 
 ### Vouchers
 
@@ -55,12 +58,14 @@
 - Payment voucher.
 - FIFO allocation for receipts.
 - Journal entries created by RPCs.
+- Basic JSON-template PDF/print output.
 
 ### Mobile Refill Flow
 
 - Today's assigned refill visits.
 - Visit address/map/GPS from the tied service location.
 - GPS check-in.
+- GPS mismatch proceeds only with reason and is flagged for review.
 - Camera-only photo.
 - Refill quantity and oil product.
 - Optional receipt voucher if payment is collected.
@@ -90,6 +95,8 @@
 - Quotations.
 - Trial contracts.
 - Offline mobile sync.
+- Visual document template editor.
+- Internal operations map with clustering.
 - Full P&L reports.
 - Contract profitability dashboard beyond stored snapshots.
 - Certificate pinning.
