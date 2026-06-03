@@ -996,10 +996,14 @@ Required:
 - filter active/inactive.
 - badge for:
   - system account.
+  - manual account.
   - customer subaccount.
   - supplier subaccount.
   - inactive.
 - expand/collapse tree.
+- clear setup warning when required A/R or A/P parent accounts are missing:
+  - `Accounts Receivable parent (1201) is missing. Customer subaccounts may not function correctly.`
+  - `Accounts Payable parent (2101) is missing. Supplier subaccounts may not function correctly.`
 
 ### Account Actions
 
@@ -1013,9 +1017,19 @@ Blocked:
 
 - delete/deactivate system account if unsafe.
 - delete/deactivate linked customer/supplier account manually.
+- edit account `code`.
+- move accounts by changing `parent_id`.
 - change account `type` if child accounts or journal lines exist.
 - change `tenant_id`.
 - change `related_entity_*` from UI.
+
+### Out Of Scope Inside M7
+
+- no account merge.
+- no account move/reparenting.
+- no tax foundation.
+- no VAT/GST setup.
+- no required tax posting accounts such as Input VAT Recoverable or Output VAT Payable. Those are Phase 5 Tax Foundation system accounts.
 
 ### Accounting Rules
 

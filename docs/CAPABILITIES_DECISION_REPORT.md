@@ -142,8 +142,21 @@ Put this before invoice/voucher screens:
 6. Generate missing serials reconcile/backfill tool, manager-only and audited.
 7. Structured document template schema and tenant document settings.
 8. Flutter PDF/print renderer for invoice, receipt voucher, and asset tag.
-9. Purchase invoice unit generation in the same transaction as stock/accounting.
-10. Asset tag batch printing.
+9. Tax Foundation before invoice RPCs: tenant tax settings, `tax_rates`, product tax classes, invoice-line tax snapshots, and tax posting account references.
+10. Purchase invoice unit generation in the same transaction as stock/accounting.
+11. Asset tag batch printing.
+
+### Phase 5 Tax Foundation
+
+Tax is part of invoice foundation, not a standalone Phase 4 feature.
+
+- Keep tax disabled by default for Kuwait/default v1 tenants, but keep invoice math tax-ready.
+- Use `default_tax_rate_id`, not a raw numeric default tax rate.
+- Use explicit product tax classes such as `taxable`, `zero_rated`, `exempt`, and `non_taxable`.
+- `tax_rates` should include `effective_from`, optional `effective_to`, `output_account_id`, `input_account_id`, optional `expense_account_id`, and `is_recoverable`.
+- Invoice lines must snapshot the tax rate/class/amount at issue or confirmation time so old invoices do not change when rates change.
+- Tax posting accounts are protected system accounts created/provisioned in Tax Foundation, not a requirement for Phase 4 M7.
+- Do not include VAT returns, government APIs, e-invoicing, ZATCA, FTA, or country-specific filing in this foundation.
 
 ### Phase 6
 
@@ -169,6 +182,7 @@ Put this before invoice/voucher screens:
 
 - **Backfill risk:** creating units for existing stock must not increase stock again.
 - **Accounting risk:** purchase invoices that create units must keep inventory movements, balances, WAC, and journal entries in one transaction.
+- **Tax risk:** invoice RPCs must not be built before tax snapshots and tax posting rules are fixed, even when the default tenant has tax disabled.
 - **Template risk:** building a visual editor too early will delay core accounting. Use JSON templates plus simple settings first.
 - **Location risk:** pasted map URLs are convenient but unreliable. Device GPS and map-pick are stronger sources.
 - **Permission risk:** serial correction and template editing are sensitive; both need explicit permissions and audit logs.

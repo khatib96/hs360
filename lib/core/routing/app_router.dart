@@ -10,7 +10,7 @@ import '../../features/field_ops/presentation/field_today_screen.dart';
 import '../../features/products/presentation/product_detail_screen.dart';
 import '../../features/products/presentation/product_list_screen.dart';
 import '../../features/products/presentation/product_wizard_screen.dart';
-import '../../features/accounting/presentation/chart_of_accounts_placeholder_screen.dart';
+import '../../features/accounting/presentation/chart_of_accounts_screen.dart';
 import '../../features/customers/presentation/customer_detail_screen.dart';
 import '../../features/customers/presentation/customer_edit_screen.dart';
 import '../../features/customers/presentation/customers_hub_screen.dart';
@@ -132,7 +132,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.accounts,
         name: AppRoutes.accountsName,
-        builder: (context, state) => const ChartOfAccountsPlaceholderScreen(),
+        builder: (context, state) => const ChartOfAccountsScreen(),
       ),
       GoRoute(
         path: AppRoutes.inventoryMovements,

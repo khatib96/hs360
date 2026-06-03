@@ -1629,4 +1629,174 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get serviceLocationOpenMaps => 'فتح رابط الخريطة';
+
+  @override
+  String get chartAccountSearchHint => 'ابحث بالكود أو الاسم';
+
+  @override
+  String get chartAccountFilterType => 'نوع الحساب';
+
+  @override
+  String get chartAccountFilterAllTypes => 'كل الأنواع';
+
+  @override
+  String get chartAccountFilterStatus => 'الحالة';
+
+  @override
+  String get chartAccountFilterAll => 'الكل';
+
+  @override
+  String get chartAccountStatusActive => 'نشط';
+
+  @override
+  String get chartAccountStatusInactive => 'غير نشط';
+
+  @override
+  String get chartAccountClearFilters => 'مسح عوامل التصفية';
+
+  @override
+  String get chartAccountTypeAsset => 'أصول';
+
+  @override
+  String get chartAccountTypeLiability => 'خصوم';
+
+  @override
+  String get chartAccountTypeEquity => 'حقوق ملكية';
+
+  @override
+  String get chartAccountTypeIncome => 'إيرادات';
+
+  @override
+  String get chartAccountTypeExpense => 'مصروفات';
+
+  @override
+  String get chartAccountBadgeSystem => 'نظام';
+
+  @override
+  String get chartAccountBadgeManual => 'يدوي';
+
+  @override
+  String get chartAccountBadgeCustomer => 'عميل';
+
+  @override
+  String get chartAccountBadgeSupplier => 'مورد';
+
+  @override
+  String get chartAccountBadgeInactive => 'غير نشط';
+
+  @override
+  String get chartAccountAdd => 'إضافة حساب';
+
+  @override
+  String get chartAccountEdit => 'تعديل حساب';
+
+  @override
+  String get chartAccountDeactivate => 'إلغاء التنشيط';
+
+  @override
+  String get chartAccountExpandAll => 'توسيع الكل';
+
+  @override
+  String get chartAccountCollapseAll => 'طي الكل';
+
+  @override
+  String get chartAccountCreateTitle => 'حساب جديد';
+
+  @override
+  String get chartAccountEditTitle => 'تعديل حساب';
+
+  @override
+  String get chartAccountFieldCode => 'الكود';
+
+  @override
+  String get chartAccountFieldNameAr => 'الاسم (عربي)';
+
+  @override
+  String get chartAccountFieldNameEn => 'الاسم (إنجليزي)';
+
+  @override
+  String get chartAccountFieldType => 'النوع';
+
+  @override
+  String get chartAccountFieldParent => 'الحساب الأب';
+
+  @override
+  String get chartAccountParentNone => 'بدون (مستوى جذر)';
+
+  @override
+  String get chartAccountCodeReadOnlyHint =>
+      'لا يمكن تغيير كود الحساب بعد الإنشاء.';
+
+  @override
+  String get chartAccountCreated => 'تم إنشاء الحساب.';
+
+  @override
+  String get chartAccountUpdated => 'تم حفظ الحساب.';
+
+  @override
+  String get chartAccountDeactivated => 'تم إلغاء تنشيط الحساب.';
+
+  @override
+  String get chartAccountListEmpty => 'لا توجد حسابات بعد.';
+
+  @override
+  String get chartAccountListEmptyFiltered =>
+      'لا توجد حسابات مطابقة لعوامل التصفية.';
+
+  @override
+  String get chartAccountDeactivateConfirmTitle => 'إلغاء تنشيط الحساب';
+
+  @override
+  String get chartAccountDeactivateConfirmBody =>
+      'سيتم وضع علامة غير نشط على هذا الحساب. هل تريد المتابعة؟';
+
+  @override
+  String get chartAccountSetupArMissing =>
+      'حساب أب الذمم المدينة (1201) مفقود. قد لا تعمل حسابات العملاء الفرعية بشكل صحيح.';
+
+  @override
+  String get chartAccountSetupApMissing =>
+      'حساب أب الذمم الدائنة (2101) مفقود. قد لا تعمل حسابات الموردين الفرعية بشكل صحيح.';
+
+  @override
+  String get chartAccountErrorPermissionDenied =>
+      'لا تملك صلاحية لهذا الإجراء.';
+
+  @override
+  String get chartAccountErrorUnknown => 'حدث خطأ. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get chartAccountValidationFailed =>
+      'يرجى مراجعة النموذج والمحاولة مرة أخرى.';
+
+  @override
+  String get chartAccountValidationCodeRequired => 'كود الحساب مطلوب.';
+
+  @override
+  String get chartAccountValidationNameArRequired => 'الاسم العربي مطلوب.';
+
+  @override
+  String get chartAccountValidationNameEnRequired => 'الاسم الإنجليزي مطلوب.';
+
+  @override
+  String get chartAccountErrorParentTypeMismatch =>
+      'يجب أن يطابق نوع الحساب نوع الحساب الأب.';
+
+  @override
+  String get chartAccountErrorDuplicateCode => 'كود الحساب مستخدم بالفعل.';
+
+  @override
+  String get chartAccountErrorAccountProtected =>
+      'هذا الحساب محمي ولا يمكن تعديله.';
+
+  @override
+  String get chartAccountErrorTypeChangeUnsafe =>
+      'لا يمكن تغيير نوع الحساب طالما له حسابات فرعية أو قيود يومية.';
+
+  @override
+  String get chartAccountErrorHasActiveChildren =>
+      'لا يمكن إلغاء تنشيط حساب له حسابات فرعية نشطة.';
+
+  @override
+  String get chartAccountErrorImmutableColumn => 'لا يمكن تغيير هذا الحقل.';
 }

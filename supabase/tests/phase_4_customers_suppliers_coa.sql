@@ -692,7 +692,7 @@ begin
     perform create_chart_account(jsonb_build_object('code','9501','name_ar','ابن','name_en','Child','type','liability','parent_id',v_parent::text));
     raise exception 'case28 failed: type-mismatch child accepted';
   exception when others then
-    if sqlerrm <> 'validation_failed' then raise exception 'case28 failed: mismatch expected validation_failed, got %', sqlerrm; end if;
+    if sqlerrm <> 'parent_type_mismatch' then raise exception 'case28 failed: mismatch expected parent_type_mismatch, got %', sqlerrm; end if;
   end;
 
   -- matching active parent succeeds
@@ -701,7 +701,8 @@ begin
     raise exception 'case28 failed: valid child not created';
   end if;
 
-  -- now deactivate parent and confirm inactive parent is rejected
+  -- now deactivate child, then parent, and confirm inactive parent is rejected
+  perform deactivate_chart_account(v_child);
   perform deactivate_chart_account(v_parent);
   begin
     perform create_chart_account(jsonb_build_object('code','9503','name_ar','ابن','name_en','Child','type','asset','parent_id',v_parent::text));
@@ -740,7 +741,7 @@ begin
     perform update_chart_account(v_id, '{"is_active":false}'::jsonb);
     raise exception 'case29 failed: edit deactivated via is_active payload';
   exception when others then
-    if sqlerrm <> 'validation_failed' then raise exception 'case29 failed: expected validation_failed, got %', sqlerrm; end if;
+    if sqlerrm <> 'immutable_column' then raise exception 'case29 failed: expected immutable_column, got %', sqlerrm; end if;
   end;
 
   select is_active into v_active from chart_of_accounts where id = v_id;
@@ -1111,6 +1112,365 @@ begin
   exception when others then
     if sqlerrm <> 'immutable_column' then
       raise exception 'case39d failed: expected immutable_column, got %', sqlerrm;
+    end if;
+  end;
+end $$;
+rollback;
+
+-- 40. M7: update_chart_account rejects immutable payload keys.
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+do $$
+declare
+  v_id uuid;
+begin
+  v_id := create_chart_account('{"code":"9910","name_ar":"M7","name_en":"M7","type":"expense"}'::jsonb);
+  perform set_config('test.phase4.m7_manual', v_id::text, true);
+end $$;
+reset role;
+do $$
+declare
+  v_id uuid := current_setting('test.phase4.m7_manual')::uuid;
+begin
+  begin
+    perform update_chart_account(v_id, '{"code":"9911"}'::jsonb);
+    raise exception 'case40a failed: code update succeeded';
+  exception when others then
+    if sqlerrm <> 'immutable_column' then
+      raise exception 'case40a failed: expected immutable_column, got %', sqlerrm;
+    end if;
+  end;
+  begin
+    perform update_chart_account(v_id, '{"parent_id":"00000000-0000-0000-0000-000000000001"}'::jsonb);
+    raise exception 'case40b failed: parent_id update succeeded';
+  exception when others then
+    if sqlerrm <> 'immutable_column' then
+      raise exception 'case40b failed: expected immutable_column, got %', sqlerrm;
+    end if;
+  end;
+end $$;
+rollback;
+
+-- 41. M7: update type mismatch with parent raises parent_type_mismatch.
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+do $$
+declare
+  v_parent uuid;
+  v_child uuid;
+begin
+  v_parent := create_chart_account('{"code":"9912","name_ar":"Parent","name_en":"Parent","type":"asset"}'::jsonb);
+  v_child := create_chart_account(jsonb_build_object(
+    'code', '9913', 'name_ar', 'Child', 'name_en', 'Child',
+    'type', 'asset', 'parent_id', v_parent::text
+  ));
+  perform set_config('test.phase4.m7_child', v_child::text, true);
+end $$;
+reset role;
+do $$
+declare
+  v_child uuid := current_setting('test.phase4.m7_child')::uuid;
+begin
+  begin
+    perform update_chart_account(v_child, '{"type":"liability"}'::jsonb);
+    raise exception 'case41 failed: type change succeeded';
+  exception when others then
+    if sqlerrm <> 'parent_type_mismatch' then
+      raise exception 'case41 failed: expected parent_type_mismatch, got %', sqlerrm;
+    end if;
+  end;
+end $$;
+rollback;
+
+-- 42. M7: create under entity-linked parent rejected.
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+do $$
+declare
+  v_cust uuid;
+  v_linked_parent uuid;
+begin
+  v_cust := create_customer('{"name_ar":"M7 Parent","phone_primary":"+96550002008","create_account":true}'::jsonb);
+  select account_id into v_linked_parent from customers where id = v_cust;
+  perform set_config('test.phase4.m7_linked_parent', v_linked_parent::text, true);
+end $$;
+reset role;
+do $$
+declare
+  v_parent uuid := current_setting('test.phase4.m7_linked_parent')::uuid;
+begin
+  begin
+    perform create_chart_account(jsonb_build_object(
+      'code', '9914', 'name_ar', 'Bad', 'name_en', 'Bad',
+      'type', 'asset', 'parent_id', v_parent::text
+    ));
+    raise exception 'case42 failed: create under entity-linked parent succeeded';
+  exception when others then
+    if sqlerrm <> 'validation_failed' then
+      raise exception 'case42 failed: expected validation_failed, got %', sqlerrm;
+    end if;
+  end;
+end $$;
+rollback;
+
+-- 43. M7: deactivate parent with active child rejected; inactive children allowed.
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+do $$
+declare
+  v_parent uuid;
+  v_child uuid;
+  v_parent2 uuid;
+  v_child2 uuid;
+begin
+  v_parent := create_chart_account('{"code":"9915","name_ar":"P","name_en":"P","type":"expense"}'::jsonb);
+  v_child := create_chart_account(jsonb_build_object(
+    'code', '9916', 'name_ar', 'C', 'name_en', 'C',
+    'type', 'expense', 'parent_id', v_parent::text
+  ));
+  v_parent2 := create_chart_account('{"code":"9918","name_ar":"P2","name_en":"P2","type":"expense"}'::jsonb);
+  v_child2 := create_chart_account(jsonb_build_object(
+    'code', '9919', 'name_ar', 'C2', 'name_en', 'C2',
+    'type', 'expense', 'parent_id', v_parent2::text
+  ));
+  perform set_config('test.phase4.m7_parent', v_parent::text, true);
+  perform set_config('test.phase4.m7_child', v_child::text, true);
+  perform set_config('test.phase4.m7_parent2', v_parent2::text, true);
+  perform set_config('test.phase4.m7_child2', v_child2::text, true);
+end $$;
+reset role;
+do $$
+declare
+  v_parent uuid := current_setting('test.phase4.m7_parent')::uuid;
+  v_child uuid := current_setting('test.phase4.m7_child')::uuid;
+  v_parent2 uuid := current_setting('test.phase4.m7_parent2')::uuid;
+  v_child2 uuid := current_setting('test.phase4.m7_child2')::uuid;
+begin
+  begin
+    perform deactivate_chart_account(v_parent);
+    raise exception 'case43a failed: deactivate with active child succeeded';
+  exception when others then
+    if sqlerrm <> 'account_has_active_children' then
+      raise exception 'case43a failed: expected account_has_active_children, got %', sqlerrm;
+    end if;
+  end;
+
+  perform deactivate_chart_account(v_child);
+  perform deactivate_chart_account(v_parent);
+
+  begin
+    update chart_of_accounts set is_active = false where id = v_parent2;
+    raise exception 'case43b failed: direct update deactivate with active child succeeded';
+  exception when others then
+    if sqlerrm <> 'account_has_active_children' then
+      raise exception 'case43b failed: trigger expected account_has_active_children, got %', sqlerrm;
+    end if;
+  end;
+
+  perform deactivate_chart_account(v_child2);
+  update chart_of_accounts set is_active = false where id = v_parent2;
+end $$;
+rollback;
+
+-- 44. M7.5: seeded Arabic names are real UTF-8, not question marks.
+begin;
+do $$
+declare
+  v_tenant_a uuid := '00000000-0000-0000-0000-000000000101';
+  v_bad int;
+begin
+  select count(*) into v_bad
+  from chart_of_accounts
+  where tenant_id = v_tenant_a
+    and code in (
+      '1000', '2000', '3000', '4000', '5000',
+      '1101', '1102', '1201', '1301', '2101', '4101', '5101', '6101'
+    )
+    and name_ar like '%?%';
+
+  if v_bad <> 0 then
+    raise exception 'case44 failed: % core accounts have corrupted Arabic (?)', v_bad;
+  end if;
+
+  if (select name_ar from chart_of_accounts where tenant_id = v_tenant_a and code = '1101')
+    <> U&'\0627\0644\0635\0646\062F\0648\0642' UESCAPE '\' then
+    raise exception 'case44 failed: 1101 Arabic mismatch';
+  end if;
+
+  if (select name_ar from chart_of_accounts where tenant_id = v_tenant_a and code = '3000')
+    <> U&'\062D\0642\0648\0642 \0627\0644\0645\0644\0643\064A\0629' UESCAPE '\' then
+    raise exception 'case44 failed: 3000 Equity Arabic mismatch';
+  end if;
+end $$;
+rollback;
+
+-- 45. M7.5: category roots + parent-child hierarchy for core system accounts.
+begin;
+do $$
+declare
+  v_tenant_a uuid := '00000000-0000-0000-0000-000000000101';
+  v_assets uuid;
+  v_liab uuid;
+  v_equity uuid;
+  v_rev uuid;
+  v_exp uuid;
+  v_rec record;
+begin
+  select id into v_assets from chart_of_accounts where tenant_id = v_tenant_a and code = '1000';
+  select id into v_liab from chart_of_accounts where tenant_id = v_tenant_a and code = '2000';
+  select id into v_equity from chart_of_accounts where tenant_id = v_tenant_a and code = '3000';
+  select id into v_rev from chart_of_accounts where tenant_id = v_tenant_a and code = '4000';
+  select id into v_exp from chart_of_accounts where tenant_id = v_tenant_a and code = '5000';
+
+  if v_assets is null or v_liab is null or v_equity is null or v_rev is null or v_exp is null then
+    raise exception 'case45 failed: missing category root (1000-5000)';
+  end if;
+
+  select * into v_rec from chart_of_accounts where tenant_id = v_tenant_a and code = '3000';
+  if v_rec.type <> 'equity' or v_rec.is_system is not true or v_rec.parent_id is not null then
+    raise exception 'case45 failed: 3000 Equity root flags wrong';
+  end if;
+
+  if exists (
+    select 1 from chart_of_accounts
+    where tenant_id = v_tenant_a
+      and code in ('1101', '1102', '1201', '1301')
+      and parent_id is distinct from v_assets
+  ) then
+    raise exception 'case45 failed: asset leaf not under 1000';
+  end if;
+
+  if (select parent_id from chart_of_accounts where tenant_id = v_tenant_a and code = '2101')
+    <> v_liab then
+    raise exception 'case45 failed: 2101 not under 2000';
+  end if;
+
+  if (select parent_id from chart_of_accounts where tenant_id = v_tenant_a and code = '4101')
+    <> v_rev then
+    raise exception 'case45 failed: 4101 not under 4000';
+  end if;
+
+  if exists (
+    select 1 from chart_of_accounts
+    where tenant_id = v_tenant_a
+      and code in ('5101', '6101')
+      and parent_id is distinct from v_exp
+  ) then
+    raise exception 'case45 failed: expense leaf not under 5000';
+  end if;
+end $$;
+rollback;
+
+-- 46. M7.5: unique (tenant_id, code) exists; duplicate 1101 rejected.
+begin;
+do $$
+declare
+  v_tenant_a uuid := '00000000-0000-0000-0000-000000000101';
+  v_dupes int;
+  v_has_unique boolean;
+begin
+  select count(*) into v_dupes
+  from (
+    select tenant_id, code
+    from chart_of_accounts
+    group by tenant_id, code
+    having count(*) > 1
+  ) d;
+
+  if v_dupes <> 0 then
+    raise exception 'case46 failed: duplicate (tenant_id, code) groups exist';
+  end if;
+
+  select exists (
+    select 1
+    from pg_constraint c
+    join pg_class t on c.conrelid = t.oid
+    join pg_namespace n on t.relnamespace = n.oid
+    where n.nspname = 'public'
+      and t.relname = 'chart_of_accounts'
+      and c.contype = 'u'
+      and pg_get_constraintdef(c.oid) ~ 'tenant_id.*code|code.*tenant_id'
+  ) into v_has_unique;
+
+  if not v_has_unique then
+    raise exception 'case46 failed: unique (tenant_id, code) constraint missing';
+  end if;
+end $$;
+reset role;
+do $$
+declare
+  v_tenant_a uuid := '00000000-0000-0000-0000-000000000101';
+begin
+  begin
+    insert into chart_of_accounts (tenant_id, code, name_ar, name_en, type, is_system)
+    values (
+      v_tenant_a, '1101',
+      U&'\0627\0644\0635\0646\062F\0648\0642' UESCAPE '\',
+      'Duplicate cash', 'asset', true
+    );
+    raise exception 'case46 failed: duplicate 1101 insert succeeded';
+  exception
+    when unique_violation then null;
+  end;
+end $$;
+rollback;
+
+-- 47. M7.5: category root 1000 protected like system leaf 1101.
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+do $$
+declare
+  v_tenant_a uuid := '00000000-0000-0000-0000-000000000101';
+  v_root uuid;
+begin
+  select id into v_root from chart_of_accounts where tenant_id = v_tenant_a and code = '1000';
+
+  begin
+    perform update_chart_account(v_root, '{"name_ar":"hack"}'::jsonb);
+    raise exception 'case47 failed: update_chart_account on root 1000 succeeded';
+  exception when others then
+    if sqlerrm <> 'account_protected' then
+      raise exception 'case47 failed: expected account_protected, got %', sqlerrm;
+    end if;
+  end;
+
+  begin
+    perform deactivate_chart_account(v_root);
+    raise exception 'case47 failed: deactivate_chart_account on root 1000 succeeded';
+  exception when others then
+    if sqlerrm <> 'account_protected' then
+      raise exception 'case47 failed: expected account_protected, got %', sqlerrm;
+    end if;
+  end;
+end $$;
+reset role;
+do $$
+declare
+  v_tenant_a uuid := '00000000-0000-0000-0000-000000000101';
+  v_root uuid;
+begin
+  select id into v_root from chart_of_accounts where tenant_id = v_tenant_a and code = '1000';
+
+  begin
+    update chart_of_accounts set name_ar = 'hack' where id = v_root;
+    raise exception 'case47 failed: owner update on root 1000 succeeded';
+  exception when others then
+    if sqlerrm <> 'account_protected' then
+      raise exception 'case47 failed: owner expected account_protected, got %', sqlerrm;
+    end if;
+  end;
+
+  begin
+    update chart_of_accounts set is_active = false where id = v_root;
+    raise exception 'case47 failed: owner deactivate on root 1000 succeeded';
+  exception when others then
+    if sqlerrm <> 'account_protected' then
+      raise exception 'case47 failed: owner deactivate expected account_protected, got %', sqlerrm;
     end if;
   end;
 end $$;

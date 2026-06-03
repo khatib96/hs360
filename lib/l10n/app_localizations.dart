@@ -3211,6 +3211,324 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open map link'**
   String get serviceLocationOpenMaps;
+
+  /// No description provided for @chartAccountSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by code or name'**
+  String get chartAccountSearchHint;
+
+  /// No description provided for @chartAccountFilterType.
+  ///
+  /// In en, this message translates to:
+  /// **'Account type'**
+  String get chartAccountFilterType;
+
+  /// No description provided for @chartAccountFilterAllTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'All types'**
+  String get chartAccountFilterAllTypes;
+
+  /// No description provided for @chartAccountFilterStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get chartAccountFilterStatus;
+
+  /// No description provided for @chartAccountFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get chartAccountFilterAll;
+
+  /// No description provided for @chartAccountStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get chartAccountStatusActive;
+
+  /// No description provided for @chartAccountStatusInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get chartAccountStatusInactive;
+
+  /// No description provided for @chartAccountClearFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear filters'**
+  String get chartAccountClearFilters;
+
+  /// No description provided for @chartAccountTypeAsset.
+  ///
+  /// In en, this message translates to:
+  /// **'Asset'**
+  String get chartAccountTypeAsset;
+
+  /// No description provided for @chartAccountTypeLiability.
+  ///
+  /// In en, this message translates to:
+  /// **'Liability'**
+  String get chartAccountTypeLiability;
+
+  /// No description provided for @chartAccountTypeEquity.
+  ///
+  /// In en, this message translates to:
+  /// **'Equity'**
+  String get chartAccountTypeEquity;
+
+  /// No description provided for @chartAccountTypeIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get chartAccountTypeIncome;
+
+  /// No description provided for @chartAccountTypeExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get chartAccountTypeExpense;
+
+  /// No description provided for @chartAccountBadgeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get chartAccountBadgeSystem;
+
+  /// No description provided for @chartAccountBadgeManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual'**
+  String get chartAccountBadgeManual;
+
+  /// No description provided for @chartAccountBadgeCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer'**
+  String get chartAccountBadgeCustomer;
+
+  /// No description provided for @chartAccountBadgeSupplier.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplier'**
+  String get chartAccountBadgeSupplier;
+
+  /// No description provided for @chartAccountBadgeInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get chartAccountBadgeInactive;
+
+  /// No description provided for @chartAccountAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add account'**
+  String get chartAccountAdd;
+
+  /// No description provided for @chartAccountEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit account'**
+  String get chartAccountEdit;
+
+  /// No description provided for @chartAccountDeactivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate'**
+  String get chartAccountDeactivate;
+
+  /// No description provided for @chartAccountExpandAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Expand all'**
+  String get chartAccountExpandAll;
+
+  /// No description provided for @chartAccountCollapseAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Collapse all'**
+  String get chartAccountCollapseAll;
+
+  /// No description provided for @chartAccountCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New account'**
+  String get chartAccountCreateTitle;
+
+  /// No description provided for @chartAccountEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit account'**
+  String get chartAccountEditTitle;
+
+  /// No description provided for @chartAccountFieldCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get chartAccountFieldCode;
+
+  /// No description provided for @chartAccountFieldNameAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Name (Arabic)'**
+  String get chartAccountFieldNameAr;
+
+  /// No description provided for @chartAccountFieldNameEn.
+  ///
+  /// In en, this message translates to:
+  /// **'Name (English)'**
+  String get chartAccountFieldNameEn;
+
+  /// No description provided for @chartAccountFieldType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get chartAccountFieldType;
+
+  /// No description provided for @chartAccountFieldParent.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent account'**
+  String get chartAccountFieldParent;
+
+  /// No description provided for @chartAccountParentNone.
+  ///
+  /// In en, this message translates to:
+  /// **'None (root level)'**
+  String get chartAccountParentNone;
+
+  /// No description provided for @chartAccountCodeReadOnlyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Account code cannot be changed after creation.'**
+  String get chartAccountCodeReadOnlyHint;
+
+  /// No description provided for @chartAccountCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Account created.'**
+  String get chartAccountCreated;
+
+  /// No description provided for @chartAccountUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Account saved.'**
+  String get chartAccountUpdated;
+
+  /// No description provided for @chartAccountDeactivated.
+  ///
+  /// In en, this message translates to:
+  /// **'Account deactivated.'**
+  String get chartAccountDeactivated;
+
+  /// No description provided for @chartAccountListEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No accounts yet.'**
+  String get chartAccountListEmpty;
+
+  /// No description provided for @chartAccountListEmptyFiltered.
+  ///
+  /// In en, this message translates to:
+  /// **'No accounts match your filters.'**
+  String get chartAccountListEmptyFiltered;
+
+  /// No description provided for @chartAccountDeactivateConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate account'**
+  String get chartAccountDeactivateConfirmTitle;
+
+  /// No description provided for @chartAccountDeactivateConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This account will be marked inactive. Continue?'**
+  String get chartAccountDeactivateConfirmBody;
+
+  /// No description provided for @chartAccountSetupArMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Accounts Receivable parent (1201) is missing. Customer subaccounts may not function correctly.'**
+  String get chartAccountSetupArMissing;
+
+  /// No description provided for @chartAccountSetupApMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Accounts Payable parent (2101) is missing. Supplier subaccounts may not function correctly.'**
+  String get chartAccountSetupApMissing;
+
+  /// No description provided for @chartAccountErrorPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have permission for this action.'**
+  String get chartAccountErrorPermissionDenied;
+
+  /// No description provided for @chartAccountErrorUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get chartAccountErrorUnknown;
+
+  /// No description provided for @chartAccountValidationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Please check the form and try again.'**
+  String get chartAccountValidationFailed;
+
+  /// No description provided for @chartAccountValidationCodeRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Account code is required.'**
+  String get chartAccountValidationCodeRequired;
+
+  /// No description provided for @chartAccountValidationNameArRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic name is required.'**
+  String get chartAccountValidationNameArRequired;
+
+  /// No description provided for @chartAccountValidationNameEnRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'English name is required.'**
+  String get chartAccountValidationNameEnRequired;
+
+  /// No description provided for @chartAccountErrorParentTypeMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Account type must match the parent account type.'**
+  String get chartAccountErrorParentTypeMismatch;
+
+  /// No description provided for @chartAccountErrorDuplicateCode.
+  ///
+  /// In en, this message translates to:
+  /// **'This account code is already in use.'**
+  String get chartAccountErrorDuplicateCode;
+
+  /// No description provided for @chartAccountErrorAccountProtected.
+  ///
+  /// In en, this message translates to:
+  /// **'This account is protected and cannot be changed.'**
+  String get chartAccountErrorAccountProtected;
+
+  /// No description provided for @chartAccountErrorTypeChangeUnsafe.
+  ///
+  /// In en, this message translates to:
+  /// **'Account type cannot be changed while the account has subaccounts or journal entries.'**
+  String get chartAccountErrorTypeChangeUnsafe;
+
+  /// No description provided for @chartAccountErrorHasActiveChildren.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot deactivate an account that has active subaccounts.'**
+  String get chartAccountErrorHasActiveChildren;
+
+  /// No description provided for @chartAccountErrorImmutableColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'This field cannot be changed.'**
+  String get chartAccountErrorImmutableColumn;
 }
 
 class _AppLocalizationsDelegate

@@ -439,6 +439,45 @@ Acceptance:
 - A4 invoice, receipt voucher, and asset tag can render client-side in Arabic and English from JSON templates.
 - Serial correction is permission-gated, requires a reason, and is audited.
 
+**5.0A Tax Foundation (Invoice Foundation prerequisite)**
+This is a small invoice-math foundation, not a tax filing module. It must be implemented before `record_sales_invoice` and `record_purchase_invoice`.
+
+- Add tenant tax settings:
+  - `tax_enabled`.
+  - `tax_registration_number`.
+  - `default_tax_rate_id` linked to `tax_rates` rather than a raw numeric default.
+- Add tenant-scoped `tax_rates`:
+  - code and Arabic/English names.
+  - decimal rate.
+  - `effective_from` / optional `effective_to`.
+  - `output_account_id`, `input_account_id`, optional `expense_account_id`.
+  - `is_recoverable`, `is_active`.
+- Add product tax classification:
+  - `taxable`.
+  - `zero_rated`.
+  - `exempt`.
+  - `non_taxable`.
+  - Do not model this as `taxable boolean`.
+- Add invoice-line tax snapshots:
+  - `tax_rate_id`.
+  - numeric `tax_rate`.
+  - `tax_class`.
+  - `taxable_amount`.
+  - `tax_amount`.
+  - before-tax and after-tax line totals.
+- Seed or provision protected tax posting accounts when tax is enabled:
+  - Input VAT Recoverable / recoverable input tax.
+  - Output VAT Payable / output tax liability.
+  - Optional tax expense account for non-recoverable taxes.
+- Keep Kuwait/default v1 tenants tax-disabled by default, with tax amounts equal to zero.
+- Exclude VAT returns, government APIs, e-invoicing integrations, and country-specific filing from this foundation.
+
+Acceptance:
+- Invoice totals can be computed as subtotal, discount, tax amount, and grand total even when tax is disabled.
+- Historical invoices keep their saved tax snapshots after tax rates change.
+- Sales invoice posting can credit output tax separately from revenue.
+- Purchase invoice posting can debit recoverable input tax or tax expense according to the tax-rate settings.
+
 **5.1 Stored Functions**
 Implement all RPCs per `DATABASE_SCHEMA.md` section 19:
 - `record_purchase_invoice`

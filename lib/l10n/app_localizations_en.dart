@@ -1639,4 +1639,177 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get serviceLocationOpenMaps => 'Open map link';
+
+  @override
+  String get chartAccountSearchHint => 'Search by code or name';
+
+  @override
+  String get chartAccountFilterType => 'Account type';
+
+  @override
+  String get chartAccountFilterAllTypes => 'All types';
+
+  @override
+  String get chartAccountFilterStatus => 'Status';
+
+  @override
+  String get chartAccountFilterAll => 'All';
+
+  @override
+  String get chartAccountStatusActive => 'Active';
+
+  @override
+  String get chartAccountStatusInactive => 'Inactive';
+
+  @override
+  String get chartAccountClearFilters => 'Clear filters';
+
+  @override
+  String get chartAccountTypeAsset => 'Asset';
+
+  @override
+  String get chartAccountTypeLiability => 'Liability';
+
+  @override
+  String get chartAccountTypeEquity => 'Equity';
+
+  @override
+  String get chartAccountTypeIncome => 'Income';
+
+  @override
+  String get chartAccountTypeExpense => 'Expense';
+
+  @override
+  String get chartAccountBadgeSystem => 'System';
+
+  @override
+  String get chartAccountBadgeManual => 'Manual';
+
+  @override
+  String get chartAccountBadgeCustomer => 'Customer';
+
+  @override
+  String get chartAccountBadgeSupplier => 'Supplier';
+
+  @override
+  String get chartAccountBadgeInactive => 'Inactive';
+
+  @override
+  String get chartAccountAdd => 'Add account';
+
+  @override
+  String get chartAccountEdit => 'Edit account';
+
+  @override
+  String get chartAccountDeactivate => 'Deactivate';
+
+  @override
+  String get chartAccountExpandAll => 'Expand all';
+
+  @override
+  String get chartAccountCollapseAll => 'Collapse all';
+
+  @override
+  String get chartAccountCreateTitle => 'New account';
+
+  @override
+  String get chartAccountEditTitle => 'Edit account';
+
+  @override
+  String get chartAccountFieldCode => 'Code';
+
+  @override
+  String get chartAccountFieldNameAr => 'Name (Arabic)';
+
+  @override
+  String get chartAccountFieldNameEn => 'Name (English)';
+
+  @override
+  String get chartAccountFieldType => 'Type';
+
+  @override
+  String get chartAccountFieldParent => 'Parent account';
+
+  @override
+  String get chartAccountParentNone => 'None (root level)';
+
+  @override
+  String get chartAccountCodeReadOnlyHint =>
+      'Account code cannot be changed after creation.';
+
+  @override
+  String get chartAccountCreated => 'Account created.';
+
+  @override
+  String get chartAccountUpdated => 'Account saved.';
+
+  @override
+  String get chartAccountDeactivated => 'Account deactivated.';
+
+  @override
+  String get chartAccountListEmpty => 'No accounts yet.';
+
+  @override
+  String get chartAccountListEmptyFiltered => 'No accounts match your filters.';
+
+  @override
+  String get chartAccountDeactivateConfirmTitle => 'Deactivate account';
+
+  @override
+  String get chartAccountDeactivateConfirmBody =>
+      'This account will be marked inactive. Continue?';
+
+  @override
+  String get chartAccountSetupArMissing =>
+      'Accounts Receivable parent (1201) is missing. Customer subaccounts may not function correctly.';
+
+  @override
+  String get chartAccountSetupApMissing =>
+      'Accounts Payable parent (2101) is missing. Supplier subaccounts may not function correctly.';
+
+  @override
+  String get chartAccountErrorPermissionDenied =>
+      'You do not have permission for this action.';
+
+  @override
+  String get chartAccountErrorUnknown =>
+      'Something went wrong. Please try again.';
+
+  @override
+  String get chartAccountValidationFailed =>
+      'Please check the form and try again.';
+
+  @override
+  String get chartAccountValidationCodeRequired => 'Account code is required.';
+
+  @override
+  String get chartAccountValidationNameArRequired => 'Arabic name is required.';
+
+  @override
+  String get chartAccountValidationNameEnRequired =>
+      'English name is required.';
+
+  @override
+  String get chartAccountErrorParentTypeMismatch =>
+      'Account type must match the parent account type.';
+
+  @override
+  String get chartAccountErrorDuplicateCode =>
+      'This account code is already in use.';
+
+  @override
+  String get chartAccountErrorAccountProtected =>
+      'This account is protected and cannot be changed.';
+
+  @override
+  String get chartAccountErrorTypeChangeUnsafe =>
+      'Account type cannot be changed while the account has subaccounts or journal entries.';
+
+  @override
+  String get chartAccountErrorHasActiveChildren =>
+      'Cannot deactivate an account that has active subaccounts.';
+
+  @override
+  String get chartAccountErrorImmutableColumn =>
+      'This field cannot be changed.';
 }

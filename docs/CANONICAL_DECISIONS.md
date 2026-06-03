@@ -49,6 +49,24 @@ Currencies are dynamic. Hayat Secret starts with KWD, but KWD is an example, not
 
 ---
 
+## 2.5 Tax Foundation
+
+Tax support is an invoice-foundation concern, not a Phase 4/M7 chart-of-accounts scope item.
+
+- Phase 5 must add a small Tax Foundation before `record_sales_invoice` and `record_purchase_invoice`.
+- Out of scope for this foundation: VAT returns, tax authority integrations, country-specific e-invoicing, ZATCA/FTA integrations, and government filing.
+- The tax engine calculates tax. The chart of accounts only receives the resulting accounting postings.
+- Prefer `tenant_settings.default_tax_rate_id` over a raw numeric `default_tax_rate`.
+- Product tax treatment must not be a boolean. Use explicit classes such as `taxable`, `zero_rated`, `exempt`, and `non_taxable`.
+- Tax rates should be tenant-scoped rows with stable IDs, rate snapshots, effective date ranges, active state, and posting account references.
+- Suggested tax-rate fields: `code`, `name_ar`, `name_en`, `rate`, `output_account_id`, `input_account_id`, optional `expense_account_id`, `is_recoverable`, `effective_from`, `effective_to`, and `is_active`.
+- Invoice lines must snapshot tax at issue/confirmation time: `tax_rate_id`, numeric `tax_rate`, `tax_class`, `taxable_amount`, `tax_amount`, and before/after-tax line totals.
+- Old invoices must never be recomputed from a newer tax rate. Historical invoices keep the tax values saved on their lines.
+- Tax posting accounts such as `Input VAT Recoverable` and `Output VAT Payable` should be seeded as protected system accounts when Tax Foundation is implemented, not required during Phase 4 M7.
+- Kuwait/default v1 tenants may run with tax disabled and zero tax amounts, but the invoice structure must remain tax-ready.
+
+---
+
 ## 3. Field Permissions
 
 Field hiding is implemented with:

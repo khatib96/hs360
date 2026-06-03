@@ -38,9 +38,11 @@ class ChartAccount {
 
   bool get isSupplierSubaccount => relatedEntityTable == 'suppliers';
 
-  bool get canManualEdit => !isSystem && !isEntityLinked;
+  bool get isManualAccount => !isSystem && !isEntityLinked;
 
-  bool get canManualDeactivate => !isSystem && !isEntityLinked;
+  bool get canManualEdit => isManualAccount;
+
+  bool get canManualDeactivate => isManualAccount;
 
   String displayName(String locale) {
     if (locale == 'ar') return nameAr;

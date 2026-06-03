@@ -1,7 +1,6 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-06-03 (Phase 4 M6 complete; next is M7 Chart of Accounts tree).
-> Keep this file short. It is for continuity between AI tools, not full project documentation.
+> Updated 2026-06-04 (Phase 4 M7.5 CoA hierarchy + Arabic repair complete).
 
 ---
 
@@ -16,14 +15,36 @@
 - **Phase 4 M5.5 complete** - profile field cleanup (DB `046`), optional `create_account`, `ensure_*_account`, Kuwait location catalog, responsive sectioned forms, governorate/area filters.
 - **Phase 4 M5.6 complete** - `047_customer_service_locations.sql`, composite FKs, location RPCs, customer detail **Locations** tab.
 - **Phase 4 M6 complete** - Customer 360 shell at [`customer_detail_screen.dart`](lib/features/customers/presentation/customer_detail_screen.dart): Profile, Locations, Contracts/Invoices/Vouchers placeholders, Statement (`customers.view_ledger` RPCs), Timeline (local metadata only).
-- Migrations `001`-`047` on local Postgres; `npx --yes supabase db reset` remains avoided/blocked by Supabase CLI 2.102 internal service migration duplicate.
+- **Phase 4 M7 complete** - Chart of Accounts tree at [`chart_of_accounts_screen.dart`](lib/features/accounting/presentation/chart_of_accounts_screen.dart); migration [`048`](supabase/migrations/048_chart_accounts_m7_hardening.sql); single-fetch tree, policy-driven badges/actions, setup banner, manual CRUD dialogs.
+- **Phase 4 M7.5 complete** - CoA hierarchy + Arabic repair via [`049`](supabase/migrations/049_chart_accounts_hierarchy_and_arabic_repair.sql): 5 protected category roots (`1000`–`5000` incl. Equity), system leaves reparented, Arabic repaired with transport-safe `U&` escapes, duplicate-code pre-check, targeted protection-trigger disable only.
+- Migrations `001`-`049` on local Postgres; `npx --yes supabase db reset` remains avoided/blocked by Supabase CLI 2.102 internal service migration duplicate.
 - **Canonical inventory rules:** [`docs/PHASE_3_M1_5_INVENTORY_RULES.md`](docs/PHASE_3_M1_5_INVENTORY_RULES.md)
-- **Capability decisions:** [`docs/CAPABILITIES_DECISION_REPORT.md`](docs/CAPABILITIES_DECISION_REPORT.md) + [`docs/CANONICAL_DECISIONS.md`](docs/CANONICAL_DECISIONS.md) now fix Barcode/Serial, JSON print templates, and service-location coordinates.
-- **Next:** Phase 4 M7 - Chart of Accounts tree.
+- **Capability decisions:** [`docs/CAPABILITIES_DECISION_REPORT.md`](docs/CAPABILITIES_DECISION_REPORT.md) + [`docs/CANONICAL_DECISIONS.md`](docs/CANONICAL_DECISIONS.md) now fix Barcode/Serial, JSON print templates, service-location coordinates, and Phase 5 Tax Foundation placement.
+- **Next:** Phase 5 or further CoA UX polish as needed.
 
 ---
 
-## Cross-Capability Decisions (captured 2026-06-03)
+## Phase 4 M7.5 - CoA Hierarchy & Arabic Repair (done)
+
+- **Migration:** [`049_chart_accounts_hierarchy_and_arabic_repair.sql`](supabase/migrations/049_chart_accounts_hierarchy_and_arabic_repair.sql) — fail-fast `duplicate_chart_account_codes`; idempotent `unique (tenant_id, code)`; disable only `trg_enforce_chart_account_protection` (audit/FK stay live); insert roots `1000/2000/3000/4000/5000` (`is_system`); reparent `1101`–`6101`; repair `name_ar` via `U&` escapes.
+- **Root cause:** flat tree = seed had no `parent_id`/category roots; Arabic `???` = PowerShell `psql <` encoding when piping UTF-8 migrations (not bad file bytes).
+- **Flutter:** category roots auto-expand on first fetch in [`chart_account_list_controller.dart`](lib/features/accounting/presentation/chart_account_list_controller.dart).
+- **Tests:** SQL cases 44–47 in [`phase_4_customers_suppliers_coa.sql`](supabase/tests/phase_4_customers_suppliers_coa.sql); Dart tree/protection/screen tests extended.
+- **Verification:** `flutter analyze`, `flutter test` (353 tests) green; migration 049 + phase_4 SQL passed on `supabase_db_hs360`; tenant A hierarchy confirmed (`1101`→`1000`, etc.) with correct Arabic in PostgreSQL.
+
+---
+
+## Phase 4 M7 - Chart of Accounts Tree (done)
+
+- **Screen:** [`chart_of_accounts_screen.dart`](lib/features/accounting/presentation/chart_of_accounts_screen.dart) replaces placeholder; route `/accounts` unchanged.
+- **DB:** [`048_chart_accounts_m7_hardening.sql`](supabase/migrations/048_chart_accounts_m7_hardening.sql) — RPC rejects immutable payload keys, entity-linked parent on create, `parent_type_mismatch`, `account_has_active_children`; trigger backstop on deactivate with active children.
+- **Domain:** `detectAccountingSetupIssues`, `filterAccountsForTree` (ancestors from `allAccounts`), [`chart_account_policy.dart`](lib/features/accounting/domain/chart_account_policy.dart) (`deriveAccountBadges` / `deriveAllowedActions`).
+- **Controller:** `ChartAccountListController` — one `fetchChartAccounts`, local filters, `ChartAccountSubmitResult` async dialog contract; screen owns SnackBar on success.
+- **UI:** expand/collapse tree, search/type/status filters, setup banner (1201/2101), manual-only create/edit/deactivate; parent dropdown excludes entity-linked accounts.
+- **Tests:** SQL cases 40-43 in [`phase_4_customers_suppliers_coa.sql`](supabase/tests/phase_4_customers_suppliers_coa.sql); Dart policy/setup/tree/controller/screen tests.
+- **Verification:** `flutter gen-l10n`, `build_runner`, `flutter analyze`, `flutter test` (350 tests) green. SQL `048` verified locally via Docker `psql` against `supabase_db_hs360`; [`phase_4_customers_suppliers_coa.sql`](supabase/tests/phase_4_customers_suppliers_coa.sql) passed.
+
+---
 
 - SKU remains in DB but becomes internal/generated/hidden from normal product UI.
 - Product barcode identifies product type; unit serial identifies one physical device; asset QR payload is the serial text.
@@ -32,6 +53,7 @@
 - Existing stock serial backfill must reconcile units without increasing inventory balances again.
 - Document templates use structured JSON; Flutter `pdf`/`printing` renderer first, later server renderer uses the same JSON model.
 - Coordinates belong on `customer_service_locations`; `google_maps_url` is a source/link, not the truth. Store source/quality metadata (`resolution_source`, `resolved_at`, `coordinate_accuracy_m`) when implementing capture.
+- Tax Foundation belongs before Phase 5 invoice RPCs, not in M7: use `default_tax_rate_id`, tenant `tax_rates`, explicit product tax classes (`taxable`/`zero_rated`/`exempt`/`non_taxable`), invoice-line tax snapshots, and protected tax posting accounts when implemented.
 
 ---
 

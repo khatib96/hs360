@@ -18,6 +18,7 @@ class AccountingException extends AppException {
   static const accountProtected = 'account_protected';
   static const accountTypeChangeUnsafe = 'account_type_change_unsafe';
   static const immutableColumn = 'immutable_column';
+  static const accountHasActiveChildren = 'account_has_active_children';
   static const supabaseNotConfigured = 'supabaseNotConfigured';
   static const unknown = 'unknown';
 
@@ -40,6 +41,18 @@ class AccountingException extends AppException {
     }
     if (message.contains('duplicate_code')) {
       return AccountingException(code: duplicateCode, technicalDetail: message);
+    }
+    if (message.contains('parent_type_mismatch')) {
+      return AccountingException(
+        code: parentTypeMismatch,
+        technicalDetail: message,
+      );
+    }
+    if (message.contains('account_has_active_children')) {
+      return AccountingException(
+        code: accountHasActiveChildren,
+        technicalDetail: message,
+      );
     }
     if (message.contains('account_protected')) {
       return AccountingException(code: accountProtected, technicalDetail: message);
