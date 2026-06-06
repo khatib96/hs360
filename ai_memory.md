@@ -1,6 +1,90 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-06-07 (Phase 5 M1 finance foundation complete).
+> Updated 2026-06-07 (Session: Phase 5 M1 planning, implementation, and verification complete).
+
+---
+
+## Session 2026-06-07 — Phase 5 M1 (Finance Foundation)
+
+### Context
+
+- Started from Phase 4 closure at migration `052`. Local Supabase/Docker operational again (`npx supabase status` green).
+- User provided full project audit (Arabic) + professional M1 prompt; Cursor produced an implementation plan reviewed by AntiGravity and ChatGPT before coding.
+
+### Planning outcomes (approved before implementation)
+
+Six architectural decisions locked as **AD-1 … AD-6**:
+
+| ID | Decision |
+|----|----------|
+| AD-1 | **JE sequences in M1** — system-generated journal entries need `JE-000001` numbering even though manual journal UI is out of MVP |
+| AD-2 | **Dual-field idempotency** — `idempotency_key` + `idempotency_payload_hash`; same key + same hash = retry; same key + different hash = `idempotency_payload_mismatch` |
+| AD-3 | **`books_locked_through`** — lightweight v1 period lock on `tenant_settings`; full fiscal-period subsystem deferred |
+| AD-4 | **Enum isolation** — `journal_source` reversals in separate migration (`053`) because PostgreSQL cannot use new enum values in the same transaction |
+| AD-5 | **Auto document sequences** — `AFTER INSERT` trigger on `tenants` + backfill; keys SI/PI/RV/PV/JE (no hard-coded tenant UUIDs; migrations run before seed) |
+| AD-6 | **Write-gate must not break RPCs** — dual path: `current_user IN ('postgres','supabase_admin')` OR session `hs360.finance_write=1` via `allow_finance_write()`; never use `session_user` as allow check |
+
+Other plan refinements incorporated:
+
+- Split M1 into **two migrations** (053 enum + 054 foundation); later Phase 5 planned migrations renumbered +1 (M2 asset = `055`, … views = `061`).
+- Exact FK drop names documented for composite FK migration.
+- SQL tests use existing **DO-block + SET ROLE** style (no pgTAP — not installed).
+- Legacy permissions (`invoices.view`, `vouchers.view`, etc.) **kept** until M8 Flutter guard split.
+
+### Files created
+
+| File | Role |
+|------|------|
+| [`supabase/migrations/053_phase_5_journal_source_enum.sql`](supabase/migrations/053_phase_5_journal_source_enum.sql) | Four `journal_source` reversal enum values only |
+| [`supabase/migrations/054_phase_5_finance_foundation.sql`](supabase/migrations/054_phase_5_finance_foundation.sql) | Full M1 schema, sequences, idempotency, RLS/ACL, triggers, RPC stubs |
+| [`supabase/tests/phase_5_finance_foundation.sql`](supabase/tests/phase_5_finance_foundation.sql) | 20 verification cases |
+
+### Files updated (docs)
+
+| File | Change |
+|------|--------|
+| [`docs/PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md`](docs/PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md) | M1 migration split; migration table 053–061; `books_locked_through` lightweight-lock note |
+
+### What `054` implements (summary)
+
+- **`document_sequences`** + `next_document_number()` (internal-only EXECUTE).
+- **Invoice/voucher/allocation hardening:** nullable draft numbers, type-aware party checks, amount checks, idempotency columns, composite `(tenant_id, id)` FKs, line snapshot columns.
+- **Journal hardening:** reversal links, idempotency, posting validation (≥2 lines, tenant/account alignment), posted-entry/line immutability triggers.
+- **`voucher_status`** enum; cancellation/confirmation metadata on vouchers.
+- **`resolve_finance_idempotency(regclass, uuid, text)`** — full contract implemented (not stub).
+- **17 new permissions** inserted (`ON CONFLICT DO NOTHING`); legacy finance permissions unchanged.
+- **RLS:** dropped INSERT/UPDATE/DELETE on finance tables; type-aware invoice SELECT (`view_sales`/`view_purchase` OR legacy `invoices.view`).
+- **Write-gate triggers** on invoices, invoice_lines, vouchers, voucher_invoice_allocations.
+- **8 RPC stubs** (`save_invoice_draft`, `record_*_invoice`, `cancel_*`, voucher stubs) → `feature_not_implemented`; EXECUTE granted to `authenticated` only.
+- **`_test_finance_write_smoke()`** — internal postgres-only helper proving RPC write path (AD-6).
+
+### Verification (this session)
+
+```text
+npx supabase db reset                          → 001–054 applied cleanly
+phase_1d_rls.sql                               → passed
+phase_3_products_inventory.sql                 → passed
+phase_4_customers_suppliers_coa.sql            → passed
+phase_4_customer_service_locations.sql         → passed
+phase_4_service_location_coordinates.sql       → passed
+phase_5_finance_foundation.sql                 → passed (20 cases)
+flutter analyze                                → no issues
+flutter test                                   → 376 passed
+```
+
+PowerShell note: pipe SQL tests with `Get-Content -Raw … | docker exec -i supabase_db_hs360 psql …` ( `<` redirection not supported).
+
+### Explicit non-goals (honored)
+
+- No Flutter UI, routes, repositories, or l10n changes.
+- No tax columns / `tax_rates` (M4).
+- No real posting, WAC, or stock logic in RPC stubs (M5–M7).
+- No `books_locked_through` date enforcement in RPCs yet (column + comment only).
+
+### Next session
+
+- **Phase 5 M2:** [`055_phase_5_asset_identity_scan_timeline.sql`](supabase/migrations/055_phase_5_asset_identity_scan_timeline.sql) — SKU/serial generation, scan resolver, unit timeline, serial reconcile/correct permissions.
+- Cloud deploy of migrations 053–054 remains a separate ops step when Supabase project is linked.
 
 ---
 
@@ -37,8 +121,7 @@
 - **Dependency cleanup:** unused `geolocator` and its generated platform registrations were removed because coordinates now come only from Google Maps links.
 - **Automated verification:** `flutter pub get`, localization generation, build runner, `flutter analyze`, 376 Flutter tests, Windows integration test/build, Node map parser tests, and `git diff --check` passed.
 - **Database verification:** migration 052 applied successfully; catalog ACL/FK/RLS/audit checks passed; `phase_1d_rls.sql`, `phase_3_products_inventory.sql`, and all three Phase 4 SQL suites passed sequentially.
-- **Fresh-reset blocker:** the later `supabase db reset` attempt removed the local DB container, then Docker failed while pulling the Postgres image. Docker logs show VHDX/overlay filesystem `input/output error`, `I/O error, dev loop1`, and dockerd `SIGBUS`. This is Docker data-disk corruption, not a project migration or SQL-test failure.
-- **Current local DB state:** unavailable until Docker Desktop data is repaired or recreated. Do not delete or move `C:\Users\alkat\AppData\Local\Docker\wsl\disk\docker_data.vhdx` without explicit approval because it affects all local Docker projects.
+- **Docker recovery:** prior VHDX corruption blocker resolved; local Supabase stack operational as of 2026-06-07 (Phase 5 M1 reset + full SQL regression passed).
 - **File-size review:** the largest Phase 4 presentation files were reviewed. Their size comes from cohesive desktop/mobile renderers or complete form/location workflows; no blocking split was required for M8.
 - **Operational follow-ups:** clean reset after Docker recovery, then cloud migration/function deployment after Supabase login and project linking.
 
