@@ -1,6 +1,6 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-06-06 (Phase 4 M8 engineering closure complete; Docker recovery and cloud deployment remain operational follow-ups).
+> Updated 2026-06-07 (Phase 5 M1 finance foundation complete).
 
 ---
 
@@ -9,21 +9,23 @@
 - **Phase 0-1D complete** - local Supabase database foundation is verified.
 - **Phase 2 complete** - auth, routing, permissions, locale (M0-M8).
 - **Phase 3 complete** - products and inventory (M0-M8).
-- **Phase 4 M0-M3 complete** - DB RPCs, domain models, validators, repositories for customers, suppliers, chart of accounts.
-- **Phase 4 M4 complete** - routes, guards, AppShell navigation, AR/EN l10n, placeholder screens.
-- **Phase 4 M5 complete** - customer/supplier lists, filters, and create/edit/deactivate forms.
-- **Phase 4 M5.5 complete** - profile field cleanup (DB `046`), optional `create_account`, `ensure_*_account`, Kuwait location catalog, responsive sectioned forms, governorate/area filters.
-- **Phase 4 M5.6 complete** - `047_customer_service_locations.sql`, composite FKs, location RPCs, customer detail **Locations** tab.
-- **Phase 4 M5.7 locally complete** - migrations `050`/`051`, coordinate source/time/status metadata, Google Maps link resolution, DB constraints, AR/EN UI, and coordinate display.
-- **Phase 4 M6 complete** - Customer 360 shell at [`customer_detail_screen.dart`](lib/features/customers/presentation/customer_detail_screen.dart): Profile, Locations, Contracts/Invoices/Vouchers placeholders, Statement (`customers.view_ledger` RPCs), Timeline (local metadata only).
-- **Phase 4 M7 complete** - Chart of Accounts tree at [`chart_of_accounts_screen.dart`](lib/features/accounting/presentation/chart_of_accounts_screen.dart); migration [`048`](supabase/migrations/048_chart_accounts_m7_hardening.sql); single-fetch tree, policy-driven badges/actions, setup banner, manual CRUD dialogs.
-- **Phase 4 M7.5 complete** - CoA hierarchy + Arabic repair via [`049`](supabase/migrations/049_chart_accounts_hierarchy_and_arabic_repair.sql): 5 protected category roots (`1000`–`5000` incl. Equity), system leaves reparented, Arabic repaired with transport-safe `U&` escapes, duplicate-code pre-check, targeted protection-trigger disable only.
-- **Phase 4 M8 engineering closure complete** - bounded/paginated customer, supplier, statement, CoA, and location reads; responsive Arabic mobile coverage; database ACL and tenant-safe FK hardening in migration [`052`](supabase/migrations/052_phase_4_closure_hardening.sql).
-- Migrations `001`-`052` were applied to local Postgres and every Phase 1/3/4 SQL verification suite passed on 2026-06-06 before the Docker data disk failed during a fresh reset attempt.
-- **Canonical inventory rules:** [`docs/PHASE_3_M1_5_INVENTORY_RULES.md`](docs/PHASE_3_M1_5_INVENTORY_RULES.md)
-- **Capability decisions:** [`docs/CAPABILITIES_DECISION_REPORT.md`](docs/CAPABILITIES_DECISION_REPORT.md) + [`docs/CANONICAL_DECISIONS.md`](docs/CANONICAL_DECISIONS.md) now fix Barcode/Serial, JSON print templates, service-location coordinates, and Phase 5 Tax Foundation placement.
-- **Phase 5 plan created:** [`docs/PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md`](docs/PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md) defines M0-M10 for finance schema hardening, asset/scan/print/tax foundations, purchase/sales invoices, vouchers/allocations, journal views, Flutter UI, and engineering close. Quotations and manual journal posting remain outside the strict Phase 5 MVP.
-- **Next:** repair/recreate Docker Desktop data, rerun a clean `supabase db reset` and all SQL suites, then deploy migrations and `resolve-google-maps-url` to the linked target Supabase project. Phase 5 engineering can start after this operational recovery checkpoint.
+- **Phase 4 M0-M8 complete** - customers, suppliers, CoA, service locations, coordinates, engineering closure through migration [`052`](supabase/migrations/052_phase_4_closure_hardening.sql).
+- **Phase 5 M1 complete** - finance schema hardening via [`053`](supabase/migrations/053_phase_5_journal_source_enum.sql) + [`054`](supabase/migrations/054_phase_5_finance_foundation.sql): document sequences (SI/PI/RV/PV/JE), dual-field idempotency, `books_locked_through`, tenant-safe composite FKs, RPC-only finance writes, journal immutability, 17 new permissions, 8 posting RPC stubs. SQL suite [`phase_5_finance_foundation.sql`](supabase/tests/phase_5_finance_foundation.sql) passes; all Phase 1/3/4 suites still pass; `flutter analyze` clean; 376 Flutter tests green.
+- **Next:** Phase 5 M2 — asset identity, serial, scan, and timeline (`055_phase_5_asset_identity_scan_timeline.sql`).
+
+---
+
+## Phase 5 M1 - Finance Schema, Permissions, and Invariants (done)
+
+- **Migrations:** [`053_phase_5_journal_source_enum.sql`](supabase/migrations/053_phase_5_journal_source_enum.sql) (isolated enum); [`054_phase_5_finance_foundation.sql`](supabase/migrations/054_phase_5_finance_foundation.sql) (foundation).
+- **Sequences (AD-1/AD-5):** `document_sequences` with SI/PI/RV/PV/JE; `next_document_number()` internal-only; tenant INSERT trigger + backfill.
+- **Idempotency (AD-2):** `idempotency_key` + `idempotency_payload_hash` on invoices, vouchers, journal_entries; `resolve_finance_idempotency()` helper.
+- **Period lock (AD-3):** `tenant_settings.books_locked_through` with SQL comment; enforcement deferred to M5–M7 RPCs.
+- **Write safety (AD-6):** finance write-gate triggers (postgres owner + `hs360.finance_write` session gate); direct authenticated writes blocked; `_test_finance_write_smoke()` verifies RPC path.
+- **RLS:** finance table writes dropped; type-aware invoice SELECT (view_sales/view_purchase + legacy view).
+- **RPC stubs:** 8 posting functions raise `feature_not_implemented`; granted to `authenticated` only.
+- **Permissions:** 17 new IDs inserted (legacy finance permissions retained).
+- **Verification:** `supabase db reset` through 054; all SQL suites including [`phase_5_finance_foundation.sql`](supabase/tests/phase_5_finance_foundation.sql); `flutter analyze` clean; 376 tests green (2026-06-07).
 
 ---
 

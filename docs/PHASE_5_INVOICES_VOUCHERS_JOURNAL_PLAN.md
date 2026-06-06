@@ -449,9 +449,13 @@ period-locking model is designed.
 ### 17. Accounting Periods
 
 Phase 5 stores transaction dates and validates them, but full period close is
-out of scope. M1 adds tenant-level `books_locked_through date`. All
+out of scope. M1 adds tenant-level `books_locked_through date` (implemented in
+migration `054_phase_5_finance_foundation.sql` with column comment). All
 posting/cancellation RPCs reject dates on or before the lock date. The setting
 is nullable and manager/accounting-admin controlled.
+
+This is a **lightweight Phase 5 v1 accounting lock** and may later be extended
+or replaced by a full fiscal-period / fiscal-year subsystem.
 
 ### 18. Print Source Is Stored Data
 
@@ -550,7 +554,10 @@ Turn the Phase 1 finance tables into a safe base for atomic posting.
 
 ### Suggested Migration
 
-`053_phase_5_finance_foundation.sql`
+Split across two files (enum transaction rule + foundation):
+
+- `053_phase_5_journal_source_enum.sql` — journal_source reversal values only
+- `054_phase_5_finance_foundation.sql` — sequences, hardening, permissions, RLS/ACL, stubs
 
 ### Schema Work
 
@@ -2322,14 +2329,15 @@ Update:
 
 | Migration | Responsibility |
 |-----------|----------------|
-| `053_phase_5_finance_foundation.sql` | sequences, statuses, tenant-safe FKs, permissions, RLS/ACL, journal invariants |
-| `054_phase_5_asset_identity_scan_timeline.sql` | SKU/serial generation, reconcile/correct, scan resolver, unit events/timeline |
-| `055_phase_5_document_templates.sql` | JSON templates and tenant document settings |
-| `056_phase_5_tax_foundation.sql` | tax settings/rates/classes/snapshots and math helpers |
-| `057_phase_5_purchase_invoice_rpc.sql` | purchase draft/confirm, units, stock, WAC, A/P journal |
-| `058_phase_5_sales_invoice_rpc.sql` | sales confirm, stock-out, cost snapshot, A/R/revenue/COGS, cancellation |
-| `059_phase_5_voucher_allocation_rpc.sql` | receipt/payment/allocation/cancellation |
-| `060_phase_5_finance_views_hardening.sql` | bounded read RPCs/views, indexes, final ACL/trigger hardening |
+| `053_phase_5_journal_source_enum.sql` | journal_source reversal enum values (isolated transaction) |
+| `054_phase_5_finance_foundation.sql` | sequences, statuses, tenant-safe FKs, permissions, RLS/ACL, journal invariants, RPC stubs |
+| `055_phase_5_asset_identity_scan_timeline.sql` | SKU/serial generation, reconcile/correct, scan resolver, unit events/timeline |
+| `056_phase_5_document_templates.sql` | JSON templates and tenant document settings |
+| `057_phase_5_tax_foundation.sql` | tax settings/rates/classes/snapshots and math helpers |
+| `058_phase_5_purchase_invoice_rpc.sql` | purchase draft/confirm, units, stock, WAC, A/P journal |
+| `059_phase_5_sales_invoice_rpc.sql` | sales confirm, stock-out, cost snapshot, A/R/revenue/COGS, cancellation |
+| `060_phase_5_voucher_allocation_rpc.sql` | receipt/payment/allocation/cancellation |
+| `061_phase_5_finance_views_hardening.sql` | bounded read RPCs/views, indexes, final ACL/trigger hardening |
 
 Migration names are planned, not reserved. If implementation uncovers a reason
 to split a migration, preserve dependency order and document the change.
@@ -2526,7 +2534,7 @@ Start with **M0 only**:
 3. run all existing SQL suites;
 4. run Flutter verification;
 5. record the clean baseline in this plan and `ai_memory.md`;
-6. then implement `053_phase_5_finance_foundation.sql`.
+6. then implement `053_phase_5_journal_source_enum.sql` and `054_phase_5_finance_foundation.sql`.
 
 Do not start invoice UI or posting RPCs before the M0 baseline and M1 accounting
 invariants are complete.
