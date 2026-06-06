@@ -16,8 +16,8 @@
 | **1D - Seed and Verification** | Done | 2026-05-16 |
 | **2 - Authentication & Routing** | Done | not recorded |
 | **3 - Products & Inventory** | Done | 2026-05-30 |
-| **4 - Customers, Suppliers & CoA** | In progress | through M5.6 on 2026-06-02 |
-| **5 - Invoices, Vouchers & Journal** | Not started | - |
+| **4 - Customers, Suppliers & CoA** | Engineering complete | 2026-06-06 |
+| **5 - Invoices, Vouchers & Journal** | Planned | M0-M10 plan created 2026-06-06 |
 | **6 - Contracts** | Not started | - |
 | **7 - Calendar** | Not started | - |
 | **8 - Mobile Field Ops** | Not started | - |
@@ -28,6 +28,7 @@
 
 > Phase 0 details: `docs/PHASE_0_SETUP.md`
 > Capability placement: `docs/CAPABILITIES_DECISION_REPORT.md`.
+> Phase 5 execution plan: `docs/PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md`.
 
 ---
 
@@ -388,7 +389,12 @@ Acceptance:
 
 ---
 
-## Phase 5 — Invoices, Vouchers & Journal (≈ 3 weeks)
+## Phase 5 — Invoices, Vouchers & Journal (≈ 8-12 weeks)
+
+**Status:** [ ] Planned on 2026-06-06. The detailed M0-M10 execution plan in
+`PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md` supersedes the older task ordering
+below where they conflict. In particular, quotations and manual journal
+posting are outside the strict Phase 5 MVP.
 
 ### Goal
 Full accounting cycle works. Purchase → Sale → Receipt → P&L.
@@ -513,10 +519,9 @@ Implement all RPCs per `DATABASE_SCHEMA.md` section 19:
 - Voucher detail
 - Receipt PDF & generate
 
-**5.4 Quotations**
-- Quotation list + new
-- Convert to invoice button
-- PDF generation
+**5.4 Quotations (deferred)**
+- Quotations and quotation conversion are outside the strict v1 scope.
+- Keep the existing Phase 1 tables dormant until a later post-MVP phase.
 
 **5.5 Cash & Bank Reconciliation View**
 - Per cash account: list of vouchers in date range
@@ -866,16 +871,16 @@ These are out of v1 scope but worth noting for the roadmap:
 | 2 — Auth | 1 wk | 4 wk |
 | 3 — Products | 2 wk | 6 wk |
 | 4 — Customers | 1 wk | 7 wk |
-| 5 — Invoices & Vouchers | 3 wk | 10 wk |
-| 6 — Contracts | 4 wk | 14 wk |
-| 7 — Calendar | 2 wk | 16 wk |
-| 8 — Mobile | 4 wk | 20 wk |
-| 9 — POS + Maint + HR | 3 wk | 23 wk |
-| 10 — Reports | 2 wk | 25 wk |
-| 11 — Comms | 2 wk | 27 wk |
-| 12 — Polish & Launch | 3 wk | **30 wk** |
+| 5 — Invoices & Vouchers | 8-12 wk | 15-19 wk |
+| 6 — Contracts | 4 wk | 19-23 wk |
+| 7 — Calendar | 2 wk | 21-25 wk |
+| 8 — Mobile | 4 wk | 25-29 wk |
+| 9 — POS + Maint + HR | 3 wk | 28-32 wk |
+| 10 — Reports | 2 wk | 30-34 wk |
+| 11 — Comms | 2 wk | 32-36 wk |
+| 12 — Polish & Launch | 3 wk | **35-39 wk** |
 
-**Total: ~30 weeks (~7 months)** of focused work. Realistic for solo+AI; faster if you skip non-essential features in v1 (POS, advanced HR, full notifications).
+**Total: ~35-39 weeks (~8-9 months)** of focused work. Realistic for solo+AI; faster if you skip non-essential features in v1 (POS, advanced HR, full notifications).
 
 ---
 

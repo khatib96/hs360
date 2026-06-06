@@ -22,6 +22,7 @@
 - Migrations `001`-`052` were applied to local Postgres and every Phase 1/3/4 SQL verification suite passed on 2026-06-06 before the Docker data disk failed during a fresh reset attempt.
 - **Canonical inventory rules:** [`docs/PHASE_3_M1_5_INVENTORY_RULES.md`](docs/PHASE_3_M1_5_INVENTORY_RULES.md)
 - **Capability decisions:** [`docs/CAPABILITIES_DECISION_REPORT.md`](docs/CAPABILITIES_DECISION_REPORT.md) + [`docs/CANONICAL_DECISIONS.md`](docs/CANONICAL_DECISIONS.md) now fix Barcode/Serial, JSON print templates, service-location coordinates, and Phase 5 Tax Foundation placement.
+- **Phase 5 plan created:** [`docs/PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md`](docs/PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md) defines M0-M10 for finance schema hardening, asset/scan/print/tax foundations, purchase/sales invoices, vouchers/allocations, journal views, Flutter UI, and engineering close. Quotations and manual journal posting remain outside the strict Phase 5 MVP.
 - **Next:** repair/recreate Docker Desktop data, rerun a clean `supabase db reset` and all SQL suites, then deploy migrations and `resolve-google-maps-url` to the linked target Supabase project. Phase 5 engineering can start after this operational recovery checkpoint.
 
 ---
