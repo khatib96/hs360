@@ -229,6 +229,7 @@ Phase 4 may show empty or read-only tabs that will later be populated by Phase 5
 | M4 | Routes, Guards, Navigation & Localization | App can route to Phase 4 modules with correct permissions |
 | M5 | Customers & Suppliers Lists/Forms | Operational customer/supplier CRUD on desktop/mobile |
 | M5.6 | Customer Service Locations | Multi-site customers are modeled before detail, contracts, and visits |
+| M5.7 | Service Location Coordinates | Coordinate source and quality are reliable for later visits/maps |
 | M6 | Customer Detail, Statement & Timeline | Customer 360 shell works, empty-safe before Phase 5 |
 | M7 | Chart Of Accounts Tree | CoA hierarchy view and safe non-system account editing |
 | M7.5 | Hardening, Performance & UX Pass | Search, pagination, file size, permission edge cases |
@@ -888,6 +889,20 @@ Add Dart tests:
 
 ## M5.7 - Service Location Coordinates Foundation
 
+**Status: locally complete and verified on 2026-06-06. Target-project
+deployment remains a release-environment task.**
+
+Implementation:
+
+- migrations `050_service_location_coordinates_foundation.sql` and `051_google_maps_url_coordinate_resolution.sql`.
+- coordinate-pair, range, source, status, and accuracy constraints.
+- Google Maps link as the only user-facing coordinate input.
+- local extraction for full links and authenticated Edge Function expansion for shortened links.
+- automatic customer primary-location synchronization on create, edit, and link clearing.
+- source, resolution time, and coordinates shown in location cards.
+- Arabic/English strings and targeted Dart/widget/SQL tests.
+- real shortened-link verification against local authenticated Edge Runtime.
+
 ### Goal
 
 Make service-location coordinates reliable enough for visits, native directions, and later operations maps.
@@ -895,19 +910,29 @@ Make service-location coordinates reliable enough for visits, native directions,
 ### Scope
 
 - Keep `customer_service_locations.latitude` and `customer_service_locations.longitude` as the operational coordinate truth.
-- Keep `google_maps_url` as a source/link only.
-- Add `resolution_source` when coordinate capture is implemented: `map_pick`, `device_gps`, `url`, or `manual`.
+- Use `google_maps_url` as the only user-facing location input and retain it as the source link.
+- Add `resolution_source`; current UI writes `url`, while legacy/future sources remain representable.
 - Add `resolved_at`, `coordinate_accuracy_m`, and optional `resolution_status`/`resolution_error` so the source and quality of coordinates remain auditable later.
-- Add "Use current location" where the UI runs on a location-capable device.
-- Add a Google Maps URL resolver Edge Function later for shortened links.
+- Extract coordinates locally from full Google Maps links.
+- Expand shortened Google Maps links through an authenticated Edge Function.
+- Block form submission when a non-empty link cannot produce a valid coordinate pair.
+- Do not expose manual latitude/longitude or device-GPS controls.
 - Defer choose-on-map UI until the map package is selected.
 
 ### Acceptance
 
 - A service location can store coordinates and the source that produced them.
-- A service location can show when coordinates were resolved and whether they came from GPS, map pick, URL, or manual entry.
+- A service location can show when coordinates were resolved and identify the stored source.
 - Visits and calendar can consume service-location coordinates without customer-level GPS fields.
 - Pasted map links never become the location truth unless resolved into coordinates.
+
+Local verification:
+
+- migration `051` applied successfully.
+- `phase_4_service_location_coordinates.sql` passed all cases.
+- real shortened link resolved to `25.7800955, 55.9693682`.
+- persistence transaction stored the exact link/pair on the primary location and rolled back cleanly.
+- invalid host returned `400`; missing JWT returned `401`.
 
 ---
 
@@ -1125,6 +1150,8 @@ npx --yes supabase db reset
 docker exec -i supabase_db_hs360 psql -U postgres -d postgres < supabase/tests/phase_1d_rls.sql
 docker exec -i supabase_db_hs360 psql -U postgres -d postgres < supabase/tests/phase_3_products_inventory.sql
 docker exec -i supabase_db_hs360 psql -U postgres -d postgres < supabase/tests/phase_4_customers_suppliers_coa.sql
+docker exec -i supabase_db_hs360 psql -U postgres -d postgres < supabase/tests/phase_4_customer_service_locations.sql
+docker exec -i supabase_db_hs360 psql -U postgres -d postgres < supabase/tests/phase_4_service_location_coordinates.sql
 ```
 
 If `supabase db reset` is still blocked by the known local CLI issue, document it and run the SQL verification against the migrated local database.
@@ -1140,6 +1167,9 @@ If `supabase db reset` is still blocked by the known local CLI issue, document i
 | [ ] | Create customer | customer row and A/R subaccount created atomically |
 | [ ] | Add customer service location | location appears under the same customer, not as a separate customer |
 | [ ] | Customer with multiple locations | Customer detail separates profile, locations, contracts, and visits clearly |
+| [ ] | Paste full Google Maps URL | coordinates are extracted automatically and saved with source `url` |
+| [ ] | Paste shortened Google Maps URL | Edge Function expands the link and returns a validated coordinate pair |
+| [ ] | Paste invalid/unresolvable map URL | form remains open with a localized error |
 | [ ] | Create supplier | supplier row created; A/P subaccount created atomically only when requested |
 | [ ] | Customer detail Statement tab with permission | opens, empty-safe |
 | [ ] | Customer detail Statement tab without permission | denied state |
@@ -1158,6 +1188,7 @@ If `supabase db reset` is still blocked by the known local CLI issue, document i
 - [ ] Customer/supplier creation uses RPCs.
 - [ ] Customer/supplier `account_id` is not client-selected.
 - [ ] Customer service locations are tenant-scoped, permission-checked, and not modeled as duplicate customers.
+- [ ] Service-location coordinates are paired, range-checked, and carry auditable source/quality metadata.
 - [ ] Contract/visit/calendar/product-unit service-location FKs exist before Phase 6/7/8 implementation.
 - [ ] Customer statement uses `customers.view_ledger`, not raw journal access.
 - [ ] CoA system rows are protected.
@@ -1171,6 +1202,7 @@ If `supabase db reset` is still blocked by the known local CLI issue, document i
 
 - Customers can be created, listed, viewed, edited, and deactivated.
 - Customer service locations can be created, listed, edited, set primary, and deactivated safely.
+- Service locations resolve validated coordinates from pasted Google Maps links and retain source metadata.
 - Suppliers can be created, listed, edited, and deactivated.
 - Customer and supplier codes are generated consistently.
 - Customer A/R and supplier A/P subaccounts are created only when requested on create, or later through the ensure-account action.

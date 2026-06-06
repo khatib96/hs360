@@ -9,6 +9,9 @@ import 'package:hs360/features/auth/domain/app_session.dart';
 import 'package:hs360/features/auth/presentation/auth_controller.dart';
 import 'package:hs360/features/customers/data/customer_repository.dart';
 import 'package:hs360/features/customers/data/customer_service_location_repository.dart';
+import 'package:hs360/features/customers/domain/customer_service_location.dart';
+import 'package:hs360/features/customers/domain/service_location_coordinates.dart';
+import 'package:hs360/features/customers/domain/service_location_type.dart';
 import 'package:hs360/features/customers/presentation/customer_detail_screen.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
@@ -31,10 +34,7 @@ void main() {
       accountType: 'user',
       displayName: 'Test User',
       preferredLocale: 'en',
-      permissions: AppPermissions(
-        isManager: false,
-        permissions: permissions,
-      ),
+      permissions: AppPermissions(isManager: false, permissions: permissions),
     );
   }
 
@@ -92,7 +92,9 @@ void main() {
     expect(find.byKey(const Key('customer-tab-timeline')), findsOneWidget);
   });
 
-  testWidgets('locations tab renders with service location fake', (tester) async {
+  testWidgets('locations tab renders with service location fake', (
+    tester,
+  ) async {
     final l10n = lookupAppLocalizations(const Locale('en'));
     final repo = FakeCustomerRepository(customers: [sampleCustomer()]);
     await tester.pumpWidget(
@@ -105,18 +107,55 @@ void main() {
     expect(find.text(l10n.serviceLocationEmpty), findsOneWidget);
   });
 
-  testWidgets('statement tab does not call repository before tab select', (
+  testWidgets('locations tab shows coordinate source and accuracy', (
     tester,
   ) async {
-    final repo = FakeCustomerRepository(
-      customers: [sampleCustomer()],
+    final repo = FakeCustomerRepository(customers: [sampleCustomer()]);
+    final locationRepo = FakeCustomerServiceLocationRepository(
+      locations: [
+        CustomerServiceLocation(
+          id: 'location-1',
+          tenantId: 'tenant-1',
+          customerId: 'cust-1',
+          code: 'LOC-0001',
+          name: 'Main site',
+          locationType: ServiceLocationType.branch,
+          isPrimary: true,
+          isActive: true,
+          latitude: 29.3759,
+          longitude: 47.9774,
+          resolutionSource: CoordinateResolutionSource.deviceGps,
+          resolvedAt: DateTime.utc(2026, 6, 6, 8, 30),
+          coordinateAccuracyM: 4.25,
+          resolutionStatus: CoordinateResolutionStatus.resolved,
+        ),
+      ],
     );
     await tester.pumpWidget(
       buildDetail(
-        appSession: session(permissions: {
-          'customers.view',
-          'customers.view_ledger',
-        }),
+        appSession: session(),
+        customerRepo: repo,
+        locationRepo: locationRepo,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await selectCustomerTab(tester, 1);
+
+    expect(find.text('29.375900, 47.977400'), findsOneWidget);
+    expect(find.textContaining('Device GPS'), findsOneWidget);
+    expect(find.textContaining('Accuracy: 4.3 m'), findsOneWidget);
+  });
+
+  testWidgets('statement tab does not call repository before tab select', (
+    tester,
+  ) async {
+    final repo = FakeCustomerRepository(customers: [sampleCustomer()]);
+    await tester.pumpWidget(
+      buildDetail(
+        appSession: session(
+          permissions: {'customers.view', 'customers.view_ledger'},
+        ),
         customerRepo: repo,
       ),
     );
@@ -151,10 +190,9 @@ void main() {
     final repo = FakeCustomerRepository(customers: [sampleCustomer()]);
     await tester.pumpWidget(
       buildDetail(
-        appSession: session(permissions: {
-          'customers.view',
-          'customers.view_ledger',
-        }),
+        appSession: session(
+          permissions: {'customers.view', 'customers.view_ledger'},
+        ),
         customerRepo: repo,
       ),
     );
@@ -178,10 +216,9 @@ void main() {
     );
     await tester.pumpWidget(
       buildDetail(
-        appSession: session(permissions: {
-          'customers.view',
-          'customers.view_ledger',
-        }),
+        appSession: session(
+          permissions: {'customers.view', 'customers.view_ledger'},
+        ),
         customerRepo: repo,
       ),
     );

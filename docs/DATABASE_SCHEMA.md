@@ -669,6 +669,8 @@ create index idx_customers_phone on customers(tenant_id, phone_primary);
 ### 9.2 `customer_service_locations`
 
 > **M5.6 (`047_customer_service_locations.sql`):** customers are the main company/account. Branches, offices, warehouses, homes, and installation addresses are service locations under one customer. Contracts, visits, calendar events, and rented product units reference service locations through nullable composite FKs so the selected location must belong to the same tenant and customer.
+>
+> **M5.7 (`050_service_location_coordinates_foundation.sql`, `051_google_maps_url_coordinate_resolution.sql`):** `latitude` and `longitude` are the operational coordinate truth. Users paste a Google Maps link; the client resolves full links locally and shortened links through an authenticated Edge Function before saving. Coordinate source, resolution time, accuracy, status, and error fields make the result auditable.
 
 ```sql
 create type service_location_type as enum (
@@ -693,6 +695,11 @@ create table customer_service_locations (
   google_maps_url text,
   latitude numeric(10,7),
   longitude numeric(10,7),
+  resolution_source text,                       -- map_pick/device_gps/url/manual
+  resolved_at timestamptz,
+  coordinate_accuracy_m numeric(10,2),
+  resolution_status text,                       -- resolved/pending/failed
+  resolution_error text,
 
   contact_person_name text,
   contact_person_phone text,
@@ -721,8 +728,11 @@ create unique index idx_custloc_one_primary
 
 Backfill rule:
 - When a customer already has `address_line`, `area`, `governorate`, or `google_maps_url`, migration `047` creates one active primary service location from those fields.
+- Migration `050` marks existing complete coordinate pairs as `manual` and resolved, using the row update/create time as the resolution time.
 - Customer profile location fields are retained for backward compatibility and list summaries, but contract and visit workflows should use `customer_service_locations`.
 - Do not add simple `service_location_id references customer_service_locations(id)` FKs. Downstream tables use nullable composite FKs such as `(tenant_id, customer_id, service_location_id)`.
+- Coordinates must be stored as a complete pair in valid latitude/longitude ranges. Stored coordinates require source, `resolved_at`, and `resolution_status = 'resolved'`.
+- A pasted Google Maps URL must resolve to a validated coordinate pair before the form can save. Customer profile edits synchronize the link and pair to the active primary service location.
 
 ### 9.3 `suppliers`
 
@@ -1425,6 +1435,10 @@ Full implementations in `BUILD_PLAN.md`. Names and signatures:
 045_customers_suppliers_coa_rpc.sql
 046_customer_supplier_profile_cleanup.sql
 047_customer_service_locations.sql -- M5.6 service locations + backfill + downstream FKs
+048_chart_accounts_m7_hardening.sql -- M7 CoA RPC and trigger safeguards
+049_chart_accounts_hierarchy_and_arabic_repair.sql -- M7.5 roots, hierarchy, Arabic repair
+050_service_location_coordinates_foundation.sql -- M5.7 coordinate source/quality foundation
+051_google_maps_url_coordinate_resolution.sql -- M5.7 URL resolution persistence and primary-location sync
 ```
 
 Add FKs that were forward-references (e.g. `product_units.current_contract_id -> contracts.id`, `product_units.current_service_location_id -> customer_service_locations.id`) at the end of each table's migration once both exist, or in the later feature migration that introduces the referenced table.

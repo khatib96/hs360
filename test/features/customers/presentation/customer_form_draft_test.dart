@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hs360/core/errors/customer_exception.dart';
+import 'package:hs360/features/customers/domain/google_maps_coordinates.dart';
 import 'package:hs360/features/customers/presentation/customer_form_draft.dart';
 
 void main() {
@@ -35,10 +36,19 @@ void main() {
         createAccount: true,
       );
       expect(draft.validate(), isEmpty);
-      final state = draft.toFormState();
+      final state = draft.toFormState(
+        coordinates: GoogleMapsCoordinates(
+          latitude: 29.3759,
+          longitude: 47.9774,
+          resolvedAt: DateTime.utc(2026, 6, 6),
+          resolvedUrl: draft.googleMapsUrl,
+        ),
+      );
       expect(state.governorate, 'hawalli');
       expect(state.area, 'salmiya');
       expect(state.googleMapsUrl, 'https://maps.example');
+      expect(state.latitude, 29.3759);
+      expect(state.longitude, 47.9774);
       expect(state.createAccount, isTrue);
     });
 

@@ -1,5 +1,6 @@
 import '../../../core/location/kuwait_locations.dart';
 import 'customer_service_location.dart';
+import 'service_location_coordinates.dart';
 import 'service_location_type.dart';
 
 /// Form payload for service-location RPCs.
@@ -15,6 +16,11 @@ class CustomerServiceLocationFormState {
     this.googleMapsUrl,
     this.latitude,
     this.longitude,
+    this.resolutionSource,
+    this.resolvedAt,
+    this.coordinateAccuracyM,
+    this.resolutionStatus,
+    this.resolutionError,
     this.contactPersonName,
     this.contactPersonPhone,
     this.contactPersonEmail,
@@ -35,6 +41,11 @@ class CustomerServiceLocationFormState {
       googleMapsUrl: location.googleMapsUrl,
       latitude: location.latitude,
       longitude: location.longitude,
+      resolutionSource: location.resolutionSource,
+      resolvedAt: location.resolvedAt,
+      coordinateAccuracyM: location.coordinateAccuracyM,
+      resolutionStatus: location.resolutionStatus,
+      resolutionError: location.resolutionError,
       contactPersonName: location.contactPersonName,
       contactPersonPhone: location.contactPersonPhone,
       contactPersonEmail: location.contactPersonEmail,
@@ -52,6 +63,11 @@ class CustomerServiceLocationFormState {
   final String? googleMapsUrl;
   final double? latitude;
   final double? longitude;
+  final CoordinateResolutionSource? resolutionSource;
+  final DateTime? resolvedAt;
+  final double? coordinateAccuracyM;
+  final CoordinateResolutionStatus? resolutionStatus;
+  final String? resolutionError;
   final String? contactPersonName;
   final String? contactPersonPhone;
   final String? contactPersonEmail;
@@ -62,23 +78,27 @@ class CustomerServiceLocationFormState {
       'name': name.trim(),
       'location_type': locationType.toDb(),
       'is_primary': isPrimary,
-      if (country?.trim().isNotEmpty == true) 'country': country!.trim(),
-      if (governorate?.trim().isNotEmpty == true)
-        'governorate': governorate!.trim(),
-      if (area?.trim().isNotEmpty == true) 'area': area!.trim(),
-      if (addressLine?.trim().isNotEmpty == true)
-        'address_line': addressLine!.trim(),
-      if (googleMapsUrl?.trim().isNotEmpty == true)
-        'google_maps_url': googleMapsUrl!.trim(),
-      if (latitude != null) 'latitude': latitude,
-      if (longitude != null) 'longitude': longitude,
-      if (contactPersonName?.trim().isNotEmpty == true)
-        'contact_person_name': contactPersonName!.trim(),
-      if (contactPersonPhone?.trim().isNotEmpty == true)
-        'contact_person_phone': contactPersonPhone!.trim(),
-      if (contactPersonEmail?.trim().isNotEmpty == true)
-        'contact_person_email': contactPersonEmail!.trim(),
-      if (notes?.trim().isNotEmpty == true) 'notes': notes!.trim(),
+      'country': _trimmedOrNull(country),
+      'governorate': _trimmedOrNull(governorate),
+      'area': _trimmedOrNull(area),
+      'address_line': _trimmedOrNull(addressLine),
+      'google_maps_url': _trimmedOrNull(googleMapsUrl),
+      'latitude': latitude,
+      'longitude': longitude,
+      'resolution_source': resolutionSource?.toDb(),
+      'resolved_at': resolvedAt?.toUtc().toIso8601String(),
+      'coordinate_accuracy_m': coordinateAccuracyM,
+      'resolution_status': resolutionStatus?.toDb(),
+      'resolution_error': _trimmedOrNull(resolutionError),
+      'contact_person_name': _trimmedOrNull(contactPersonName),
+      'contact_person_phone': _trimmedOrNull(contactPersonPhone),
+      'contact_person_email': _trimmedOrNull(contactPersonEmail),
+      'notes': _trimmedOrNull(notes),
     };
+  }
+
+  static String? _trimmedOrNull(String? value) {
+    final trimmed = value?.trim();
+    return trimmed == null || trimmed.isEmpty ? null : trimmed;
   }
 }

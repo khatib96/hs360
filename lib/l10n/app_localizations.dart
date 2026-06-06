@@ -3164,6 +3164,162 @@ abstract class AppLocalizations {
   /// **'Longitude'**
   String get serviceLocationFieldLongitude;
 
+  /// No description provided for @serviceLocationCoordinatesSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Coordinates'**
+  String get serviceLocationCoordinatesSection;
+
+  /// No description provided for @serviceLocationCoordinatesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste a Google Maps link. Coordinates are extracted automatically and are not entered manually.'**
+  String get serviceLocationCoordinatesHint;
+
+  /// No description provided for @googleMapsLinkResolutionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste a Google Maps link to extract the location automatically.'**
+  String get googleMapsLinkResolutionHint;
+
+  /// No description provided for @googleMapsResolveLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Extract location'**
+  String get googleMapsResolveLink;
+
+  /// No description provided for @googleMapsCoordinatesResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Location extracted: {latitude}, {longitude}'**
+  String googleMapsCoordinatesResolved(String latitude, String longitude);
+
+  /// No description provided for @googleMapsLinkInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid Google Maps link.'**
+  String get googleMapsLinkInvalid;
+
+  /// No description provided for @googleMapsCoordinatesNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Coordinates could not be extracted from this Google Maps link.'**
+  String get googleMapsCoordinatesNotFound;
+
+  /// No description provided for @googleMapsResolutionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The Google Maps link could not be resolved. Check the connection and try again.'**
+  String get googleMapsResolutionFailed;
+
+  /// No description provided for @serviceLocationUseCurrentLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Use current location'**
+  String get serviceLocationUseCurrentLocation;
+
+  /// No description provided for @serviceLocationClearCoordinates.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear coordinates'**
+  String get serviceLocationClearCoordinates;
+
+  /// No description provided for @serviceLocationCoordinatePairRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter both latitude and longitude.'**
+  String get serviceLocationCoordinatePairRequired;
+
+  /// No description provided for @serviceLocationLatitudeInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Latitude must be between -90 and 90.'**
+  String get serviceLocationLatitudeInvalid;
+
+  /// No description provided for @serviceLocationLongitudeInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Longitude must be between -180 and 180.'**
+  String get serviceLocationLongitudeInvalid;
+
+  /// No description provided for @serviceLocationCoordinateMetadataInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Coordinate source or quality information is invalid.'**
+  String get serviceLocationCoordinateMetadataInvalid;
+
+  /// No description provided for @serviceLocationCoordinatesCaptured.
+  ///
+  /// In en, this message translates to:
+  /// **'Current location captured.'**
+  String get serviceLocationCoordinatesCaptured;
+
+  /// No description provided for @serviceLocationCoordinateSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Source'**
+  String get serviceLocationCoordinateSource;
+
+  /// No description provided for @serviceLocationCoordinateSourceMapPick.
+  ///
+  /// In en, this message translates to:
+  /// **'Map selection'**
+  String get serviceLocationCoordinateSourceMapPick;
+
+  /// No description provided for @serviceLocationCoordinateSourceDeviceGps.
+  ///
+  /// In en, this message translates to:
+  /// **'Device GPS'**
+  String get serviceLocationCoordinateSourceDeviceGps;
+
+  /// No description provided for @serviceLocationCoordinateSourceUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved map link'**
+  String get serviceLocationCoordinateSourceUrl;
+
+  /// No description provided for @serviceLocationCoordinateSourceManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual entry'**
+  String get serviceLocationCoordinateSourceManual;
+
+  /// No description provided for @serviceLocationCoordinateResolvedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved'**
+  String get serviceLocationCoordinateResolvedAt;
+
+  /// No description provided for @serviceLocationCoordinateAccuracy.
+  ///
+  /// In en, this message translates to:
+  /// **'Accuracy: {meters} m'**
+  String serviceLocationCoordinateAccuracy(String meters);
+
+  /// No description provided for @serviceLocationServicesDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Location services are disabled on this device.'**
+  String get serviceLocationServicesDisabled;
+
+  /// No description provided for @serviceLocationPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Location permission was denied.'**
+  String get serviceLocationPermissionDenied;
+
+  /// No description provided for @serviceLocationPermissionPermanentlyDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Location permission is blocked. Enable it in system settings.'**
+  String get serviceLocationPermissionPermanentlyDenied;
+
+  /// No description provided for @serviceLocationUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Current location could not be determined.'**
+  String get serviceLocationUnavailable;
+
   /// No description provided for @serviceLocationTypeBranch.
   ///
   /// In en, this message translates to:

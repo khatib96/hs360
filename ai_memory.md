@@ -1,6 +1,6 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-06-04 (Phase 4 M7.5 CoA hierarchy + Arabic repair complete).
+> Updated 2026-06-06 (Phase 4 M5.7 locally complete and verified).
 
 ---
 
@@ -14,13 +14,30 @@
 - **Phase 4 M5 complete** - customer/supplier lists, filters, and create/edit/deactivate forms.
 - **Phase 4 M5.5 complete** - profile field cleanup (DB `046`), optional `create_account`, `ensure_*_account`, Kuwait location catalog, responsive sectioned forms, governorate/area filters.
 - **Phase 4 M5.6 complete** - `047_customer_service_locations.sql`, composite FKs, location RPCs, customer detail **Locations** tab.
+- **Phase 4 M5.7 locally complete** - migrations `050`/`051`, coordinate source/time/status metadata, Google Maps link resolution, DB constraints, AR/EN UI, and coordinate display.
 - **Phase 4 M6 complete** - Customer 360 shell at [`customer_detail_screen.dart`](lib/features/customers/presentation/customer_detail_screen.dart): Profile, Locations, Contracts/Invoices/Vouchers placeholders, Statement (`customers.view_ledger` RPCs), Timeline (local metadata only).
 - **Phase 4 M7 complete** - Chart of Accounts tree at [`chart_of_accounts_screen.dart`](lib/features/accounting/presentation/chart_of_accounts_screen.dart); migration [`048`](supabase/migrations/048_chart_accounts_m7_hardening.sql); single-fetch tree, policy-driven badges/actions, setup banner, manual CRUD dialogs.
 - **Phase 4 M7.5 complete** - CoA hierarchy + Arabic repair via [`049`](supabase/migrations/049_chart_accounts_hierarchy_and_arabic_repair.sql): 5 protected category roots (`1000`–`5000` incl. Equity), system leaves reparented, Arabic repaired with transport-safe `U&` escapes, duplicate-code pre-check, targeted protection-trigger disable only.
-- Migrations `001`-`049` on local Postgres; `npx --yes supabase db reset` remains avoided/blocked by Supabase CLI 2.102 internal service migration duplicate.
+- Migrations `001`-`051` are applied on local Postgres. The M5.7 SQL suite passed on 2026-06-06.
 - **Canonical inventory rules:** [`docs/PHASE_3_M1_5_INVENTORY_RULES.md`](docs/PHASE_3_M1_5_INVENTORY_RULES.md)
 - **Capability decisions:** [`docs/CAPABILITIES_DECISION_REPORT.md`](docs/CAPABILITIES_DECISION_REPORT.md) + [`docs/CANONICAL_DECISIONS.md`](docs/CANONICAL_DECISIONS.md) now fix Barcode/Serial, JSON print templates, service-location coordinates, and Phase 5 Tax Foundation placement.
-- **Next:** Phase 5 or further CoA UX polish as needed.
+- **Next:** deploy `resolve-google-maps-url` and migrations to the target Supabase project after CLI login/project linking, then complete final Phase 4 visual acceptance.
+
+---
+
+## Phase 4 M5.7 - Service Location Coordinates Foundation (done)
+
+- **Migrations:** [`050_service_location_coordinates_foundation.sql`](supabase/migrations/050_service_location_coordinates_foundation.sql) adds coordinate metadata and constraints; [`051_google_maps_url_coordinate_resolution.sql`](supabase/migrations/051_google_maps_url_coordinate_resolution.sql) synchronizes resolved URL coordinates with the customer's primary service location.
+- **Truth rule:** `latitude`/`longitude` are operational truth, but users enter only a Google Maps link. The app resolves the link before save.
+- **Coverage rule:** Google Maps link resolution is available on both the customer's primary location (customer create/edit form) and every additional service location (location add/edit dialog). Each location stores and updates its own link and coordinate pair independently.
+- **Flutter/Edge:** full links resolve locally; shortened `maps.app.goo.gl` links resolve through `resolve-google-maps-url`. There are no manual coordinate or device-GPS controls.
+- **Tests:** model/payload/validator/widget coverage plus [`phase_4_service_location_coordinates.sql`](supabase/tests/phase_4_service_location_coordinates.sql).
+- **Verification:** `flutter analyze` passed, `flutter test` passed (368 tests), Node parser tests passed, `git diff --check` passed, migration `051` applied, and the M5.7 SQL suite passed.
+- **Real-link E2E:** `https://maps.app.goo.gl/4bNoy35oFC6UKAPP7` resolved locally through the authenticated Edge Function to `25.7800955, 55.9693682`; invalid host returned `400`, missing JWT returned `401`, and a transaction/rollback save test stored the link and exact coordinates on the primary service location.
+- **Primary + additional verification:** the SQL suite verifies that a customer can retain a resolved primary location and a separately resolved additional location; updating the additional location does not alter the primary location.
+- **Deployment:** local Edge Runtime is verified. Cloud deployment is pending because Supabase CLI has no access token/project link in this workspace.
+- **Android build note:** `assembleDebug` produced the intermediate APK, but the final copy failed when drive `C:` reached zero free bytes. Temporary `build/app` output was removed and about 2.39 GB free space was restored; this was an environment-capacity failure, not a compile error.
+- **Deferred by design:** choose-on-map UI.
 
 ---
 
@@ -52,7 +69,7 @@
 - Serialized operations must require `product_unit_id` at RPC level.
 - Existing stock serial backfill must reconcile units without increasing inventory balances again.
 - Document templates use structured JSON; Flutter `pdf`/`printing` renderer first, later server renderer uses the same JSON model.
-- Coordinates belong on `customer_service_locations`; `google_maps_url` is a source/link, not the truth. Store source/quality metadata (`resolution_source`, `resolved_at`, `coordinate_accuracy_m`) when implementing capture.
+- Coordinates belong on `customer_service_locations`; the user supplies `google_maps_url`, and the resolved coordinate pair is stored as truth by migrations `050`/`051`.
 - Tax Foundation belongs before Phase 5 invoice RPCs, not in M7: use `default_tax_rate_id`, tenant `tax_rates`, explicit product tax classes (`taxable`/`zero_rated`/`exempt`/`non_taxable`), invoice-line tax snapshots, and protected tax posting accounts when implemented.
 
 ---

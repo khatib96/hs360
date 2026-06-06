@@ -17,6 +17,9 @@ class CustomerFormState {
     this.governorate,
     this.country = kuwaitCountryCanonical,
     this.googleMapsUrl,
+    this.latitude,
+    this.longitude,
+    this.coordinatesResolvedAt,
     this.taxNumber,
     this.isVip = false,
     this.notes,
@@ -57,6 +60,9 @@ class CustomerFormState {
   final String? governorate;
   final String? country;
   final String? googleMapsUrl;
+  final double? latitude;
+  final double? longitude;
+  final DateTime? coordinatesResolvedAt;
   final String? taxNumber;
   final bool isVip;
   final String? notes;
@@ -74,7 +80,8 @@ class CustomerFormState {
           'contact_person_name': contactPersonName!.trim(),
         if (contactPersonPhone?.trim().isNotEmpty == true)
           'contact_person_phone': contactPersonPhone!.trim(),
-        if (taxNumber?.trim().isNotEmpty == true) 'tax_number': taxNumber!.trim(),
+        if (taxNumber?.trim().isNotEmpty == true)
+          'tax_number': taxNumber!.trim(),
       },
       'phone_primary': phonePrimary.trim(),
       if (email?.trim().isNotEmpty == true) 'email': email!.trim(),
@@ -86,6 +93,15 @@ class CustomerFormState {
       if (country?.trim().isNotEmpty == true) 'country': country!.trim(),
       if (googleMapsUrl?.trim().isNotEmpty == true)
         'google_maps_url': googleMapsUrl!.trim(),
+      if (latitude != null && longitude != null) ...{
+        'latitude': latitude,
+        'longitude': longitude,
+        'resolution_source': 'url',
+        'resolved_at': coordinatesResolvedAt?.toUtc().toIso8601String(),
+        'coordinate_accuracy_m': null,
+        'resolution_status': 'resolved',
+        'resolution_error': null,
+      },
       'is_vip': isVip,
       if (notes?.trim().isNotEmpty == true) 'notes': notes!.trim(),
       'create_account': createAccount,
@@ -113,8 +129,20 @@ class CustomerFormState {
       'governorate': governorate?.trim(),
       'country': country?.trim(),
       'google_maps_url': googleMapsUrl?.trim(),
-      'tax_number':
-          customerType == CustomerType.company ? taxNumber?.trim() : null,
+      'latitude': latitude,
+      'longitude': longitude,
+      'resolution_source': latitude != null && longitude != null ? 'url' : null,
+      'resolved_at': latitude != null && longitude != null
+          ? coordinatesResolvedAt?.toUtc().toIso8601String()
+          : null,
+      'coordinate_accuracy_m': null,
+      'resolution_status': latitude != null && longitude != null
+          ? 'resolved'
+          : null,
+      'resolution_error': null,
+      'tax_number': customerType == CustomerType.company
+          ? taxNumber?.trim()
+          : null,
       'is_vip': isVip,
       'notes': notes?.trim(),
     };

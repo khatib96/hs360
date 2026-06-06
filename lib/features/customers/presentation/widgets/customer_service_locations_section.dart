@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hs360/l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../shared/widgets/message_banner.dart';
 import '../../../auth/presentation/auth_controller.dart';
@@ -9,14 +10,12 @@ import '../../domain/customer_permissions.dart';
 import '../../domain/customer_service_location.dart';
 import '../customer_error_messages.dart';
 import '../customer_locations_controller.dart';
+import '../service_location_coordinate_labels.dart';
 import '../service_location_type_labels.dart';
 import 'customer_service_location_form_dialog.dart';
 
 class CustomerServiceLocationsSection extends ConsumerWidget {
-  const CustomerServiceLocationsSection({
-    required this.customerId,
-    super.key,
-  });
+  const CustomerServiceLocationsSection({required this.customerId, super.key});
 
   final String customerId;
 
@@ -26,8 +25,9 @@ class CustomerServiceLocationsSection extends ConsumerWidget {
     final session = ref.watch(authControllerProvider).valueOrNull;
     final canEdit = session != null && canEditCustomer(session);
     final state = ref.watch(customerLocationsControllerProvider(customerId));
-    final notifier =
-        ref.read(customerLocationsControllerProvider(customerId).notifier);
+    final notifier = ref.read(
+      customerLocationsControllerProvider(customerId).notifier,
+    );
 
     if (state.isLoading && state.locations.isEmpty) {
       return const Center(child: CircularProgressIndicator());
@@ -84,15 +84,12 @@ class CustomerServiceLocationsSection extends ConsumerWidget {
                           _onDeactivate(context, ref, notifier, location),
                       onSetPrimary: location.isPrimary
                           ? null
-                          : () => _onSetPrimary(
-                                context,
-                                ref,
-                                notifier,
-                                location,
-                              ),
-                      onOpenMaps: location.googleMapsUrl?.trim().isNotEmpty ==
-                              true
-                          ? () => _copyMapsLink(context, location.googleMapsUrl!)
+                          : () =>
+                                _onSetPrimary(context, ref, notifier, location),
+                      onOpenMaps:
+                          location.googleMapsUrl?.trim().isNotEmpty == true
+                          ? () =>
+                                _copyMapsLink(context, location.googleMapsUrl!)
                           : null,
                     );
                   },
@@ -178,9 +175,9 @@ class CustomerServiceLocationsSection extends ConsumerWidget {
   void _copyMapsLink(BuildContext context, String url) {
     final l10n = AppLocalizations.of(context)!;
     Clipboard.setData(ClipboardData(text: url));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.serviceLocationMapsCopied)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(l10n.serviceLocationMapsCopied)));
   }
 }
 
@@ -240,6 +237,37 @@ class _LocationCard extends StatelessWidget {
               const SizedBox(height: 8),
               Text(summary),
             ],
+            if (location.hasCoordinates) ...[
+              const SizedBox(height: 8),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsetsDirectional.only(top: 2),
+                    child: Icon(Icons.location_on_outlined, size: 18),
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${location.latitude!.toStringAsFixed(6)}, '
+                          '${location.longitude!.toStringAsFixed(6)}',
+                        ),
+                        if (location.resolutionSource != null ||
+                            location.resolvedAt != null ||
+                            location.coordinateAccuracyM != null)
+                          Text(
+                            _coordinateMetadata(context, location),
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
             if (location.contactPersonName?.isNotEmpty == true ||
                 location.contactPersonPhone?.isNotEmpty == true) ...[
               const SizedBox(height: 8),
@@ -284,5 +312,25 @@ class _LocationCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _coordinateMetadata(
+    BuildContext context,
+    CustomerServiceLocation location,
+  ) {
+    final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    return [
+      if (location.resolutionSource != null)
+        '${l10n.serviceLocationCoordinateSource}: '
+            '${coordinateResolutionSourceLabel(l10n, location.resolutionSource!)}',
+      if (location.coordinateAccuracyM != null)
+        l10n.serviceLocationCoordinateAccuracy(
+          location.coordinateAccuracyM!.toStringAsFixed(1),
+        ),
+      if (location.resolvedAt != null)
+        '${l10n.serviceLocationCoordinateResolvedAt}: '
+            '${DateFormat.yMMMd(locale).add_jm().format(location.resolvedAt!.toLocal())}',
+    ].join(' · ');
   }
 }

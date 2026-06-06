@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 /// Labeled form field with optional password visibility toggle.
@@ -15,6 +16,10 @@ class AppTextField extends StatefulWidget {
     this.showPasswordLabel,
     this.hidePasswordLabel,
     this.onFieldSubmitted,
+    this.onChanged,
+    this.inputFormatters,
+    this.helperText,
+    this.errorText,
     super.key,
   });
 
@@ -29,6 +34,10 @@ class AppTextField extends StatefulWidget {
   final String? showPasswordLabel;
   final String? hidePasswordLabel;
   final ValueChanged<String>? onFieldSubmitted;
+  final ValueChanged<String>? onChanged;
+  final List<TextInputFormatter>? inputFormatters;
+  final String? helperText;
+  final String? errorText;
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -83,6 +92,8 @@ class _AppTextFieldState extends State<AppTextField> {
                 ? _obscured
                 : widget.obscureText,
             onFieldSubmitted: widget.onFieldSubmitted,
+            onChanged: widget.onChanged,
+            inputFormatters: widget.inputFormatters,
             decoration: InputDecoration(
               isDense: true,
               contentPadding: const EdgeInsetsDirectional.symmetric(
@@ -90,6 +101,8 @@ class _AppTextFieldState extends State<AppTextField> {
                 vertical: 12,
               ),
               suffixIcon: suffix,
+              helperText: widget.helperText,
+              errorText: widget.errorText,
             ),
           ),
         ),

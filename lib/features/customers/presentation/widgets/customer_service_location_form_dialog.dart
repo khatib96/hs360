@@ -2,21 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
-import '../../../../core/localization/locale_controller.dart' show localeProvider;
+import '../../../../core/localization/locale_controller.dart'
+    show localeProvider;
 import '../../../../core/location/kuwait_locations.dart';
 import '../../../../shared/widgets/app_text_field.dart';
 import '../../../../shared/widgets/kuwait_location_fields.dart';
 import '../../domain/customer_service_location.dart';
 import '../../domain/customer_service_location_form_state.dart';
+import '../../domain/google_maps_coordinates.dart';
+import '../../domain/service_location_coordinates.dart';
 import '../../domain/service_location_type.dart';
 import '../customer_error_messages.dart';
 import '../service_location_type_labels.dart';
+import 'google_maps_link_field.dart';
 
 class CustomerServiceLocationFormDialog extends ConsumerStatefulWidget {
-  const CustomerServiceLocationFormDialog({
-    this.initial,
-    super.key,
-  });
+  const CustomerServiceLocationFormDialog({this.initial, super.key});
 
   final CustomerServiceLocation? initial;
 
@@ -40,6 +41,8 @@ class _CustomerServiceLocationFormDialogState
   late bool _useCustomArea;
   String? _governorate;
   String? _area;
+  bool _coordinatesBusy = false;
+  final _googleMapsKey = GlobalKey<GoogleMapsLinkFieldState>();
 
   @override
   void initState() {
@@ -59,7 +62,8 @@ class _CustomerServiceLocationFormDialogState
     _isPrimary = form.isPrimary;
     _governorate = form.governorate;
     _area = form.area;
-    _useCustomArea = form.area != null &&
+    _useCustomArea =
+        form.area != null &&
         kuwaitAreaByCanonical(form.governorate, form.area) == null &&
         form.area!.isNotEmpty;
     if (_useCustomArea) {
@@ -79,7 +83,9 @@ class _CustomerServiceLocationFormDialogState
     super.dispose();
   }
 
-  CustomerServiceLocationFormState _buildFormState() {
+  CustomerServiceLocationFormState _buildFormState(
+    GoogleMapsCoordinates? coordinates,
+  ) {
     final area = _useCustomArea ? _customArea.text.trim() : _area?.trim();
     return CustomerServiceLocationFormState(
       name: _name.text,
@@ -88,14 +94,33 @@ class _CustomerServiceLocationFormDialogState
       governorate: _governorate?.trim(),
       area: area?.isEmpty == true ? null : area,
       addressLine: _address.text.trim().isEmpty ? null : _address.text.trim(),
-      googleMapsUrl:
-          _googleMaps.text.trim().isEmpty ? null : _googleMaps.text.trim(),
-      contactPersonName:
-          _contactName.text.trim().isEmpty ? null : _contactName.text.trim(),
-      contactPersonPhone:
-          _contactPhone.text.trim().isEmpty ? null : _contactPhone.text.trim(),
+      googleMapsUrl: _googleMaps.text.trim().isEmpty
+          ? null
+          : _googleMaps.text.trim(),
+      latitude: coordinates?.latitude,
+      longitude: coordinates?.longitude,
+      resolutionSource: coordinates == null
+          ? null
+          : CoordinateResolutionSource.url,
+      resolvedAt: coordinates?.resolvedAt,
+      resolutionStatus: coordinates == null
+          ? null
+          : CoordinateResolutionStatus.resolved,
+      contactPersonName: _contactName.text.trim().isEmpty
+          ? null
+          : _contactName.text.trim(),
+      contactPersonPhone: _contactPhone.text.trim().isEmpty
+          ? null
+          : _contactPhone.text.trim(),
       notes: _notes.text.trim().isEmpty ? null : _notes.text.trim(),
     );
+  }
+
+  Future<void> _submit() async {
+    final hasMapLink = _googleMaps.text.trim().isNotEmpty;
+    final coordinates = await _googleMapsKey.currentState?.resolveForSubmit();
+    if (!mounted || (hasMapLink && coordinates == null)) return;
+    Navigator.of(context).pop(_buildFormState(coordinates));
   }
 
   @override
@@ -107,7 +132,7 @@ class _CustomerServiceLocationFormDialogState
     return AlertDialog(
       title: Text(isEdit ? l10n.serviceLocationEdit : l10n.serviceLocationAdd),
       content: SizedBox(
-        width: 560,
+        width: 680,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -122,8 +147,9 @@ class _CustomerServiceLocationFormDialogState
               DropdownButtonFormField<ServiceLocationType>(
                 isExpanded: true,
                 initialValue: _type,
-                decoration:
-                    InputDecoration(labelText: l10n.serviceLocationFieldType),
+                decoration: InputDecoration(
+                  labelText: l10n.serviceLocationFieldType,
+                ),
                 items: ServiceLocationType.values
                     .map(
                       (t) => DropdownMenuItem(
@@ -159,9 +185,15 @@ class _CustomerServiceLocationFormDialogState
                 label: l10n.customerFieldAddress,
               ),
               const SizedBox(height: 12),
-              AppTextField(
+              GoogleMapsLinkField(
+                key: _googleMapsKey,
                 controller: _googleMaps,
-                label: l10n.customerFieldGoogleMapsUrl,
+                initialLatitude: widget.initial?.latitude,
+                initialLongitude: widget.initial?.longitude,
+                initialResolvedAt: widget.initial?.resolvedAt,
+                onBusyChanged: (value) {
+                  if (mounted) setState(() => _coordinatesBusy = value);
+                },
               ),
               const SizedBox(height: 12),
               AppTextField(
@@ -174,10 +206,7 @@ class _CustomerServiceLocationFormDialogState
                 label: l10n.serviceLocationFieldContactPhone,
               ),
               const SizedBox(height: 12),
-              AppTextField(
-                controller: _notes,
-                label: l10n.customerFieldNotes,
-              ),
+              AppTextField(controller: _notes, label: l10n.customerFieldNotes),
               if (!isEdit) ...[
                 const SizedBox(height: 8),
                 CheckboxListTile(
@@ -194,13 +223,13 @@ class _CustomerServiceLocationFormDialogState
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: _coordinatesBusy
+              ? null
+              : () => Navigator.of(context).pop(),
           child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
         ),
         FilledButton(
-          onPressed: () {
-            Navigator.of(context).pop(_buildFormState());
-          },
+          onPressed: _coordinatesBusy ? null : _submit,
           child: Text(MaterialLocalizations.of(context).saveButtonLabel),
         ),
       ],
@@ -220,7 +249,7 @@ Future<CustomerServiceLocationFormState?> showCustomerServiceLocationFormDialog(
 
 void showServiceLocationErrorSnackBar(BuildContext context, String code) {
   final l10n = AppLocalizations.of(context)!;
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text(customerErrorMessage(l10n, code))),
-  );
+  ScaffoldMessenger.of(
+    context,
+  ).showSnackBar(SnackBar(content: Text(customerErrorMessage(l10n, code))));
 }

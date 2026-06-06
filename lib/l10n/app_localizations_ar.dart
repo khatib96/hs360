@@ -1607,6 +1607,98 @@ class AppLocalizationsAr extends AppLocalizations {
   String get serviceLocationFieldLongitude => 'خط الطول';
 
   @override
+  String get serviceLocationCoordinatesSection => 'الإحداثيات';
+
+  @override
+  String get serviceLocationCoordinatesHint =>
+      'الصق رابط Google Maps وسيتم استخراج الإحداثيات تلقائيًا دون إدخال يدوي.';
+
+  @override
+  String get googleMapsLinkResolutionHint =>
+      'الصق رابط Google Maps لاستخراج الموقع تلقائيًا.';
+
+  @override
+  String get googleMapsResolveLink => 'استخراج الموقع';
+
+  @override
+  String googleMapsCoordinatesResolved(String latitude, String longitude) {
+    return 'تم استخراج الموقع: $latitude، $longitude';
+  }
+
+  @override
+  String get googleMapsLinkInvalid => 'أدخل رابط Google Maps صحيحًا.';
+
+  @override
+  String get googleMapsCoordinatesNotFound =>
+      'تعذر استخراج الإحداثيات من رابط Google Maps هذا.';
+
+  @override
+  String get googleMapsResolutionFailed =>
+      'تعذر تحليل رابط Google Maps. تحقق من الاتصال وحاول مجددًا.';
+
+  @override
+  String get serviceLocationUseCurrentLocation => 'استخدام الموقع الحالي';
+
+  @override
+  String get serviceLocationClearCoordinates => 'مسح الإحداثيات';
+
+  @override
+  String get serviceLocationCoordinatePairRequired =>
+      'أدخل خط العرض وخط الطول معًا.';
+
+  @override
+  String get serviceLocationLatitudeInvalid =>
+      'يجب أن يكون خط العرض بين -90 و90.';
+
+  @override
+  String get serviceLocationLongitudeInvalid =>
+      'يجب أن يكون خط الطول بين -180 و180.';
+
+  @override
+  String get serviceLocationCoordinateMetadataInvalid =>
+      'بيانات مصدر الإحداثيات أو دقتها غير صحيحة.';
+
+  @override
+  String get serviceLocationCoordinatesCaptured => 'تم التقاط الموقع الحالي.';
+
+  @override
+  String get serviceLocationCoordinateSource => 'المصدر';
+
+  @override
+  String get serviceLocationCoordinateSourceMapPick => 'اختيار من الخريطة';
+
+  @override
+  String get serviceLocationCoordinateSourceDeviceGps => 'موقع الجهاز';
+
+  @override
+  String get serviceLocationCoordinateSourceUrl => 'رابط خريطة محلول';
+
+  @override
+  String get serviceLocationCoordinateSourceManual => 'إدخال يدوي';
+
+  @override
+  String get serviceLocationCoordinateResolvedAt => 'وقت التحديد';
+
+  @override
+  String serviceLocationCoordinateAccuracy(String meters) {
+    return 'الدقة: $meters م';
+  }
+
+  @override
+  String get serviceLocationServicesDisabled =>
+      'خدمات الموقع متوقفة على هذا الجهاز.';
+
+  @override
+  String get serviceLocationPermissionDenied => 'تم رفض إذن الوصول إلى الموقع.';
+
+  @override
+  String get serviceLocationPermissionPermanentlyDenied =>
+      'إذن الموقع محظور. فعّله من إعدادات النظام.';
+
+  @override
+  String get serviceLocationUnavailable => 'تعذر تحديد الموقع الحالي.';
+
+  @override
   String get serviceLocationTypeBranch => 'فرع';
 
   @override

@@ -1617,6 +1617,100 @@ class AppLocalizationsEn extends AppLocalizations {
   String get serviceLocationFieldLongitude => 'Longitude';
 
   @override
+  String get serviceLocationCoordinatesSection => 'Coordinates';
+
+  @override
+  String get serviceLocationCoordinatesHint =>
+      'Paste a Google Maps link. Coordinates are extracted automatically and are not entered manually.';
+
+  @override
+  String get googleMapsLinkResolutionHint =>
+      'Paste a Google Maps link to extract the location automatically.';
+
+  @override
+  String get googleMapsResolveLink => 'Extract location';
+
+  @override
+  String googleMapsCoordinatesResolved(String latitude, String longitude) {
+    return 'Location extracted: $latitude, $longitude';
+  }
+
+  @override
+  String get googleMapsLinkInvalid => 'Enter a valid Google Maps link.';
+
+  @override
+  String get googleMapsCoordinatesNotFound =>
+      'Coordinates could not be extracted from this Google Maps link.';
+
+  @override
+  String get googleMapsResolutionFailed =>
+      'The Google Maps link could not be resolved. Check the connection and try again.';
+
+  @override
+  String get serviceLocationUseCurrentLocation => 'Use current location';
+
+  @override
+  String get serviceLocationClearCoordinates => 'Clear coordinates';
+
+  @override
+  String get serviceLocationCoordinatePairRequired =>
+      'Enter both latitude and longitude.';
+
+  @override
+  String get serviceLocationLatitudeInvalid =>
+      'Latitude must be between -90 and 90.';
+
+  @override
+  String get serviceLocationLongitudeInvalid =>
+      'Longitude must be between -180 and 180.';
+
+  @override
+  String get serviceLocationCoordinateMetadataInvalid =>
+      'Coordinate source or quality information is invalid.';
+
+  @override
+  String get serviceLocationCoordinatesCaptured => 'Current location captured.';
+
+  @override
+  String get serviceLocationCoordinateSource => 'Source';
+
+  @override
+  String get serviceLocationCoordinateSourceMapPick => 'Map selection';
+
+  @override
+  String get serviceLocationCoordinateSourceDeviceGps => 'Device GPS';
+
+  @override
+  String get serviceLocationCoordinateSourceUrl => 'Resolved map link';
+
+  @override
+  String get serviceLocationCoordinateSourceManual => 'Manual entry';
+
+  @override
+  String get serviceLocationCoordinateResolvedAt => 'Resolved';
+
+  @override
+  String serviceLocationCoordinateAccuracy(String meters) {
+    return 'Accuracy: $meters m';
+  }
+
+  @override
+  String get serviceLocationServicesDisabled =>
+      'Location services are disabled on this device.';
+
+  @override
+  String get serviceLocationPermissionDenied =>
+      'Location permission was denied.';
+
+  @override
+  String get serviceLocationPermissionPermanentlyDenied =>
+      'Location permission is blocked. Enable it in system settings.';
+
+  @override
+  String get serviceLocationUnavailable =>
+      'Current location could not be determined.';
+
+  @override
   String get serviceLocationTypeBranch => 'Branch';
 
   @override

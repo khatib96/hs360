@@ -16,12 +16,32 @@ class CustomerException extends AppException {
   static const accountAlreadyLinked = 'account_already_linked';
   static const immutableColumn = 'immutable_column';
   static const serviceLocationNameRequired = 'service_location_name_required';
+  static const serviceLocationCoordinatePairRequired =
+      'service_location_coordinate_pair_required';
+  static const serviceLocationLatitudeInvalid =
+      'service_location_latitude_invalid';
+  static const serviceLocationLongitudeInvalid =
+      'service_location_longitude_invalid';
+  static const serviceLocationCoordinateMetadataInvalid =
+      'service_location_coordinate_metadata_invalid';
+  static const locationServicesDisabled = 'location_services_disabled';
+  static const locationPermissionDenied = 'location_permission_denied';
+  static const locationPermissionPermanentlyDenied =
+      'location_permission_permanently_denied';
+  static const locationUnavailable = 'location_unavailable';
+  static const googleMapsLinkInvalid = 'google_maps_link_invalid';
+  static const googleMapsCoordinatesNotFound =
+      'google_maps_coordinates_not_found';
+  static const googleMapsResolutionFailed = 'google_maps_resolution_failed';
   static const locationInUse = 'location_in_use';
   static const primaryRequired = 'primary_required';
   static const supabaseNotConfigured = 'supabaseNotConfigured';
   static const unknown = 'unknown';
 
-  factory CustomerException.fromSupabase(Object error, [StackTrace? stackTrace]) {
+  factory CustomerException.fromSupabase(
+    Object error, [
+    StackTrace? stackTrace,
+  ]) {
     if (error is CustomerException) return error;
 
     final message = _extractMessage(error).toLowerCase();
@@ -30,7 +50,10 @@ class CustomerException extends AppException {
       return CustomerException(code: tenantNotFound, technicalDetail: message);
     }
     if (message.contains('permission_denied')) {
-      return CustomerException(code: permissionDenied, technicalDetail: message);
+      return CustomerException(
+        code: permissionDenied,
+        technicalDetail: message,
+      );
     }
     if (message.contains('ar_parent_missing')) {
       return CustomerException(code: arParentMissing, technicalDetail: message);
@@ -45,7 +68,10 @@ class CustomerException extends AppException {
       return CustomerException(code: immutableColumn, technicalDetail: message);
     }
     if (message.contains('validation_failed')) {
-      return CustomerException(code: validationFailed, technicalDetail: message);
+      return CustomerException(
+        code: validationFailed,
+        technicalDetail: message,
+      );
     }
     if (message.contains('location_in_use')) {
       return CustomerException(code: locationInUse, technicalDetail: message);

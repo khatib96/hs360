@@ -12,6 +12,7 @@ import '../../domain/customer_form_state.dart';
 import '../../domain/customer_type.dart';
 import '../customer_error_messages.dart';
 import '../customer_form_draft.dart';
+import 'google_maps_link_field.dart';
 
 /// Shared customer form fields for dialog and edit screen.
 class CustomerForm extends ConsumerStatefulWidget {
@@ -66,6 +67,8 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
   String? _governorate;
   String? _area;
   List<String> _errorCodes = const [];
+  bool _mapLinkBusy = false;
+  final _googleMapsKey = GlobalKey<GoogleMapsLinkFieldState>();
 
   @override
   void initState() {
@@ -129,7 +132,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
     );
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     final draft = _buildDraft();
     final codes = draft.validate();
     if (codes.isNotEmpty) {
@@ -137,7 +140,10 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
       return;
     }
     setState(() => _errorCodes = const []);
-    widget.onSubmit(draft.toFormState());
+    final hasMapLink = draft.googleMapsUrl.trim().isNotEmpty;
+    final coordinates = await _googleMapsKey.currentState?.resolveForSubmit();
+    if (!mounted || (hasMapLink && coordinates == null)) return;
+    widget.onSubmit(draft.toFormState(coordinates: coordinates));
   }
 
   @override
@@ -225,7 +231,10 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                     },
                   ),
                 ),
-                AppTextField(label: l10n.customerFieldNameAr, controller: _nameAr),
+                AppTextField(
+                  label: l10n.customerFieldNameAr,
+                  controller: _nameAr,
+                ),
                 if (isCompany)
                   AppTextField(
                     label: l10n.customerFieldNameEn,
@@ -258,7 +267,10 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                   keyboardType: TextInputType.emailAddress,
                 ),
                 if (isCompany) ...[
-                  AppTextField(label: l10n.customerFieldTaxNumber, controller: _taxNumber),
+                  AppTextField(
+                    label: l10n.customerFieldTaxNumber,
+                    controller: _taxNumber,
+                  ),
                   AppTextField(
                     label: l10n.customerFieldContactName,
                     controller: _contactName,
@@ -313,10 +325,12 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
               controller: _address,
             ),
             const SizedBox(height: 12),
-            AppTextField(
-              label: l10n.customerFieldGoogleMapsUrl,
+            GoogleMapsLinkField(
+              key: _googleMapsKey,
               controller: _googleMaps,
-              keyboardType: TextInputType.url,
+              onBusyChanged: (value) {
+                if (mounted) setState(() => _mapLinkBusy = value);
+              },
             ),
           ],
         ),
@@ -340,13 +354,15 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             TextButton(
-              onPressed: widget.isSubmitting ? null : widget.onCancel,
+              onPressed: widget.isSubmitting || _mapLinkBusy
+                  ? null
+                  : widget.onCancel,
               child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
             ),
             const SizedBox(width: 8),
             FilledButton(
               key: const Key('customer-form-submit'),
-              onPressed: widget.isSubmitting ? null : _submit,
+              onPressed: widget.isSubmitting || _mapLinkBusy ? null : _submit,
               child: Text(widget.submitLabel),
             ),
           ],

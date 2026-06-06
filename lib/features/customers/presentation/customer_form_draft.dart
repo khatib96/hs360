@@ -3,6 +3,7 @@ import '../../../core/location/kuwait_locations.dart';
 import '../domain/customer.dart';
 import '../domain/customer_form_state.dart';
 import '../domain/customer_type.dart';
+import '../domain/google_maps_coordinates.dart';
 
 /// Mutable string-backed draft for the customer form.
 class CustomerFormDraft {
@@ -32,9 +33,9 @@ class CustomerFormDraft {
   factory CustomerFormDraft.fromCustomer(Customer customer) {
     final gov = customer.governorate ?? '';
     final area = customer.area ?? '';
-    final catalogAreas = areasForGovernorate(gov.isEmpty ? null : gov)
-        .map((a) => a.canonical)
-        .toList();
+    final catalogAreas = areasForGovernorate(
+      gov.isEmpty ? null : gov,
+    ).map((a) => a.canonical).toList();
     final inCatalog = catalogAreas.contains(area);
     return CustomerFormDraft(
       customerType: customer.customerType,
@@ -148,7 +149,7 @@ class CustomerFormDraft {
     return selected;
   }
 
-  CustomerFormState toFormState() {
+  CustomerFormState toFormState({GoogleMapsCoordinates? coordinates}) {
     return CustomerFormState(
       customerType: customerType,
       nameAr: nameAr.trim(),
@@ -166,6 +167,9 @@ class CustomerFormDraft {
       governorate: _nullIfBlank(governorate),
       country: _nullIfBlank(country) ?? kuwaitCountryCanonical,
       googleMapsUrl: _nullIfBlank(googleMapsUrl),
+      latitude: coordinates?.latitude,
+      longitude: coordinates?.longitude,
+      coordinatesResolvedAt: coordinates?.resolvedAt,
       taxNumber: customerType == CustomerType.company
           ? _nullIfBlank(taxNumber)
           : null,

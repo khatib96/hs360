@@ -789,6 +789,49 @@
   "serviceLocationFieldContactEmail": "Responsible email",
   "serviceLocationFieldLatitude": "Latitude",
   "serviceLocationFieldLongitude": "Longitude",
+  "serviceLocationCoordinatesSection": "Coordinates",
+  "serviceLocationCoordinatesHint": "Paste a Google Maps link. Coordinates are extracted automatically and are not entered manually.",
+  "googleMapsLinkResolutionHint": "Paste a Google Maps link to extract the location automatically.",
+  "googleMapsResolveLink": "Extract location",
+  "googleMapsCoordinatesResolved": "Location extracted: {latitude}, {longitude}",
+  "@googleMapsCoordinatesResolved": {
+    "placeholders": {
+      "latitude": {
+        "type": "String"
+      },
+      "longitude": {
+        "type": "String"
+      }
+    }
+  },
+  "googleMapsLinkInvalid": "Enter a valid Google Maps link.",
+  "googleMapsCoordinatesNotFound": "Coordinates could not be extracted from this Google Maps link.",
+  "googleMapsResolutionFailed": "The Google Maps link could not be resolved. Check the connection and try again.",
+  "serviceLocationUseCurrentLocation": "Use current location",
+  "serviceLocationClearCoordinates": "Clear coordinates",
+  "serviceLocationCoordinatePairRequired": "Enter both latitude and longitude.",
+  "serviceLocationLatitudeInvalid": "Latitude must be between -90 and 90.",
+  "serviceLocationLongitudeInvalid": "Longitude must be between -180 and 180.",
+  "serviceLocationCoordinateMetadataInvalid": "Coordinate source or quality information is invalid.",
+  "serviceLocationCoordinatesCaptured": "Current location captured.",
+  "serviceLocationCoordinateSource": "Source",
+  "serviceLocationCoordinateSourceMapPick": "Map selection",
+  "serviceLocationCoordinateSourceDeviceGps": "Device GPS",
+  "serviceLocationCoordinateSourceUrl": "Resolved map link",
+  "serviceLocationCoordinateSourceManual": "Manual entry",
+  "serviceLocationCoordinateResolvedAt": "Resolved",
+  "serviceLocationCoordinateAccuracy": "Accuracy: {meters} m",
+  "@serviceLocationCoordinateAccuracy": {
+    "placeholders": {
+      "meters": {
+        "type": "String"
+      }
+    }
+  },
+  "serviceLocationServicesDisabled": "Location services are disabled on this device.",
+  "serviceLocationPermissionDenied": "Location permission was denied.",
+  "serviceLocationPermissionPermanentlyDenied": "Location permission is blocked. Enable it in system settings.",
+  "serviceLocationUnavailable": "Current location could not be determined.",
   "serviceLocationTypeBranch": "Branch",
   "serviceLocationTypeOffice": "Office",
   "serviceLocationTypeWarehouse": "Warehouse",

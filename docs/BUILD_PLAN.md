@@ -337,7 +337,7 @@ Customer and supplier management fully working. CoA visible and customizable.
 ### Tasks
 1. Customer CRUD screens (desktop + mobile)
 2. Auto-generate customer code (CUST-0001)
-3. Auto-create A/R subaccount when customer is created
+3. Create an A/R subaccount only when requested, with a later ensure-account action
 4. Customer service locations: multiple branches/sites/addresses under one customer account
 5. Customer detail tabs: Profile | Locations | Contracts | Invoices | Vouchers | Statement
 6. Customer 360 Timeline: chronological stream of contracts, visits, invoices, vouchers, messages, notes
@@ -349,10 +349,10 @@ Customer and supplier management fully working. CoA visible and customizable.
 - Customers and suppliers fully managed
 - Multi-site customers modeled through service locations, not duplicate customer records
 - Chart of accounts visible and editable
-- Customer 360 Timeline gives a single operational history per customer
+- Customer 360 shell exposes profile, locations, future modules, statement, and available local timeline metadata
 
 ### Acceptance
-- Create a customer → A/R subaccount auto-created
+- Create a customer with `create_account = true` → A/R subaccount created atomically
 - Add multiple service locations under one customer without changing the customer count
 - View customer statement (initially empty) without error
 - Customer timeline shows new invoice/payment/contract events in order
@@ -362,17 +362,22 @@ Customer and supplier management fully working. CoA visible and customizable.
 This is a small add-on before closing Phase 4 or at the start of Phase 5. It supports visits, mobile directions, and later operations maps.
 
 Tasks:
-- Store operational coordinates only on `customer_service_locations`, not on `customers`.
-- Add `resolution_source` for service-location coordinates (`map_pick`, `device_gps`, `url`, `manual`) when coordinate capture is implemented.
-- Add `resolved_at`, `coordinate_accuracy_m`, and optional `resolution_status`/`resolution_error` so coordinate quality is auditable.
-- Add "Use current location" on mobile-capable customer/service-location forms.
-- Keep pasted Google Maps URL as a source field; resolve shortened map URLs through a later Edge Function.
-- Defer "choose on map" UI until a map package is selected.
+- [x] Store operational coordinates only on `customer_service_locations`, not on `customers`.
+- [x] Add `resolution_source` for service-location coordinates (`map_pick`, `device_gps`, `url`, `manual`).
+- [x] Add `resolved_at`, `coordinate_accuracy_m`, `resolution_status`, and `resolution_error`.
+- [x] Use the pasted Google Maps link as the only coordinate input.
+- [x] Resolve full Google Maps URLs locally before save.
+- [x] Resolve shortened map URLs through the authenticated `resolve-google-maps-url` Edge Function.
+- [ ] Deploy `resolve-google-maps-url` to the target Supabase project.
+- [x] Do not expose manual latitude/longitude or device-GPS controls.
+- [x] Apply migration `051` and pass the local M5.7 SQL verification suite.
+- [x] Verify a real shortened Google Maps link through the local authenticated Edge Runtime.
+- [ ] Add "choose on map" after a map package is selected.
 
 Acceptance:
-- A service location can hold verified `latitude`/`longitude` and the source that produced them.
-- Existing customer/account flows keep working without customer-level GPS fields.
-- Visit and calendar screens can rely on service-location coordinates later without duplicating address data.
+- [x] A service location can hold verified `latitude`/`longitude` and the source that produced them.
+- [x] Existing customer/account flows keep working without customer-level GPS fields.
+- [x] Visit and calendar screens can rely on service-location coordinates later without duplicating address data.
 
 ---
 

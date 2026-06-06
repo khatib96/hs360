@@ -1,3 +1,4 @@
+import 'service_location_coordinates.dart';
 import 'service_location_type.dart';
 
 /// Row from [customer_service_locations].
@@ -18,6 +19,11 @@ class CustomerServiceLocation {
     this.googleMapsUrl,
     this.latitude,
     this.longitude,
+    this.resolutionSource,
+    this.resolvedAt,
+    this.coordinateAccuracyM,
+    this.resolutionStatus,
+    this.resolutionError,
     this.contactPersonName,
     this.contactPersonPhone,
     this.contactPersonEmail,
@@ -41,6 +47,11 @@ class CustomerServiceLocation {
   final String? googleMapsUrl;
   final double? latitude;
   final double? longitude;
+  final CoordinateResolutionSource? resolutionSource;
+  final DateTime? resolvedAt;
+  final double? coordinateAccuracyM;
+  final CoordinateResolutionStatus? resolutionStatus;
+  final String? resolutionError;
   final String? contactPersonName;
   final String? contactPersonPhone;
   final String? contactPersonEmail;
@@ -56,6 +67,8 @@ class CustomerServiceLocation {
     ];
     return parts.join(' · ');
   }
+
+  bool get hasCoordinates => latitude != null && longitude != null;
 
   factory CustomerServiceLocation.fromRow(Map<String, dynamic> row) {
     return CustomerServiceLocation(
@@ -74,6 +87,15 @@ class CustomerServiceLocation {
       googleMapsUrl: row['google_maps_url'] as String?,
       latitude: _parseDouble(row['latitude']),
       longitude: _parseDouble(row['longitude']),
+      resolutionSource: CoordinateResolutionSource.fromDb(
+        row['resolution_source'] as String?,
+      ),
+      resolvedAt: _parseDateTime(row['resolved_at']),
+      coordinateAccuracyM: _parseDouble(row['coordinate_accuracy_m']),
+      resolutionStatus: CoordinateResolutionStatus.fromDb(
+        row['resolution_status'] as String?,
+      ),
+      resolutionError: row['resolution_error'] as String?,
       contactPersonName: row['contact_person_name'] as String?,
       contactPersonPhone: row['contact_person_phone'] as String?,
       contactPersonEmail: row['contact_person_email'] as String?,
@@ -91,5 +113,10 @@ class CustomerServiceLocation {
     if (value == null) return null;
     if (value is num) return value.toDouble();
     return double.tryParse(value.toString());
+  }
+
+  static DateTime? _parseDateTime(Object? value) {
+    if (value == null) return null;
+    return DateTime.tryParse(value.toString());
   }
 }

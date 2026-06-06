@@ -11,6 +11,9 @@ void main() {
     governorate: 'hawalli',
     area: 'salmiya',
     googleMapsUrl: 'https://maps.example',
+    latitude: 29.3759,
+    longitude: 47.9774,
+    coordinatesResolvedAt: DateTime.utc(2026, 6, 6, 8, 30),
     createAccount: true,
     acquiredBy: 'emp-1',
     acquiredAt: DateTime(2024, 1, 15),
@@ -28,6 +31,10 @@ void main() {
     expect(payload['governorate'], 'hawalli');
     expect(payload['area'], 'salmiya');
     expect(payload['google_maps_url'], 'https://maps.example');
+    expect(payload['latitude'], 29.3759);
+    expect(payload['longitude'], 47.9774);
+    expect(payload['resolution_source'], 'url');
+    expect(payload['resolution_status'], 'resolved');
   });
 
   test('toCreatePayload omits forbidden keys', () {
@@ -55,7 +62,24 @@ void main() {
     expect(payload['phone_primary'], '+96550000111');
     expect(payload['governorate'], 'hawalli');
     expect(payload['google_maps_url'], 'https://maps.example');
+    expect(payload['latitude'], 29.3759);
+    expect(payload['longitude'], 47.9774);
+    expect(payload['resolution_source'], 'url');
   });
+
+  test(
+    'toUpdatePayload clears coordinate metadata without a resolved link',
+    () {
+      final payload = CustomerFormState(
+        nameAr: 'Customer',
+        phonePrimary: '+96550000111',
+      ).toUpdatePayload();
+      expect(payload['latitude'], isNull);
+      expect(payload['longitude'], isNull);
+      expect(payload['resolution_source'], isNull);
+      expect(payload['resolution_status'], isNull);
+    },
+  );
 
   test('individual update clears company-only tax_number', () {
     final companyForm = CustomerFormState(

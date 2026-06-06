@@ -511,6 +511,49 @@
   "serviceLocationFieldContactEmail": "بريد المسؤول",
   "serviceLocationFieldLatitude": "خط العرض",
   "serviceLocationFieldLongitude": "خط الطول",
+  "serviceLocationCoordinatesSection": "الإحداثيات",
+  "serviceLocationCoordinatesHint": "الصق رابط Google Maps وسيتم استخراج الإحداثيات تلقائيًا دون إدخال يدوي.",
+  "googleMapsLinkResolutionHint": "الصق رابط Google Maps لاستخراج الموقع تلقائيًا.",
+  "googleMapsResolveLink": "استخراج الموقع",
+  "googleMapsCoordinatesResolved": "تم استخراج الموقع: {latitude}، {longitude}",
+  "@googleMapsCoordinatesResolved": {
+    "placeholders": {
+      "latitude": {
+        "type": "String"
+      },
+      "longitude": {
+        "type": "String"
+      }
+    }
+  },
+  "googleMapsLinkInvalid": "أدخل رابط Google Maps صحيحًا.",
+  "googleMapsCoordinatesNotFound": "تعذر استخراج الإحداثيات من رابط Google Maps هذا.",
+  "googleMapsResolutionFailed": "تعذر تحليل رابط Google Maps. تحقق من الاتصال وحاول مجددًا.",
+  "serviceLocationUseCurrentLocation": "استخدام الموقع الحالي",
+  "serviceLocationClearCoordinates": "مسح الإحداثيات",
+  "serviceLocationCoordinatePairRequired": "أدخل خط العرض وخط الطول معًا.",
+  "serviceLocationLatitudeInvalid": "يجب أن يكون خط العرض بين -90 و90.",
+  "serviceLocationLongitudeInvalid": "يجب أن يكون خط الطول بين -180 و180.",
+  "serviceLocationCoordinateMetadataInvalid": "بيانات مصدر الإحداثيات أو دقتها غير صحيحة.",
+  "serviceLocationCoordinatesCaptured": "تم التقاط الموقع الحالي.",
+  "serviceLocationCoordinateSource": "المصدر",
+  "serviceLocationCoordinateSourceMapPick": "اختيار من الخريطة",
+  "serviceLocationCoordinateSourceDeviceGps": "موقع الجهاز",
+  "serviceLocationCoordinateSourceUrl": "رابط خريطة محلول",
+  "serviceLocationCoordinateSourceManual": "إدخال يدوي",
+  "serviceLocationCoordinateResolvedAt": "وقت التحديد",
+  "serviceLocationCoordinateAccuracy": "الدقة: {meters} م",
+  "@serviceLocationCoordinateAccuracy": {
+    "placeholders": {
+      "meters": {
+        "type": "String"
+      }
+    }
+  },
+  "serviceLocationServicesDisabled": "خدمات الموقع متوقفة على هذا الجهاز.",
+  "serviceLocationPermissionDenied": "تم رفض إذن الوصول إلى الموقع.",
+  "serviceLocationPermissionPermanentlyDenied": "إذن الموقع محظور. فعّله من إعدادات النظام.",
+  "serviceLocationUnavailable": "تعذر تحديد الموقع الحالي.",
   "serviceLocationTypeBranch": "فرع",
   "serviceLocationTypeOffice": "مكتب",
   "serviceLocationTypeWarehouse": "مستودع",
