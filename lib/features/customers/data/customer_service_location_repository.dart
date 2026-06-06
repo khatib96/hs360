@@ -20,6 +20,8 @@ CustomerServiceLocationRepository customerServiceLocationRepository(Ref ref) {
 class CustomerServiceLocationRepository {
   CustomerServiceLocationRepository(this._client);
 
+  static const maxLocationsPerCustomer = 500;
+
   final SupabaseClient? _client;
   final CustomerServiceLocationValidator _validator =
       const CustomerServiceLocationValidator();
@@ -49,10 +51,12 @@ class CustomerServiceLocationRepository {
   ) async {
     _assertCanView(session);
     try {
-      final rows = await _requireClient.rpc(
-        'list_customer_service_locations',
-        params: {'p_customer_id': customerId},
-      );
+      final rows = await _requireClient
+          .rpc(
+            'list_customer_service_locations',
+            params: {'p_customer_id': customerId},
+          )
+          .limit(maxLocationsPerCustomer);
       return (rows as List)
           .map(
             (r) => CustomerServiceLocation.fromRow(
@@ -79,10 +83,7 @@ class CustomerServiceLocationRepository {
     try {
       final id = await _requireClient.rpc(
         'create_customer_service_location',
-        params: {
-          'p_customer_id': customerId,
-          'p_data': input.toPayload(),
-        },
+        params: {'p_customer_id': customerId, 'p_data': input.toPayload()},
       );
       final locations = await listLocations(session, customerId);
       return locations.firstWhere((l) => l.id == id as String);
@@ -106,10 +107,7 @@ class CustomerServiceLocationRepository {
     try {
       await _requireClient.rpc(
         'update_customer_service_location',
-        params: {
-          'p_id': locationId,
-          'p_data': input.toPayload(),
-        },
+        params: {'p_id': locationId, 'p_data': input.toPayload()},
       );
       final locations = await listLocations(session, customerId);
       return locations.firstWhere((l) => l.id == locationId);
@@ -118,10 +116,7 @@ class CustomerServiceLocationRepository {
     }
   }
 
-  Future<void> deactivateLocation(
-    AppSession session,
-    String locationId,
-  ) async {
+  Future<void> deactivateLocation(AppSession session, String locationId) async {
     _assertCanEdit(session);
     try {
       await _requireClient.rpc(
@@ -133,10 +128,7 @@ class CustomerServiceLocationRepository {
     }
   }
 
-  Future<void> setPrimary(
-    AppSession session,
-    String locationId,
-  ) async {
+  Future<void> setPrimary(AppSession session, String locationId) async {
     _assertCanEdit(session);
     try {
       await _requireClient.rpc(

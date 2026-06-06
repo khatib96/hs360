@@ -331,31 +331,38 @@ Admin can manage products, units, and warehouses. Stock balances are visible.
 
 ## Phase 4 — Customers, Suppliers & Chart of Accounts (≈ 1 week)
 
+**Status:** [x] Engineering complete as of 2026-06-06 through M8. A clean database reset is pending Docker Desktop data-disk recovery; cloud migration/Edge Function deployment is pending Supabase login and project linking.
+
 ### Goal
 Customer and supplier management fully working. CoA visible and customizable.
 
 ### Tasks
-1. Customer CRUD screens (desktop + mobile)
-2. Auto-generate customer code (CUST-0001)
-3. Create an A/R subaccount only when requested, with a later ensure-account action
-4. Customer service locations: multiple branches/sites/addresses under one customer account
-5. Customer detail tabs: Profile | Locations | Contracts | Invoices | Vouchers | Statement
-6. Customer 360 Timeline: chronological stream of contracts, visits, invoices, vouchers, messages, notes
-7. Supplier CRUD
-8. CoA tree view (requires `chart_of_accounts.view`)
-9. CoA: add/edit non-system accounts
+1. [x] Customer CRUD screens (desktop + mobile)
+2. [x] Auto-generate customer code (CUST-0001)
+3. [x] Create an A/R subaccount only when requested, with a later ensure-account action
+4. [x] Customer service locations: multiple branches/sites/addresses under one customer account
+5. [x] Customer detail tabs: Profile | Locations | Contracts | Invoices | Vouchers | Statement
+6. [x] Customer 360 Timeline foundation using available local metadata; module events arrive with their later phases
+7. [x] Supplier CRUD
+8. [x] CoA tree view (requires `chart_of_accounts.view`)
+9. [x] CoA: add/edit non-system accounts
+10. [x] M8 pagination, responsive/mobile, permission, localization, ACL, FK, and regression hardening
 
 ### Deliverables
-- Customers and suppliers fully managed
-- Multi-site customers modeled through service locations, not duplicate customer records
-- Chart of accounts visible and editable
-- Customer 360 shell exposes profile, locations, future modules, statement, and available local timeline metadata
+- [x] Customers and suppliers fully managed
+- [x] Multi-site customers modeled through service locations, not duplicate customer records
+- [x] Chart of accounts visible and editable
+- [x] Customer 360 shell exposes profile, locations, future modules, statement, and available local timeline metadata
+- [x] Large lists/statements are paginated or explicitly bounded
+- [x] Phase 4 API helper ACLs and cross-tenant account/parent FKs are hardened by migration `052`
 
 ### Acceptance
-- Create a customer with `create_account = true` → A/R subaccount created atomically
-- Add multiple service locations under one customer without changing the customer count
-- View customer statement (initially empty) without error
-- Customer timeline shows new invoice/payment/contract events in order
+- [x] Create a customer with `create_account = true` → A/R subaccount created atomically
+- [x] Add multiple service locations under one customer without changing the customer count
+- [x] View customer statement (initially empty) without error
+- [x] Customer timeline shows currently available local metadata safely; invoice/payment/contract events are added by their owning phases
+- [x] Arabic mobile-width customer, supplier, detail/location, and CoA screens pass widget verification
+- [x] Phase 1, Phase 3, and all Phase 4 SQL suites pass on the migrated local database
 
 ### Phase 4.7 Location Coordinates Foundation
 
@@ -368,11 +375,11 @@ Tasks:
 - [x] Use the pasted Google Maps link as the only coordinate input.
 - [x] Resolve full Google Maps URLs locally before save.
 - [x] Resolve shortened map URLs through the authenticated `resolve-google-maps-url` Edge Function.
-- [ ] Deploy `resolve-google-maps-url` to the target Supabase project.
+- [ ] Deploy `resolve-google-maps-url` to the target Supabase project after Supabase login/project linking.
 - [x] Do not expose manual latitude/longitude or device-GPS controls.
 - [x] Apply migration `051` and pass the local M5.7 SQL verification suite.
 - [x] Verify a real shortened Google Maps link through the local authenticated Edge Runtime.
-- [ ] Add "choose on map" after a map package is selected.
+- [ ] Add "choose on map" after a map package is selected (deferred enhancement; not a Phase 4 closure blocker).
 
 Acceptance:
 - [x] A service location can hold verified `latitude`/`longitude` and the source that produced them.

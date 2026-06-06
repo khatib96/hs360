@@ -7,6 +7,9 @@ class CustomerStatementState {
     this.hasLoaded = false,
     this.permissionDenied = false,
     this.errorCode,
+    this.loadMoreErrorCode,
+    this.isLoadingMore = false,
+    this.hasMore = false,
     this.rows = const [],
     CustomerBalanceSummary? summary,
   }) : summary = summary ?? CustomerBalanceSummary.zero();
@@ -15,6 +18,9 @@ class CustomerStatementState {
   final bool hasLoaded;
   final bool permissionDenied;
   final String? errorCode;
+  final String? loadMoreErrorCode;
+  final bool isLoadingMore;
+  final bool hasMore;
   final List<CustomerStatementRow> rows;
   final CustomerBalanceSummary summary;
 
@@ -24,6 +30,10 @@ class CustomerStatementState {
     bool? permissionDenied,
     String? errorCode,
     bool clearError = false,
+    String? loadMoreErrorCode,
+    bool clearLoadMoreError = false,
+    bool? isLoadingMore,
+    bool? hasMore,
     List<CustomerStatementRow>? rows,
     CustomerBalanceSummary? summary,
   }) {
@@ -32,6 +42,11 @@ class CustomerStatementState {
       hasLoaded: hasLoaded ?? this.hasLoaded,
       permissionDenied: permissionDenied ?? this.permissionDenied,
       errorCode: clearError ? null : (errorCode ?? this.errorCode),
+      loadMoreErrorCode: clearLoadMoreError
+          ? null
+          : (loadMoreErrorCode ?? this.loadMoreErrorCode),
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+      hasMore: hasMore ?? this.hasMore,
       rows: rows ?? this.rows,
       summary: summary ?? this.summary,
     );

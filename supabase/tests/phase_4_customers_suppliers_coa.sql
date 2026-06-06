@@ -1476,4 +1476,93 @@ begin
 end $$;
 rollback;
 
+-- 48. M8: Phase 4 RPC grants are authenticated-only; helpers are internal.
+do $$
+declare
+  v_signature text;
+  v_public_rpcs text[] := array[
+    'public.create_customer(jsonb)',
+    'public.update_customer(uuid,jsonb)',
+    'public.deactivate_customer(uuid)',
+    'public.ensure_customer_account(uuid)',
+    'public.create_supplier(jsonb)',
+    'public.update_supplier(uuid,jsonb)',
+    'public.deactivate_supplier(uuid)',
+    'public.ensure_supplier_account(uuid)',
+    'public.create_chart_account(jsonb)',
+    'public.update_chart_account(uuid,jsonb)',
+    'public.deactivate_chart_account(uuid)',
+    'public.get_customer_balance_summary(uuid)',
+    'public.get_customer_statement(uuid,date,date)',
+    'public.list_customer_service_locations(uuid)',
+    'public.create_customer_service_location(uuid,jsonb)',
+    'public.update_customer_service_location(uuid,jsonb)',
+    'public.deactivate_customer_service_location(uuid)',
+    'public.set_primary_customer_service_location(uuid)'
+  ];
+  v_internal_helpers text[] := array[
+    'public.get_entity_parent_account(text)',
+    'public.generate_entity_code(text)',
+    'public.generate_subaccount_code(uuid,text)',
+    'public.generate_service_location_code(uuid,uuid)',
+    'public.insert_primary_service_location_from_customer(uuid,uuid,jsonb)'
+  ];
+begin
+  foreach v_signature in array v_public_rpcs loop
+    if has_function_privilege('anon', v_signature, 'execute') then
+      raise exception 'case48 failed: anon can execute %', v_signature;
+    end if;
+    if not has_function_privilege('authenticated', v_signature, 'execute') then
+      raise exception 'case48 failed: authenticated cannot execute %', v_signature;
+    end if;
+  end loop;
+
+  foreach v_signature in array v_internal_helpers loop
+    if has_function_privilege('anon', v_signature, 'execute')
+      or has_function_privilege('authenticated', v_signature, 'execute')
+    then
+      raise exception 'case48 failed: API role can execute helper %', v_signature;
+    end if;
+  end loop;
+end $$;
+
+-- 49. M8: customer/supplier/account parent links are tenant-safe FKs.
+do $$
+declare
+  v_definition text;
+begin
+  select pg_get_constraintdef(oid)
+  into v_definition
+  from pg_constraint
+  where conrelid = 'public.customers'::regclass
+    and conname = 'fk_customers_account_tenant';
+  if v_definition is null
+    or v_definition !~ 'FOREIGN KEY \(tenant_id, account_id\)'
+  then
+    raise exception 'case49 failed: tenant-safe customer account FK missing';
+  end if;
+
+  select pg_get_constraintdef(oid)
+  into v_definition
+  from pg_constraint
+  where conrelid = 'public.suppliers'::regclass
+    and conname = 'fk_suppliers_account_tenant';
+  if v_definition is null
+    or v_definition !~ 'FOREIGN KEY \(tenant_id, account_id\)'
+  then
+    raise exception 'case49 failed: tenant-safe supplier account FK missing';
+  end if;
+
+  select pg_get_constraintdef(oid)
+  into v_definition
+  from pg_constraint
+  where conrelid = 'public.chart_of_accounts'::regclass
+    and conname = 'fk_coa_parent_tenant';
+  if v_definition is null
+    or v_definition !~ 'FOREIGN KEY \(tenant_id, parent_id\)'
+  then
+    raise exception 'case49 failed: tenant-safe CoA parent FK missing';
+  end if;
+end $$;
+
 select 'phase_4_customers_suppliers_coa_verification_passed' as result;

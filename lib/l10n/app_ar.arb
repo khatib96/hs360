@@ -22,6 +22,7 @@
   "backToLogin": "العودة لتسجيل الدخول",
   "logout": "تسجيل الخروج",
   "loading": "جاري التحميل…",
+  "loadMore": "تحميل المزيد",
   "retry": "إعادة المحاولة",
   "showPassword": "إظهار كلمة المرور",
   "hidePassword": "إخفاء كلمة المرور",
@@ -550,10 +551,6 @@
       }
     }
   },
-  "serviceLocationServicesDisabled": "خدمات الموقع متوقفة على هذا الجهاز.",
-  "serviceLocationPermissionDenied": "تم رفض إذن الوصول إلى الموقع.",
-  "serviceLocationPermissionPermanentlyDenied": "إذن الموقع محظور. فعّله من إعدادات النظام.",
-  "serviceLocationUnavailable": "تعذر تحديد الموقع الحالي.",
   "serviceLocationTypeBranch": "فرع",
   "serviceLocationTypeOffice": "مكتب",
   "serviceLocationTypeWarehouse": "مستودع",
@@ -585,6 +582,8 @@
   "chartAccountDeactivate": "إلغاء التنشيط",
   "chartAccountExpandAll": "توسيع الكل",
   "chartAccountCollapseAll": "طي الكل",
+  "chartAccountExpand": "توسيع",
+  "chartAccountCollapse": "طي",
   "chartAccountCreateTitle": "حساب جديد",
   "chartAccountEditTitle": "تعديل حساب",
   "chartAccountFieldCode": "الكود",

@@ -53,15 +53,51 @@ class SuppliersTabBody extends ConsumerWidget {
         canCreate: canCreate,
       );
     } else {
-      body = SupplierTable(
-        suppliers: state.suppliers,
-        languageCode: languageCode,
-        canEdit: canEdit,
-        canDeactivate: canDeactivate,
-        onView: (supplier) =>
-            context.go(AppRoutes.supplierDetailPath(supplier.id)),
-        onEdit: (supplier) => _showFormDialog(context, ref, initial: supplier),
-        onDeactivate: (supplier) => _confirmDeactivate(context, ref, supplier),
+      body = Column(
+        children: [
+          Expanded(
+            child: SupplierTable(
+              suppliers: state.suppliers,
+              languageCode: languageCode,
+              canEdit: canEdit,
+              canDeactivate: canDeactivate,
+              onView: (supplier) =>
+                  context.go(AppRoutes.supplierDetailPath(supplier.id)),
+              onEdit: (supplier) =>
+                  _showFormDialog(context, ref, initial: supplier),
+              onDeactivate: (supplier) =>
+                  _confirmDeactivate(context, ref, supplier),
+            ),
+          ),
+          if (state.loadMoreErrorCode != null)
+            Padding(
+              padding: const EdgeInsetsDirectional.only(top: 12),
+              child: Text(
+                supplierErrorMessage(l10n, state.loadMoreErrorCode!),
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+            ),
+          if (state.hasMore ||
+              state.isLoadingMore ||
+              state.loadMoreErrorCode != null)
+            Padding(
+              padding: const EdgeInsetsDirectional.only(top: 12),
+              child: OutlinedButton.icon(
+                key: const Key('supplier-load-more'),
+                onPressed: state.isLoadingMore ? null : controller.loadMore,
+                icon: state.isLoadingMore
+                    ? const SizedBox.square(
+                        dimension: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.expand_more),
+                label: Text(
+                  state.loadMoreErrorCode == null ? l10n.loadMore : l10n.retry,
+                ),
+              ),
+            ),
+        ],
       );
     }
 
@@ -71,26 +107,45 @@ class SuppliersTabBody extends ConsumerWidget {
       children: [
         Padding(
           padding: const EdgeInsetsDirectional.all(16),
-          child: Row(
-            children: [
-              Expanded(
-                child: SupplierFiltersBar(
-                  filters: state.filters,
-                  onSearchSubmitted: controller.setSearch,
-                  onActiveChanged: controller.setIsActive,
-                  onClear: controller.clearFilters,
-                ),
-              ),
-              if (canCreate) ...[
-                const SizedBox(width: 12),
-                FilledButton.icon(
-                  key: const Key('supplier-create-button'),
-                  onPressed: () => _showFormDialog(context, ref),
-                  icon: const Icon(Icons.add),
-                  label: Text(l10n.supplierAdd),
-                ),
-              ],
-            ],
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final filters = SupplierFiltersBar(
+                filters: state.filters,
+                onSearchSubmitted: controller.setSearch,
+                onActiveChanged: controller.setIsActive,
+                onClear: controller.clearFilters,
+              );
+              final createButton = FilledButton.icon(
+                key: const Key('supplier-create-button'),
+                onPressed: () => _showFormDialog(context, ref),
+                icon: const Icon(Icons.add),
+                label: Text(l10n.supplierAdd),
+              );
+
+              if (constraints.maxWidth < 720) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    filters,
+                    if (canCreate) ...[
+                      const SizedBox(height: 12),
+                      Align(
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: createButton,
+                      ),
+                    ],
+                  ],
+                );
+              }
+
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: filters),
+                  if (canCreate) ...[const SizedBox(width: 12), createButton],
+                ],
+              );
+            },
           ),
         ),
         Expanded(

@@ -49,66 +49,77 @@ class _SupplierFiltersBarState extends State<SupplierFiltersBar> {
     final l10n = AppLocalizations.of(context)!;
     final filters = widget.filters;
 
-    return Wrap(
-      spacing: 12,
-      runSpacing: 12,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: [
-        SizedBox(
-          width: 280,
-          child: TextField(
-            key: const Key('supplier-search-field'),
-            controller: _search,
-            textInputAction: TextInputAction.search,
-            decoration: InputDecoration(
-              isDense: true,
-              prefixIcon: const Icon(Icons.search, size: 20),
-              hintText: l10n.supplierSearchHint,
-              suffixIcon: _search.text.isEmpty
-                  ? null
-                  : IconButton(
-                      icon: const Icon(Icons.clear, size: 18),
-                      tooltip: MaterialLocalizations.of(context)
-                          .cancelButtonLabel,
-                      onPressed: () {
-                        _search.clear();
-                        widget.onSearchSubmitted(null);
-                      },
-                    ),
-            ),
-            onChanged: (_) => setState(() {}),
-            onSubmitted: widget.onSearchSubmitted,
-          ),
-        ),
-        SizedBox(
-          width: 160,
-          child: DropdownButtonFormField<bool?>(
-            isExpanded: true,
-            initialValue: filters.isActive,
-            decoration: InputDecoration(
-              isDense: true,
-              labelText: l10n.supplierFilterStatus,
-            ),
-            items: [
-              DropdownMenuItem(value: null, child: Text(l10n.supplierFilterAll)),
-              DropdownMenuItem(
-                value: true,
-                child: Text(l10n.supplierStatusActive),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double fieldWidth(double preferred) =>
+            constraints.maxWidth < preferred ? constraints.maxWidth : preferred;
+
+        return Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            SizedBox(
+              width: fieldWidth(280),
+              child: TextField(
+                key: const Key('supplier-search-field'),
+                controller: _search,
+                textInputAction: TextInputAction.search,
+                decoration: InputDecoration(
+                  isDense: true,
+                  prefixIcon: const Icon(Icons.search, size: 20),
+                  hintText: l10n.supplierSearchHint,
+                  suffixIcon: _search.text.isEmpty
+                      ? null
+                      : IconButton(
+                          icon: const Icon(Icons.clear, size: 18),
+                          tooltip: MaterialLocalizations.of(
+                            context,
+                          ).cancelButtonLabel,
+                          onPressed: () {
+                            _search.clear();
+                            widget.onSearchSubmitted(null);
+                          },
+                        ),
+                ),
+                onChanged: (_) => setState(() {}),
+                onSubmitted: widget.onSearchSubmitted,
               ),
-              DropdownMenuItem(
-                value: false,
-                child: Text(l10n.supplierStatusInactive),
+            ),
+            SizedBox(
+              width: fieldWidth(160),
+              child: DropdownButtonFormField<bool?>(
+                isExpanded: true,
+                initialValue: filters.isActive,
+                decoration: InputDecoration(
+                  isDense: true,
+                  labelText: l10n.supplierFilterStatus,
+                ),
+                items: [
+                  DropdownMenuItem(
+                    value: null,
+                    child: Text(l10n.supplierFilterAll),
+                  ),
+                  DropdownMenuItem(
+                    value: true,
+                    child: Text(l10n.supplierStatusActive),
+                  ),
+                  DropdownMenuItem(
+                    value: false,
+                    child: Text(l10n.supplierStatusInactive),
+                  ),
+                ],
+                onChanged: widget.onActiveChanged,
               ),
-            ],
-            onChanged: widget.onActiveChanged,
-          ),
-        ),
-        TextButton.icon(
-          onPressed: widget.onClear,
-          icon: const Icon(Icons.filter_alt_off_outlined, size: 18),
-          label: Text(l10n.supplierClearFilters),
-        ),
-      ],
+            ),
+            TextButton.icon(
+              onPressed: widget.onClear,
+              icon: const Icon(Icons.filter_alt_off_outlined, size: 18),
+              label: Text(l10n.supplierClearFilters),
+            ),
+          ],
+        );
+      },
     );
   }
 }

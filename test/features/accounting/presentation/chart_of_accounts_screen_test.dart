@@ -14,7 +14,9 @@ import 'package:hs360/l10n/app_localizations.dart';
 
 import '../fake_chart_account_repository.dart';
 
-AppSession _session({Set<String> permissions = const {'chart_of_accounts.view'}}) {
+AppSession _session({
+  Set<String> permissions = const {'chart_of_accounts.view'},
+}) {
   return AppSession(
     userId: 'user-1',
     email: 'test@example.com',
@@ -23,10 +25,7 @@ AppSession _session({Set<String> permissions = const {'chart_of_accounts.view'}}
     accountType: 'user',
     displayName: 'Test User',
     preferredLocale: 'en',
-    permissions: AppPermissions(
-      isManager: false,
-      permissions: permissions,
-    ),
+    permissions: AppPermissions(isManager: false, permissions: permissions),
   );
 }
 
@@ -42,20 +41,20 @@ class TestAuthController extends AuthController {
 Widget buildScreen({
   required AppSession appSession,
   required FakeChartAccountRepository repo,
+  Locale locale = const Locale('en'),
+  Size size = const Size(1600, 900),
 }) {
   return ProviderScope(
     overrides: [
-      authControllerProvider.overrideWith(
-        () => TestAuthController(appSession),
-      ),
+      authControllerProvider.overrideWith(() => TestAuthController(appSession)),
       chartAccountRepositoryProvider.overrideWith((ref) => repo),
     ],
     child: MaterialApp(
-      locale: const Locale('en'),
+      locale: locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       builder: (context, child) => MediaQuery(
-        data: const MediaQueryData(size: Size(1600, 900)),
+        data: MediaQueryData(size: size),
         child: child ?? const SizedBox.shrink(),
       ),
       home: const ChartOfAccountsScreen(),
@@ -104,7 +103,9 @@ void main() {
     expect(find.text('1201.0001'), findsOneWidget);
   });
 
-  testWidgets('setup banner shows only missing AP when AR valid', (tester) async {
+  testWidgets('setup banner shows only missing AP when AR valid', (
+    tester,
+  ) async {
     final l10n = lookupAppLocalizations(const Locale('en'));
     final repo = FakeChartAccountRepository(
       accounts: [
@@ -121,8 +122,14 @@ void main() {
     await tester.pumpWidget(buildScreen(appSession: _session(), repo: repo));
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const Key('chart-account-setup-ar-missing')), findsNothing);
-    expect(find.byKey(const Key('chart-account-setup-ap-missing')), findsOneWidget);
+    expect(
+      find.byKey(const Key('chart-account-setup-ar-missing')),
+      findsNothing,
+    );
+    expect(
+      find.byKey(const Key('chart-account-setup-ap-missing')),
+      findsOneWidget,
+    );
     expect(find.text(l10n.chartAccountSetupApMissing), findsOneWidget);
   });
 
@@ -149,7 +156,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text(l10n.chartAccountSetupApMissing), findsOneWidget);
-    expect(find.byKey(const Key('chart-account-setup-ar-missing')), findsNothing);
+    expect(
+      find.byKey(const Key('chart-account-setup-ar-missing')),
+      findsNothing,
+    );
   });
 
   testWidgets('create button hidden without create permission', (tester) async {
@@ -164,16 +174,18 @@ void main() {
     final repo = FakeChartAccountRepository(accounts: [sampleChartAccount()]);
     await tester.pumpWidget(
       buildScreen(
-        appSession: _session(permissions: {
-          'chart_of_accounts.view',
-          'chart_of_accounts.create',
-        }),
+        appSession: _session(
+          permissions: {'chart_of_accounts.view', 'chart_of_accounts.create'},
+        ),
         repo: repo,
       ),
     );
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const Key('chart-account-create-button')), findsOneWidget);
+    expect(
+      find.byKey(const Key('chart-account-create-button')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('protected accounts have no action menu', (tester) async {
@@ -200,11 +212,13 @@ void main() {
 
     await tester.pumpWidget(
       buildScreen(
-        appSession: _session(permissions: {
-          'chart_of_accounts.view',
-          'chart_of_accounts.edit',
-          'chart_of_accounts.delete',
-        }),
+        appSession: _session(
+          permissions: {
+            'chart_of_accounts.view',
+            'chart_of_accounts.edit',
+            'chart_of_accounts.delete',
+          },
+        ),
         repo: repo,
       ),
     );
@@ -216,34 +230,41 @@ void main() {
 
   testWidgets('manual account shows edit menu when permitted', (tester) async {
     final repo = FakeChartAccountRepository(
-      accounts: [sampleChartAccount(id: 'manual', code: '5000', nameEn: 'Manual')],
+      accounts: [
+        sampleChartAccount(id: 'manual', code: '5000', nameEn: 'Manual'),
+      ],
     );
 
     await tester.pumpWidget(
       buildScreen(
-        appSession: _session(permissions: {
-          'chart_of_accounts.view',
-          'chart_of_accounts.edit',
-        }),
+        appSession: _session(
+          permissions: {'chart_of_accounts.view', 'chart_of_accounts.edit'},
+        ),
         repo: repo,
       ),
     );
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const Key('chart-account-actions-manual')), findsOneWidget);
+    expect(
+      find.byKey(const Key('chart-account-actions-manual')),
+      findsOneWidget,
+    );
   });
 
-  testWidgets('edit form has read-only code and no parent field', (tester) async {
+  testWidgets('edit form has read-only code and no parent field', (
+    tester,
+  ) async {
     final repo = FakeChartAccountRepository(
-      accounts: [sampleChartAccount(id: 'manual', code: '5000', nameEn: 'Manual')],
+      accounts: [
+        sampleChartAccount(id: 'manual', code: '5000', nameEn: 'Manual'),
+      ],
     );
 
     await tester.pumpWidget(
       buildScreen(
-        appSession: _session(permissions: {
-          'chart_of_accounts.view',
-          'chart_of_accounts.edit',
-        }),
+        appSession: _session(
+          permissions: {'chart_of_accounts.view', 'chart_of_accounts.edit'},
+        ),
         repo: repo,
       ),
     );
@@ -254,7 +275,10 @@ void main() {
     await tester.tap(find.text('Edit account'));
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const Key('chart-account-code-readonly')), findsOneWidget);
+    expect(
+      find.byKey(const Key('chart-account-code-readonly')),
+      findsOneWidget,
+    );
     expect(find.text('Parent account'), findsNothing);
   });
 
@@ -263,10 +287,9 @@ void main() {
 
     await tester.pumpWidget(
       buildScreen(
-        appSession: _session(permissions: {
-          'chart_of_accounts.view',
-          'chart_of_accounts.create',
-        }),
+        appSession: _session(
+          permissions: {'chart_of_accounts.view', 'chart_of_accounts.create'},
+        ),
         repo: repo,
       ),
     );
@@ -275,18 +298,21 @@ void main() {
     await tester.tap(find.byKey(const Key('chart-account-create-button')));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.descendant(
-      of: find.byType(ChartAccountFormDialog),
-      matching: find.byType(FilledButton),
-    ));
+    await tester.tap(
+      find.descendant(
+        of: find.byType(ChartAccountFormDialog),
+        matching: find.byType(FilledButton),
+      ),
+    );
     await tester.pumpAndSettle();
 
     expect(find.byType(ChartAccountFormDialog), findsOneWidget);
     expect(find.byType(AlertDialog), findsNothing);
   });
 
-  testWidgets('category roots auto-expand and nest children with indentation',
-      (tester) async {
+  testWidgets('category roots auto-expand and nest children with indentation', (
+    tester,
+  ) async {
     final repo = FakeChartAccountRepository(
       accounts: [
         sampleChartAccount(
@@ -344,8 +370,9 @@ void main() {
       find.byKey(const Key('chart-account-tile-cash')),
     );
     final rootStart = rootTile.contentPadding!.resolve(TextDirection.ltr).left;
-    final childStart =
-        childTile.contentPadding!.resolve(TextDirection.ltr).left;
+    final childStart = childTile.contentPadding!
+        .resolve(TextDirection.ltr)
+        .left;
     expect(childStart, greaterThan(rootStart));
 
     final collapseLiab = find.descendant(
@@ -355,5 +382,40 @@ void main() {
     await tester.tap(collapseLiab);
     await tester.pumpAndSettle();
     expect(find.text('2101'), findsNothing);
+  });
+
+  testWidgets('chart tree fits a narrow Arabic viewport', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(360, 800));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    final repo = FakeChartAccountRepository(
+      accounts: [
+        sampleChartAccount(
+          id: 'assets',
+          code: '1000',
+          type: AccountType.asset,
+          nameAr: 'الأصول',
+          isSystem: true,
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      buildScreen(
+        appSession: _session(
+          permissions: {'chart_of_accounts.view', 'chart_of_accounts.create'},
+        ),
+        repo: repo,
+        locale: const Locale('ar'),
+        size: const Size(360, 800),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(
+      find.byKey(const Key('chart-account-create-button')),
+      findsOneWidget,
+    );
+    expect(find.byKey(const Key('chart-account-tree-view')), findsOneWidget);
   });
 }

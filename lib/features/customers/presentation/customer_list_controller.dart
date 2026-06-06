@@ -14,6 +14,8 @@ part 'customer_list_controller.g.dart';
 
 @Riverpod(keepAlive: true)
 class CustomerListController extends _$CustomerListController {
+  static const pageSize = 100;
+
   int _refreshSerial = 0;
   bool _hasStartedInitialLoad = false;
 
@@ -55,27 +57,82 @@ class CustomerListController extends _$CustomerListController {
     }
 
     final refreshId = ++_refreshSerial;
-    state = state.copyWith(isLoading: true, clearError: true);
+    state = state.copyWith(
+      isLoading: true,
+      isLoadingMore: false,
+      clearError: true,
+      clearLoadMoreError: true,
+    );
 
     try {
-      final customers = await ref
+      final rows = await ref
           .read(customerRepositoryProvider)
-          .fetchCustomers(session, state.filters);
+          .fetchCustomers(session, state.filters, limit: pageSize + 1);
       if (refreshId != _refreshSerial) return;
 
       state = state.copyWith(
-        customers: customers,
+        customers: rows.take(pageSize).toList(),
         isLoading: false,
+        isLoadingMore: false,
+        hasMore: rows.length > pageSize,
         clearError: true,
       );
     } on CustomerException catch (e) {
       if (refreshId != _refreshSerial) return;
-      state = state.copyWith(isLoading: false, errorCode: e.code);
+      state = state.copyWith(
+        isLoading: false,
+        isLoadingMore: false,
+        errorCode: e.code,
+      );
     } catch (_) {
       if (refreshId != _refreshSerial) return;
       state = state.copyWith(
         isLoading: false,
+        isLoadingMore: false,
         errorCode: CustomerException.unknown,
+      );
+    }
+  }
+
+  Future<void> loadMore() async {
+    if (state.isLoading || state.isLoadingMore || !state.hasMore) return;
+
+    final session = _session;
+    if (session == null || !canViewCustomers(session)) return;
+
+    final refreshId = ++_refreshSerial;
+    state = state.copyWith(
+      isLoadingMore: true,
+      clearError: true,
+      clearLoadMoreError: true,
+    );
+
+    try {
+      final rows = await ref
+          .read(customerRepositoryProvider)
+          .fetchCustomers(
+            session,
+            state.filters,
+            offset: state.customers.length,
+            limit: pageSize + 1,
+          );
+      if (refreshId != _refreshSerial) return;
+
+      state = state.copyWith(
+        customers: [...state.customers, ...rows.take(pageSize)],
+        isLoadingMore: false,
+        hasMore: rows.length > pageSize,
+        clearError: true,
+        clearLoadMoreError: true,
+      );
+    } on CustomerException catch (e) {
+      if (refreshId != _refreshSerial) return;
+      state = state.copyWith(isLoadingMore: false, loadMoreErrorCode: e.code);
+    } catch (_) {
+      if (refreshId != _refreshSerial) return;
+      state = state.copyWith(
+        isLoadingMore: false,
+        loadMoreErrorCode: CustomerException.unknown,
       );
     }
   }
@@ -96,7 +153,9 @@ class CustomerListController extends _$CustomerListController {
   }
 
   void setIsActive(bool? isActive) {
-    _applyFilters(_copyFilters(isActive: isActive, clearIsActive: isActive == null));
+    _applyFilters(
+      _copyFilters(isActive: isActive, clearIsActive: isActive == null),
+    );
   }
 
   void setIsVip(bool? isVip) {
@@ -140,9 +199,11 @@ class CustomerListController extends _$CustomerListController {
         !canEditCustomer(session)) {
       return CustomerException.permissionDenied;
     }
-    return _mutate(() => ref
-        .read(customerRepositoryProvider)
-        .ensureCustomerAccount(session, id));
+    return _mutate(
+      () => ref
+          .read(customerRepositoryProvider)
+          .ensureCustomerAccount(session, id),
+    );
   }
 
   void clearFilters() {
@@ -169,10 +230,12 @@ class CustomerListController extends _$CustomerListController {
       search: clearSearch ? null : (search ?? current.search),
       isActive: clearIsActive ? null : (isActive ?? current.isActive),
       isVip: clearIsVip ? null : (isVip ?? current.isVip),
-      customerType:
-          clearCustomerType ? null : (customerType ?? current.customerType),
-      governorate:
-          clearGovernorate ? null : (governorate ?? current.governorate),
+      customerType: clearCustomerType
+          ? null
+          : (customerType ?? current.customerType),
+      governorate: clearGovernorate
+          ? null
+          : (governorate ?? current.governorate),
       area: clearArea ? null : (area ?? current.area),
     );
   }
@@ -184,9 +247,9 @@ class CustomerListController extends _$CustomerListController {
         !canCreateCustomer(session)) {
       return CustomerException.permissionDenied;
     }
-    return _mutate(() => ref
-        .read(customerRepositoryProvider)
-        .createCustomer(session, input));
+    return _mutate(
+      () => ref.read(customerRepositoryProvider).createCustomer(session, input),
+    );
   }
 
   Future<String?> updateCustomer(String id, CustomerFormState input) async {
@@ -196,9 +259,11 @@ class CustomerListController extends _$CustomerListController {
         !canEditCustomer(session)) {
       return CustomerException.permissionDenied;
     }
-    return _mutate(() => ref
-        .read(customerRepositoryProvider)
-        .updateCustomer(session, id, input));
+    return _mutate(
+      () => ref
+          .read(customerRepositoryProvider)
+          .updateCustomer(session, id, input),
+    );
   }
 
   Future<String?> deactivateCustomer(String id) async {
@@ -208,8 +273,10 @@ class CustomerListController extends _$CustomerListController {
         !canDeactivateCustomer(session)) {
       return CustomerException.permissionDenied;
     }
-    return _mutate(() =>
-        ref.read(customerRepositoryProvider).deactivateCustomer(session, id));
+    return _mutate(
+      () =>
+          ref.read(customerRepositoryProvider).deactivateCustomer(session, id),
+    );
   }
 
   Future<String?> _mutate(Future<void> Function() action) async {

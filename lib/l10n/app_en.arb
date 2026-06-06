@@ -82,6 +82,10 @@
   "@loading": {
     "description": "Loading state label"
   },
+  "loadMore": "Load more",
+  "@loadMore": {
+    "description": "Button label for loading the next page of list results"
+  },
   "retry": "Retry",
   "@retry": {
     "description": "Retry action"
@@ -828,10 +832,6 @@
       }
     }
   },
-  "serviceLocationServicesDisabled": "Location services are disabled on this device.",
-  "serviceLocationPermissionDenied": "Location permission was denied.",
-  "serviceLocationPermissionPermanentlyDenied": "Location permission is blocked. Enable it in system settings.",
-  "serviceLocationUnavailable": "Current location could not be determined.",
   "serviceLocationTypeBranch": "Branch",
   "serviceLocationTypeOffice": "Office",
   "serviceLocationTypeWarehouse": "Warehouse",
@@ -863,6 +863,8 @@
   "chartAccountDeactivate": "Deactivate",
   "chartAccountExpandAll": "Expand all",
   "chartAccountCollapseAll": "Collapse all",
+  "chartAccountExpand": "Expand",
+  "chartAccountCollapse": "Collapse",
   "chartAccountCreateTitle": "New account",
   "chartAccountEditTitle": "Edit account",
   "chartAccountFieldCode": "Code",

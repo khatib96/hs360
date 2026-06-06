@@ -76,6 +76,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get loading => 'جاري التحميل…';
 
   @override
+  String get loadMore => 'تحميل المزيد';
+
+  @override
   String get retry => 'إعادة المحاولة';
 
   @override
@@ -1685,20 +1688,6 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get serviceLocationServicesDisabled =>
-      'خدمات الموقع متوقفة على هذا الجهاز.';
-
-  @override
-  String get serviceLocationPermissionDenied => 'تم رفض إذن الوصول إلى الموقع.';
-
-  @override
-  String get serviceLocationPermissionPermanentlyDenied =>
-      'إذن الموقع محظور. فعّله من إعدادات النظام.';
-
-  @override
-  String get serviceLocationUnavailable => 'تعذر تحديد الموقع الحالي.';
-
-  @override
   String get serviceLocationTypeBranch => 'فرع';
 
   @override
@@ -1790,6 +1779,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get chartAccountCollapseAll => 'طي الكل';
+
+  @override
+  String get chartAccountExpand => 'توسيع';
+
+  @override
+  String get chartAccountCollapse => 'طي';
 
   @override
   String get chartAccountCreateTitle => 'حساب جديد';

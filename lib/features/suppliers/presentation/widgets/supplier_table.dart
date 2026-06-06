@@ -124,9 +124,7 @@ class _DesktopSupplierTableState extends State<_DesktopSupplierTable> {
                     DataCell(Text(supplier.email ?? l10n.productsNotAvailable)),
                     DataCell(
                       Text(
-                        location.isEmpty
-                            ? l10n.productsNotAvailable
-                            : location,
+                        location.isEmpty ? l10n.productsNotAvailable : location,
                       ),
                     ),
                     DataCell(
@@ -136,8 +134,9 @@ class _DesktopSupplierTableState extends State<_DesktopSupplierTable> {
                             : l10n.supplierStatusInactive,
                         style: supplier.isActive
                             ? null
-                            : theme.textTheme.bodyMedium
-                                ?.copyWith(color: AppColors.neutral400),
+                            : theme.textTheme.bodyMedium?.copyWith(
+                                color: AppColors.neutral400,
+                              ),
                       ),
                     ),
                     DataCell(
@@ -255,7 +254,9 @@ class _MobileSupplierList extends StatelessWidget {
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('${supplier.code} · ${supplier.phone ?? l10n.productsNotAvailable}'),
+                Text(
+                  '${supplier.code} · ${supplier.phone ?? l10n.productsNotAvailable}',
+                ),
                 if (location.isNotEmpty) Text(location),
                 Text(
                   supplier.isActive
@@ -264,7 +265,7 @@ class _MobileSupplierList extends StatelessWidget {
                 ),
               ],
             ),
-            trailing: _RowActions(
+            trailing: _MobileRowActions(
               supplier: supplier,
               canEdit: canEdit,
               canDeactivate: canDeactivate,
@@ -275,6 +276,53 @@ class _MobileSupplierList extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _MobileRowActions extends StatelessWidget {
+  const _MobileRowActions({
+    required this.supplier,
+    required this.canEdit,
+    required this.canDeactivate,
+    required this.onView,
+    required this.onEdit,
+    required this.onDeactivate,
+  });
+
+  final Supplier supplier;
+  final bool canEdit;
+  final bool canDeactivate;
+  final ValueChanged<Supplier> onView;
+  final ValueChanged<Supplier> onEdit;
+  final ValueChanged<Supplier> onDeactivate;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return PopupMenuButton<String>(
+      key: Key('supplier-mobile-actions-${supplier.id}'),
+      tooltip: MaterialLocalizations.of(context).moreButtonTooltip,
+      onSelected: (action) {
+        switch (action) {
+          case 'view':
+            onView(supplier);
+          case 'edit':
+            onEdit(supplier);
+          case 'deactivate':
+            onDeactivate(supplier);
+        }
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem(value: 'view', child: Text(l10n.supplierActionView)),
+        if (canEdit)
+          PopupMenuItem(value: 'edit', child: Text(l10n.supplierActionEdit)),
+        if (canDeactivate && supplier.isActive)
+          PopupMenuItem(
+            value: 'deactivate',
+            child: Text(l10n.supplierActionDeactivate),
+          ),
+      ],
     );
   }
 }

@@ -69,147 +69,162 @@ class _CustomerFiltersBarState extends ConsumerState<CustomerFiltersBar> {
     final languageCode = ref.watch(localeProvider).languageCode;
     final filters = widget.filters;
 
-    return Wrap(
-      spacing: 12,
-      runSpacing: 12,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: [
-        SizedBox(
-          width: 280,
-          child: TextField(
-            key: const Key('customer-search-field'),
-            controller: _search,
-            textInputAction: TextInputAction.search,
-            decoration: InputDecoration(
-              isDense: true,
-              prefixIcon: const Icon(Icons.search, size: 20),
-              hintText: l10n.customerSearchHint,
-              suffixIcon: _search.text.isEmpty
-                  ? null
-                  : IconButton(
-                      icon: const Icon(Icons.clear, size: 18),
-                      tooltip: MaterialLocalizations.of(context)
-                          .cancelButtonLabel,
-                      onPressed: () {
-                        _search.clear();
-                        widget.onSearchSubmitted(null);
-                      },
-                    ),
-            ),
-            onChanged: (_) => setState(() {}),
-            onSubmitted: widget.onSearchSubmitted,
-          ),
-        ),
-        SizedBox(
-          width: 160,
-          child: DropdownButtonFormField<bool?>(
-            isExpanded: true,
-            initialValue: filters.isActive,
-            decoration: InputDecoration(
-              isDense: true,
-              labelText: l10n.customerFilterStatus,
-            ),
-            items: [
-              DropdownMenuItem(value: null, child: Text(l10n.customerFilterAll)),
-              DropdownMenuItem(
-                value: true,
-                child: Text(l10n.customerStatusActive),
-              ),
-              DropdownMenuItem(
-                value: false,
-                child: Text(l10n.customerStatusInactive),
-              ),
-            ],
-            onChanged: widget.onActiveChanged,
-          ),
-        ),
-        SizedBox(
-          width: 150,
-          child: DropdownButtonFormField<bool?>(
-            isExpanded: true,
-            initialValue: filters.isVip,
-            decoration: InputDecoration(
-              isDense: true,
-              labelText: l10n.customerFilterVip,
-            ),
-            items: [
-              DropdownMenuItem(value: null, child: Text(l10n.customerFilterAll)),
-              DropdownMenuItem(value: true, child: Text(l10n.customerVip)),
-              DropdownMenuItem(
-                value: false,
-                child: Text(l10n.customerNonVip),
-              ),
-            ],
-            onChanged: widget.onVipChanged,
-          ),
-        ),
-        SizedBox(
-          width: 170,
-          child: DropdownButtonFormField<CustomerType?>(
-            isExpanded: true,
-            initialValue: filters.customerType,
-            decoration: InputDecoration(
-              isDense: true,
-              labelText: l10n.customerTypeLabel,
-            ),
-            items: [
-              DropdownMenuItem(value: null, child: Text(l10n.customerFilterAll)),
-              DropdownMenuItem(
-                value: CustomerType.individual,
-                child: Text(l10n.customerTypeIndividual),
-              ),
-              DropdownMenuItem(
-                value: CustomerType.company,
-                child: Text(l10n.customerTypeCompany),
-              ),
-            ],
-            onChanged: widget.onTypeChanged,
-          ),
-        ),
-        SizedBox(
-          width: 180,
-          child: DropdownButtonFormField<String?>(
-            isExpanded: true,
-            initialValue: filters.governorate,
-            decoration: InputDecoration(
-              isDense: true,
-              labelText: l10n.customerFieldGovernorate,
-            ),
-            items: [
-              DropdownMenuItem<String?>(
-                value: null,
-                child: Text(l10n.customerFilterAll),
-              ),
-              ...kuwaitGovernorates.map(
-                (g) => DropdownMenuItem(
-                  value: g.canonical,
-                  child: Text(
-                    languageCode == 'en' ? g.nameEn : g.nameAr,
-                  ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double fieldWidth(double preferred) =>
+            constraints.maxWidth < preferred ? constraints.maxWidth : preferred;
+
+        return Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            SizedBox(
+              width: fieldWidth(280),
+              child: TextField(
+                key: const Key('customer-search-field'),
+                controller: _search,
+                textInputAction: TextInputAction.search,
+                decoration: InputDecoration(
+                  isDense: true,
+                  prefixIcon: const Icon(Icons.search, size: 20),
+                  hintText: l10n.customerSearchHint,
+                  suffixIcon: _search.text.isEmpty
+                      ? null
+                      : IconButton(
+                          icon: const Icon(Icons.clear, size: 18),
+                          tooltip: MaterialLocalizations.of(
+                            context,
+                          ).cancelButtonLabel,
+                          onPressed: () {
+                            _search.clear();
+                            widget.onSearchSubmitted(null);
+                          },
+                        ),
                 ),
+                onChanged: (_) => setState(() {}),
+                onSubmitted: widget.onSearchSubmitted,
               ),
-            ],
-            onChanged: widget.onGovernorateChanged,
-          ),
-        ),
-        SizedBox(
-          width: 150,
-          child: TextField(
-            controller: _area,
-            textInputAction: TextInputAction.search,
-            decoration: InputDecoration(
-              isDense: true,
-              labelText: l10n.customerFieldArea,
             ),
-            onSubmitted: widget.onAreaSubmitted,
-          ),
-        ),
-        TextButton.icon(
-          onPressed: widget.onClear,
-          icon: const Icon(Icons.filter_alt_off_outlined, size: 18),
-          label: Text(l10n.customerClearFilters),
-        ),
-      ],
+            SizedBox(
+              width: fieldWidth(160),
+              child: DropdownButtonFormField<bool?>(
+                isExpanded: true,
+                initialValue: filters.isActive,
+                decoration: InputDecoration(
+                  isDense: true,
+                  labelText: l10n.customerFilterStatus,
+                ),
+                items: [
+                  DropdownMenuItem(
+                    value: null,
+                    child: Text(l10n.customerFilterAll),
+                  ),
+                  DropdownMenuItem(
+                    value: true,
+                    child: Text(l10n.customerStatusActive),
+                  ),
+                  DropdownMenuItem(
+                    value: false,
+                    child: Text(l10n.customerStatusInactive),
+                  ),
+                ],
+                onChanged: widget.onActiveChanged,
+              ),
+            ),
+            SizedBox(
+              width: fieldWidth(150),
+              child: DropdownButtonFormField<bool?>(
+                isExpanded: true,
+                initialValue: filters.isVip,
+                decoration: InputDecoration(
+                  isDense: true,
+                  labelText: l10n.customerFilterVip,
+                ),
+                items: [
+                  DropdownMenuItem(
+                    value: null,
+                    child: Text(l10n.customerFilterAll),
+                  ),
+                  DropdownMenuItem(value: true, child: Text(l10n.customerVip)),
+                  DropdownMenuItem(
+                    value: false,
+                    child: Text(l10n.customerNonVip),
+                  ),
+                ],
+                onChanged: widget.onVipChanged,
+              ),
+            ),
+            SizedBox(
+              width: fieldWidth(170),
+              child: DropdownButtonFormField<CustomerType?>(
+                isExpanded: true,
+                initialValue: filters.customerType,
+                decoration: InputDecoration(
+                  isDense: true,
+                  labelText: l10n.customerTypeLabel,
+                ),
+                items: [
+                  DropdownMenuItem(
+                    value: null,
+                    child: Text(l10n.customerFilterAll),
+                  ),
+                  DropdownMenuItem(
+                    value: CustomerType.individual,
+                    child: Text(l10n.customerTypeIndividual),
+                  ),
+                  DropdownMenuItem(
+                    value: CustomerType.company,
+                    child: Text(l10n.customerTypeCompany),
+                  ),
+                ],
+                onChanged: widget.onTypeChanged,
+              ),
+            ),
+            SizedBox(
+              width: fieldWidth(180),
+              child: DropdownButtonFormField<String?>(
+                isExpanded: true,
+                initialValue: filters.governorate,
+                decoration: InputDecoration(
+                  isDense: true,
+                  labelText: l10n.customerFieldGovernorate,
+                ),
+                items: [
+                  DropdownMenuItem<String?>(
+                    value: null,
+                    child: Text(l10n.customerFilterAll),
+                  ),
+                  ...kuwaitGovernorates.map(
+                    (g) => DropdownMenuItem(
+                      value: g.canonical,
+                      child: Text(languageCode == 'en' ? g.nameEn : g.nameAr),
+                    ),
+                  ),
+                ],
+                onChanged: widget.onGovernorateChanged,
+              ),
+            ),
+            SizedBox(
+              width: fieldWidth(150),
+              child: TextField(
+                controller: _area,
+                textInputAction: TextInputAction.search,
+                decoration: InputDecoration(
+                  isDense: true,
+                  labelText: l10n.customerFieldArea,
+                ),
+                onSubmitted: widget.onAreaSubmitted,
+              ),
+            ),
+            TextButton.icon(
+              onPressed: widget.onClear,
+              icon: const Icon(Icons.filter_alt_off_outlined, size: 18),
+              label: Text(l10n.customerClearFilters),
+            ),
+          ],
+        );
+      },
     );
   }
 }

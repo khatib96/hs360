@@ -1156,47 +1156,65 @@ docker exec -i supabase_db_hs360 psql -U postgres -d postgres < supabase/tests/p
 
 If `supabase db reset` is still blocked by the known local CLI issue, document it and run the SQL verification against the migrated local database.
 
+### Verification Result - 2026-06-06
+
+- [x] `flutter pub get`
+- [x] localization generation and build runner
+- [x] `flutter analyze`
+- [x] full Flutter unit/widget test suite (376 tests)
+- [x] Windows integration test and debug application build
+- [x] Google Maps URL parser tests
+- [x] `git diff --check`
+- [x] migration `052_phase_4_closure_hardening.sql` applied to the migrated local database
+- [x] catalog checks for RLS, audit triggers, RPC ACLs, function `search_path`, indexes, and tenant-safe composite FKs
+- [x] Phase 1, Phase 3, and all Phase 4 SQL verification suites passed sequentially
+- [ ] fresh `supabase db reset`: attempted after the successful migrated-database verification, but Docker Desktop's VHDX/overlay storage failed with `input/output error` and dockerd `SIGBUS` while pulling the database image
+
+The reset blocker is an external Docker data-disk failure, not a migration or SQL-test failure. The local Supabase database container is currently unavailable until Docker data is repaired or recreated.
+
 ### Manual Acceptance Matrix
 
 | Done | Case | Expected |
 |---|---|---|
-| [ ] | Manager opens Customers | customer/supplier area visible |
-| [ ] | User with `customers.view` opens Customers tab | customers visible |
-| [ ] | User with `suppliers.view` opens Suppliers tab | suppliers visible |
-| [ ] | Zero user opens Customers | blocked/redirected |
-| [ ] | Create customer | customer row and A/R subaccount created atomically |
-| [ ] | Add customer service location | location appears under the same customer, not as a separate customer |
-| [ ] | Customer with multiple locations | Customer detail separates profile, locations, contracts, and visits clearly |
-| [ ] | Paste full Google Maps URL | coordinates are extracted automatically and saved with source `url` |
-| [ ] | Paste shortened Google Maps URL | Edge Function expands the link and returns a validated coordinate pair |
-| [ ] | Paste invalid/unresolvable map URL | form remains open with a localized error |
-| [ ] | Create supplier | supplier row created; A/P subaccount created atomically only when requested |
-| [ ] | Customer detail Statement tab with permission | opens, empty-safe |
-| [ ] | Customer detail Statement tab without permission | denied state |
-| [ ] | Customer created account appears in CoA tree | under A/R parent |
-| [ ] | Supplier created account appears in CoA tree | under A/P parent |
-| [ ] | System CoA account edit/deactivate | blocked |
-| [ ] | Non-system CoA account edit | allowed with permission |
-| [ ] | Arabic/English switch | Phase 4 screens remain readable |
-| [ ] | Mobile width | lists and forms remain usable |
+| [x] | Manager opens Customers | customer/supplier area visible |
+| [x] | User with `customers.view` opens Customers tab | customers visible |
+| [x] | User with `suppliers.view` opens Suppliers tab | suppliers visible |
+| [x] | Zero user opens Customers | blocked/redirected |
+| [x] | Create customer | customer row created; A/R subaccount is atomic only when requested |
+| [x] | Add customer service location | location appears under the same customer, not as a separate customer |
+| [x] | Customer with multiple locations | Customer detail separates profile, locations, contracts, and visits clearly |
+| [x] | Paste full Google Maps URL | coordinates are extracted automatically and saved with source `url` |
+| [x] | Paste shortened Google Maps URL | Edge Function expands the link and returns a validated coordinate pair |
+| [x] | Paste invalid/unresolvable map URL | form remains open with a localized error |
+| [x] | Create supplier | supplier row created; A/P subaccount created atomically only when requested |
+| [x] | Customer detail Statement tab with permission | opens, empty-safe |
+| [x] | Customer detail Statement tab without permission | denied state |
+| [x] | Customer created account appears in CoA tree | under A/R parent |
+| [x] | Supplier created account appears in CoA tree | under A/P parent |
+| [x] | System CoA account edit/deactivate | blocked |
+| [x] | Non-system CoA account edit | allowed with permission |
+| [x] | Arabic/English switch | Phase 4 screens remain readable |
+| [x] | Mobile width | lists and forms remain usable |
+
+The matrix is covered by route, permission, controller, widget, SQL, and real shortened-link verification. Cloud deployment remains a release operation, not an M8 code gap.
 
 ### Quality Checklist
 
-- [ ] No widget calls Supabase directly.
-- [ ] No money uses `double`.
-- [ ] Permission checks use `AppPermissions`.
-- [ ] Customer/supplier creation uses RPCs.
-- [ ] Customer/supplier `account_id` is not client-selected.
-- [ ] Customer service locations are tenant-scoped, permission-checked, and not modeled as duplicate customers.
-- [ ] Service-location coordinates are paired, range-checked, and carry auditable source/quality metadata.
-- [ ] Contract/visit/calendar/product-unit service-location FKs exist before Phase 6/7/8 implementation.
-- [ ] Customer statement uses `customers.view_ledger`, not raw journal access.
-- [ ] CoA system rows are protected.
-- [ ] Entity-linked accounts are protected.
-- [ ] Customer/supplier/CoA changes are audited where required.
-- [ ] Queries are bounded or paginated.
-- [ ] Arabic and English strings exist.
-- [ ] File-size scan reviewed.
+- [x] No widget calls Supabase directly.
+- [x] No money uses `double`.
+- [x] Permission checks use the canonical customer, supplier, and accounting permission helpers backed by the session permission set.
+- [x] Customer/supplier creation uses RPCs.
+- [x] Customer/supplier `account_id` is not client-selected.
+- [x] Customer service locations are tenant-scoped, permission-checked, and not modeled as duplicate customers.
+- [x] Service-location coordinates are paired, range-checked, and carry auditable source/quality metadata.
+- [x] Contract/visit/calendar/product-unit service-location FKs exist before Phase 6/7/8 implementation.
+- [x] Customer statement uses `customers.view_ledger`, not raw journal access.
+- [x] CoA system rows are protected.
+- [x] Entity-linked accounts are protected.
+- [x] Customer/supplier/CoA changes are audited where required.
+- [x] Queries are bounded or paginated.
+- [x] Arabic and English strings exist.
+- [x] File-size scan reviewed; the remaining larger files contain cohesive desktop/mobile renderers or complete form/location workflows.
 
 ### Phase 4 Done Means
 
@@ -1289,15 +1307,6 @@ Phase close means the database rules, UI, permissions, localization, tests, and 
 
 ## Starting Point For Next Coding Session
 
-Current project state is after **M5.6 complete** (service locations, Locations tab on customer detail). **Next: M6** Customer Detail, Statement & Timeline (Customer 360 shell).
+Phase 4 is engineering-complete through **M8**. Before relying on a fresh local database, repair/recreate Docker Desktop data and rerun `supabase db reset` plus every SQL suite. Then link/login to the target Supabase project and deploy migrations plus `resolve-google-maps-url`.
 
-The first implementation target should be:
-
-```text
-lib/features/customers/presentation/customer_detail_screen.dart
-lib/features/customers/presentation/customer_detail_controller.dart
-lib/features/customers/presentation/customer_statement_controller.dart
-test/features/customers/presentation/customer_detail_screen_test.dart
-```
-
-Optional add-on **M5.7 / Phase 4.7** (location coordinates foundation) is not a blocker for M6. Do not mix map/GPS capture into the M6 shell.
+After that operational checkpoint, start **Phase 5.0 Asset / Barcode / Print Foundation** and **Phase 5.0A Tax Foundation** before invoice/voucher RPCs.

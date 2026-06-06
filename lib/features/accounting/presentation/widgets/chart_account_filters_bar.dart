@@ -52,90 +52,101 @@ class _ChartAccountFiltersBarState extends State<ChartAccountFiltersBar> {
     final l10n = AppLocalizations.of(context)!;
     final filters = widget.filters;
 
-    return Wrap(
-      spacing: 12,
-      runSpacing: 12,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: [
-        SizedBox(
-          width: 280,
-          child: TextField(
-            key: const Key('chart-account-search-field'),
-            controller: _search,
-            textInputAction: TextInputAction.search,
-            decoration: InputDecoration(
-              isDense: true,
-              prefixIcon: const Icon(Icons.search, size: 20),
-              hintText: l10n.chartAccountSearchHint,
-              suffixIcon: _search.text.isEmpty
-                  ? null
-                  : IconButton(
-                      icon: const Icon(Icons.clear, size: 18),
-                      tooltip: MaterialLocalizations.of(context)
-                          .cancelButtonLabel,
-                      onPressed: () {
-                        _search.clear();
-                        widget.onSearchSubmitted(null);
-                      },
-                    ),
-            ),
-            onChanged: (_) => setState(() {}),
-            onSubmitted: widget.onSearchSubmitted,
-          ),
-        ),
-        SizedBox(
-          width: 180,
-          child: DropdownButtonFormField<AccountType?>(
-            isExpanded: true,
-            initialValue: filters.type,
-            decoration: InputDecoration(
-              isDense: true,
-              labelText: l10n.chartAccountFilterType,
-            ),
-            items: [
-              DropdownMenuItem(
-                value: null,
-                child: Text(l10n.chartAccountFilterAllTypes),
-              ),
-              ...AccountType.values.map(
-                (type) => DropdownMenuItem(
-                  value: type,
-                  child: Text(localizedAccountType(l10n, type)),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double fieldWidth(double preferred) =>
+            constraints.maxWidth < preferred ? constraints.maxWidth : preferred;
+
+        return Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            SizedBox(
+              width: fieldWidth(280),
+              child: TextField(
+                key: const Key('chart-account-search-field'),
+                controller: _search,
+                textInputAction: TextInputAction.search,
+                decoration: InputDecoration(
+                  isDense: true,
+                  prefixIcon: const Icon(Icons.search, size: 20),
+                  hintText: l10n.chartAccountSearchHint,
+                  suffixIcon: _search.text.isEmpty
+                      ? null
+                      : IconButton(
+                          icon: const Icon(Icons.clear, size: 18),
+                          tooltip: MaterialLocalizations.of(
+                            context,
+                          ).cancelButtonLabel,
+                          onPressed: () {
+                            _search.clear();
+                            widget.onSearchSubmitted(null);
+                          },
+                        ),
                 ),
+                onChanged: (_) => setState(() {}),
+                onSubmitted: widget.onSearchSubmitted,
               ),
-            ],
-            onChanged: widget.onTypeChanged,
-          ),
-        ),
-        SizedBox(
-          width: 160,
-          child: DropdownButtonFormField<bool?>(
-            isExpanded: true,
-            initialValue: filters.isActive,
-            decoration: InputDecoration(
-              isDense: true,
-              labelText: l10n.chartAccountFilterStatus,
             ),
-            items: [
-              DropdownMenuItem(value: null, child: Text(l10n.chartAccountFilterAll)),
-              DropdownMenuItem(
-                value: true,
-                child: Text(l10n.chartAccountStatusActive),
+            SizedBox(
+              width: fieldWidth(180),
+              child: DropdownButtonFormField<AccountType?>(
+                isExpanded: true,
+                initialValue: filters.type,
+                decoration: InputDecoration(
+                  isDense: true,
+                  labelText: l10n.chartAccountFilterType,
+                ),
+                items: [
+                  DropdownMenuItem(
+                    value: null,
+                    child: Text(l10n.chartAccountFilterAllTypes),
+                  ),
+                  ...AccountType.values.map(
+                    (type) => DropdownMenuItem(
+                      value: type,
+                      child: Text(localizedAccountType(l10n, type)),
+                    ),
+                  ),
+                ],
+                onChanged: widget.onTypeChanged,
               ),
-              DropdownMenuItem(
-                value: false,
-                child: Text(l10n.chartAccountStatusInactive),
+            ),
+            SizedBox(
+              width: fieldWidth(160),
+              child: DropdownButtonFormField<bool?>(
+                isExpanded: true,
+                initialValue: filters.isActive,
+                decoration: InputDecoration(
+                  isDense: true,
+                  labelText: l10n.chartAccountFilterStatus,
+                ),
+                items: [
+                  DropdownMenuItem(
+                    value: null,
+                    child: Text(l10n.chartAccountFilterAll),
+                  ),
+                  DropdownMenuItem(
+                    value: true,
+                    child: Text(l10n.chartAccountStatusActive),
+                  ),
+                  DropdownMenuItem(
+                    value: false,
+                    child: Text(l10n.chartAccountStatusInactive),
+                  ),
+                ],
+                onChanged: widget.onActiveChanged,
               ),
-            ],
-            onChanged: widget.onActiveChanged,
-          ),
-        ),
-        TextButton.icon(
-          onPressed: widget.onClear,
-          icon: const Icon(Icons.filter_alt_off_outlined, size: 18),
-          label: Text(l10n.chartAccountClearFilters),
-        ),
-      ],
+            ),
+            TextButton.icon(
+              onPressed: widget.onClear,
+              icon: const Icon(Icons.filter_alt_off_outlined, size: 18),
+              label: Text(l10n.chartAccountClearFilters),
+            ),
+          ],
+        );
+      },
     );
   }
 }

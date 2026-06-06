@@ -13,6 +13,8 @@ part 'supplier_list_controller.g.dart';
 
 @Riverpod(keepAlive: true)
 class SupplierListController extends _$SupplierListController {
+  static const pageSize = 100;
+
   int _refreshSerial = 0;
   bool _hasStartedInitialLoad = false;
 
@@ -54,27 +56,82 @@ class SupplierListController extends _$SupplierListController {
     }
 
     final refreshId = ++_refreshSerial;
-    state = state.copyWith(isLoading: true, clearError: true);
+    state = state.copyWith(
+      isLoading: true,
+      isLoadingMore: false,
+      clearError: true,
+      clearLoadMoreError: true,
+    );
 
     try {
-      final suppliers = await ref
+      final rows = await ref
           .read(supplierRepositoryProvider)
-          .fetchSuppliers(session, state.filters);
+          .fetchSuppliers(session, state.filters, limit: pageSize + 1);
       if (refreshId != _refreshSerial) return;
 
       state = state.copyWith(
-        suppliers: suppliers,
+        suppliers: rows.take(pageSize).toList(),
         isLoading: false,
+        isLoadingMore: false,
+        hasMore: rows.length > pageSize,
         clearError: true,
       );
     } on SupplierException catch (e) {
       if (refreshId != _refreshSerial) return;
-      state = state.copyWith(isLoading: false, errorCode: e.code);
+      state = state.copyWith(
+        isLoading: false,
+        isLoadingMore: false,
+        errorCode: e.code,
+      );
     } catch (_) {
       if (refreshId != _refreshSerial) return;
       state = state.copyWith(
         isLoading: false,
+        isLoadingMore: false,
         errorCode: SupplierException.unknown,
+      );
+    }
+  }
+
+  Future<void> loadMore() async {
+    if (state.isLoading || state.isLoadingMore || !state.hasMore) return;
+
+    final session = _session;
+    if (session == null || !canViewSuppliers(session)) return;
+
+    final refreshId = ++_refreshSerial;
+    state = state.copyWith(
+      isLoadingMore: true,
+      clearError: true,
+      clearLoadMoreError: true,
+    );
+
+    try {
+      final rows = await ref
+          .read(supplierRepositoryProvider)
+          .fetchSuppliers(
+            session,
+            state.filters,
+            offset: state.suppliers.length,
+            limit: pageSize + 1,
+          );
+      if (refreshId != _refreshSerial) return;
+
+      state = state.copyWith(
+        suppliers: [...state.suppliers, ...rows.take(pageSize)],
+        isLoadingMore: false,
+        hasMore: rows.length > pageSize,
+        clearError: true,
+        clearLoadMoreError: true,
+      );
+    } on SupplierException catch (e) {
+      if (refreshId != _refreshSerial) return;
+      state = state.copyWith(isLoadingMore: false, loadMoreErrorCode: e.code);
+    } catch (_) {
+      if (refreshId != _refreshSerial) return;
+      state = state.copyWith(
+        isLoadingMore: false,
+        loadMoreErrorCode: SupplierException.unknown,
       );
     }
   }
@@ -83,10 +140,7 @@ class SupplierListController extends _$SupplierListController {
     final trimmed = search?.trim();
     final value = trimmed == null || trimmed.isEmpty ? null : trimmed;
     state = state.copyWith(
-      filters: SupplierFilters(
-        search: value,
-        isActive: state.filters.isActive,
-      ),
+      filters: SupplierFilters(search: value, isActive: state.filters.isActive),
     );
     refresh();
   }
@@ -113,8 +167,9 @@ class SupplierListController extends _$SupplierListController {
         !canCreateSupplier(session)) {
       return SupplierException.permissionDenied;
     }
-    return _mutate(() =>
-        ref.read(supplierRepositoryProvider).createSupplier(session, input));
+    return _mutate(
+      () => ref.read(supplierRepositoryProvider).createSupplier(session, input),
+    );
   }
 
   Future<String?> updateSupplier(String id, SupplierFormState input) async {
@@ -124,9 +179,11 @@ class SupplierListController extends _$SupplierListController {
         !canEditSupplier(session)) {
       return SupplierException.permissionDenied;
     }
-    return _mutate(() => ref
-        .read(supplierRepositoryProvider)
-        .updateSupplier(session, id, input));
+    return _mutate(
+      () => ref
+          .read(supplierRepositoryProvider)
+          .updateSupplier(session, id, input),
+    );
   }
 
   Future<String?> ensureAccount(String id) async {
@@ -136,9 +193,11 @@ class SupplierListController extends _$SupplierListController {
         !canEditSupplier(session)) {
       return SupplierException.permissionDenied;
     }
-    return _mutate(() => ref
-        .read(supplierRepositoryProvider)
-        .ensureSupplierAccount(session, id));
+    return _mutate(
+      () => ref
+          .read(supplierRepositoryProvider)
+          .ensureSupplierAccount(session, id),
+    );
   }
 
   Future<String?> deactivateSupplier(String id) async {
@@ -148,8 +207,10 @@ class SupplierListController extends _$SupplierListController {
         !canDeactivateSupplier(session)) {
       return SupplierException.permissionDenied;
     }
-    return _mutate(() =>
-        ref.read(supplierRepositoryProvider).deactivateSupplier(session, id));
+    return _mutate(
+      () =>
+          ref.read(supplierRepositoryProvider).deactivateSupplier(session, id),
+    );
   }
 
   Future<String?> _mutate(Future<void> Function() action) async {

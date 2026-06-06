@@ -230,6 +230,12 @@ abstract class AppLocalizations {
   /// **'Loading…'**
   String get loading;
 
+  /// Button label for loading the next page of list results
+  ///
+  /// In en, this message translates to:
+  /// **'Load more'**
+  String get loadMore;
+
   /// Retry action
   ///
   /// In en, this message translates to:
@@ -3296,30 +3302,6 @@ abstract class AppLocalizations {
   /// **'Accuracy: {meters} m'**
   String serviceLocationCoordinateAccuracy(String meters);
 
-  /// No description provided for @serviceLocationServicesDisabled.
-  ///
-  /// In en, this message translates to:
-  /// **'Location services are disabled on this device.'**
-  String get serviceLocationServicesDisabled;
-
-  /// No description provided for @serviceLocationPermissionDenied.
-  ///
-  /// In en, this message translates to:
-  /// **'Location permission was denied.'**
-  String get serviceLocationPermissionDenied;
-
-  /// No description provided for @serviceLocationPermissionPermanentlyDenied.
-  ///
-  /// In en, this message translates to:
-  /// **'Location permission is blocked. Enable it in system settings.'**
-  String get serviceLocationPermissionPermanentlyDenied;
-
-  /// No description provided for @serviceLocationUnavailable.
-  ///
-  /// In en, this message translates to:
-  /// **'Current location could not be determined.'**
-  String get serviceLocationUnavailable;
-
   /// No description provided for @serviceLocationTypeBranch.
   ///
   /// In en, this message translates to:
@@ -3505,6 +3487,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Collapse all'**
   String get chartAccountCollapseAll;
+
+  /// No description provided for @chartAccountExpand.
+  ///
+  /// In en, this message translates to:
+  /// **'Expand'**
+  String get chartAccountExpand;
+
+  /// No description provided for @chartAccountCollapse.
+  ///
+  /// In en, this message translates to:
+  /// **'Collapse'**
+  String get chartAccountCollapse;
 
   /// No description provided for @chartAccountCreateTitle.
   ///

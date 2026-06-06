@@ -11,14 +11,16 @@ class FakeSupplierRepository extends SupplierRepository {
     List<Supplier> suppliers = const [],
     this.fetchError,
     this.mutationError,
-  })  : suppliers = List<Supplier>.from(suppliers),
-        super(null);
+  }) : suppliers = List<Supplier>.from(suppliers),
+       super(null);
 
   List<Supplier> suppliers;
-  final Object? fetchError;
+  Object? fetchError;
   final Object? mutationError;
 
   SupplierFilters? lastFilters;
+  int? lastOffset;
+  int? lastLimit;
   SupplierFormState? lastCreateInput;
   SupplierFormState? lastUpdateInput;
   String? lastUpdatedId;
@@ -29,21 +31,26 @@ class FakeSupplierRepository extends SupplierRepository {
   @override
   Future<List<Supplier>> fetchSuppliers(
     AppSession session,
-    SupplierFilters filters,
-  ) async {
+    SupplierFilters filters, {
+    int offset = 0,
+    int limit = 100,
+  }) async {
     fetchCount++;
     lastFilters = filters;
+    lastOffset = offset;
+    lastLimit = limit;
     final error = fetchError;
     if (error != null) {
       if (error is SupplierException) throw error;
       throw const SupplierException(code: SupplierException.unknown);
     }
-    return suppliers.where((s) {
+    final filtered = suppliers.where((s) {
       if (filters.isActive != null && s.isActive != filters.isActive) {
         return false;
       }
       return true;
     }).toList();
+    return filtered.skip(offset).take(limit).toList();
   }
 
   @override
@@ -115,7 +122,8 @@ class FakeSupplierRepository extends SupplierRepository {
     lastEnsureAccountId = id;
     final linked = sampleSupplier(id: id, accountId: 'acc-$id');
     suppliers = [
-      for (final s in suppliers) if (s.id == id) linked else s,
+      for (final s in suppliers)
+        if (s.id == id) linked else s,
     ];
     return linked;
   }

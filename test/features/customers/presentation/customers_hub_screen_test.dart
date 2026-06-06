@@ -24,30 +24,35 @@ void main() {
       accountType: 'user',
       displayName: 'Test User',
       preferredLocale: 'en',
-      permissions: AppPermissions(
-        isManager: false,
-        permissions: permissions,
-      ),
+      permissions: AppPermissions(isManager: false, permissions: permissions),
     );
   }
 
-  Widget buildHub({required AppSession appSession}) {
+  Widget buildHub({
+    required AppSession appSession,
+    Locale locale = const Locale('en'),
+    Size size = const Size(1024, 768),
+    FakeCustomerRepository? customerRepo,
+    FakeSupplierRepository? supplierRepo,
+  }) {
     return ProviderScope(
       overrides: [
         authControllerProvider.overrideWith(
           () => TestAuthController(appSession),
         ),
-        customerRepositoryProvider
-            .overrideWith((ref) => FakeCustomerRepository()),
-        supplierRepositoryProvider
-            .overrideWith((ref) => FakeSupplierRepository()),
+        customerRepositoryProvider.overrideWith(
+          (ref) => customerRepo ?? FakeCustomerRepository(),
+        ),
+        supplierRepositoryProvider.overrideWith(
+          (ref) => supplierRepo ?? FakeSupplierRepository(),
+        ),
       ],
       child: MaterialApp(
-        locale: const Locale('en'),
+        locale: locale,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         home: MediaQuery(
-          data: const MediaQueryData(size: Size(1024, 768)),
+          data: MediaQueryData(size: size),
           child: const CustomersHubScreen(),
         ),
       ),
@@ -73,9 +78,7 @@ void main() {
   ) async {
     await tester.pumpWidget(
       buildHub(
-        appSession: session(
-          permissions: {'customers.view', 'suppliers.view'},
-        ),
+        appSession: session(permissions: {'customers.view', 'suppliers.view'}),
       ),
     );
     await tester.pumpAndSettle();
@@ -98,6 +101,54 @@ void main() {
 
     expect(find.text(l10n.moduleAccessUnavailable), findsOneWidget);
     expect(find.byKey(const Key('customers-tab')), findsNothing);
+  });
+
+  testWidgets('customer and supplier lists fit a narrow Arabic viewport', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(360, 800));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      buildHub(
+        appSession: session(
+          permissions: {
+            'customers.view',
+            'customers.create',
+            'customers.edit',
+            'customers.delete',
+            'suppliers.view',
+            'suppliers.create',
+            'suppliers.edit',
+            'suppliers.delete',
+          },
+        ),
+        locale: const Locale('ar'),
+        size: const Size(360, 800),
+        customerRepo: FakeCustomerRepository(
+          customers: [sampleCustomer(nameAr: 'عميل باسم طويل للاختبار')],
+        ),
+        supplierRepo: FakeSupplierRepository(
+          suppliers: [sampleSupplier(nameAr: 'مورد باسم طويل للاختبار')],
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(
+      find.byKey(const Key('customer-mobile-actions-cust-1')),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.byKey(const Key('suppliers-tab')));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(
+      find.byKey(const Key('supplier-mobile-actions-sup-1')),
+      findsOneWidget,
+    );
   });
 }
 

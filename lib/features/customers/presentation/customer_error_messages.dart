@@ -22,13 +22,6 @@ String customerErrorMessage(AppLocalizations l10n, String code) {
       l10n.serviceLocationLongitudeInvalid,
     CustomerException.serviceLocationCoordinateMetadataInvalid =>
       l10n.serviceLocationCoordinateMetadataInvalid,
-    CustomerException.locationServicesDisabled =>
-      l10n.serviceLocationServicesDisabled,
-    CustomerException.locationPermissionDenied =>
-      l10n.serviceLocationPermissionDenied,
-    CustomerException.locationPermissionPermanentlyDenied =>
-      l10n.serviceLocationPermissionPermanentlyDenied,
-    CustomerException.locationUnavailable => l10n.serviceLocationUnavailable,
     CustomerException.googleMapsLinkInvalid => l10n.googleMapsLinkInvalid,
     CustomerException.googleMapsCoordinatesNotFound =>
       l10n.googleMapsCoordinatesNotFound,

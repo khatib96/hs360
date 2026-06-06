@@ -20,8 +20,9 @@ class CustomerStatementTab extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final languageCode = ref.watch(localeProvider).languageCode;
     final state = ref.watch(customerStatementControllerProvider(customerId));
-    final notifier =
-        ref.read(customerStatementControllerProvider(customerId).notifier);
+    final notifier = ref.read(
+      customerStatementControllerProvider(customerId).notifier,
+    );
 
     if (state.permissionDenied) {
       return Center(
@@ -139,13 +140,43 @@ class CustomerStatementTab extends ConsumerWidget {
                     ),
                     _SummaryRow(
                       label: l10n.customerStatementBalance,
-                      value: formatMoney(row.runningBalance, locale: languageCode),
+                      value: formatMoney(
+                        row.runningBalance,
+                        locale: languageCode,
+                      ),
                     ),
                   ],
                 ),
               ),
             );
           }),
+        if (state.loadMoreErrorCode != null) ...[
+          const SizedBox(height: 4),
+          MessageBanner(
+            variant: MessageBannerVariant.error,
+            message: customerErrorMessage(l10n, state.loadMoreErrorCode!),
+          ),
+        ],
+        if (state.hasMore ||
+            state.isLoadingMore ||
+            state.loadMoreErrorCode != null) ...[
+          const SizedBox(height: 12),
+          Center(
+            child: OutlinedButton.icon(
+              key: const Key('customer-statement-load-more'),
+              onPressed: state.isLoadingMore ? null : notifier.loadMore,
+              icon: state.isLoadingMore
+                  ? const SizedBox.square(
+                      dimension: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.expand_more),
+              label: Text(
+                state.loadMoreErrorCode == null ? l10n.loadMore : l10n.retry,
+              ),
+            ),
+          ),
+        ],
       ],
     );
   }

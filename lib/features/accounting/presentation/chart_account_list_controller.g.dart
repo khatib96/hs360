@@ -7,7 +7,7 @@ part of 'chart_account_list_controller.dart';
 // **************************************************************************
 
 String _$chartAccountListControllerHash() =>
-    r'f5b693a0d8d7ef9a3ff4361c0a95f9816ea7ec83';
+    r'68bc02869e7f318d766bedc3e9c31f0b3ce58c51';
 
 /// See also [ChartAccountListController].
 @ProviderFor(ChartAccountListController)

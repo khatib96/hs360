@@ -76,6 +76,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loading => 'Loading…';
 
   @override
+  String get loadMore => 'Load more';
+
+  @override
   String get retry => 'Retry';
 
   @override
@@ -1695,22 +1698,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get serviceLocationServicesDisabled =>
-      'Location services are disabled on this device.';
-
-  @override
-  String get serviceLocationPermissionDenied =>
-      'Location permission was denied.';
-
-  @override
-  String get serviceLocationPermissionPermanentlyDenied =>
-      'Location permission is blocked. Enable it in system settings.';
-
-  @override
-  String get serviceLocationUnavailable =>
-      'Current location could not be determined.';
-
-  @override
   String get serviceLocationTypeBranch => 'Branch';
 
   @override
@@ -1802,6 +1789,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chartAccountCollapseAll => 'Collapse all';
+
+  @override
+  String get chartAccountExpand => 'Expand';
+
+  @override
+  String get chartAccountCollapse => 'Collapse';
 
   @override
   String get chartAccountCreateTitle => 'New account';

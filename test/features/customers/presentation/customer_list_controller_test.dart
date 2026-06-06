@@ -41,8 +41,9 @@ ProviderContainer _container(
 }) {
   final container = ProviderContainer(
     overrides: [
-      authControllerProvider
-          .overrideWith(() => TestAuthController(_session(permissions: permissions))),
+      authControllerProvider.overrideWith(
+        () => TestAuthController(_session(permissions: permissions)),
+      ),
       customerRepositoryProvider.overrideWith((ref) => repo),
     ],
   );
@@ -91,6 +92,72 @@ void main() {
       expect(state.isLoading, isFalse);
     });
 
+    test('loads bounded customer pages without duplicates', () async {
+      final repo = FakeCustomerRepository(
+        customers: [
+          for (var index = 0; index < 205; index++)
+            sampleCustomer(
+              id: 'cust-$index',
+              code: 'CUST-${index.toString().padLeft(4, '0')}',
+            ),
+        ],
+      );
+      final container = _container(repo);
+      addTearDown(container.dispose);
+      final controller = container.read(
+        customerListControllerProvider.notifier,
+      );
+
+      await controller.refresh();
+      var state = container.read(customerListControllerProvider);
+      expect(state.customers, hasLength(100));
+      expect(state.hasMore, isTrue);
+      expect(repo.lastOffset, 0);
+      expect(repo.lastLimit, 101);
+
+      await controller.loadMore();
+      state = container.read(customerListControllerProvider);
+      expect(state.customers, hasLength(200));
+      expect(state.hasMore, isTrue);
+      expect(repo.lastOffset, 100);
+
+      await controller.loadMore();
+      state = container.read(customerListControllerProvider);
+      expect(state.customers, hasLength(205));
+      expect(
+        state.customers.map((customer) => customer.id).toSet(),
+        hasLength(205),
+      );
+      expect(state.hasMore, isFalse);
+      expect(repo.lastOffset, 200);
+    });
+
+    test('load-more failure preserves rows and exposes retry error', () async {
+      final repo = FakeCustomerRepository(
+        customers: [
+          for (var index = 0; index < 101; index++)
+            sampleCustomer(id: 'cust-$index'),
+        ],
+      );
+      final container = _container(repo);
+      addTearDown(container.dispose);
+      final controller = container.read(
+        customerListControllerProvider.notifier,
+      );
+
+      await controller.refresh();
+      repo.fetchError = const CustomerException(
+        code: CustomerException.unknown,
+      );
+      await controller.loadMore();
+
+      final state = container.read(customerListControllerProvider);
+      expect(state.customers, hasLength(100));
+      expect(state.hasMore, isTrue);
+      expect(state.errorCode, isNull);
+      expect(state.loadMoreErrorCode, CustomerException.unknown);
+    });
+
     test('fetch error sets error code', () async {
       final repo = FakeCustomerRepository(
         fetchError: const CustomerException(code: CustomerException.unknown),
@@ -110,8 +177,9 @@ void main() {
       final container = _container(repo);
       addTearDown(container.dispose);
 
-      final controller =
-          container.read(customerListControllerProvider.notifier);
+      final controller = container.read(
+        customerListControllerProvider.notifier,
+      );
       await controller.refresh();
       controller.setIsActive(null);
       await Future<void>.value();
@@ -129,19 +197,19 @@ void main() {
       );
       addTearDown(container.dispose);
 
-      final controller =
-          container.read(customerListControllerProvider.notifier);
+      final controller = container.read(
+        customerListControllerProvider.notifier,
+      );
       await controller.refresh();
-      expect(container.read(customerListControllerProvider).customers,
-          hasLength(1));
+      expect(
+        container.read(customerListControllerProvider).customers,
+        hasLength(1),
+      );
 
       final code = await controller.deactivateCustomer('cust-1');
       expect(code, isNull);
       expect(repo.lastDeactivatedId, 'cust-1');
-      expect(
-        container.read(customerListControllerProvider).customers,
-        isEmpty,
-      );
+      expect(container.read(customerListControllerProvider).customers, isEmpty);
     });
 
     test('create refreshes list and forwards input', () async {
@@ -152,14 +220,17 @@ void main() {
       );
       addTearDown(container.dispose);
 
-      final controller =
-          container.read(customerListControllerProvider.notifier);
+      final controller = container.read(
+        customerListControllerProvider.notifier,
+      );
       final code = await controller.createCustomer(_formState(nameAr: 'جديد'));
 
       expect(code, isNull);
       expect(repo.lastCreateInput?.nameAr, 'جديد');
-      expect(container.read(customerListControllerProvider).customers,
-          hasLength(1));
+      expect(
+        container.read(customerListControllerProvider).customers,
+        hasLength(1),
+      );
     });
 
     test('updateCustomer succeeds even when list never loaded', () async {
@@ -213,8 +284,9 @@ void main() {
       );
       addTearDown(container.dispose);
 
-      final controller =
-          container.read(customerListControllerProvider.notifier);
+      final controller = container.read(
+        customerListControllerProvider.notifier,
+      );
       await controller.refresh();
       await controller.createCustomer(_formState());
       await controller.deactivateCustomer('cust-1');

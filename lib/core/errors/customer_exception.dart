@@ -24,11 +24,6 @@ class CustomerException extends AppException {
       'service_location_longitude_invalid';
   static const serviceLocationCoordinateMetadataInvalid =
       'service_location_coordinate_metadata_invalid';
-  static const locationServicesDisabled = 'location_services_disabled';
-  static const locationPermissionDenied = 'location_permission_denied';
-  static const locationPermissionPermanentlyDenied =
-      'location_permission_permanently_denied';
-  static const locationUnavailable = 'location_unavailable';
   static const googleMapsLinkInvalid = 'google_maps_link_invalid';
   static const googleMapsCoordinatesNotFound =
       'google_maps_coordinates_not_found';

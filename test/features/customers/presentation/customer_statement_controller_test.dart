@@ -1,12 +1,15 @@
 import 'dart:async';
 
+import 'package:decimal/decimal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hs360/core/errors/customer_exception.dart';
+import 'package:hs360/features/accounting/domain/journal_source.dart';
 import 'package:hs360/features/auth/domain/app_permissions.dart';
 import 'package:hs360/features/auth/domain/app_session.dart';
 import 'package:hs360/features/auth/presentation/auth_controller.dart';
 import 'package:hs360/features/customers/data/customer_repository.dart';
+import 'package:hs360/features/customers/domain/customer_statement_row.dart';
 import 'package:hs360/features/customers/presentation/customer_statement_controller.dart';
 
 import '../fake_customer_repository.dart';
@@ -21,10 +24,7 @@ void main() {
       accountType: 'user',
       displayName: 'Test User',
       preferredLocale: 'en',
-      permissions: AppPermissions(
-        isManager: false,
-        permissions: permissions,
-      ),
+      permissions: AppPermissions(isManager: false, permissions: permissions),
     );
   }
 
@@ -50,15 +50,14 @@ void main() {
     final repo = FakeCustomerRepository();
     final c = container(
       repo: repo,
-      appSession: session(permissions: {
-        'customers.view_ledger',
-      }),
+      appSession: session(permissions: {'customers.view_ledger'}),
     );
     addTearDown(c.dispose);
     await ready(c);
 
-    final notifier =
-        c.read(customerStatementControllerProvider('cust-1').notifier);
+    final notifier = c.read(
+      customerStatementControllerProvider('cust-1').notifier,
+    );
     await notifier.load();
     expect(repo.statementCallCount, 1);
     expect(repo.balanceCallCount, 1);
@@ -74,8 +73,9 @@ void main() {
     addTearDown(c.dispose);
     await ready(c);
 
-    final notifier =
-        c.read(customerStatementControllerProvider('cust-1').notifier);
+    final notifier = c.read(
+      customerStatementControllerProvider('cust-1').notifier,
+    );
     await notifier.load();
 
     expect(repo.statementCallCount, 0);
@@ -96,8 +96,9 @@ void main() {
     addTearDown(c.dispose);
     await ready(c);
 
-    final notifier =
-        c.read(customerStatementControllerProvider('cust-1').notifier);
+    final notifier = c.read(
+      customerStatementControllerProvider('cust-1').notifier,
+    );
     await notifier.load();
 
     var state = c.read(customerStatementControllerProvider('cust-1'));
@@ -113,6 +114,51 @@ void main() {
     expect(state.hasLoaded, isTrue);
     expect(state.errorCode, isNull);
     expect(repo.statementCallCount, 1);
+  });
+
+  test('loads customer statement in bounded pages', () async {
+    final repo = FakeCustomerRepository(
+      statementRows: [
+        for (var index = 0; index < 205; index++)
+          CustomerStatementRow(
+            entryDate: DateTime.utc(2026, 1, 1).add(Duration(days: index)),
+            entryNumber: 'JE-$index',
+            source: JournalSource.manual,
+            debit: Decimal.zero,
+            credit: Decimal.zero,
+            runningBalance: Decimal.zero,
+          ),
+      ],
+    );
+    final c = container(
+      repo: repo,
+      appSession: session(permissions: {'customers.view_ledger'}),
+    );
+    addTearDown(c.dispose);
+    await ready(c);
+    final notifier = c.read(
+      customerStatementControllerProvider('cust-1').notifier,
+    );
+
+    await notifier.load();
+    var state = c.read(customerStatementControllerProvider('cust-1'));
+    expect(state.rows, hasLength(100));
+    expect(state.hasMore, isTrue);
+    expect(repo.lastStatementOffset, 0);
+    expect(repo.lastStatementLimit, 101);
+
+    await notifier.loadMore();
+    state = c.read(customerStatementControllerProvider('cust-1'));
+    expect(state.rows, hasLength(200));
+    expect(state.hasMore, isTrue);
+    expect(repo.lastStatementOffset, 100);
+
+    await notifier.loadMore();
+    state = c.read(customerStatementControllerProvider('cust-1'));
+    expect(state.rows, hasLength(205));
+    expect(state.hasMore, isFalse);
+    expect(repo.lastStatementOffset, 200);
+    expect(repo.balanceCallCount, 1);
   });
 }
 

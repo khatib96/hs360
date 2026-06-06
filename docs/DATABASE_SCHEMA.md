@@ -645,7 +645,7 @@ create table customers (
   google_maps_url text,
   tax_number text,
 
-  account_id uuid references chart_of_accounts(id),
+  account_id uuid,
 
   is_active boolean default true,
   is_vip boolean default false,
@@ -659,7 +659,10 @@ create table customers (
   updated_at timestamptz,
   updated_by uuid references auth.users(id),
 
-  unique(tenant_id, code)
+  unique(tenant_id, code),
+  unique(tenant_id, id),
+  foreign key (tenant_id, account_id)
+    references chart_of_accounts(tenant_id, id)
 );
 
 create index idx_customers_tenant on customers(tenant_id);
@@ -671,6 +674,8 @@ create index idx_customers_phone on customers(tenant_id, phone_primary);
 > **M5.6 (`047_customer_service_locations.sql`):** customers are the main company/account. Branches, offices, warehouses, homes, and installation addresses are service locations under one customer. Contracts, visits, calendar events, and rented product units reference service locations through nullable composite FKs so the selected location must belong to the same tenant and customer.
 >
 > **M5.7 (`050_service_location_coordinates_foundation.sql`, `051_google_maps_url_coordinate_resolution.sql`):** `latitude` and `longitude` are the operational coordinate truth. Users paste a Google Maps link; the client resolves full links locally and shortened links through an authenticated Edge Function before saving. Coordinate source, resolution time, accuracy, status, and error fields make the result auditable.
+>
+> **M8 (`052_phase_4_closure_hardening.sql`):** customer/supplier account links and CoA parent links use composite tenant-safe foreign keys. Internal helper functions are unavailable to API roles, while public Phase 4 RPCs are executable only by `authenticated`.
 
 ```sql
 create type service_location_type as enum (
@@ -737,6 +742,8 @@ Backfill rule:
 ### 9.3 `suppliers`
 
 > **M5.5:** `address` → `address_line`; added `country`, `governorate`, `area`, `google_maps_url`, `tax_number`, `notes`. `account_id` nullable; optional `create_account` on create + `ensure_supplier_account` RPC.
+>
+> **M8:** `account_id` uses the tenant-safe composite FK introduced by migration `052`.
 
 ```sql
 create table suppliers (
@@ -754,10 +761,13 @@ create table suppliers (
   google_maps_url text,
   tax_number text,
   notes text,
-  account_id uuid references chart_of_accounts(id),
+  account_id uuid,
   is_active boolean default true,
   created_at timestamptz default now(),
-  unique(tenant_id, code)
+  unique(tenant_id, code),
+  unique(tenant_id, id),
+  foreign key (tenant_id, account_id)
+    references chart_of_accounts(tenant_id, id)
 );
 ```
 
@@ -1439,6 +1449,7 @@ Full implementations in `BUILD_PLAN.md`. Names and signatures:
 049_chart_accounts_hierarchy_and_arabic_repair.sql -- M7.5 roots, hierarchy, Arabic repair
 050_service_location_coordinates_foundation.sql -- M5.7 coordinate source/quality foundation
 051_google_maps_url_coordinate_resolution.sql -- M5.7 URL resolution persistence and primary-location sync
+052_phase_4_closure_hardening.sql -- M8 RPC ACLs and tenant-safe CoA/customer/supplier FKs
 ```
 
 Add FKs that were forward-references (e.g. `product_units.current_contract_id -> contracts.id`, `product_units.current_service_location_id -> customer_service_locations.id`) at the end of each table's migration once both exist, or in the later feature migration that introduces the referenced table.

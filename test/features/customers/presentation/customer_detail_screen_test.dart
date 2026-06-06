@@ -42,6 +42,8 @@ void main() {
     required AppSession appSession,
     required FakeCustomerRepository customerRepo,
     FakeCustomerServiceLocationRepository? locationRepo,
+    Locale locale = const Locale('en'),
+    Size size = const Size(1600, 900),
   }) {
     return ProviderScope(
       overrides: [
@@ -54,11 +56,11 @@ void main() {
         ),
       ],
       child: MaterialApp(
-        locale: const Locale('en'),
+        locale: locale,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         builder: (context, child) => MediaQuery(
-          data: const MediaQueryData(size: Size(1600, 900)),
+          data: MediaQueryData(size: size),
           child: child ?? const SizedBox.shrink(),
         ),
         home: CustomerDetailScreen(customerId: 'cust-1'),
@@ -320,6 +322,53 @@ void main() {
     await tester.pumpAndSettle();
     await selectCustomerTab(tester, 4);
     expect(find.text(l10n.customerVouchersEmpty), findsOneWidget);
+  });
+
+  testWidgets('customer detail and locations fit a narrow Arabic viewport', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(360, 800));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    final repo = FakeCustomerRepository(
+      customers: [
+        sampleCustomer(nameAr: 'عميل باسم طويل لاختبار العرض المتجاوب'),
+      ],
+    );
+    final locationRepo = FakeCustomerServiceLocationRepository(
+      locations: [
+        CustomerServiceLocation(
+          id: 'location-1',
+          tenantId: 'tenant-1',
+          customerId: 'cust-1',
+          code: 'LOC-0001',
+          name: 'الموقع الرئيسي باسم طويل',
+          locationType: ServiceLocationType.branch,
+          isPrimary: true,
+          isActive: true,
+          latitude: 25.7800955,
+          longitude: 55.9693682,
+          resolutionSource: CoordinateResolutionSource.url,
+          resolvedAt: DateTime.utc(2026, 6, 6),
+          resolutionStatus: CoordinateResolutionStatus.resolved,
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      buildDetail(
+        appSession: session(permissions: {'customers.view', 'customers.edit'}),
+        customerRepo: repo,
+        locationRepo: locationRepo,
+        locale: const Locale('ar'),
+        size: const Size(360, 800),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+
+    await selectCustomerTab(tester, 1);
+    expect(tester.takeException(), isNull);
+    expect(find.text('25.780096, 55.969368'), findsOneWidget);
   });
 }
 

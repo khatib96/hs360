@@ -22,6 +22,8 @@ ChartAccountRepository chartAccountRepository(Ref ref) {
 class ChartAccountRepository {
   ChartAccountRepository(this._client);
 
+  static const maxTreeAccounts = 2000;
+
   final SupabaseClient? _client;
   final ChartAccountValidator _validator = const ChartAccountValidator();
 
@@ -36,7 +38,9 @@ class ChartAccountRepository {
 
   void _assertCanView(AppSession session) {
     if (!_canView(session)) {
-      throw const AccountingException(code: AccountingException.permissionDenied);
+      throw const AccountingException(
+        code: AccountingException.permissionDenied,
+      );
     }
   }
 
@@ -45,7 +49,9 @@ class ChartAccountRepository {
     required String actionPerm,
   }) {
     if (!session.isManager && !session.permissions.can(actionPerm)) {
-      throw const AccountingException(code: AccountingException.permissionDenied);
+      throw const AccountingException(
+        code: AccountingException.permissionDenied,
+      );
     }
     _assertCanView(session);
   }
@@ -57,8 +63,9 @@ class ChartAccountRepository {
   }) async {
     _assertCanView(session);
     try {
-      var query =
-          _requireClient.from('chart_of_accounts').select(ChartAccountColumns.list);
+      var query = _requireClient
+          .from('chart_of_accounts')
+          .select(ChartAccountColumns.list);
 
       if (type != null) {
         query = query.eq('type', type.toDb());
@@ -67,7 +74,7 @@ class ChartAccountRepository {
         query = query.eq('is_active', isActive);
       }
 
-      final rows = await query.order('code');
+      final rows = await query.order('code').limit(maxTreeAccounts);
       return (rows as List)
           .map((r) => ChartAccount.fromRow(Map<String, dynamic>.from(r)))
           .toList();
@@ -157,7 +164,9 @@ class ChartAccountRepository {
     // 2. Load current account.
     final current = await fetchChartAccountById(session, id);
     if (current == null) {
-      throw const AccountingException(code: AccountingException.validationFailed);
+      throw const AccountingException(
+        code: AccountingException.validationFailed,
+      );
     }
 
     // 3. Parent type guard when type changes.
@@ -186,10 +195,7 @@ class ChartAccountRepository {
     try {
       await _requireClient.rpc(
         'update_chart_account',
-        params: {
-          'p_id': id,
-          'p_data': input.toUpdatePayload(),
-        },
+        params: {'p_id': id, 'p_data': input.toUpdatePayload()},
       );
       final updated = await fetchChartAccountById(session, id);
       if (updated == null) {

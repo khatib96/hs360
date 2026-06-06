@@ -18,12 +18,12 @@ class FakeCustomerRepository extends CustomerRepository {
     CustomerBalanceSummary? balanceSummary,
     this.statementError,
     this.balanceError,
-  })  : customers = List<Customer>.from(customers),
-        balanceSummary = balanceSummary ?? CustomerBalanceSummary.zero(),
-        super(null);
+  }) : customers = List<Customer>.from(customers),
+       balanceSummary = balanceSummary ?? CustomerBalanceSummary.zero(),
+       super(null);
 
   List<Customer> customers;
-  final Object? fetchError;
+  Object? fetchError;
   final Object? mutationError;
   final List<CustomerStatementRow> statementRows;
   final CustomerBalanceSummary balanceSummary;
@@ -31,6 +31,8 @@ class FakeCustomerRepository extends CustomerRepository {
   Object? balanceError;
 
   CustomerFilters? lastFilters;
+  int? lastOffset;
+  int? lastLimit;
   CustomerFormState? lastCreateInput;
   CustomerFormState? lastUpdateInput;
   String? lastUpdatedId;
@@ -39,20 +41,26 @@ class FakeCustomerRepository extends CustomerRepository {
   int fetchCount = 0;
   int statementCallCount = 0;
   int balanceCallCount = 0;
+  int? lastStatementOffset;
+  int? lastStatementLimit;
 
   @override
   Future<List<Customer>> fetchCustomers(
     AppSession session,
-    CustomerFilters filters,
-  ) async {
+    CustomerFilters filters, {
+    int offset = 0,
+    int limit = 100,
+  }) async {
     fetchCount++;
     lastFilters = filters;
+    lastOffset = offset;
+    lastLimit = limit;
     final error = fetchError;
     if (error != null) {
       if (error is CustomerException) throw error;
       throw const CustomerException(code: CustomerException.unknown);
     }
-    return customers.where((c) {
+    final filtered = customers.where((c) {
       if (filters.isActive != null && c.isActive != filters.isActive) {
         return false;
       }
@@ -73,6 +81,7 @@ class FakeCustomerRepository extends CustomerRepository {
       }
       return true;
     }).toList();
+    return filtered.skip(offset).take(limit).toList();
   }
 
   @override
@@ -150,7 +159,8 @@ class FakeCustomerRepository extends CustomerRepository {
     lastEnsureAccountId = id;
     final linked = sampleCustomer(id: id, accountId: 'acc-$id');
     customers = [
-      for (final c in customers) if (c.id == id) linked else c,
+      for (final c in customers)
+        if (c.id == id) linked else c,
     ];
     return linked;
   }
@@ -161,8 +171,12 @@ class FakeCustomerRepository extends CustomerRepository {
     String customerId, {
     DateTime? from,
     DateTime? to,
+    int offset = 0,
+    int limit = 100,
   }) async {
     statementCallCount++;
+    lastStatementOffset = offset;
+    lastStatementLimit = limit;
     if (!session.isManager &&
         !session.permissions.can('customers.view_ledger')) {
       throw const CustomerException(code: CustomerException.permissionDenied);
@@ -172,7 +186,7 @@ class FakeCustomerRepository extends CustomerRepository {
       if (error is CustomerException) throw error;
       throw const CustomerException(code: CustomerException.unknown);
     }
-    return statementRows;
+    return statementRows.skip(offset).take(limit).toList();
   }
 
   @override

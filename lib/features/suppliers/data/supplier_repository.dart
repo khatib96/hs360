@@ -51,9 +51,13 @@ class SupplierRepository {
 
   Future<List<Supplier>> fetchSuppliers(
     AppSession session,
-    SupplierFilters filters,
-  ) async {
+    SupplierFilters filters, {
+    int offset = 0,
+    int limit = 100,
+  }) async {
     _assertCanView(session);
+    assert(offset >= 0);
+    assert(limit > 0);
     try {
       var query = _requireClient.from('suppliers').select(SupplierColumns.list);
 
@@ -69,7 +73,7 @@ class SupplierRepository {
         query = query.eq('is_active', filters.isActive!);
       }
 
-      final rows = await query.order('code');
+      final rows = await query.order('code').range(offset, offset + limit - 1);
       return (rows as List)
           .map((r) => Supplier.fromRow(Map<String, dynamic>.from(r)))
           .toList();
@@ -133,10 +137,7 @@ class SupplierRepository {
     try {
       await _requireClient.rpc(
         'update_supplier',
-        params: {
-          'p_id': id,
-          'p_data': input.toUpdatePayload(),
-        },
+        params: {'p_id': id, 'p_data': input.toUpdatePayload()},
       );
       final updated = await fetchSupplierById(session, id);
       if (updated == null) {

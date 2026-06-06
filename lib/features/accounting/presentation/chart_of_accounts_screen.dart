@@ -30,8 +30,7 @@ class ChartOfAccountsScreen extends ConsumerWidget {
     final state = ref.watch(chartAccountListControllerProvider);
     final controller = ref.read(chartAccountListControllerProvider.notifier);
 
-    final canCreate =
-        session != null && canCreateChartAccount(session);
+    final canCreate = session != null && canCreateChartAccount(session);
 
     Widget body;
     if (state.isLoading && state.allAccounts.isEmpty) {
@@ -84,34 +83,54 @@ class ChartOfAccountsScreen extends ConsumerWidget {
           AccountingSetupBanner(issues: state.setupIssues),
           Padding(
             padding: const EdgeInsetsDirectional.all(16),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: ChartAccountFiltersBar(
-                    filters: state.filters,
-                    onSearchSubmitted: controller.setSearch,
-                    onTypeChanged: controller.setType,
-                    onActiveChanged: controller.setIsActive,
-                    onClear: controller.clearFilters,
-                  ),
-                ),
-                if (canCreate) ...[
-                  const SizedBox(width: 12),
-                  FilledButton.icon(
-                    key: const Key('chart-account-create-button'),
-                    onPressed: () => _showCreateDialog(context, ref),
-                    icon: const Icon(Icons.add),
-                    label: Text(l10n.chartAccountAdd),
-                  ),
-                ],
-              ],
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final filters = ChartAccountFiltersBar(
+                  filters: state.filters,
+                  onSearchSubmitted: controller.setSearch,
+                  onTypeChanged: controller.setType,
+                  onActiveChanged: controller.setIsActive,
+                  onClear: controller.clearFilters,
+                );
+                final createButton = FilledButton.icon(
+                  key: const Key('chart-account-create-button'),
+                  onPressed: () => _showCreateDialog(context, ref),
+                  icon: const Icon(Icons.add),
+                  label: Text(l10n.chartAccountAdd),
+                );
+
+                if (constraints.maxWidth < 720) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      filters,
+                      if (canCreate) ...[
+                        const SizedBox(height: 12),
+                        Align(
+                          alignment: AlignmentDirectional.centerEnd,
+                          child: createButton,
+                        ),
+                      ],
+                    ],
+                  );
+                }
+
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(child: filters),
+                    if (canCreate) ...[const SizedBox(width: 12), createButton],
+                  ],
+                );
+              },
             ),
           ),
           if (state.treeNodes.isNotEmpty)
             Padding(
               padding: const EdgeInsetsDirectional.symmetric(horizontal: 16),
-              child: Row(
+              child: Wrap(
+                spacing: 4,
+                runSpacing: 4,
                 children: [
                   TextButton.icon(
                     onPressed: controller.expandAll,
@@ -130,7 +149,9 @@ class ChartOfAccountsScreen extends ConsumerWidget {
             child: Stack(
               children: [
                 Padding(
-                  padding: const EdgeInsetsDirectional.symmetric(horizontal: 16),
+                  padding: const EdgeInsetsDirectional.symmetric(
+                    horizontal: 16,
+                  ),
                   child: body,
                 ),
                 if (state.isLoading && state.allAccounts.isNotEmpty)
@@ -163,9 +184,9 @@ class ChartOfAccountsScreen extends ConsumerWidget {
     );
 
     if (result is ChartAccountSubmitSuccess && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.chartAccountCreated)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.chartAccountCreated)));
     }
   }
 
@@ -187,9 +208,9 @@ class ChartOfAccountsScreen extends ConsumerWidget {
     );
 
     if (result is ChartAccountSubmitSuccess && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.chartAccountUpdated)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.chartAccountUpdated)));
     }
   }
 
@@ -224,9 +245,9 @@ class ChartOfAccountsScreen extends ConsumerWidget {
 
     if (!context.mounted) return;
     if (errorCode == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.chartAccountDeactivated)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.chartAccountDeactivated)));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(chartAccountErrorMessage(l10n, errorCode))),

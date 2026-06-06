@@ -76,6 +76,7 @@ class ChartAccountTreeTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final account = node.account;
     final hasChildren = node.children.isNotEmpty;
     final expanded = expandedIds.contains(account.id);
@@ -100,7 +101,9 @@ class ChartAccountTreeTile extends StatelessWidget {
                     size: 20,
                   ),
                   onPressed: () => onToggleExpanded(account.id),
-                  tooltip: expanded ? 'Collapse' : 'Expand',
+                  tooltip: expanded
+                      ? l10n.chartAccountCollapse
+                      : l10n.chartAccountExpand,
                 )
               : SizedBox(width: 40),
           title: Row(
@@ -108,21 +111,17 @@ class ChartAccountTreeTile extends StatelessWidget {
               Text(
                 account.code,
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: account.isActive
-                          ? null
-                          : AppColors.neutral600,
-                    ),
+                  fontWeight: FontWeight.w600,
+                  color: account.isActive ? null : AppColors.neutral600,
+                ),
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   name,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: account.isActive
-                            ? null
-                            : AppColors.neutral600,
-                      ),
+                    color: account.isActive ? null : AppColors.neutral600,
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),

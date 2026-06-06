@@ -53,9 +53,13 @@ class CustomerRepository {
 
   Future<List<Customer>> fetchCustomers(
     AppSession session,
-    CustomerFilters filters,
-  ) async {
+    CustomerFilters filters, {
+    int offset = 0,
+    int limit = 100,
+  }) async {
     _assertCanView(session);
+    assert(offset >= 0);
+    assert(limit > 0);
     try {
       var query = _requireClient.from('customers').select(CustomerColumns.list);
 
@@ -84,7 +88,7 @@ class CustomerRepository {
         query = query.eq('governorate', filters.governorate!.trim());
       }
 
-      final rows = await query.order('code');
+      final rows = await query.order('code').range(offset, offset + limit - 1);
       return (rows as List)
           .map((r) => Customer.fromRow(Map<String, dynamic>.from(r)))
           .toList();
@@ -148,10 +152,7 @@ class CustomerRepository {
     try {
       await _requireClient.rpc(
         'update_customer',
-        params: {
-          'p_id': id,
-          'p_data': input.toUpdatePayload(),
-        },
+        params: {'p_id': id, 'p_data': input.toUpdatePayload()},
       );
       final updated = await fetchCustomerById(session, id);
       if (updated == null) {
@@ -198,21 +199,27 @@ class CustomerRepository {
     String customerId, {
     DateTime? from,
     DateTime? to,
+    int offset = 0,
+    int limit = 100,
   }) async {
     if (!session.isManager &&
         !session.permissions.can('customers.view_ledger')) {
       throw const CustomerException(code: CustomerException.permissionDenied);
     }
+    assert(offset >= 0);
+    assert(limit > 0);
 
     try {
-      final rows = await _requireClient.rpc(
-        'get_customer_statement',
-        params: {
-          'p_customer_id': customerId,
-          'p_from': from != null ? _dateOnly(from) : null,
-          'p_to': to != null ? _dateOnly(to) : null,
-        },
-      );
+      final rows = await _requireClient
+          .rpc(
+            'get_customer_statement',
+            params: {
+              'p_customer_id': customerId,
+              'p_from': from != null ? _dateOnly(from) : null,
+              'p_to': to != null ? _dateOnly(to) : null,
+            },
+          )
+          .range(offset, offset + limit - 1);
       return (rows as List)
           .map(
             (r) => CustomerStatementRow.fromRow(

@@ -149,9 +149,7 @@ class _DesktopCustomerTableState extends State<_DesktopCustomerTable> {
                     DataCell(Text(_typeLabel(customer, l10n))),
                     DataCell(
                       Text(
-                        location.isEmpty
-                            ? l10n.productsNotAvailable
-                            : location,
+                        location.isEmpty ? l10n.productsNotAvailable : location,
                       ),
                     ),
                     DataCell(
@@ -161,8 +159,9 @@ class _DesktopCustomerTableState extends State<_DesktopCustomerTable> {
                             : l10n.customerStatusInactive,
                         style: customer.isActive
                             ? null
-                            : theme.textTheme.bodyMedium
-                                ?.copyWith(color: AppColors.neutral400),
+                            : theme.textTheme.bodyMedium?.copyWith(
+                                color: AppColors.neutral400,
+                              ),
                       ),
                     ),
                     DataCell(
@@ -220,7 +219,10 @@ class _VipBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsetsDirectional.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsetsDirectional.symmetric(
+        horizontal: 6,
+        vertical: 2,
+      ),
       decoration: BoxDecoration(
         color: AppColors.gold.withValues(alpha: 0.18),
         borderRadius: BorderRadius.circular(4),
@@ -228,9 +230,9 @@ class _VipBadge extends StatelessWidget {
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: AppColors.gold,
-              fontWeight: FontWeight.w600,
-            ),
+          color: AppColors.gold,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }
@@ -330,7 +332,7 @@ class _MobileCustomerList extends StatelessWidget {
                 ),
               ],
             ),
-            trailing: _RowActions(
+            trailing: _MobileRowActions(
               customer: customer,
               canEdit: canEdit,
               canDeactivate: canDeactivate,
@@ -341,6 +343,53 @@ class _MobileCustomerList extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _MobileRowActions extends StatelessWidget {
+  const _MobileRowActions({
+    required this.customer,
+    required this.canEdit,
+    required this.canDeactivate,
+    required this.onView,
+    required this.onEdit,
+    required this.onDeactivate,
+  });
+
+  final Customer customer;
+  final bool canEdit;
+  final bool canDeactivate;
+  final ValueChanged<Customer> onView;
+  final ValueChanged<Customer> onEdit;
+  final ValueChanged<Customer> onDeactivate;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return PopupMenuButton<String>(
+      key: Key('customer-mobile-actions-${customer.id}'),
+      tooltip: MaterialLocalizations.of(context).moreButtonTooltip,
+      onSelected: (action) {
+        switch (action) {
+          case 'view':
+            onView(customer);
+          case 'edit':
+            onEdit(customer);
+          case 'deactivate':
+            onDeactivate(customer);
+        }
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem(value: 'view', child: Text(l10n.customerActionView)),
+        if (canEdit)
+          PopupMenuItem(value: 'edit', child: Text(l10n.customerActionEdit)),
+        if (canDeactivate && customer.isActive)
+          PopupMenuItem(
+            value: 'deactivate',
+            child: Text(l10n.customerActionDeactivate),
+          ),
+      ],
     );
   }
 }

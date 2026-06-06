@@ -1,6 +1,6 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-06-06 (Phase 4 M5.7 locally complete and verified).
+> Updated 2026-06-06 (Phase 4 M8 engineering closure complete; Docker recovery and cloud deployment remain operational follow-ups).
 
 ---
 
@@ -18,10 +18,26 @@
 - **Phase 4 M6 complete** - Customer 360 shell at [`customer_detail_screen.dart`](lib/features/customers/presentation/customer_detail_screen.dart): Profile, Locations, Contracts/Invoices/Vouchers placeholders, Statement (`customers.view_ledger` RPCs), Timeline (local metadata only).
 - **Phase 4 M7 complete** - Chart of Accounts tree at [`chart_of_accounts_screen.dart`](lib/features/accounting/presentation/chart_of_accounts_screen.dart); migration [`048`](supabase/migrations/048_chart_accounts_m7_hardening.sql); single-fetch tree, policy-driven badges/actions, setup banner, manual CRUD dialogs.
 - **Phase 4 M7.5 complete** - CoA hierarchy + Arabic repair via [`049`](supabase/migrations/049_chart_accounts_hierarchy_and_arabic_repair.sql): 5 protected category roots (`1000`–`5000` incl. Equity), system leaves reparented, Arabic repaired with transport-safe `U&` escapes, duplicate-code pre-check, targeted protection-trigger disable only.
-- Migrations `001`-`051` are applied on local Postgres. The M5.7 SQL suite passed on 2026-06-06.
+- **Phase 4 M8 engineering closure complete** - bounded/paginated customer, supplier, statement, CoA, and location reads; responsive Arabic mobile coverage; database ACL and tenant-safe FK hardening in migration [`052`](supabase/migrations/052_phase_4_closure_hardening.sql).
+- Migrations `001`-`052` were applied to local Postgres and every Phase 1/3/4 SQL verification suite passed on 2026-06-06 before the Docker data disk failed during a fresh reset attempt.
 - **Canonical inventory rules:** [`docs/PHASE_3_M1_5_INVENTORY_RULES.md`](docs/PHASE_3_M1_5_INVENTORY_RULES.md)
 - **Capability decisions:** [`docs/CAPABILITIES_DECISION_REPORT.md`](docs/CAPABILITIES_DECISION_REPORT.md) + [`docs/CANONICAL_DECISIONS.md`](docs/CANONICAL_DECISIONS.md) now fix Barcode/Serial, JSON print templates, service-location coordinates, and Phase 5 Tax Foundation placement.
-- **Next:** deploy `resolve-google-maps-url` and migrations to the target Supabase project after CLI login/project linking, then complete final Phase 4 visual acceptance.
+- **Next:** repair/recreate Docker Desktop data, rerun a clean `supabase db reset` and all SQL suites, then deploy migrations and `resolve-google-maps-url` to the linked target Supabase project. Phase 5 engineering can start after this operational recovery checkpoint.
+
+---
+
+## Phase 4 M8 - Verification & Engineering Close (done)
+
+- **Pagination/bounds:** customer and supplier lists and customer statements load in 100-row pages; CoA is capped at 2000 rows and service locations at 500 rows.
+- **Responsive UI:** customer, supplier, Customer 360, service-location, and CoA screens have Arabic 360x800 widget coverage. Mobile list actions use compact menus and narrow headers/filters wrap safely.
+- **Database hardening:** migration [`052_phase_4_closure_hardening.sql`](supabase/migrations/052_phase_4_closure_hardening.sql) removes API-role execution from internal helpers, grants public Phase 4 RPCs only to `authenticated`, and replaces cross-entity account/parent references with tenant-safe composite FKs.
+- **Dependency cleanup:** unused `geolocator` and its generated platform registrations were removed because coordinates now come only from Google Maps links.
+- **Automated verification:** `flutter pub get`, localization generation, build runner, `flutter analyze`, 376 Flutter tests, Windows integration test/build, Node map parser tests, and `git diff --check` passed.
+- **Database verification:** migration 052 applied successfully; catalog ACL/FK/RLS/audit checks passed; `phase_1d_rls.sql`, `phase_3_products_inventory.sql`, and all three Phase 4 SQL suites passed sequentially.
+- **Fresh-reset blocker:** the later `supabase db reset` attempt removed the local DB container, then Docker failed while pulling the Postgres image. Docker logs show VHDX/overlay filesystem `input/output error`, `I/O error, dev loop1`, and dockerd `SIGBUS`. This is Docker data-disk corruption, not a project migration or SQL-test failure.
+- **Current local DB state:** unavailable until Docker Desktop data is repaired or recreated. Do not delete or move `C:\Users\alkat\AppData\Local\Docker\wsl\disk\docker_data.vhdx` without explicit approval because it affects all local Docker projects.
+- **File-size review:** the largest Phase 4 presentation files were reviewed. Their size comes from cohesive desktop/mobile renderers or complete form/location workflows; no blocking split was required for M8.
+- **Operational follow-ups:** clean reset after Docker recovery, then cloud migration/function deployment after Supabase login and project linking.
 
 ---
 
