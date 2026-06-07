@@ -1,28 +1,192 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-06-07 (Session: Phase 5 M2 asset identity, serial, scan, timeline complete).
+> Updated 2026-06-07 (Session: Phase 5 M1/M2 hardening closure — permanent regression suite complete).
+
+---
+
+## Session 2026-06-07 — Phase 5 M1/M2 Hardening Closure
+
+### Context
+
+- Migration `056` independently verified; no logic changes. Closed M1/M2 by adding permanent regression cases to [`phase_5_m1_m2_hardening.sql`](supabase/tests/phase_5_m1_m2_hardening.sql) per approved plan.
+
+### Regression cases added
+
+- `document_sequences`: anon INSERT/UPDATE/DELETE/TRUNCATE denial (42501)
+- `unit_events`: authorized SELECT for manager with `product_units.view`
+- Journal: zero-line posting rejected (`journal_entry_requires_two_lines`)
+- `tenant_settings` audit: full `before_json`/`after_json` for books lock + serial fields
+- Reconcile: inactive/non-serialized/cross-tenant product; inactive/cross-tenant/unknown warehouse, covered by both preview and reconcile RPCs
+- Reconcile: direct `reconcile_serialized_stock` error paths (fractional, negative, bucket, exceeds)
+- Metadata: invalid cancelled invoice/voucher (missing actor, blank reason)
+- Reconcile gap: `created_by` and `qty_available` in event metadata
+
+### M1/M2 status
+
+- **Closed.** Next: Phase 5 M3 — `057_phase_5_document_templates.sql`.
+
+### Verification (closure re-run)
+
+```text
+npx supabase db reset                          → 001–056 applied cleanly
+phase_1d_rls.sql                               → passed
+phase_3_products_inventory.sql                 → passed
+phase_4_customers_suppliers_coa.sql            → passed
+phase_4_customer_service_locations.sql         → passed
+phase_4_service_location_coordinates.sql       → passed
+phase_5_finance_foundation.sql                 → passed
+phase_5_asset_identity.sql                     → passed
+phase_5_m1_m2_hardening.sql                    → passed (expanded permanent regression)
+```
+
+---
+
+## Session 2026-06-07 — Phase 5 M1/M2 Hardening Checkpoint
+
+### Context
+
+- Mandatory hardening gate before M3 (document templates). Reproduced security, accounting, inventory, and scan gaps against clean DB at migration `055`.
+- Delivered as migration [`056_phase_5_m1_m2_hardening.sql`](supabase/migrations/056_phase_5_m1_m2_hardening.sql) + suite [`phase_5_m1_m2_hardening.sql`](supabase/tests/phase_5_m1_m2_hardening.sql).
+
+### Root causes fixed
+
+| # | Finding | Root cause |
+|---|---------|------------|
+| 1 | `document_sequences` exposed | No RLS/revoke on table; only `next_document_number()` was internal |
+| 2 | Journal gaps | Line trigger lacked INSERT + parent `FOR UPDATE`; posting validator skipped INSERT-with-posted and balance check |
+| 3 | `tenant_settings` audit | PL/pgSQL compile-time `new.id` on table without `id` column |
+| 4 | Fractional reconcile | `numeric::bigint` **rounds** before validation |
+| 5 | Scan permissions | Global `product_units.view` gate blocked product-only scans |
+| 6 | Confirmation metadata | Missing `confirmed_by` / cancellation actor+reason constraints |
+
+### Architecture decisions (056)
+
+- **`document_sequences`:** `REVOKE ALL` + `ENABLE RLS` with **no client policies** (no FORCE RLS).
+- **Reconcile/preview auth:** both require `is_manager()` OR `product_units.reconcile_serials` (not `product_units.view`).
+- **Reconcile validation order:** negative → whole-number → non-available buckets → exceeds balance → difference; exact match → `serialized_reconciliation_not_needed`.
+- **Conservative bucket rule:** reject when any of `qty_rented/trial/maintenance/damaged` is non-zero.
+- **Scan policy:** per-category permissions; `scan_not_found` when no authorized match; cross-tenant → `scan_not_found`.
+- **Journal lines:** lock both OLD/NEW parent entries in UUID order on UPDATE.
+
+### Files changed
+
+| File | Role |
+|------|------|
+| [`056_phase_5_m1_m2_hardening.sql`](supabase/migrations/056_phase_5_m1_m2_hardening.sql) | Hardening migration |
+| [`phase_5_m1_m2_hardening.sql`](supabase/tests/phase_5_m1_m2_hardening.sql) | Permanent regression suite (~65 isolated cases) |
+| [`phase_5_finance_foundation.sql`](supabase/tests/phase_5_finance_foundation.sql) | Cases 6/8/15 updated for metadata + posting transition |
+| [`PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md`](docs/PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md) | Migration renumber 057–062; M1/M2 hardening milestone |
+| [`ai_memory.md`](ai_memory.md) | This session block |
+
+### Verification (2026-06-07)
+
+```text
+npx supabase db reset                          → 001–056 applied cleanly
+phase_1d_rls.sql                               → passed
+phase_3_products_inventory.sql                 → passed
+phase_4_customers_suppliers_coa.sql            → passed
+phase_4_customer_service_locations.sql         → passed
+phase_4_service_location_coordinates.sql       → passed
+phase_5_finance_foundation.sql                 → passed (20 cases)
+phase_5_asset_identity.sql                     → passed (11 cases)
+phase_5_m1_m2_hardening.sql                    → passed
+npx supabase db lint --local --level warning   → pre-existing warnings only (054/055 stubs, create_product_units); no new 056 function warnings
+flutter analyze                                → no issues
+flutter test                                   → 381 passed
+```
+
+### Explicit non-goals (honored)
+
+- No M3 document templates, tax, invoice/voucher posting RPCs, scan launcher, reconcile UI, or Flutter permission refactors.
+- No edits to historical migrations `029`, `054`, or `055`.
+
+### Next session
+
+- **Phase 5 M3:** `057_phase_5_document_templates.sql` per finance plan.
 
 ---
 
 ## Session 2026-06-07 — Phase 5 M2 (Asset Identity, Serial, Scan, Timeline)
 
-### Delivered
+### Context
 
-| Area | Files |
-|------|-------|
-| Migration | [`supabase/migrations/055_phase_5_asset_identity_scan_timeline.sql`](supabase/migrations/055_phase_5_asset_identity_scan_timeline.sql) |
-| SQL tests | [`supabase/tests/phase_5_asset_identity.sql`](supabase/tests/phase_5_asset_identity.sql) |
-| Scan core | [`lib/core/scanning/`](lib/core/scanning/) — `ScanResult`, `ScanRepository`, `ScanController`, `ScanInput`, `MobileScanSheet` |
-| Unit detail | [`lib/features/products/presentation/product_unit_detail_screen.dart`](lib/features/products/presentation/product_unit_detail_screen.dart), timeline controllers/widgets, route `/product-units/:id` |
-| SKU wizard | Removed user-editable SKU from product wizard; DB auto-generates via `SKU` document sequence |
+- Continued from Phase 5 M1 closure (migrations `053`–`054`, 376 Flutter tests green).
+- User supplied the full M2 plan (DB migration + Flutter scanning/unit detail + test suites). Plan reviewed in Cursor; two scope decisions locked before coding.
 
-### Migration 055 summary
+### Planning outcomes (approved before implementation)
 
-- `SKU` document sequence + auto-generate/immutability triggers on `products`
-- `serial_number_mode` enum + tenant settings columns; case-insensitive trimmed barcode unique indexes
-- `unit_events` table + RLS; `v_unit_timeline` view
-- RPCs: `preview_serialized_stock_reconciliation`, `reconcile_serialized_stock`, `correct_product_unit_serial`, `resolve_scan_code`
-- Composite FK hardening on `product_units.current_warehouse_id` / `current_customer_id`
+| Decision | Choice |
+|----------|--------|
+| SKU in Flutter wizard | **Fully remove** user-editable SKU from wizard/draft/form state/validator; DB auto-generates via `SKU` document sequence on insert |
+| Scan entry in AppShell | **Route only** — add reachable `/product-units/:id` screen; **no** global scan launcher in M2 |
+| Permissions for reconcile/correct | Already seeded in `054` (`product_units.correct_serial`, `product_units.reconcile_serials`); no new permission rows in `055` |
+
+Implementation finding during migration design:
+
+- `customer_service_locations` had only `unique (tenant_id, customer_id, id)`. Added `unique (tenant_id, id)` so `unit_events` can reference `(tenant_id, service_location_id)` via composite FK.
+- Barcode unique partial indexes make `scan_ambiguous` unreachable for duplicate barcodes in normal operation; SQL case 9 verifies duplicate barcodes are rejected on bulk unit create instead of ambiguous scan resolution.
+
+### Files created
+
+| File | Role |
+|------|------|
+| [`supabase/migrations/055_phase_5_asset_identity_scan_timeline.sql`](supabase/migrations/055_phase_5_asset_identity_scan_timeline.sql) | M2 schema, RPCs, view, RLS/ACL |
+| [`supabase/tests/phase_5_asset_identity.sql`](supabase/tests/phase_5_asset_identity.sql) | 11 verification cases |
+| [`lib/core/errors/scan_exception.dart`](lib/core/errors/scan_exception.dart) | Typed scan errors (`scan_not_found`, `scan_ambiguous`, …) |
+| [`lib/core/scanning/domain/scan_result.dart`](lib/core/scanning/domain/scan_result.dart) | `ScanResult` + kind/matchedBy enums |
+| [`lib/core/scanning/data/scan_repository.dart`](lib/core/scanning/data/scan_repository.dart) | `resolve_scan_code` RPC wrapper |
+| [`lib/core/scanning/presentation/scan_controller.dart`](lib/core/scanning/presentation/scan_controller.dart) | Riverpod scan state machine |
+| [`lib/core/scanning/presentation/scan_input.dart`](lib/core/scanning/presentation/scan_input.dart) | Keyboard-wedge input (Enter → resolve) |
+| [`lib/core/scanning/presentation/mobile_scan_sheet.dart`](lib/core/scanning/presentation/mobile_scan_sheet.dart) | `mobile_scanner` bottom sheet |
+| [`lib/features/products/domain/unit_timeline_event.dart`](lib/features/products/domain/unit_timeline_event.dart) | `v_unit_timeline` row model |
+| [`lib/features/products/presentation/product_unit_detail_state.dart`](lib/features/products/presentation/product_unit_detail_state.dart) | Detail UI state |
+| [`lib/features/products/presentation/product_unit_detail_controller.dart`](lib/features/products/presentation/product_unit_detail_controller.dart) | Load unit + serial correction |
+| [`lib/features/products/presentation/product_unit_timeline_controller.dart`](lib/features/products/presentation/product_unit_timeline_controller.dart) | Timeline fetch per unit |
+| [`lib/features/products/presentation/product_unit_detail_screen.dart`](lib/features/products/presentation/product_unit_detail_screen.dart) | Responsive bilingual detail screen |
+| [`lib/features/products/presentation/widgets/product_unit_detail_header.dart`](lib/features/products/presentation/widgets/product_unit_detail_header.dart) | Metadata + status chips |
+| [`lib/features/products/presentation/widgets/product_unit_serial_correction_card.dart`](lib/features/products/presentation/widgets/product_unit_serial_correction_card.dart) | Permission-gated correction form |
+| [`lib/features/products/presentation/widgets/product_unit_timeline_list.dart`](lib/features/products/presentation/widgets/product_unit_timeline_list.dart) | Chronological timeline (Column, not nested ListView) |
+| [`test/core/scanning/domain/scan_result_test.dart`](test/core/scanning/domain/scan_result_test.dart) | JSON parsing |
+| [`test/core/scanning/presentation/scan_input_test.dart`](test/core/scanning/presentation/scan_input_test.dart) | Wedge Enter + clear |
+| [`test/features/products/presentation/product_unit_detail_screen_test.dart`](test/features/products/presentation/product_unit_detail_screen_test.dart) | Mobile AR 360×800 + desktop EN + permission gate |
+
+### Files updated (high-signal)
+
+| File | Change |
+|------|--------|
+| [`supabase/migrations/054`](supabase/migrations/054_phase_5_finance_foundation.sql) trigger fn | Extended by `055` replace: `initialize_tenant_document_sequences()` now seeds `SKU` |
+| [`lib/features/products/domain/product_form_state.dart`](lib/features/products/domain/product_form_state.dart) et al. | Removed `sku` from create/edit input |
+| [`lib/features/products/data/product_repository.dart`](lib/features/products/data/product_repository.dart) | Stop sending `sku` on write; read back DB SKU on create when permitted |
+| [`lib/features/products/data/product_unit_repository.dart`](lib/features/products/data/product_unit_repository.dart) | `fetchUnitById`, `fetchUnitTimeline`, `correctSerial` |
+| [`lib/features/products/domain/product_unit.dart`](lib/features/products/domain/product_unit.dart) | Location/maintenance fields for detail screen |
+| [`lib/features/products/domain/product_unit_permissions.dart`](lib/features/products/domain/product_unit_permissions.dart) | `canCorrectProductUnitSerial`, `canReconcileProductUnitSerials` |
+| [`lib/core/routing/app_routes.dart`](lib/core/routing/app_routes.dart), [`app_router.dart`](lib/core/routing/app_router.dart), [`route_guards.dart`](lib/core/routing/route_guards.dart) | Route `/product-units/:id`; guard `product_units.view` |
+| [`lib/l10n/app_en.arb`](lib/l10n/app_en.arb), [`app_ar.arb`](lib/l10n/app_ar.arb) | Scan + unit detail + timeline strings |
+| [`supabase/tests/phase_5_finance_foundation.sql`](supabase/tests/phase_5_finance_foundation.sql) | Cases 17–18: expect **6** sequences (added `SKU`) |
+| [`test/domain/validators/product_validator_test.dart`](test/domain/validators/product_validator_test.dart) et al. | SKU removal test updates |
+| [`test/features/products/fake_product_unit_repository.dart`](test/features/products/fake_product_unit_repository.dart) | Fakes for detail/timeline/correctSerial |
+
+### What `055` implements (summary)
+
+- **`SKU` sequence:** backfill + tenant trigger; `trg_generate_product_sku_on_insert` calls `next_document_number('SKU')`; `trg_enforce_product_sku_immutability` raises `immutable_column`.
+- **Serial settings:** `serial_number_mode` enum; `tenant_settings.serial_number_mode/prefix/padding`.
+- **Barcode uniqueness:** `ux_products_tenant_barcode`, `ux_product_units_tenant_barcode` (case-insensitive, trimmed, partial).
+- **`unit_events`:** lifecycle log table; RLS select via `product_units.view`; writes only through SECURITY DEFINER RPCs.
+- **RPCs (authenticated EXECUTE):**
+  - `preview_serialized_stock_reconciliation` — balance vs physical unit count
+  - `reconcile_serialized_stock` — insert missing units + `unit_events`; **no** balance/movement writes
+  - `correct_product_unit_serial` — serial update + `serial_correction` event; **no** balance/movement writes
+  - `resolve_scan_code` — priority: unit barcode → product barcode → serial; tenant-scoped; `scan_ambiguous` / `scan_not_found`
+- **`v_unit_timeline`:** `security_invoker = true`; unions acquisition, purchase invoice, inventory movements, unit events; placeholder unions for contracts/visits/maintenance (`where false`).
+- **Composite FK hardening:** `product_units.(tenant_id, current_warehouse_id)` → warehouses; `(tenant_id, current_customer_id)` → customers.
+- **ACL:** revoke internal helpers from public/anon/authenticated; grant public RPCs to `authenticated` only.
+
+### Flutter M2 summary
+
+- **Scanning core** under [`lib/core/scanning/`](lib/core/scanning/): reusable `ScanInput`, `MobileScanSheet`, `ScanController` + `ScanRepository` (not wired into AppShell nav — deferred).
+- **Product unit detail** at [`/product-units/:id`](lib/core/routing/app_routes.dart): serial, barcode, status/health chips, location (warehouse/customer/site), maintenance count, permission-gated serial correction card, timeline from `v_unit_timeline`.
+- **SKU wizard:** field removed from identity step and review; create success snackbar uses product name instead of SKU.
+- **Bilingual:** AR/EN l10n keys; RTL via existing `localeProvider` / `AppLocalizations`.
 
 ### Verification (this session)
 
@@ -35,14 +199,26 @@ phase_4_customers_suppliers_coa.sql            → passed
 phase_4_customer_service_locations.sql         → passed
 phase_4_service_location_coordinates.sql       → passed
 phase_5_finance_foundation.sql                 → passed (cases 17–18 updated for SKU sequence)
+flutter gen-l10n                               → OK
+dart run build_runner build --delete-conflicting-outputs → OK
 flutter analyze                                → no issues
-flutter test                                   → 381 passed
+flutter test                                   → 381 passed (+5 vs M1)
 ```
+
+PowerShell note: pipe SQL tests with `Get-Content -Raw … | docker exec -i supabase_db_hs360 psql …` (`<` redirection not supported).
+
+### Explicit non-goals (honored)
+
+- No global scan launcher / AppShell scan entry (components exist; integration deferred).
+- No reconcile-serial UI (RPC + permission helper only; UI deferred).
+- No automatic serial generation from `tenant_settings.serial_number_mode` yet (columns seeded; generation logic deferred).
+- No changes to finance posting RPC stubs or tax foundation (M4+).
+- `reconcile_serialized_stock` / `correct_product_unit_serial` do not touch inventory balances or movements (by design).
 
 ### Next session
 
-- **Phase 5 M3+** per [`docs/PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md`](docs/PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md)
-- Optional: wire global scan launcher in AppShell (deferred from M2 by design)
+- ~~**Phase 5 M3+** per finance plan~~ — **M1/M2 hardening complete**; next: M3 `057_phase_5_document_templates.sql`
+- Optional: wire scan launcher in AppShell; link unit rows from product detail → `/product-units/:id`
 - Cloud deploy of migrations 053–055 when Supabase project is linked
 
 ---
@@ -124,10 +300,10 @@ PowerShell note: pipe SQL tests with `Get-Content -Raw … | docker exec -i supa
 - No real posting, WAC, or stock logic in RPC stubs (M5–M7).
 - No `books_locked_through` date enforcement in RPCs yet (column + comment only).
 
-### Next session
+### Next session (superseded by M2 — done 2026-06-07)
 
-- **Phase 5 M2:** [`055_phase_5_asset_identity_scan_timeline.sql`](supabase/migrations/055_phase_5_asset_identity_scan_timeline.sql) — SKU/serial generation, scan resolver, unit timeline, serial reconcile/correct permissions.
-- Cloud deploy of migrations 053–054 remains a separate ops step when Supabase project is linked.
+- ~~**Phase 5 M2:** `055_phase_5_asset_identity_scan_timeline.sql`~~ — completed same day.
+- Cloud deploy of migrations 053–055 remains a separate ops step when Supabase project is linked.
 
 ---
 
@@ -137,9 +313,24 @@ PowerShell note: pipe SQL tests with `Get-Content -Raw … | docker exec -i supa
 - **Phase 2 complete** - auth, routing, permissions, locale (M0-M8).
 - **Phase 3 complete** - products and inventory (M0-M8).
 - **Phase 4 M0-M8 complete** - customers, suppliers, CoA, service locations, coordinates, engineering closure through migration [`052`](supabase/migrations/052_phase_4_closure_hardening.sql).
+- **Phase 5 M1/M2 complete** — hardening via [`056`](supabase/migrations/056_phase_5_m1_m2_hardening.sql); M3 document templates next (`057`).
 - **Phase 5 M1 complete** - finance schema hardening via [`053`](supabase/migrations/053_phase_5_journal_source_enum.sql) + [`054`](supabase/migrations/054_phase_5_finance_foundation.sql): document sequences (SI/PI/RV/PV/JE), dual-field idempotency, `books_locked_through`, tenant-safe composite FKs, RPC-only finance writes, journal immutability, 17 new permissions, 8 posting RPC stubs. SQL suite [`phase_5_finance_foundation.sql`](supabase/tests/phase_5_finance_foundation.sql) passes; all Phase 1/3/4 suites still pass; `flutter analyze` clean; 376 Flutter tests green.
 - **Phase 5 M2 complete** - asset identity, serial, scan, timeline via [`055`](supabase/migrations/055_phase_5_asset_identity_scan_timeline.sql): SKU auto-generation, barcode uniqueness, unit events/timeline view, scan resolver, reconcile/correct serial RPCs; Flutter scanning core + product unit detail screen at `/product-units/:id`; SKU removed from product wizard. SQL suite [`phase_5_asset_identity.sql`](supabase/tests/phase_5_asset_identity.sql) passes; all prior SQL suites pass; `flutter analyze` clean; 381 Flutter tests green.
-- **Next:** Phase 5 M3+ per finance plan.
+- **Next:** Phase 5 M3 — `057_phase_5_document_templates.sql`.
+
+---
+
+## Phase 5 M2 - Asset Identity, Serial, Scan, and Timeline (done)
+
+- **Migration:** [`055_phase_5_asset_identity_scan_timeline.sql`](supabase/migrations/055_phase_5_asset_identity_scan_timeline.sql).
+- **SKU:** internal `SKU-000001` sequence; auto-generate on product insert; immutability trigger; wizard no longer accepts user SKU.
+- **Barcodes:** tenant-scoped case-insensitive trimmed unique indexes on `products` and `product_units`.
+- **Serial settings:** `serial_number_mode` enum + `tenant_settings` columns (generation behavior deferred).
+- **Unit lifecycle:** `unit_events` table; `v_unit_timeline` view (`security_invoker`); reconcile/correct RPCs write events only (no stock side effects).
+- **Scan resolver:** `resolve_scan_code` RPC; Flutter [`lib/core/scanning/`](lib/core/scanning/) stack (`ScanInput`, `MobileScanSheet`, controllers/repos).
+- **Unit detail UI:** [`ProductUnitDetailScreen`](lib/features/products/presentation/product_unit_detail_screen.dart) at `/product-units/:id`; serial correction gated by `product_units.correct_serial`.
+- **Permissions:** reuse `054` seeds for `correct_serial` / `reconcile_serials`; route guard requires `product_units.view`.
+- **Verification:** `supabase db reset` through 055; [`phase_5_asset_identity.sql`](supabase/tests/phase_5_asset_identity.sql) + all prior SQL suites; `flutter analyze` clean; 381 tests green (2026-06-07).
 
 ---
 

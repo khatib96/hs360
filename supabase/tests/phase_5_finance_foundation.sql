@@ -175,11 +175,13 @@ begin
   begin
     insert into vouchers (
       tenant_id, voucher_number, type, date, amount, payment_method,
-      customer_id, account_id, cash_account_id
+      customer_id, account_id, cash_account_id,
+      confirmed_at, confirmed_by
     )
     values (
       v_tenant_a, 'RV-ZERO', 'receipt', current_date, 0, 'cash',
-      v_customer, v_cash, v_cash
+      v_customer, v_cash, v_cash,
+      now(), '00000000-0000-0000-0000-000000000201'::uuid
     );
     raise exception 'case6 failed: zero voucher amount succeeded';
   exception
@@ -231,10 +233,10 @@ declare
   v_owner uuid := '00000000-0000-0000-0000-000000000201';
 begin
   insert into journal_entries (
-    tenant_id, entry_number, date, source, is_posted, posted_at, posted_by
+    tenant_id, entry_number, date, source, is_posted
   )
   values (
-    v_tenant_a, 'JE-TEST-001', current_date, 'manual', true, now(), v_owner
+    v_tenant_a, 'JE-TEST-001', current_date, 'manual', false
   )
   returning id into v_entry_id;
 
@@ -244,6 +246,10 @@ begin
   values
     (v_tenant_a, v_entry_id, v_cash, 10, 0, 1),
     (v_tenant_a, v_entry_id, v_revenue, 0, 10, 2);
+
+  update journal_entries
+  set is_posted = true, posted_at = now(), posted_by = v_owner
+  where id = v_entry_id;
 
   select id into v_line_id
   from journal_lines
@@ -413,21 +419,21 @@ begin
 
   insert into invoices (
     tenant_id, invoice_number, type, status, customer_id, date,
-    subtotal, total, confirmed_at
+    subtotal, total, confirmed_at, confirmed_by
   )
   values (
     v_tenant_a, 'SI-DUP-001', 'sales', 'confirmed', v_customer, current_date,
-    0, 0, now()
+    0, 0, now(), '00000000-0000-0000-0000-000000000201'::uuid
   );
 
   begin
     insert into invoices (
       tenant_id, invoice_number, type, status, customer_id, date,
-      subtotal, total, confirmed_at
+      subtotal, total, confirmed_at, confirmed_by
     )
     values (
       v_tenant_a, 'SI-DUP-001', 'sales', 'confirmed', v_customer, current_date,
-      0, 0, now()
+      0, 0, now(), '00000000-0000-0000-0000-000000000201'::uuid
     );
     raise exception 'case15 failed: duplicate invoice number succeeded';
   exception

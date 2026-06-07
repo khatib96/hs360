@@ -3,8 +3,7 @@
 > Purpose: implement the first production-safe accounting cycle for HS360:
 > purchase -> inventory/WAC -> sale -> receivable -> receipt/payment -> journal.
 >
-> Status at creation: planned on 2026-06-06. Phase 4 is engineering-complete
-> through M8, but the clean local database reset remains an M0 operational gate.
+> Status: M1/M2 hardening complete through migration `056` (2026-06-07). M3 (document templates) is next.
 >
 > Canonical sources: `CANONICAL_DECISIONS.md`, `PAYMENT_SYSTEM.md`,
 > `DATABASE_SCHEMA.md`, `MVP_SCOPE.md`, and
@@ -73,7 +72,7 @@ in Phases 3-4 and contracts/field operations in Phases 6-8.
 
 ### Confirmed Starting Point
 
-- Migrations `001` through `052` exist.
+- Migrations `001` through `056` exist.
 - Phase 3 products/inventory and Phase 4 customers/suppliers/CoA are
   engineering-complete.
 - `decimal` is already used in Dart for money and quantity values.
@@ -776,7 +775,7 @@ Make serialized assets reliable before purchase invoices begin creating units.
 
 ### Suggested Migration
 
-`054_phase_5_asset_identity_scan_timeline.sql`
+`055_phase_5_asset_identity_scan_timeline.sql`
 
 ### SKU
 
@@ -825,20 +824,19 @@ preview_serialized_stock_reconciliation(product_id, warehouse_id)
 reconcile_serialized_stock(product_id, warehouse_id, serial_inputs, reason)
 ```
 
-Rules:
+Rules (hardened in `056`):
 
-- manager or `product_units.reconcile_serials`;
-- product must be active and serialized;
-- available balance must be a whole number;
-- compare available units in that warehouse to `qty_available`;
+- **Both** preview and reconcile require manager or `product_units.reconcile_serials` (not `product_units.view` alone);
+- product must be active, serialized, and tenant-scoped; warehouse must be active and tenant-scoped;
+- validate negative qty before fractional check; reject non-whole `qty_available`;
+- reject when any non-available bucket (`qty_rented`, `qty_trial`, `qty_maintenance`, `qty_damaged`) is non-zero until a full status-to-bucket model exists;
+- preview may return `difference = 0`; reconcile rejects exact match with `serialized_reconciliation_not_needed`;
+- compare available units in that warehouse to `qty_available`; reject when unit count exceeds balance (`serialized_unit_count_exceeds_balance`);
 - only create the positive missing difference;
 - never update inventory balance;
 - never create purchase/adjustment movements;
-- create one manual `unit_event` per reconcile batch or unit;
-- require reason;
-- audit actor, before count, after count, and generated serials;
-- reject if unit count exceeds balance or if non-available buckets are
-  inconsistent.
+- create one manual `unit_event` per reconciled unit with enriched metadata;
+- require reason; audit actor, before/after counts, and serial.
 
 ### Serial Correction
 
@@ -1007,7 +1005,11 @@ documents.
 
 ### Suggested Migration
 
-`055_phase_5_document_templates.sql`
+`056_phase_5_m1_m2_hardening.sql` (completed 2026-06-07)
+
+### Suggested Migration (M3)
+
+`057_phase_5_document_templates.sql`
 
 ### Database
 
@@ -1160,7 +1162,7 @@ RPCs are implemented.
 
 ### Suggested Migration
 
-`056_phase_5_tax_foundation.sql`
+`058_phase_5_tax_foundation.sql`
 
 ### Database
 
@@ -1323,7 +1325,7 @@ invoice + lines + stock + serialized units + WAC + A/P + journal
 
 ### Suggested Migration
 
-`057_phase_5_purchase_invoice_rpc.sql`
+`059_phase_5_purchase_invoice_rpc.sql`
 
 ### RPC
 
@@ -1462,7 +1464,7 @@ Record a sale atomically and support safe reversal of posting mistakes.
 
 ### Suggested Migration
 
-`058_phase_5_sales_invoice_rpc.sql`
+`060_phase_5_sales_invoice_rpc.sql`
 
 ### RPCs
 
@@ -1595,7 +1597,7 @@ Complete the cash movement cycle and maintain invoice payment status safely.
 
 ### Suggested Migration
 
-`059_phase_5_voucher_allocation_rpc.sql`
+`061_phase_5_voucher_allocation_rpc.sql`
 
 ### Receipt RPC
 
@@ -2332,12 +2334,13 @@ Update:
 | `053_phase_5_journal_source_enum.sql` | journal_source reversal enum values (isolated transaction) |
 | `054_phase_5_finance_foundation.sql` | sequences, statuses, tenant-safe FKs, permissions, RLS/ACL, journal invariants, RPC stubs |
 | `055_phase_5_asset_identity_scan_timeline.sql` | SKU/serial generation, reconcile/correct, scan resolver, unit events/timeline |
-| `056_phase_5_document_templates.sql` | JSON templates and tenant document settings |
-| `057_phase_5_tax_foundation.sql` | tax settings/rates/classes/snapshots and math helpers |
-| `058_phase_5_purchase_invoice_rpc.sql` | purchase draft/confirm, units, stock, WAC, A/P journal |
-| `059_phase_5_sales_invoice_rpc.sql` | sales confirm, stock-out, cost snapshot, A/R/revenue/COGS, cancellation |
-| `060_phase_5_voucher_allocation_rpc.sql` | receipt/payment/allocation/cancellation |
-| `061_phase_5_finance_views_hardening.sql` | bounded read RPCs/views, indexes, final ACL/trigger hardening |
+| `056_phase_5_m1_m2_hardening.sql` | M1/M2 security/accounting hardening (ACL, journal, audit, reconcile, scan, metadata) |
+| `057_phase_5_document_templates.sql` | JSON templates and tenant document settings |
+| `058_phase_5_tax_foundation.sql` | tax settings/rates/classes/snapshots and math helpers |
+| `059_phase_5_purchase_invoice_rpc.sql` | purchase draft/confirm, units, stock, WAC, A/P journal |
+| `060_phase_5_sales_invoice_rpc.sql` | sales confirm, stock-out, cost snapshot, A/R/revenue/COGS, cancellation |
+| `061_phase_5_voucher_allocation_rpc.sql` | receipt/payment/allocation/cancellation |
+| `062_phase_5_finance_views_hardening.sql` | bounded read RPCs/views, indexes, final ACL/trigger hardening |
 
 Migration names are planned, not reserved. If implementation uncovers a reason
 to split a migration, preserve dependency order and document the change.
@@ -2350,6 +2353,7 @@ to split a migration, preserve dependency order and document the change.
 |-----------|------------------|
 | `phase_5_finance_foundation.sql` | schema, FKs, RLS, ACL, sequence, journal invariants |
 | `phase_5_asset_identity.sql` | SKU, serial, reconcile, correct, resolver, timeline |
+| `phase_5_m1_m2_hardening.sql` | ACL, journal concurrency, audit, reconcile, scan policy, metadata |
 | `phase_5_tax_foundation.sql` | tax classes/rates/snapshots/math |
 | `phase_5_purchase_invoices.sql` | purchase, units, balances, WAC, A/P, rollback |
 | `phase_5_sales_invoices.sql` | sales, stock, cost, A/R, COGS, cancellation |
