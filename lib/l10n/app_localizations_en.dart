@@ -1899,4 +1899,77 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get chartAccountErrorImmutableColumn =>
       'This field cannot be changed.';
+
+  @override
+  String get scanInputLabel => 'Scan barcode or serial';
+
+  @override
+  String get scanMobileTitle => 'Scan code';
+
+  @override
+  String get scanErrorAmbiguous => 'Multiple matches found for this code.';
+
+  @override
+  String get scanErrorNotFound => 'No product or unit matched this code.';
+
+  @override
+  String get scanErrorPermissionDenied =>
+      'You do not have permission to scan inventory codes.';
+
+  @override
+  String get scanErrorUnknown => 'Scan failed. Please try again.';
+
+  @override
+  String get productUnitDetailTitle => 'Unit details';
+
+  @override
+  String get productUnitDetailNotFound => 'Product unit not found.';
+
+  @override
+  String get productUnitDetailNoBarcode => 'No barcode';
+
+  @override
+  String get productUnitDetailLocation => 'Current location';
+
+  @override
+  String get productUnitDetailLocationUnknown => 'Location not assigned';
+
+  @override
+  String get productUnitDetailMaintenanceCount => 'Maintenance count';
+
+  @override
+  String get productUnitSerialCorrectionTitle => 'Correct serial number';
+
+  @override
+  String get productUnitSerialCorrectionNewSerial => 'New serial number';
+
+  @override
+  String get productUnitSerialCorrectionReason => 'Reason for correction';
+
+  @override
+  String get productUnitSerialCorrectionSubmit => 'Save serial correction';
+
+  @override
+  String get productUnitSerialCorrectionSuccess => 'Serial number updated.';
+
+  @override
+  String get productUnitTimelineTitle => 'Unit timeline';
+
+  @override
+  String get productUnitTimelineEmpty => 'No timeline events yet.';
+
+  @override
+  String get productUnitTimelineAcquisition => 'Unit acquired';
+
+  @override
+  String get productUnitTimelinePurchaseInvoice => 'Purchase invoice';
+
+  @override
+  String get productUnitTimelineInventoryMovement => 'Inventory movement';
+
+  @override
+  String get productUnitTimelineReconciled => 'Serial reconciled';
+
+  @override
+  String get productUnitTimelineSerialCorrection => 'Serial corrected';
 }

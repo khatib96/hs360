@@ -1,6 +1,49 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-06-07 (Session: Phase 5 M1 planning, implementation, and verification complete).
+> Updated 2026-06-07 (Session: Phase 5 M2 asset identity, serial, scan, timeline complete).
+
+---
+
+## Session 2026-06-07 — Phase 5 M2 (Asset Identity, Serial, Scan, Timeline)
+
+### Delivered
+
+| Area | Files |
+|------|-------|
+| Migration | [`supabase/migrations/055_phase_5_asset_identity_scan_timeline.sql`](supabase/migrations/055_phase_5_asset_identity_scan_timeline.sql) |
+| SQL tests | [`supabase/tests/phase_5_asset_identity.sql`](supabase/tests/phase_5_asset_identity.sql) |
+| Scan core | [`lib/core/scanning/`](lib/core/scanning/) — `ScanResult`, `ScanRepository`, `ScanController`, `ScanInput`, `MobileScanSheet` |
+| Unit detail | [`lib/features/products/presentation/product_unit_detail_screen.dart`](lib/features/products/presentation/product_unit_detail_screen.dart), timeline controllers/widgets, route `/product-units/:id` |
+| SKU wizard | Removed user-editable SKU from product wizard; DB auto-generates via `SKU` document sequence |
+
+### Migration 055 summary
+
+- `SKU` document sequence + auto-generate/immutability triggers on `products`
+- `serial_number_mode` enum + tenant settings columns; case-insensitive trimmed barcode unique indexes
+- `unit_events` table + RLS; `v_unit_timeline` view
+- RPCs: `preview_serialized_stock_reconciliation`, `reconcile_serialized_stock`, `correct_product_unit_serial`, `resolve_scan_code`
+- Composite FK hardening on `product_units.current_warehouse_id` / `current_customer_id`
+
+### Verification (this session)
+
+```text
+npx supabase db reset                          → 001–055 applied cleanly
+phase_5_asset_identity.sql                     → passed (11 cases)
+phase_1d_rls.sql                               → passed
+phase_3_products_inventory.sql                 → passed
+phase_4_customers_suppliers_coa.sql            → passed
+phase_4_customer_service_locations.sql         → passed
+phase_4_service_location_coordinates.sql       → passed
+phase_5_finance_foundation.sql                 → passed (cases 17–18 updated for SKU sequence)
+flutter analyze                                → no issues
+flutter test                                   → 381 passed
+```
+
+### Next session
+
+- **Phase 5 M3+** per [`docs/PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md`](docs/PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md)
+- Optional: wire global scan launcher in AppShell (deferred from M2 by design)
+- Cloud deploy of migrations 053–055 when Supabase project is linked
 
 ---
 
@@ -95,7 +138,8 @@ PowerShell note: pipe SQL tests with `Get-Content -Raw … | docker exec -i supa
 - **Phase 3 complete** - products and inventory (M0-M8).
 - **Phase 4 M0-M8 complete** - customers, suppliers, CoA, service locations, coordinates, engineering closure through migration [`052`](supabase/migrations/052_phase_4_closure_hardening.sql).
 - **Phase 5 M1 complete** - finance schema hardening via [`053`](supabase/migrations/053_phase_5_journal_source_enum.sql) + [`054`](supabase/migrations/054_phase_5_finance_foundation.sql): document sequences (SI/PI/RV/PV/JE), dual-field idempotency, `books_locked_through`, tenant-safe composite FKs, RPC-only finance writes, journal immutability, 17 new permissions, 8 posting RPC stubs. SQL suite [`phase_5_finance_foundation.sql`](supabase/tests/phase_5_finance_foundation.sql) passes; all Phase 1/3/4 suites still pass; `flutter analyze` clean; 376 Flutter tests green.
-- **Next:** Phase 5 M2 — asset identity, serial, scan, and timeline (`055_phase_5_asset_identity_scan_timeline.sql`).
+- **Phase 5 M2 complete** - asset identity, serial, scan, timeline via [`055`](supabase/migrations/055_phase_5_asset_identity_scan_timeline.sql): SKU auto-generation, barcode uniqueness, unit events/timeline view, scan resolver, reconcile/correct serial RPCs; Flutter scanning core + product unit detail screen at `/product-units/:id`; SKU removed from product wizard. SQL suite [`phase_5_asset_identity.sql`](supabase/tests/phase_5_asset_identity.sql) passes; all prior SQL suites pass; `flutter analyze` clean; 381 Flutter tests green.
+- **Next:** Phase 5 M3+ per finance plan.
 
 ---
 

@@ -140,6 +140,7 @@ class ProductRepository {
           id: createdId!,
           session: session,
           input: input,
+          sku: '',
         );
       }
 
@@ -318,7 +319,6 @@ class ProductRepository {
     String? id,
   }) {
     final map = <String, dynamic>{
-      'sku': input.sku.trim(),
       'barcode': input.barcode?.trim(),
       'name_ar': input.nameAr.trim(),
       'name_en': input.nameEn.trim(),
@@ -368,12 +368,13 @@ class ProductRepository {
     required String id,
     required AppSession session,
     required ProductFormState input,
+    required String sku,
   }) {
     final canViewCosts = canViewFullProductCosts(session);
     return Product(
       id: id,
       tenantId: session.tenantId,
-      sku: input.sku.trim(),
+      sku: sku,
       barcode: input.barcode?.trim(),
       nameAr: input.nameAr.trim(),
       nameEn: input.nameEn.trim(),

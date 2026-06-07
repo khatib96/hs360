@@ -8,7 +8,6 @@ import '../domain/unit_of_measure.dart';
 /// Mutable wizard/edit draft mapped to [ProductFormState] on submit.
 class ProductFormDraft {
   ProductFormDraft({
-    this.sku = '',
     this.barcode,
     this.nameAr = '',
     this.nameEn = '',
@@ -31,7 +30,6 @@ class ProductFormDraft {
     this.imageUrl,
   });
 
-  String sku;
   String? barcode;
   String nameAr;
   String nameEn;
@@ -55,7 +53,6 @@ class ProductFormDraft {
 
   factory ProductFormDraft.fromFormState(ProductFormState state) {
     return ProductFormDraft(
-      sku: state.sku,
       barcode: state.barcode,
       nameAr: state.nameAr,
       nameEn: state.nameEn,
@@ -81,7 +78,6 @@ class ProductFormDraft {
 
   ProductFormState toFormState() {
     return ProductFormState(
-      sku: sku,
       barcode: barcode?.trim().isEmpty == true ? null : barcode?.trim(),
       nameAr: nameAr,
       nameEn: nameEn,

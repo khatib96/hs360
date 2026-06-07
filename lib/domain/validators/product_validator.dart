@@ -11,9 +11,6 @@ class ProductValidator {
   ValidationResult validate(ProductFormState input) {
     final codes = <String>[];
 
-    if (input.sku.trim().isEmpty) {
-      codes.add(ProductsException.skuRequired);
-    }
     if (input.nameAr.trim().isEmpty) {
       codes.add(ProductsException.nameArRequired);
     }
@@ -81,7 +78,6 @@ class ProductValidator {
 
     final stepCodes = switch (step) {
       1 => {
-          ProductsException.skuRequired,
           ProductsException.nameArRequired,
           ProductsException.nameEnRequired,
           ProductsException.groupRequired,

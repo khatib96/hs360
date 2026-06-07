@@ -7,7 +7,8 @@ class ProductUnitColumns {
 
   static const base =
       'id, tenant_id, product_id, serial_number, barcode, status, '
-      'current_warehouse_id, health_status, acquired_at, notes, '
+      'current_warehouse_id, current_customer_id, current_service_location_id, '
+      'health_status, total_maintenance_count, acquired_at, notes, '
       'created_at, updated_at';
 
   static const withCost = '$base, purchase_cost';

@@ -21,6 +21,12 @@ class ProductUnit {
     this.notes,
     this.createdAt,
     this.updatedAt,
+    this.totalMaintenanceCount = 0,
+    this.currentCustomerId,
+    this.customerNameAr,
+    this.customerNameEn,
+    this.currentServiceLocationId,
+    this.serviceLocationName,
   });
 
   final String id;
@@ -38,6 +44,12 @@ class ProductUnit {
   final String? notes;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final int totalMaintenanceCount;
+  final String? currentCustomerId;
+  final String? customerNameAr;
+  final String? customerNameEn;
+  final String? currentServiceLocationId;
+  final String? serviceLocationName;
 
   factory ProductUnit.fromRow(
     Map<String, dynamic> row, {
@@ -68,6 +80,12 @@ class ProductUnit {
       updatedAt: row['updated_at'] != null
           ? DateTime.parse(row['updated_at'] as String)
           : null,
+      totalMaintenanceCount: row['total_maintenance_count'] as int? ?? 0,
+      currentCustomerId: row['current_customer_id'] as String?,
+      customerNameAr: row['customer_name_ar'] as String?,
+      customerNameEn: row['customer_name_en'] as String?,
+      currentServiceLocationId: row['current_service_location_id'] as String?,
+      serviceLocationName: row['service_location_name'] as String?,
     );
   }
 }

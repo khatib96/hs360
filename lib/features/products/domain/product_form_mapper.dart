@@ -5,7 +5,6 @@ import 'unit_of_measure.dart';
 
 ProductFormState productFormStateFromProduct(Product product) {
   return ProductFormState(
-    sku: product.sku,
     barcode: product.barcode,
     nameAr: product.nameAr,
     nameEn: product.nameEn,
@@ -34,7 +33,6 @@ ProductFormState productFormStateFromProduct(Product product) {
 
 ProductFormState emptyProductFormState({String groupId = ''}) {
   return ProductFormState(
-    sku: '',
     nameAr: '',
     nameEn: '',
     groupId: groupId,

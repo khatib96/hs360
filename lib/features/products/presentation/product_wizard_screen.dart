@@ -25,7 +25,6 @@ class ProductWizardScreen extends ConsumerStatefulWidget {
 }
 
 class _ProductWizardScreenState extends ConsumerState<ProductWizardScreen> {
-  final _sku = TextEditingController();
   final _nameAr = TextEditingController();
   final _nameEn = TextEditingController();
   final _conversion = TextEditingController();
@@ -39,7 +38,6 @@ class _ProductWizardScreenState extends ConsumerState<ProductWizardScreen> {
 
   @override
   void dispose() {
-    _sku.dispose();
     _nameAr.dispose();
     _nameEn.dispose();
     _conversion.dispose();
@@ -54,7 +52,6 @@ class _ProductWizardScreenState extends ConsumerState<ProductWizardScreen> {
   }
 
   void _bindControllers(ProductFormDraft draft) {
-    if (_sku.text != draft.sku) _sku.text = draft.sku;
     if (_nameAr.text != draft.nameAr) _nameAr.text = draft.nameAr;
     if (_nameEn.text != draft.nameEn) _nameEn.text = draft.nameEn;
     if (_conversion.text != draft.conversionFactor) {
@@ -79,7 +76,6 @@ class _ProductWizardScreenState extends ConsumerState<ProductWizardScreen> {
 
   ProductFormDraft _draftFromControllers(ProductFormDraft base) {
     return ProductFormDraft(
-      sku: _sku.text,
       barcode: _barcode.text.trim().isEmpty ? null : _barcode.text.trim(),
       nameAr: _nameAr.text,
       nameEn: _nameEn.text,
@@ -144,7 +140,6 @@ class _ProductWizardScreenState extends ConsumerState<ProductWizardScreen> {
             canSelectGroup: state.canSelectGroup,
             isEdit: state.isEdit,
             onChanged: onChanged,
-            skuController: _sku,
             nameArController: _nameAr,
             nameEnController: _nameEn,
           ),
@@ -246,7 +241,7 @@ class _ProductWizardScreenState extends ConsumerState<ProductWizardScreen> {
                                 SnackBar(
                                   content: Text(
                                     l10n.productCreatedSuccess(
-                                      result.product.sku,
+                                      result.product.nameAr,
                                     ),
                                   ),
                                 ),

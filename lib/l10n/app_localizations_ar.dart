@@ -1886,4 +1886,76 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get chartAccountErrorImmutableColumn => 'لا يمكن تغيير هذا الحقل.';
+
+  @override
+  String get scanInputLabel => 'مسح الباركود أو الرقم التسلسلي';
+
+  @override
+  String get scanMobileTitle => 'مسح الرمز';
+
+  @override
+  String get scanErrorAmbiguous => 'تم العثور على أكثر من تطابق لهذا الرمز.';
+
+  @override
+  String get scanErrorNotFound => 'لم يتم العثور على منتج أو وحدة مطابقة.';
+
+  @override
+  String get scanErrorPermissionDenied => 'لا تملك صلاحية مسح رموز المخزون.';
+
+  @override
+  String get scanErrorUnknown => 'فشل المسح. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get productUnitDetailTitle => 'تفاصيل الوحدة';
+
+  @override
+  String get productUnitDetailNotFound => 'لم يتم العثور على وحدة المنتج.';
+
+  @override
+  String get productUnitDetailNoBarcode => 'لا يوجد باركود';
+
+  @override
+  String get productUnitDetailLocation => 'الموقع الحالي';
+
+  @override
+  String get productUnitDetailLocationUnknown => 'لم يُحدَّد موقع';
+
+  @override
+  String get productUnitDetailMaintenanceCount => 'عدد الصيانات';
+
+  @override
+  String get productUnitSerialCorrectionTitle => 'تصحيح الرقم التسلسلي';
+
+  @override
+  String get productUnitSerialCorrectionNewSerial => 'الرقم التسلسلي الجديد';
+
+  @override
+  String get productUnitSerialCorrectionReason => 'سبب التصحيح';
+
+  @override
+  String get productUnitSerialCorrectionSubmit => 'حفظ تصحيح الرقم';
+
+  @override
+  String get productUnitSerialCorrectionSuccess => 'تم تحديث الرقم التسلسلي.';
+
+  @override
+  String get productUnitTimelineTitle => 'الجدول الزمني للوحدة';
+
+  @override
+  String get productUnitTimelineEmpty => 'لا توجد أحداث في الجدول الزمني بعد.';
+
+  @override
+  String get productUnitTimelineAcquisition => 'اكتساب الوحدة';
+
+  @override
+  String get productUnitTimelinePurchaseInvoice => 'فاتورة شراء';
+
+  @override
+  String get productUnitTimelineInventoryMovement => 'حركة مخزون';
+
+  @override
+  String get productUnitTimelineReconciled => 'مطابقة تسلسل';
+
+  @override
+  String get productUnitTimelineSerialCorrection => 'تصحيح تسلسل';
 }

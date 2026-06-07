@@ -3679,6 +3679,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This field cannot be changed.'**
   String get chartAccountErrorImmutableColumn;
+
+  /// Label for keyboard-wedge scan input field
+  ///
+  /// In en, this message translates to:
+  /// **'Scan barcode or serial'**
+  String get scanInputLabel;
+
+  /// Title for mobile camera scan sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Scan code'**
+  String get scanMobileTitle;
+
+  /// No description provided for @scanErrorAmbiguous.
+  ///
+  /// In en, this message translates to:
+  /// **'Multiple matches found for this code.'**
+  String get scanErrorAmbiguous;
+
+  /// No description provided for @scanErrorNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No product or unit matched this code.'**
+  String get scanErrorNotFound;
+
+  /// No description provided for @scanErrorPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have permission to scan inventory codes.'**
+  String get scanErrorPermissionDenied;
+
+  /// No description provided for @scanErrorUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan failed. Please try again.'**
+  String get scanErrorUnknown;
+
+  /// Product unit detail screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Unit details'**
+  String get productUnitDetailTitle;
+
+  /// No description provided for @productUnitDetailNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Product unit not found.'**
+  String get productUnitDetailNotFound;
+
+  /// No description provided for @productUnitDetailNoBarcode.
+  ///
+  /// In en, this message translates to:
+  /// **'No barcode'**
+  String get productUnitDetailNoBarcode;
+
+  /// No description provided for @productUnitDetailLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Current location'**
+  String get productUnitDetailLocation;
+
+  /// No description provided for @productUnitDetailLocationUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Location not assigned'**
+  String get productUnitDetailLocationUnknown;
+
+  /// No description provided for @productUnitDetailMaintenanceCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintenance count'**
+  String get productUnitDetailMaintenanceCount;
+
+  /// No description provided for @productUnitSerialCorrectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Correct serial number'**
+  String get productUnitSerialCorrectionTitle;
+
+  /// No description provided for @productUnitSerialCorrectionNewSerial.
+  ///
+  /// In en, this message translates to:
+  /// **'New serial number'**
+  String get productUnitSerialCorrectionNewSerial;
+
+  /// No description provided for @productUnitSerialCorrectionReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason for correction'**
+  String get productUnitSerialCorrectionReason;
+
+  /// No description provided for @productUnitSerialCorrectionSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Save serial correction'**
+  String get productUnitSerialCorrectionSubmit;
+
+  /// No description provided for @productUnitSerialCorrectionSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Serial number updated.'**
+  String get productUnitSerialCorrectionSuccess;
+
+  /// No description provided for @productUnitTimelineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit timeline'**
+  String get productUnitTimelineTitle;
+
+  /// No description provided for @productUnitTimelineEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No timeline events yet.'**
+  String get productUnitTimelineEmpty;
+
+  /// No description provided for @productUnitTimelineAcquisition.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit acquired'**
+  String get productUnitTimelineAcquisition;
+
+  /// No description provided for @productUnitTimelinePurchaseInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase invoice'**
+  String get productUnitTimelinePurchaseInvoice;
+
+  /// No description provided for @productUnitTimelineInventoryMovement.
+  ///
+  /// In en, this message translates to:
+  /// **'Inventory movement'**
+  String get productUnitTimelineInventoryMovement;
+
+  /// No description provided for @productUnitTimelineReconciled.
+  ///
+  /// In en, this message translates to:
+  /// **'Serial reconciled'**
+  String get productUnitTimelineReconciled;
+
+  /// No description provided for @productUnitTimelineSerialCorrection.
+  ///
+  /// In en, this message translates to:
+  /// **'Serial corrected'**
+  String get productUnitTimelineSerialCorrection;
 }
 
 class _AppLocalizationsDelegate

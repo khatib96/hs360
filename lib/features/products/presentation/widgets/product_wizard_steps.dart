@@ -16,7 +16,6 @@ class ProductWizardIdentityStep extends StatelessWidget {
     required this.canSelectGroup,
     required this.isEdit,
     required this.onChanged,
-    required this.skuController,
     required this.nameArController,
     required this.nameEnController,
     super.key,
@@ -28,7 +27,6 @@ class ProductWizardIdentityStep extends StatelessWidget {
   final bool canSelectGroup;
   final bool isEdit;
   final ValueChanged<ProductFormDraft> onChanged;
-  final TextEditingController skuController;
   final TextEditingController nameArController;
   final TextEditingController nameEnController;
 
@@ -46,12 +44,6 @@ class ProductWizardIdentityStep extends StatelessWidget {
               actions: [const SizedBox.shrink()],
             ),
           ),
-        AppTextField(
-          label: l10n.productFieldSku,
-          controller: skuController,
-          onFieldSubmitted: (_) => _sync(onChanged),
-        ),
-        const SizedBox(height: 12),
         AppTextField(label: l10n.productFieldNameAr, controller: nameArController),
         const SizedBox(height: 12),
         AppTextField(label: l10n.productFieldNameEn, controller: nameEnController),
@@ -133,16 +125,6 @@ class ProductWizardIdentityStep extends StatelessWidget {
       ],
     );
   }
-
-  void _sync(ValueChanged<ProductFormDraft> onChanged) {
-    onChanged(
-      draft
-        ..sku = skuController.text
-        ..nameAr = nameArController.text
-        ..nameEn = nameEnController.text,
-    );
-  }
-
 }
 
 class ProductWizardUnitsStep extends StatelessWidget {
@@ -362,7 +344,6 @@ class ProductWizardReviewStep extends StatelessWidget {
         Text(l10n.productWizardReviewTitle,
             style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 12),
-        _line(l10n.productFieldSku, draft.sku),
         _line(l10n.productFieldNameAr, draft.nameAr),
         _line(l10n.productFieldNameEn, draft.nameEn),
         _line(l10n.productFieldMode, _modeLabel()),

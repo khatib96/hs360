@@ -122,7 +122,6 @@ void main() {
     notifier.setStep(2);
     notifier.updateDraft(
       ProductFormDraft(
-        sku: 'SKU-1',
         nameAr: 'منتج',
         nameEn: 'Product',
         groupId: 'g-1',

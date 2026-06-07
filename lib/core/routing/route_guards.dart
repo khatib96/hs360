@@ -25,6 +25,7 @@ const _officePermissionIds = [
   'warehouses.view',
   'inventory_movements.view',
   'inventory_movements.create',
+  'product_units.view',
   'suppliers.view',
   'chart_of_accounts.view',
 ];
@@ -99,6 +100,9 @@ bool _isPathAllowed(String path, AppSession session) {
   }
   if (path == AppRoutes.products || path.startsWith('/products/')) {
     return session.permissions.can('products.view');
+  }
+  if (path.startsWith('/product-units/')) {
+    return session.permissions.can('product_units.view');
   }
   if (path == AppRoutes.warehouses) {
     return session.permissions.can('warehouses.view');

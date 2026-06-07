@@ -8,7 +8,6 @@ import 'package:hs360/features/products/domain/unit_of_measure.dart';
 
 ProductFormState _validForm({ProductType type = ProductType.saleOnly}) {
   return ProductFormState(
-    sku: 'SKU-1',
     nameAr: 'اسم',
     nameEn: 'Name',
     groupId: 'g-1',
@@ -27,12 +26,11 @@ void main() {
     expect(validator.validate(_validForm()).isValid, isTrue);
   });
 
-  test('sku_required when sku empty', () {
+  test('name_ar_required when name empty', () {
     final form = _validForm();
     final result = validator.validate(
       ProductFormState(
-        sku: '',
-        nameAr: form.nameAr,
+        nameAr: '',
         nameEn: form.nameEn,
         groupId: form.groupId,
         productType: form.productType,
@@ -41,13 +39,12 @@ void main() {
         unitPrimary: form.unitPrimary,
       ),
     );
-    expect(result.codes, contains(ProductsException.skuRequired));
+    expect(result.codes, contains(ProductsException.nameArRequired));
   });
 
   test('rental product does not require product-level rental price', () {
     final result = validator.validate(
       ProductFormState(
-        sku: 'S',
         nameAr: 'a',
         nameEn: 'b',
         groupId: 'g',
@@ -62,7 +59,6 @@ void main() {
 
   test('serialized_requires_piece when serialized and not piece', () {
     final form = ProductFormState(
-      sku: 'S',
       nameAr: 'a',
       nameEn: 'b',
       groupId: 'g',
@@ -82,7 +78,6 @@ void main() {
     final form = _validForm();
     final result = validator.validate(
       ProductFormState(
-        sku: form.sku,
         nameAr: form.nameAr,
         nameEn: form.nameEn,
         groupId: form.groupId,
@@ -100,7 +95,6 @@ void main() {
     final form = _validForm();
     final result = validator.validate(
       ProductFormState(
-        sku: form.sku,
         nameAr: form.nameAr,
         nameEn: form.nameEn,
         groupId: form.groupId,
@@ -116,7 +110,6 @@ void main() {
 
   test('sale and rental together are valid', () {
     final form = ProductFormState(
-      sku: 'S',
       nameAr: 'a',
       nameEn: 'b',
       groupId: 'g',
@@ -133,7 +126,6 @@ void main() {
   test('product_mode_required when neither sale nor rental selected', () {
     final result = validator.validate(
       ProductFormState(
-        sku: 'S',
         nameAr: 'a',
         nameEn: 'b',
         groupId: 'g',
@@ -150,7 +142,6 @@ void main() {
   test('expected_lifespan_invalid for asset rental with non-positive months', () {
     final result = validator.validate(
       ProductFormState(
-        sku: 'S',
         nameAr: 'a',
         nameEn: 'b',
         groupId: 'g',

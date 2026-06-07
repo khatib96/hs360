@@ -9,6 +9,7 @@ abstract final class AppRoutes {
   static const productsNew = '/products/new';
   static const productsEdit = '/products/:id/edit';
   static const productsDetail = '/products/:id';
+  static const productUnitsDetail = '/product-units/:id';
   static const warehouses = '/warehouses';
   static const inventory = '/inventory';
   static const inventoryMovements = '/inventory/movements';
@@ -29,6 +30,7 @@ abstract final class AppRoutes {
   static const productsNewName = 'productsNew';
   static const productsEditName = 'productsEdit';
   static const productsDetailName = 'productsDetail';
+  static const productUnitsDetailName = 'productUnitsDetail';
   static const warehousesName = 'warehouses';
   static const inventoryName = 'inventory';
   static const inventoryMovementsName = 'inventoryMovements';
@@ -48,4 +50,7 @@ abstract final class AppRoutes {
 
   static String supplierDetailPath(String id) =>
       '/suppliers/${Uri.encodeComponent(id)}';
+
+  static String productUnitDetailPath(String id) =>
+      '/product-units/${Uri.encodeComponent(id)}';
 }

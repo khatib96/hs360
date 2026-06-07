@@ -26,7 +26,6 @@ AppSession _userSession() {
 
 ProductFormState _baseForm({Decimal? avgCost, Decimal? minRentalPrice}) {
   return ProductFormState(
-    sku: 'SKU-1',
     nameAr: 'اسم',
     nameEn: 'Name',
     groupId: 'g',

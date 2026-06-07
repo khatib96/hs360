@@ -8,6 +8,7 @@ import '../../features/auth/presentation/login_screen.dart';
 import '../../features/dashboard/presentation/dashboard_screen.dart';
 import '../../features/field_ops/presentation/field_today_screen.dart';
 import '../../features/products/presentation/product_detail_screen.dart';
+import '../../features/products/presentation/product_unit_detail_screen.dart';
 import '../../features/products/presentation/product_list_screen.dart';
 import '../../features/products/presentation/product_wizard_screen.dart';
 import '../../features/accounting/presentation/chart_of_accounts_screen.dart';
@@ -82,6 +83,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         name: AppRoutes.productsDetailName,
         builder: (context, state) => ProductDetailScreen(
           productId: state.pathParameters['id']!,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.productUnitsDetail,
+        name: AppRoutes.productUnitsDetailName,
+        builder: (context, state) => ProductUnitDetailScreen(
+          unitId: state.pathParameters['id']!,
         ),
       ),
       GoRoute(

@@ -12,6 +12,7 @@ import '../domain/product_unit_bulk_parser.dart';
 import '../domain/product_unit_columns.dart';
 import '../domain/product_unit_form_state.dart';
 import '../domain/product_unit_permissions.dart';
+import '../domain/unit_timeline_event.dart';
 
 part 'product_unit_repository.g.dart';
 
@@ -30,6 +31,133 @@ class ProductUnitRepository {
     final client = _client;
     if (client == null) throw ProductsException.notConfigured();
     return client;
+  }
+
+  Future<ProductUnit?> fetchUnitById(
+    String unitId,
+    AppSession session, {
+    Map<String, Warehouse>? warehousesById,
+  }) async {
+    if (!canViewProductUnits(session)) {
+      throw const ProductsException(code: ProductsException.permissionDenied);
+    }
+
+    try {
+      final columns = ProductUnitColumns.forSession(session);
+      final row = await _requireClient
+          .from('product_units')
+          .select(columns)
+          .eq('id', unitId)
+          .maybeSingle();
+
+      if (row == null) return null;
+
+      final map = Map<String, dynamic>.from(row);
+      await _enrichUnitLocationNames(map, session);
+
+      String? nameAr;
+      String? nameEn;
+      final whId = map['current_warehouse_id'] as String?;
+      if (whId != null && warehousesById != null) {
+        final wh = warehousesById[whId];
+        nameAr = wh?.nameAr;
+        nameEn = wh?.nameEn;
+      }
+
+      return ProductUnit.fromRow(
+        map,
+        warehouseNameAr: nameAr,
+        warehouseNameEn: nameEn,
+      );
+    } catch (e, st) {
+      throw ProductsException.fromSupabase(e, st);
+    }
+  }
+
+  Future<List<UnitTimelineEvent>> fetchUnitTimeline(
+    String unitId,
+    AppSession session,
+  ) async {
+    if (!canViewProductUnits(session)) {
+      throw const ProductsException(code: ProductsException.permissionDenied);
+    }
+
+    try {
+      final rows = await _requireClient
+          .from('v_unit_timeline')
+          .select()
+          .eq('product_unit_id', unitId)
+          .order('occurred_at', ascending: false);
+
+      return (rows as List)
+          .map(
+            (r) => UnitTimelineEvent.fromRow(Map<String, dynamic>.from(r)),
+          )
+          .toList();
+    } catch (e, st) {
+      throw ProductsException.fromSupabase(e, st);
+    }
+  }
+
+  Future<String> correctSerial({
+    required AppSession session,
+    required String unitId,
+    required String newSerial,
+    required String reason,
+  }) async {
+    if (!canCorrectProductUnitSerial(session)) {
+      throw const ProductsException(code: ProductsException.permissionDenied);
+    }
+
+    final trimmedSerial = newSerial.trim();
+    final trimmedReason = reason.trim();
+    if (trimmedSerial.isEmpty || trimmedReason.isEmpty) {
+      throw const ProductsException(code: ProductsException.validationFailed);
+    }
+
+    try {
+      final response = await _requireClient.rpc(
+        'correct_product_unit_serial',
+        params: {
+          'p_unit_id': unitId,
+          'p_new_serial': trimmedSerial,
+          'p_reason': trimmedReason,
+        },
+      );
+      return response as String;
+    } catch (e, st) {
+      throw ProductsException.fromSupabase(e, st);
+    }
+  }
+
+  Future<void> _enrichUnitLocationNames(
+    Map<String, dynamic> map,
+    AppSession session,
+  ) async {
+    final customerId = map['current_customer_id'] as String?;
+    if (customerId != null) {
+      final customer = await _requireClient
+          .from('customers')
+          .select('name_ar, name_en')
+          .eq('id', customerId)
+          .maybeSingle();
+      if (customer != null) {
+        map['customer_name_ar'] = customer['name_ar'];
+        map['customer_name_en'] = customer['name_en'];
+      }
+    }
+
+    final locationId = map['current_service_location_id'] as String?;
+    if (locationId != null) {
+      final location = await _requireClient
+          .from('customer_service_locations')
+          .select('name')
+          .eq('id', locationId)
+          .maybeSingle();
+      if (location != null) {
+        map['service_location_name'] = location['name'];
+      }
+    }
   }
 
   Future<List<ProductUnit>> fetchUnitsByProductId(

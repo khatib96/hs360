@@ -6,7 +6,6 @@ import 'unit_of_measure.dart';
 /// Create/update product input. No [tenantId] — repository sets from [AppSession].
 class ProductFormState {
   ProductFormState({
-    required this.sku,
     required this.nameAr,
     required this.nameEn,
     required this.groupId,
@@ -35,7 +34,6 @@ class ProductFormState {
         conversionFactor = conversionFactor ?? Decimal.one,
         salePrice = salePrice ?? Decimal.zero;
 
-  final String sku;
   final String? barcode;
   final String nameAr;
   final String nameEn;

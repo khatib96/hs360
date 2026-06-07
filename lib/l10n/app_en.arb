@@ -894,5 +894,38 @@
   "chartAccountErrorAccountProtected": "This account is protected and cannot be changed.",
   "chartAccountErrorTypeChangeUnsafe": "Account type cannot be changed while the account has subaccounts or journal entries.",
   "chartAccountErrorHasActiveChildren": "Cannot deactivate an account that has active subaccounts.",
-  "chartAccountErrorImmutableColumn": "This field cannot be changed."
+  "chartAccountErrorImmutableColumn": "This field cannot be changed.",
+  "scanInputLabel": "Scan barcode or serial",
+  "@scanInputLabel": {
+    "description": "Label for keyboard-wedge scan input field"
+  },
+  "scanMobileTitle": "Scan code",
+  "@scanMobileTitle": {
+    "description": "Title for mobile camera scan sheet"
+  },
+  "scanErrorAmbiguous": "Multiple matches found for this code.",
+  "scanErrorNotFound": "No product or unit matched this code.",
+  "scanErrorPermissionDenied": "You do not have permission to scan inventory codes.",
+  "scanErrorUnknown": "Scan failed. Please try again.",
+  "productUnitDetailTitle": "Unit details",
+  "@productUnitDetailTitle": {
+    "description": "Product unit detail screen title"
+  },
+  "productUnitDetailNotFound": "Product unit not found.",
+  "productUnitDetailNoBarcode": "No barcode",
+  "productUnitDetailLocation": "Current location",
+  "productUnitDetailLocationUnknown": "Location not assigned",
+  "productUnitDetailMaintenanceCount": "Maintenance count",
+  "productUnitSerialCorrectionTitle": "Correct serial number",
+  "productUnitSerialCorrectionNewSerial": "New serial number",
+  "productUnitSerialCorrectionReason": "Reason for correction",
+  "productUnitSerialCorrectionSubmit": "Save serial correction",
+  "productUnitSerialCorrectionSuccess": "Serial number updated.",
+  "productUnitTimelineTitle": "Unit timeline",
+  "productUnitTimelineEmpty": "No timeline events yet.",
+  "productUnitTimelineAcquisition": "Unit acquired",
+  "productUnitTimelinePurchaseInvoice": "Purchase invoice",
+  "productUnitTimelineInventoryMovement": "Inventory movement",
+  "productUnitTimelineReconciled": "Serial reconciled",
+  "productUnitTimelineSerialCorrection": "Serial corrected"
 }
