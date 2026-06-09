@@ -40,10 +40,7 @@ class _ProductUnitSerialCorrectionCardState
   }
 
   Future<void> _submit() async {
-    await widget.onSubmit(
-      _serialController.text,
-      _reasonController.text,
-    );
+    await widget.onSubmit(_serialController.text, _reasonController.text);
     if (widget.showSuccess && mounted) {
       _serialController.clear();
       _reasonController.clear();
@@ -53,7 +50,9 @@ class _ProductUnitSerialCorrectionCardState
   @override
   Widget build(BuildContext context) {
     if (!widget.canCorrect) {
-      return const SizedBox.shrink(key: Key('product-unit-serial-correction-hidden'));
+      return const SizedBox.shrink(
+        key: Key('product-unit-serial-correction-hidden'),
+      );
     }
 
     final theme = Theme.of(context);

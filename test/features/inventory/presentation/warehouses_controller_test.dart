@@ -22,10 +22,7 @@ AppSession _session({Set<String> permissions = const {'warehouses.view'}}) {
     accountType: 'user',
     displayName: 'Test',
     preferredLocale: 'en',
-    permissions: AppPermissions(
-      isManager: false,
-      permissions: permissions,
-    ),
+    permissions: AppPermissions(isManager: false, permissions: permissions),
   );
 }
 
@@ -48,9 +45,8 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           authControllerProvider.overrideWith(
-            () => TestAuthController(
-              _session(permissions: {'warehouses.view'}),
-            ),
+            () =>
+                TestAuthController(_session(permissions: {'warehouses.view'})),
           ),
           warehouseRepositoryProvider.overrideWith((ref) => repo),
         ],
@@ -71,9 +67,8 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           authControllerProvider.overrideWith(
-            () => TestAuthController(
-              _session(permissions: {'warehouses.view'}),
-            ),
+            () =>
+                TestAuthController(_session(permissions: {'warehouses.view'})),
           ),
           warehouseRepositoryProvider.overrideWith((ref) => repo),
         ],
@@ -100,9 +95,7 @@ void main() {
         overrides: [
           authControllerProvider.overrideWith(
             () => TestAuthController(
-              _session(
-                permissions: {'warehouses.view', 'warehouses.create'},
-              ),
+              _session(permissions: {'warehouses.view', 'warehouses.create'}),
             ),
           ),
           warehouseRepositoryProvider.overrideWith((ref) => repo),
@@ -125,35 +118,40 @@ void main() {
       expect(repo.warehouses, hasLength(1));
     });
 
-    test('employee lookup failure keeps warehouses and sets warning code',
-        () async {
-      final repo = FakeWarehouseRepository(
-        warehouses: [sampleWarehouse()],
-        fetchEmployeesError: const ProductsException(
-          code: ProductsException.permissionDenied,
-        ),
-      );
-      final container = ProviderContainer(
-        overrides: [
-          authControllerProvider.overrideWith(
-            () => TestAuthController(
-              _session(permissions: {'warehouses.view'}),
-            ),
+    test(
+      'employee lookup failure keeps warehouses and sets warning code',
+      () async {
+        final repo = FakeWarehouseRepository(
+          warehouses: [sampleWarehouse()],
+          fetchEmployeesError: const ProductsException(
+            code: ProductsException.permissionDenied,
           ),
-          warehouseRepositoryProvider.overrideWith((ref) => repo),
-        ],
-      );
-      addTearDown(container.dispose);
+        );
+        final container = ProviderContainer(
+          overrides: [
+            authControllerProvider.overrideWith(
+              () => TestAuthController(
+                _session(permissions: {'warehouses.view'}),
+              ),
+            ),
+            warehouseRepositoryProvider.overrideWith((ref) => repo),
+          ],
+        );
+        addTearDown(container.dispose);
 
-      await container.read(warehousesControllerProvider.notifier).refresh();
+        await container.read(warehousesControllerProvider.notifier).refresh();
 
-      final state = container.read(warehousesControllerProvider);
-      expect(state.warehouses, hasLength(1));
-      expect(state.employees, isEmpty);
-      expect(state.errorCode, isNull);
-      expect(state.employeeLookupErrorCode, ProductsException.permissionDenied);
-      expect(state.isLoading, isFalse);
-    });
+        final state = container.read(warehousesControllerProvider);
+        expect(state.warehouses, hasLength(1));
+        expect(state.employees, isEmpty);
+        expect(state.errorCode, isNull);
+        expect(
+          state.employeeLookupErrorCode,
+          ProductsException.permissionDenied,
+        );
+        expect(state.isLoading, isFalse);
+      },
+    );
 
     test('deactivateWarehouse requires edit permission', () async {
       final repo = FakeWarehouseRepository(
@@ -162,9 +160,8 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           authControllerProvider.overrideWith(
-            () => TestAuthController(
-              _session(permissions: {'warehouses.view'}),
-            ),
+            () =>
+                TestAuthController(_session(permissions: {'warehouses.view'})),
           ),
           warehouseRepositoryProvider.overrideWith((ref) => repo),
         ],

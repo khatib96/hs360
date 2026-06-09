@@ -258,28 +258,31 @@ void main() {
       );
     });
 
-    test('User with warehouses.view can access /warehouses but cannot access /inventory', () {
-      final warehousesUser = session(
-        accountType: 'user',
-        permissions: {'warehouses.view'},
-      );
-      expect(
-        guardRedirectForPath(
-          path: AppRoutes.warehouses,
-          hasSupabaseSession: true,
-          authState: loaded(warehousesUser),
-        ),
-        isNull,
-      );
-      expect(
-        guardRedirectForPath(
-          path: AppRoutes.inventory,
-          hasSupabaseSession: true,
-          authState: loaded(warehousesUser),
-        ),
-        AppRoutes.dashboard,
-      );
-    });
+    test(
+      'User with warehouses.view can access /warehouses but cannot access /inventory',
+      () {
+        final warehousesUser = session(
+          accountType: 'user',
+          permissions: {'warehouses.view'},
+        );
+        expect(
+          guardRedirectForPath(
+            path: AppRoutes.warehouses,
+            hasSupabaseSession: true,
+            authState: loaded(warehousesUser),
+          ),
+          isNull,
+        );
+        expect(
+          guardRedirectForPath(
+            path: AppRoutes.inventory,
+            hasSupabaseSession: true,
+            authState: loaded(warehousesUser),
+          ),
+          AppRoutes.dashboard,
+        );
+      },
+    );
 
     test('isProductEditPath matches edit route and rejects new/edit', () {
       expect(isProductEditPath('/products/abc-123/edit'), isTrue);
@@ -324,51 +327,57 @@ void main() {
       );
     });
 
-    test('User with products.create can access /products/new even if they do not have products.view', () {
-      final creatorUser = session(
-        accountType: 'user',
-        permissions: {'products.create'},
-      );
-      expect(
-        guardRedirectForPath(
-          path: AppRoutes.productsNew,
-          hasSupabaseSession: true,
-          authState: loaded(creatorUser),
-        ),
-        isNull,
-      );
-      expect(
-        guardRedirectForPath(
-          path: AppRoutes.products,
-          hasSupabaseSession: true,
-          authState: loaded(creatorUser),
-        ),
-        AppRoutes.dashboard,
-      );
-    });
+    test(
+      'User with products.create can access /products/new even if they do not have products.view',
+      () {
+        final creatorUser = session(
+          accountType: 'user',
+          permissions: {'products.create'},
+        );
+        expect(
+          guardRedirectForPath(
+            path: AppRoutes.productsNew,
+            hasSupabaseSession: true,
+            authState: loaded(creatorUser),
+          ),
+          isNull,
+        );
+        expect(
+          guardRedirectForPath(
+            path: AppRoutes.products,
+            hasSupabaseSession: true,
+            authState: loaded(creatorUser),
+          ),
+          AppRoutes.dashboard,
+        );
+      },
+    );
 
-    test('User with inventory_movements.create can access /inventory/transfers but cannot access /inventory/movements if they lack inventory_movements.view', () {
-      final transferUser = session(
-        accountType: 'user',
-        permissions: {'inventory_movements.create'},
-      );
-      expect(
-        guardRedirectForPath(
-          path: AppRoutes.inventoryTransfers,
-          hasSupabaseSession: true,
-          authState: loaded(transferUser),
-        ),
-        isNull,
-      );
-      expect(
-        guardRedirectForPath(
-          path: AppRoutes.inventoryMovements,
-          hasSupabaseSession: true,
-          authState: loaded(transferUser),
-        ),
-        AppRoutes.dashboard,
-      );
-    });
+    test(
+      'User with inventory_movements.create can access /inventory/transfers but cannot access /inventory/movements if they lack inventory_movements.view',
+      () {
+        final transferUser = session(
+          accountType: 'user',
+          permissions: {'inventory_movements.create'},
+        );
+        expect(
+          guardRedirectForPath(
+            path: AppRoutes.inventoryTransfers,
+            hasSupabaseSession: true,
+            authState: loaded(transferUser),
+          ),
+          isNull,
+        );
+        expect(
+          guardRedirectForPath(
+            path: AppRoutes.inventoryMovements,
+            hasSupabaseSession: true,
+            authState: loaded(transferUser),
+          ),
+          AppRoutes.dashboard,
+        );
+      },
+    );
 
     test('suppliers.view only resolves home to dashboard', () {
       expect(
@@ -382,10 +391,7 @@ void main() {
     test('chart_of_accounts.view only resolves home to dashboard', () {
       expect(
         resolveHomeRoute(
-          session(
-            accountType: 'user',
-            permissions: {'chart_of_accounts.view'},
-          ),
+          session(accountType: 'user', permissions: {'chart_of_accounts.view'}),
         ),
         AppRoutes.dashboard,
       );
@@ -461,20 +467,23 @@ void main() {
       );
     });
 
-    test('customers.view and customers.edit can access /customers/:id/edit', () {
-      final editor = session(
-        accountType: 'user',
-        permissions: {'customers.view', 'customers.edit'},
-      );
-      expect(
-        guardRedirectForPath(
-          path: '/customers/c1/edit',
-          hasSupabaseSession: true,
-          authState: loaded(editor),
-        ),
-        isNull,
-      );
-    });
+    test(
+      'customers.view and customers.edit can access /customers/:id/edit',
+      () {
+        final editor = session(
+          accountType: 'user',
+          permissions: {'customers.view', 'customers.edit'},
+        );
+        expect(
+          guardRedirectForPath(
+            path: '/customers/c1/edit',
+            hasSupabaseSession: true,
+            authState: loaded(editor),
+          ),
+          isNull,
+        );
+      },
+    );
 
     test('customers.edit only cannot access /customers/:id/edit', () {
       final editOnly = session(

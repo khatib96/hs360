@@ -45,10 +45,7 @@ class InventoryMovementsController extends _$InventoryMovementsController {
 
   AppSession? get _session => ref.read(authControllerProvider).valueOrNull;
 
-  bool _shouldReloadForSession(
-    AppSession? previous,
-    AppSession next,
-  ) {
+  bool _shouldReloadForSession(AppSession? previous, AppSession next) {
     if (previous == null) return true;
     return previous.tenantId != next.tenantId ||
         previous.isManager != next.isManager ||
@@ -79,9 +76,7 @@ class InventoryMovementsController extends _$InventoryMovementsController {
       List<InventoryMovement> movements;
       final search = previousFilters.search?.trim();
 
-      if (serverSideProductSearch &&
-          search != null &&
-          search.isNotEmpty) {
+      if (serverSideProductSearch && search != null && search.isNotEmpty) {
         final productIds = await ref
             .read(productRepositoryProvider)
             .searchProductIdsForInventoryMovements(session, search);
@@ -90,21 +85,33 @@ class InventoryMovementsController extends _$InventoryMovementsController {
         if (productIds.isEmpty) {
           movements = [];
         } else {
-          movements = await ref.read(inventoryRepositoryProvider).fetchInventoryMovements(
+          movements = await ref
+              .read(inventoryRepositoryProvider)
+              .fetchInventoryMovements(
                 warehouseId: previousFilters.warehouseId,
                 movementType: previousFilters.movementType,
-                occurredFrom: _occurredFromBoundary(previousFilters.occurredFromDate),
-                occurredBefore: _occurredBeforeBoundary(previousFilters.occurredToDate),
+                occurredFrom: _occurredFromBoundary(
+                  previousFilters.occurredFromDate,
+                ),
+                occurredBefore: _occurredBeforeBoundary(
+                  previousFilters.occurredToDate,
+                ),
                 productIds: productIds,
                 limit: previousFilters.limit,
               );
         }
       } else {
-        movements = await ref.read(inventoryRepositoryProvider).fetchInventoryMovements(
+        movements = await ref
+            .read(inventoryRepositoryProvider)
+            .fetchInventoryMovements(
               warehouseId: previousFilters.warehouseId,
               movementType: previousFilters.movementType,
-              occurredFrom: _occurredFromBoundary(previousFilters.occurredFromDate),
-              occurredBefore: _occurredBeforeBoundary(previousFilters.occurredToDate),
+              occurredFrom: _occurredFromBoundary(
+                previousFilters.occurredFromDate,
+              ),
+              occurredBefore: _occurredBeforeBoundary(
+                previousFilters.occurredToDate,
+              ),
               limit: previousFilters.limit,
             );
       }
@@ -193,17 +200,16 @@ class InventoryMovementsController extends _$InventoryMovementsController {
   }
 
   void setMovementType(MovementType? type) {
-    state = state.copyWith(
-      movementType: type,
-      clearMovementType: type == null,
-    );
+    state = state.copyWith(movementType: type, clearMovementType: type == null);
     refresh();
   }
 
   void setOccurredFromDate(DateTime? date) {
     final local = _localDateOnly(date);
     var toDate = state.occurredToDate;
-    if (local != null && toDate != null && local.isAfter(_localDateOnly(toDate)!)) {
+    if (local != null &&
+        toDate != null &&
+        local.isAfter(_localDateOnly(toDate)!)) {
       toDate = null;
     }
     state = state.copyWith(
@@ -260,7 +266,8 @@ class InventoryMovementsController extends _$InventoryMovementsController {
     DateTime? occurredFromDate,
     DateTime? occurredToDate,
     int limit,
-  }) _snapshotFilters() {
+  })
+  _snapshotFilters() {
     return (
       search: state.search,
       warehouseId: state.warehouseId,
@@ -280,7 +287,8 @@ class InventoryMovementsController extends _$InventoryMovementsController {
       DateTime? occurredFromDate,
       DateTime? occurredToDate,
       int limit,
-    }) filters,
+    })
+    filters,
     bool serverSideProductSearch,
   ) {
     return InventoryMovementsState(

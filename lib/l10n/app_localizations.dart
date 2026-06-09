@@ -3823,6 +3823,324 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Serial corrected'**
   String get productUnitTimelineSerialCorrection;
+
+  /// No description provided for @documentPreviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Document preview'**
+  String get documentPreviewTitle;
+
+  /// No description provided for @documentPreviewAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview PDF'**
+  String get documentPreviewAction;
+
+  /// No description provided for @documentPreviewAssetLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Print asset label'**
+  String get documentPreviewAssetLabel;
+
+  /// No description provided for @documentPreviewEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No document to preview.'**
+  String get documentPreviewEmpty;
+
+  /// No description provided for @documentPreviewPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have permission to preview this document.'**
+  String get documentPreviewPermissionDenied;
+
+  /// No description provided for @documentErrorUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not generate the document. Please try again.'**
+  String get documentErrorUnknown;
+
+  /// No description provided for @documentErrorNoTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'No default document template is configured.'**
+  String get documentErrorNoTemplate;
+
+  /// No description provided for @documentErrorStatementDateRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Statement date range is invalid.'**
+  String get documentErrorStatementDateRange;
+
+  /// No description provided for @documentErrorStatementTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Statement has too many rows to print.'**
+  String get documentErrorStatementTooLarge;
+
+  /// No description provided for @documentErrorUnsupportedType.
+  ///
+  /// In en, this message translates to:
+  /// **'This document type is not supported yet.'**
+  String get documentErrorUnsupportedType;
+
+  /// No description provided for @documentErrorThermalTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Content is too large for thermal printing.'**
+  String get documentErrorThermalTooLarge;
+
+  /// No description provided for @documentErrorFontLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load document fonts.'**
+  String get documentErrorFontLoad;
+
+  /// No description provided for @documentErrorValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Document settings are invalid.'**
+  String get documentErrorValidation;
+
+  /// No description provided for @documentErrorTenantNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Tenant context was not found.'**
+  String get documentErrorTenantNotFound;
+
+  /// No description provided for @documentErrorNotConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'Document service is not configured.'**
+  String get documentErrorNotConfigured;
+
+  /// No description provided for @documentErrorLogoInvalidUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Logo URL must use HTTPS.'**
+  String get documentErrorLogoInvalidUrl;
+
+  /// No description provided for @documentErrorLogoTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Logo file is too large (max 512 KB).'**
+  String get documentErrorLogoTooLarge;
+
+  /// No description provided for @documentErrorLogoInvalidDimensions.
+  ///
+  /// In en, this message translates to:
+  /// **'Logo dimensions are too large (max 4096 px per side, 16 MP total).'**
+  String get documentErrorLogoInvalidDimensions;
+
+  /// No description provided for @documentErrorLogoUnsupportedFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Logo must be a PNG or JPEG image.'**
+  String get documentErrorLogoUnsupportedFormat;
+
+  /// No description provided for @documentErrorLogoFetchFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not download the logo. Check the URL and try again.'**
+  String get documentErrorLogoFetchFailed;
+
+  /// No description provided for @customerStatementFromDate.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get customerStatementFromDate;
+
+  /// No description provided for @customerStatementToDate.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get customerStatementToDate;
+
+  /// No description provided for @templateSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Document templates'**
+  String get templateSettingsTitle;
+
+  /// No description provided for @templateSettingsPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have permission to view template settings.'**
+  String get templateSettingsPermissionDenied;
+
+  /// No description provided for @templateSettingsLogoUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Logo URL (HTTPS)'**
+  String get templateSettingsLogoUrl;
+
+  /// No description provided for @templateSettingsPrimaryColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary color (#RRGGBB)'**
+  String get templateSettingsPrimaryColor;
+
+  /// No description provided for @templateSettingsSecondaryColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Secondary color (#RRGGBB)'**
+  String get templateSettingsSecondaryColor;
+
+  /// No description provided for @templateSettingsDefaultLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Default document language'**
+  String get templateSettingsDefaultLanguage;
+
+  /// No description provided for @templateSettingsInvoicePaper.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice paper'**
+  String get templateSettingsInvoicePaper;
+
+  /// No description provided for @templateSettingsAssetLabelPaper.
+  ///
+  /// In en, this message translates to:
+  /// **'Asset label paper'**
+  String get templateSettingsAssetLabelPaper;
+
+  /// No description provided for @templateSettingsVoucherPaper.
+  ///
+  /// In en, this message translates to:
+  /// **'Voucher paper'**
+  String get templateSettingsVoucherPaper;
+
+  /// No description provided for @templateSettingsHeaderSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Document header'**
+  String get templateSettingsHeaderSection;
+
+  /// No description provided for @templateSettingsHeaderAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Header text (Arabic)'**
+  String get templateSettingsHeaderAr;
+
+  /// No description provided for @templateSettingsHeaderEn.
+  ///
+  /// In en, this message translates to:
+  /// **'Header text (English)'**
+  String get templateSettingsHeaderEn;
+
+  /// No description provided for @templateSettingsFooterSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Document footer'**
+  String get templateSettingsFooterSection;
+
+  /// No description provided for @templateSettingsFooterAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Footer text (Arabic)'**
+  String get templateSettingsFooterAr;
+
+  /// No description provided for @templateSettingsFooterEn.
+  ///
+  /// In en, this message translates to:
+  /// **'Footer text (English)'**
+  String get templateSettingsFooterEn;
+
+  /// No description provided for @templateSettingsOptionalColumnsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional columns'**
+  String get templateSettingsOptionalColumnsSection;
+
+  /// No description provided for @templateSettingsOptionalSalesInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Sales invoice'**
+  String get templateSettingsOptionalSalesInvoice;
+
+  /// No description provided for @templateSettingsOptionalPurchaseInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase invoice'**
+  String get templateSettingsOptionalPurchaseInvoice;
+
+  /// No description provided for @templateSettingsOptionalCustomerStatement.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer statement'**
+  String get templateSettingsOptionalCustomerStatement;
+
+  /// No description provided for @templateSettingsOptionalQty.
+  ///
+  /// In en, this message translates to:
+  /// **'Show quantity'**
+  String get templateSettingsOptionalQty;
+
+  /// No description provided for @templateSettingsOptionalUnitPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Show unit price'**
+  String get templateSettingsOptionalUnitPrice;
+
+  /// No description provided for @templateSettingsOptionalDebit.
+  ///
+  /// In en, this message translates to:
+  /// **'Show debit'**
+  String get templateSettingsOptionalDebit;
+
+  /// No description provided for @templateSettingsOptionalCredit.
+  ///
+  /// In en, this message translates to:
+  /// **'Show credit'**
+  String get templateSettingsOptionalCredit;
+
+  /// No description provided for @templateSettingsLanguageAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic'**
+  String get templateSettingsLanguageAr;
+
+  /// No description provided for @templateSettingsLanguageEn.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get templateSettingsLanguageEn;
+
+  /// No description provided for @templateSettingsLanguageBilingual.
+  ///
+  /// In en, this message translates to:
+  /// **'Bilingual'**
+  String get templateSettingsLanguageBilingual;
+
+  /// No description provided for @templateSettingsPaperA4.
+  ///
+  /// In en, this message translates to:
+  /// **'A4'**
+  String get templateSettingsPaperA4;
+
+  /// No description provided for @templateSettingsPaperThermal.
+  ///
+  /// In en, this message translates to:
+  /// **'Thermal 80mm'**
+  String get templateSettingsPaperThermal;
+
+  /// No description provided for @templateSettingsPaperLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Label sheet'**
+  String get templateSettingsPaperLabel;
+
+  /// No description provided for @templateSettingsSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Document settings saved.'**
+  String get templateSettingsSaved;
+
+  /// No description provided for @templateSettingsSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save settings'**
+  String get templateSettingsSave;
 }
 
 class _AppLocalizationsDelegate

@@ -98,9 +98,9 @@ class _DesktopProductTableState extends State<_DesktopProductTable> {
           scrollDirection: Axis.horizontal,
           child: DataTable(
             showCheckboxColumn: false,
-            headingTextStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+            headingTextStyle: Theme.of(
+              context,
+            ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
             columns: [
               DataColumn(label: Text(l10n.productColumnSku)),
               DataColumn(label: Text(l10n.productColumnName)),
@@ -124,11 +124,13 @@ class _DesktopProductTableState extends State<_DesktopProductTable> {
                     Text(localizedProductName(product, widget.languageCode)),
                   ),
                   DataCell(Text(widget.groupLabelFor(product.groupId))),
-                  DataCell(ProductTypeBadge(
-                    type: product.productType,
-                    canBeSold: product.canBeSold,
-                    canBeRented: product.canBeRented,
-                  )),
+                  DataCell(
+                    ProductTypeBadge(
+                      type: product.productType,
+                      canBeSold: product.canBeSold,
+                      canBeRented: product.canBeRented,
+                    ),
+                  ),
                   DataCell(Text(_formatMoney(product.salePrice))),
                   DataCell(
                     ProductStockBadge(
@@ -253,19 +255,11 @@ class _MobileProductSubtitle extends StatelessWidget {
                 ),
                 Text(
                   '${l10n.productColumnLastPurchaseCost}: '
-                  '${_optionalMoneyText(
-                    context,
-                    product.lastPurchaseCost,
-                    languageCode,
-                  )}',
+                  '${_optionalMoneyText(context, product.lastPurchaseCost, languageCode)}',
                 ),
                 Text(
                   '${l10n.productColumnMinSalePrice}: '
-                  '${_optionalMoneyText(
-                    context,
-                    product.minSalePrice,
-                    languageCode,
-                  )}',
+                  '${_optionalMoneyText(context, product.minSalePrice, languageCode)}',
                 ),
               ],
             ],

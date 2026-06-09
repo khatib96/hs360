@@ -9,18 +9,22 @@ class InventoryAdjustmentValidator {
   const InventoryAdjustmentValidator({
     StockEngine? stockEngine,
     CostEngine? costEngine,
-  })  : _stockEngine = stockEngine ?? const StockEngine(),
-        _costEngine = costEngine ?? const CostEngine();
+  }) : _stockEngine = stockEngine ?? const StockEngine(),
+       _costEngine = costEngine ?? const CostEngine();
 
   final StockEngine _stockEngine;
   final CostEngine _costEngine;
 
   ValidationResult validate(InventoryAdjustmentFormState input) {
     if (input.warehouseId.trim().isEmpty) {
-      return const ValidationResult(codes: [InventoryException.warehouseRequired]);
+      return const ValidationResult(
+        codes: [InventoryException.warehouseRequired],
+      );
     }
     if (input.productId.trim().isEmpty) {
-      return const ValidationResult(codes: [InventoryException.productRequired]);
+      return const ValidationResult(
+        codes: [InventoryException.productRequired],
+      );
     }
 
     final stockResult = _stockEngine.validateAdjustment(input);

@@ -55,7 +55,9 @@ void main() {
     );
   });
 
-  testWidgets('shows low stock warning when below reorder point', (tester) async {
+  testWidgets('shows low stock warning when below reorder point', (
+    tester,
+  ) async {
     final l10n = lookupAppLocalizations(const Locale('en'));
     final base = sampleProduct(id: 'p-1');
     final product = Product(

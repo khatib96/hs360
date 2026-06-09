@@ -7,12 +7,10 @@ bool isUnitSafeEditable(UnitStatus status) {
     UnitStatus.trial ||
     UnitStatus.maintenance ||
     UnitStatus.sold ||
-    UnitStatus.retired =>
-      false,
+    UnitStatus.retired => false,
     UnitStatus.availableNew ||
     UnitStatus.availableUsed ||
     UnitStatus.damaged ||
-    UnitStatus.lost =>
-      true,
+    UnitStatus.lost => true,
   };
 }

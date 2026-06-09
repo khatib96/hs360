@@ -44,9 +44,7 @@ class ProductStockSummaryCard extends StatelessWidget {
         ),
         if (low) ...[
           const SizedBox(height: 12),
-          MessageBannerLike(
-            message: l10n.productDetailStockLowWarning,
-          ),
+          MessageBannerLike(message: l10n.productDetailStockLowWarning),
         ],
         const SizedBox(height: 16),
         Text(
@@ -106,7 +104,10 @@ class _WarehouseBalanceRow extends StatelessWidget {
             l10n.inventoryBalanceMaintenance,
             formatQuantity(balance.qtyMaintenance),
           ),
-          _Row(l10n.inventoryBalanceDamaged, formatQuantity(balance.qtyDamaged)),
+          _Row(
+            l10n.inventoryBalanceDamaged,
+            formatQuantity(balance.qtyDamaged),
+          ),
         ],
       ),
     );
@@ -129,15 +130,17 @@ class _Row extends StatelessWidget {
   Widget build(BuildContext context) {
     final style = emphasize
         ? Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: AppColors.warning,
-              fontWeight: FontWeight.w600,
-            )
+            color: AppColors.warning,
+            fontWeight: FontWeight.w600,
+          )
         : Theme.of(context).textTheme.bodyLarge;
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         children: [
-          Expanded(child: Text(label, style: Theme.of(context).textTheme.bodyMedium)),
+          Expanded(
+            child: Text(label, style: Theme.of(context).textTheme.bodyMedium),
+          ),
           Text(value, style: style),
         ],
       ),
@@ -163,9 +166,9 @@ class MessageBannerLike extends StatelessWidget {
         padding: const EdgeInsetsDirectional.all(12),
         child: Text(
           message,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.warning,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: AppColors.warning),
         ),
       ),
     );

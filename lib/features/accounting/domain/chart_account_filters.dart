@@ -10,14 +10,10 @@ class ChartAccountFilters {
   final bool? isActive;
 
   bool get hasActiveFilters =>
-      search?.trim().isNotEmpty == true ||
-      type != null ||
-      isActive != null;
+      search?.trim().isNotEmpty == true || type != null || isActive != null;
 
   bool get hasNonDefaultFilters =>
-      search?.trim().isNotEmpty == true ||
-      type != null ||
-      isActive != true;
+      search?.trim().isNotEmpty == true || type != null || isActive != true;
 }
 
 bool matchesVisibleFilters(ChartAccount account, ChartAccountFilters filters) {

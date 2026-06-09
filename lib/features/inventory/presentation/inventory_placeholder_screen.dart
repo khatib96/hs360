@@ -11,10 +11,7 @@ import '../../auth/presentation/auth_controller.dart';
 enum InventoryViewMode { balances, warehouses, movements, transfers }
 
 class InventoryPlaceholderScreen extends ConsumerWidget {
-  const InventoryPlaceholderScreen({
-    required this.mode,
-    super.key,
-  });
+  const InventoryPlaceholderScreen({required this.mode, super.key});
 
   final InventoryViewMode mode;
 
@@ -41,10 +38,7 @@ class InventoryPlaceholderScreen extends ConsumerWidget {
         bodyContent = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              l10n.inventory,
-              style: theme.textTheme.headlineMedium,
-            ),
+            Text(l10n.inventory, style: theme.textTheme.headlineMedium),
             const SizedBox(height: 8),
             Text(
               'Real-time inventory levels across all active warehouses.',
@@ -81,10 +75,7 @@ class InventoryPlaceholderScreen extends ConsumerWidget {
         bodyContent = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              l10n.warehouses,
-              style: theme.textTheme.headlineMedium,
-            ),
+            Text(l10n.warehouses, style: theme.textTheme.headlineMedium),
             const SizedBox(height: 8),
             Text(
               'Manage central warehouses and vehicle/van stock repositories.',
@@ -120,7 +111,9 @@ class InventoryPlaceholderScreen extends ConsumerWidget {
             const Card(
               child: Padding(
                 padding: EdgeInsets.all(16.0),
-                child: Text('Movements history log is empty (Phase 3 placeholder).'),
+                child: Text(
+                  'Movements history log is empty (Phase 3 placeholder).',
+                ),
               ),
             ),
           ],

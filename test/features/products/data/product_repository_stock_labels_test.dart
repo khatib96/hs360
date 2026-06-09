@@ -14,10 +14,7 @@ AppSession _session({Set<String> permissions = const {'products.view'}}) {
     accountType: 'user',
     displayName: 'Test',
     preferredLocale: 'en',
-    permissions: AppPermissions(
-      isManager: false,
-      permissions: permissions,
-    ),
+    permissions: AppPermissions(isManager: false, permissions: permissions),
   );
 }
 
@@ -75,10 +72,10 @@ void main() {
         },
       );
 
-      final result = await repo.fetchProductsByIdsForStockLabels(
-        _session(),
-        {'p-1', 'p-missing'},
-      );
+      final result = await repo.fetchProductsByIdsForStockLabels(_session(), {
+        'p-1',
+        'p-missing',
+      });
 
       expect(result, hasLength(1));
       expect(result['p-1']?.sku, 'SKU');

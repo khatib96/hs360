@@ -1,27 +1,72 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/documents/domain/document_kind.dart';
+import '../../../../core/documents/domain/document_permissions.dart';
 import '../../../../core/localization/locale_controller.dart';
+import '../../../../core/routing/app_routes.dart';
 import '../../../../core/utils/money_formatter.dart';
 import '../../../../shared/widgets/message_banner.dart';
+import '../../../auth/presentation/auth_controller.dart';
 import '../customer_error_messages.dart';
 import '../customer_statement_controller.dart';
 import '../journal_source_labels.dart';
 
-class CustomerStatementTab extends ConsumerWidget {
+class CustomerStatementTab extends ConsumerStatefulWidget {
   const CustomerStatementTab({required this.customerId, super.key});
 
   final String customerId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CustomerStatementTab> createState() =>
+      _CustomerStatementTabState();
+}
+
+class _CustomerStatementTabState extends ConsumerState<CustomerStatementTab> {
+  late DateTime _fromDate;
+  late DateTime _toDate;
+
+  @override
+  void initState() {
+    super.initState();
+    final now = DateTime.now();
+    _toDate = DateTime(now.year, now.month, now.day);
+    _fromDate = _toDate.subtract(const Duration(days: 364));
+  }
+
+  Future<void> _pickDate({
+    required DateTime initial,
+    required DateTime firstDate,
+    required DateTime lastDate,
+    required ValueChanged<DateTime> onPicked,
+  }) async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: initial,
+      firstDate: firstDate,
+      lastDate: lastDate,
+    );
+    if (picked != null) {
+      setState(() => onPicked(picked));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final languageCode = ref.watch(localeProvider).languageCode;
-    final state = ref.watch(customerStatementControllerProvider(customerId));
+    final state = ref.watch(
+      customerStatementControllerProvider(widget.customerId),
+    );
+    final session = ref.watch(authControllerProvider).valueOrNull;
+    final canPreview =
+        session != null &&
+        canPreviewDocument(session, DocumentKind.customerStatement);
     final notifier = ref.read(
-      customerStatementControllerProvider(customerId).notifier,
+      customerStatementControllerProvider(widget.customerId).notifier,
     );
 
     if (state.permissionDenied) {
@@ -101,6 +146,61 @@ class CustomerStatementTab extends ConsumerWidget {
           value: formatMoney(state.summary.balance, locale: languageCode),
         ),
         const SizedBox(height: 24),
+        if (canPreview) ...[
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  key: const Key('customer-statement-from-date'),
+                  onPressed: () => _pickDate(
+                    initial: _fromDate,
+                    firstDate: DateTime(2000),
+                    lastDate: _toDate,
+                    onPicked: (value) => setState(() => _fromDate = value),
+                  ),
+                  child: Text(
+                    '${l10n.customerStatementFromDate}: ${dateFormat.format(_fromDate)}',
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: OutlinedButton(
+                  key: const Key('customer-statement-to-date'),
+                  onPressed: () => _pickDate(
+                    initial: _toDate,
+                    firstDate: _fromDate,
+                    lastDate: DateTime.now().add(const Duration(days: 365)),
+                    onPicked: (value) => setState(() => _toDate = value),
+                  ),
+                  child: Text(
+                    '${l10n.customerStatementToDate}: ${dateFormat.format(_toDate)}',
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: FilledButton.icon(
+              key: const Key('customer-statement-preview'),
+              onPressed: () {
+                context.push(
+                  AppRoutes.documentPreviewPath(
+                    kind: DocumentKind.customerStatement.documentType,
+                    entityId: widget.customerId,
+                    from: _fromDate,
+                    to: _toDate,
+                  ),
+                );
+              },
+              icon: const Icon(Icons.picture_as_pdf_outlined),
+              label: Text(l10n.documentPreviewAction),
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
         if (state.rows.isEmpty)
           Text(
             l10n.customerStatementEmpty,

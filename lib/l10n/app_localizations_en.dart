@@ -1972,4 +1972,176 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get productUnitTimelineSerialCorrection => 'Serial corrected';
+
+  @override
+  String get documentPreviewTitle => 'Document preview';
+
+  @override
+  String get documentPreviewAction => 'Preview PDF';
+
+  @override
+  String get documentPreviewAssetLabel => 'Print asset label';
+
+  @override
+  String get documentPreviewEmpty => 'No document to preview.';
+
+  @override
+  String get documentPreviewPermissionDenied =>
+      'You do not have permission to preview this document.';
+
+  @override
+  String get documentErrorUnknown =>
+      'Could not generate the document. Please try again.';
+
+  @override
+  String get documentErrorNoTemplate =>
+      'No default document template is configured.';
+
+  @override
+  String get documentErrorStatementDateRange =>
+      'Statement date range is invalid.';
+
+  @override
+  String get documentErrorStatementTooLarge =>
+      'Statement has too many rows to print.';
+
+  @override
+  String get documentErrorUnsupportedType =>
+      'This document type is not supported yet.';
+
+  @override
+  String get documentErrorThermalTooLarge =>
+      'Content is too large for thermal printing.';
+
+  @override
+  String get documentErrorFontLoad => 'Could not load document fonts.';
+
+  @override
+  String get documentErrorValidation => 'Document settings are invalid.';
+
+  @override
+  String get documentErrorTenantNotFound => 'Tenant context was not found.';
+
+  @override
+  String get documentErrorNotConfigured =>
+      'Document service is not configured.';
+
+  @override
+  String get documentErrorLogoInvalidUrl => 'Logo URL must use HTTPS.';
+
+  @override
+  String get documentErrorLogoTooLarge =>
+      'Logo file is too large (max 512 KB).';
+
+  @override
+  String get documentErrorLogoInvalidDimensions =>
+      'Logo dimensions are too large (max 4096 px per side, 16 MP total).';
+
+  @override
+  String get documentErrorLogoUnsupportedFormat =>
+      'Logo must be a PNG or JPEG image.';
+
+  @override
+  String get documentErrorLogoFetchFailed =>
+      'Could not download the logo. Check the URL and try again.';
+
+  @override
+  String get customerStatementFromDate => 'From';
+
+  @override
+  String get customerStatementToDate => 'To';
+
+  @override
+  String get templateSettingsTitle => 'Document templates';
+
+  @override
+  String get templateSettingsPermissionDenied =>
+      'You do not have permission to view template settings.';
+
+  @override
+  String get templateSettingsLogoUrl => 'Logo URL (HTTPS)';
+
+  @override
+  String get templateSettingsPrimaryColor => 'Primary color (#RRGGBB)';
+
+  @override
+  String get templateSettingsSecondaryColor => 'Secondary color (#RRGGBB)';
+
+  @override
+  String get templateSettingsDefaultLanguage => 'Default document language';
+
+  @override
+  String get templateSettingsInvoicePaper => 'Invoice paper';
+
+  @override
+  String get templateSettingsAssetLabelPaper => 'Asset label paper';
+
+  @override
+  String get templateSettingsVoucherPaper => 'Voucher paper';
+
+  @override
+  String get templateSettingsHeaderSection => 'Document header';
+
+  @override
+  String get templateSettingsHeaderAr => 'Header text (Arabic)';
+
+  @override
+  String get templateSettingsHeaderEn => 'Header text (English)';
+
+  @override
+  String get templateSettingsFooterSection => 'Document footer';
+
+  @override
+  String get templateSettingsFooterAr => 'Footer text (Arabic)';
+
+  @override
+  String get templateSettingsFooterEn => 'Footer text (English)';
+
+  @override
+  String get templateSettingsOptionalColumnsSection => 'Optional columns';
+
+  @override
+  String get templateSettingsOptionalSalesInvoice => 'Sales invoice';
+
+  @override
+  String get templateSettingsOptionalPurchaseInvoice => 'Purchase invoice';
+
+  @override
+  String get templateSettingsOptionalCustomerStatement => 'Customer statement';
+
+  @override
+  String get templateSettingsOptionalQty => 'Show quantity';
+
+  @override
+  String get templateSettingsOptionalUnitPrice => 'Show unit price';
+
+  @override
+  String get templateSettingsOptionalDebit => 'Show debit';
+
+  @override
+  String get templateSettingsOptionalCredit => 'Show credit';
+
+  @override
+  String get templateSettingsLanguageAr => 'Arabic';
+
+  @override
+  String get templateSettingsLanguageEn => 'English';
+
+  @override
+  String get templateSettingsLanguageBilingual => 'Bilingual';
+
+  @override
+  String get templateSettingsPaperA4 => 'A4';
+
+  @override
+  String get templateSettingsPaperThermal => 'Thermal 80mm';
+
+  @override
+  String get templateSettingsPaperLabel => 'Label sheet';
+
+  @override
+  String get templateSettingsSaved => 'Document settings saved.';
+
+  @override
+  String get templateSettingsSave => 'Save settings';
 }

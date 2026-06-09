@@ -45,7 +45,9 @@ class _ProductFiltersBarState extends State<ProductFiltersBar> {
   @override
   void initState() {
     super.initState();
-    _searchController = TextEditingController(text: widget.filters.search ?? '');
+    _searchController = TextEditingController(
+      text: widget.filters.search ?? '',
+    );
   }
 
   @override

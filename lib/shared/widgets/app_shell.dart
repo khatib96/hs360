@@ -10,6 +10,7 @@ import '../../features/accounting/domain/accounting_permissions.dart';
 import '../../features/auth/domain/app_session.dart';
 import '../../features/auth/presentation/auth_controller.dart';
 import '../../features/customers/domain/customer_permissions.dart';
+import '../../core/documents/domain/document_permissions.dart';
 
 class _NavItem {
   const _NavItem({
@@ -126,10 +127,17 @@ class AppShell extends ConsumerWidget {
         route: AppRoutes.inventoryTransfers,
         isVisible: (session) => _can(session, 'inventory_movements.create'),
       ),
+      _NavItem(
+        titleGetter: (l) => l.templateSettingsTitle,
+        icon: Icons.description_outlined,
+        route: AppRoutes.templateSettings,
+        isVisible: canViewTemplateSettings,
+      ),
     ];
 
-    final authorizedItems =
-        allItems.where((item) => item.isVisible(session)).toList();
+    final authorizedItems = allItems
+        .where((item) => item.isVisible(session))
+        .toList();
     final activeRoute = _activeNavRoute(currentPath, authorizedItems);
     final isDesktop = MediaQuery.of(context).size.width > 768;
 
@@ -339,9 +347,7 @@ class _NavigationTile extends StatelessWidget {
           borderRadius: borderRadius,
         ),
         child: ListTile(
-          contentPadding: const EdgeInsetsDirectional.symmetric(
-            horizontal: 16,
-          ),
+          contentPadding: const EdgeInsetsDirectional.symmetric(horizontal: 16),
           leading: Icon(item.icon, color: foreground),
           title: Text(
             item.titleGetter(l10n),

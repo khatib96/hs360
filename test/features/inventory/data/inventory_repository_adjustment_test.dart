@@ -18,10 +18,7 @@ AppSession _session({Set<String> permissions = const {}}) {
     accountType: 'user',
     displayName: 'Test',
     preferredLocale: 'en',
-    permissions: AppPermissions(
-      isManager: false,
-      permissions: permissions,
-    ),
+    permissions: AppPermissions(isManager: false, permissions: permissions),
   );
 }
 

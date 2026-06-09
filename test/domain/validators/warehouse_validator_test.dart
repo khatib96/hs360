@@ -70,11 +70,7 @@ void main() {
         agentId: 'emp-1',
       ),
       existingWarehouses: [
-        _warehouse(
-          id: 'w1',
-          type: WarehouseType.van,
-          agentId: 'emp-1',
-        ),
+        _warehouse(id: 'w1', type: WarehouseType.van, agentId: 'emp-1'),
       ],
     );
     expect(

@@ -136,17 +136,17 @@ class FakeProductRepository extends ProductRepository {
 }
 
 class FakeProductGroupRepository extends ProductGroupRepository {
-  FakeProductGroupRepository({
-    this.groups = const [],
-    this.fetchThrows = false,
-  }) : super(null);
+  FakeProductGroupRepository({this.groups = const [], this.fetchThrows = false})
+    : super(null);
 
   List<ProductGroup> groups;
   bool fetchThrows;
   int fetchCount = 0;
 
   @override
-  Future<List<ProductGroup>> fetchProductGroups({bool activeOnly = false}) async {
+  Future<List<ProductGroup>> fetchProductGroups({
+    bool activeOnly = false,
+  }) async {
     fetchCount++;
     if (fetchThrows) throw Exception('groups failed');
     return List<ProductGroup>.from(groups);

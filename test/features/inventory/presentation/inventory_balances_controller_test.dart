@@ -31,10 +31,7 @@ AppSession _session({Set<String> permissions = const {'inventory.view'}}) {
     accountType: 'user',
     displayName: 'Test',
     preferredLocale: 'en',
-    permissions: AppPermissions(
-      isManager: false,
-      permissions: permissions,
-    ),
+    permissions: AppPermissions(isManager: false, permissions: permissions),
   );
 }
 
@@ -86,7 +83,9 @@ void main() {
             ),
           ),
           inventoryRepositoryProvider.overrideWith((ref) => inventoryRepo),
-          productRepositoryProvider.overrideWith((ref) => FakeProductRepository()),
+          productRepositoryProvider.overrideWith(
+            (ref) => FakeProductRepository(),
+          ),
           warehouseRepositoryProvider.overrideWith(
             (ref) => FakeWarehouseRepository(),
           ),
@@ -105,17 +104,13 @@ void main() {
     });
 
     test('product label hydration failure keeps rows with fallback', () async {
-      final inventoryRepo = FakeInventoryRepository(
-        balances: [_balance()],
-      );
+      final inventoryRepo = FakeInventoryRepository(balances: [_balance()]);
       final productRepo = FakeProductRepository(stockLabelsThrows: true);
       final container = ProviderContainer(
         overrides: [
           authControllerProvider.overrideWith(
             () => TestAuthController(
-              _session(
-                permissions: {'inventory.view', 'products.view'},
-              ),
+              _session(permissions: {'inventory.view', 'products.view'}),
             ),
           ),
           inventoryRepositoryProvider.overrideWith((ref) => inventoryRepo),
@@ -146,9 +141,7 @@ void main() {
     });
 
     test('warehouse hydration failure keeps rows', () async {
-      final inventoryRepo = FakeInventoryRepository(
-        balances: [_balance()],
-      );
+      final inventoryRepo = FakeInventoryRepository(balances: [_balance()]);
       final warehouseRepo = FakeWarehouseRepository();
       warehouseRepo.fetchWarehousesError = const ProductsException(
         code: ProductsException.unknown,
@@ -168,16 +161,18 @@ void main() {
             ),
           ),
           inventoryRepositoryProvider.overrideWith((ref) => inventoryRepo),
-          productRepositoryProvider.overrideWith((ref) => FakeProductRepository(
-                stockLabelsById: {
-                  'p-1': const ProductStockLabel(
-                    id: 'p-1',
-                    sku: 'SKU',
-                    nameAr: 'ع',
-                    nameEn: 'Product',
-                  ),
-                },
-              )),
+          productRepositoryProvider.overrideWith(
+            (ref) => FakeProductRepository(
+              stockLabelsById: {
+                'p-1': const ProductStockLabel(
+                  id: 'p-1',
+                  sku: 'SKU',
+                  nameAr: 'ع',
+                  nameEn: 'Product',
+                ),
+              },
+            ),
+          ),
           warehouseRepositoryProvider.overrideWith((ref) => warehouseRepo),
         ],
       );

@@ -102,9 +102,7 @@ class _ChartAccountFormState extends State<ChartAccountForm> {
             initialValue: widget.initialCode,
             readOnly: true,
             enabled: false,
-            decoration: InputDecoration(
-              labelText: l10n.chartAccountFieldCode,
-            ),
+            decoration: InputDecoration(labelText: l10n.chartAccountFieldCode),
           ),
           const SizedBox(height: 4),
           Text(
@@ -163,7 +161,9 @@ class _ChartAccountFormState extends State<ChartAccountForm> {
           DropdownButtonFormField<String?>(
             isExpanded: true,
             initialValue: _parentId,
-            decoration: InputDecoration(labelText: l10n.chartAccountFieldParent),
+            decoration: InputDecoration(
+              labelText: l10n.chartAccountFieldParent,
+            ),
             items: [
               DropdownMenuItem(
                 value: null,

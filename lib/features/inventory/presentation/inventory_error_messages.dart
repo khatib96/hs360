@@ -16,7 +16,8 @@ String inventoryErrorMessage(AppLocalizations l10n, String code) {
   return switch (code) {
     InventoryException.permissionDenied => l10n.productErrorPermissionDenied,
     InventoryException.validationFailed => l10n.productValidationFailed,
-    InventoryException.insufficientStock => l10n.inventoryErrorInsufficientStock,
+    InventoryException.insufficientStock =>
+      l10n.inventoryErrorInsufficientStock,
     InventoryException.serializedAdjustmentNotSupported =>
       l10n.inventoryErrorSerializedAdjustmentNotSupported,
     InventoryException.serializedTransferNotSupported =>
@@ -27,8 +28,10 @@ String inventoryErrorMessage(AppLocalizations l10n, String code) {
       l10n.inventorySourceWarehouseRequired,
     InventoryException.destinationWarehouseRequired =>
       l10n.inventoryDestinationWarehouseRequired,
-    InventoryException.transferSameWarehouse => l10n.inventoryTransferSameWarehouse,
-    InventoryException.productRequired => l10n.inventoryAdjustmentProductRequired,
+    InventoryException.transferSameWarehouse =>
+      l10n.inventoryTransferSameWarehouse,
+    InventoryException.productRequired =>
+      l10n.inventoryAdjustmentProductRequired,
     _ => l10n.inventoryBalancesError,
   };
 }

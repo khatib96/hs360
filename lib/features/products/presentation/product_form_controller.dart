@@ -59,8 +59,10 @@ class ProductFormController extends _$ProductFormController {
       );
       return false;
     }
-    final result = const ProductValidator()
-        .validateStep(state.stepIndex + 1, state.draft.toFormState());
+    final result = const ProductValidator().validateStep(
+      state.stepIndex + 1,
+      state.draft.toFormState(),
+    );
     if (!result.isValid) {
       state = state.copyWith(errorCode: result.codes.first);
       return false;
@@ -99,8 +101,11 @@ class ProductFormController extends _$ProductFormController {
       final repo = ref.read(productRepositoryProvider);
       final input = state.draft.toFormState();
       if (state.isEdit && state.productId != null) {
-        final product =
-            await repo.updateProduct(session, state.productId!, input);
+        final product = await repo.updateProduct(
+          session,
+          state.productId!,
+          input,
+        );
         state = state.copyWith(isSubmitting: false);
         return ProductSubmitResult(product: product, isCreate: false);
       }
@@ -142,11 +147,9 @@ class ProductFormController extends _$ProductFormController {
 
     if (isEdit && productId != null) {
       try {
-        final product =
-            await ref.read(productRepositoryProvider).fetchProductById(
-                  productId,
-                  session,
-                );
+        final product = await ref
+            .read(productRepositoryProvider)
+            .fetchProductById(productId, session);
         if (product == null) {
           state = state.copyWith(
             isLoading: false,
@@ -185,8 +188,9 @@ class ProductFormController extends _$ProductFormController {
       } catch (e) {
         state = state.copyWith(
           isLoading: false,
-          errorCode:
-              e is ProductsException ? e.code : ProductsException.unknown,
+          errorCode: e is ProductsException
+              ? e.code
+              : ProductsException.unknown,
         );
         return;
       }

@@ -10,8 +10,8 @@ class FakeChartAccountRepository extends ChartAccountRepository {
     List<ChartAccount> accounts = const [],
     this.fetchError,
     this.mutationError,
-  })  : accounts = List<ChartAccount>.from(accounts),
-        super(null);
+  }) : accounts = List<ChartAccount>.from(accounts),
+       super(null);
 
   List<ChartAccount> accounts;
   final Object? fetchError;
@@ -81,7 +81,9 @@ class FakeChartAccountRepository extends ChartAccountRepository {
     lastUpdateInput = input;
     final index = accounts.indexWhere((a) => a.id == id);
     if (index < 0) {
-      throw const AccountingException(code: AccountingException.validationFailed);
+      throw const AccountingException(
+        code: AccountingException.validationFailed,
+      );
     }
     final current = accounts[index];
     final updated = ChartAccount(
@@ -114,7 +116,9 @@ class FakeChartAccountRepository extends ChartAccountRepository {
     lastDeactivatedId = id;
     final index = accounts.indexWhere((a) => a.id == id);
     if (index < 0) {
-      throw const AccountingException(code: AccountingException.validationFailed);
+      throw const AccountingException(
+        code: AccountingException.validationFailed,
+      );
     }
     final current = accounts[index];
     final updated = ChartAccount(

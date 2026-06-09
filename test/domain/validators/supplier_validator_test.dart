@@ -20,10 +20,7 @@ void main() {
   });
 
   test('email_invalid when email lacks @', () {
-    const form = SupplierFormState(
-      nameAr: 'مورد',
-      email: 'bad-email',
-    );
+    const form = SupplierFormState(nameAr: 'مورد', email: 'bad-email');
     expect(
       validator.validate(form).codes,
       contains(SupplierException.emailInvalid),

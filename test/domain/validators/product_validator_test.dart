@@ -139,23 +139,23 @@ void main() {
     expect(result.codes, contains(ProductsException.productModeRequired));
   });
 
-  test('expected_lifespan_invalid for asset rental with non-positive months', () {
-    final result = validator.validate(
-      ProductFormState(
-        nameAr: 'a',
-        nameEn: 'b',
-        groupId: 'g',
-        productType: ProductType.assetRental,
-        canBeSold: false,
-        canBeRented: true,
-        unitPrimary: UnitOfMeasure.piece,
-        expectedLifespanMonths: 0,
-      ),
-    );
+  test(
+    'expected_lifespan_invalid for asset rental with non-positive months',
+    () {
+      final result = validator.validate(
+        ProductFormState(
+          nameAr: 'a',
+          nameEn: 'b',
+          groupId: 'g',
+          productType: ProductType.assetRental,
+          canBeSold: false,
+          canBeRented: true,
+          unitPrimary: UnitOfMeasure.piece,
+          expectedLifespanMonths: 0,
+        ),
+      );
 
-    expect(
-      result.codes,
-      contains(ProductsException.expectedLifespanInvalid),
-    );
-  });
+      expect(result.codes, contains(ProductsException.expectedLifespanInvalid));
+    },
+  );
 }

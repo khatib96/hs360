@@ -91,10 +91,7 @@ class ProductUnitBulkRow {
 }
 
 class ProductUnitBulkParseResult {
-  const ProductUnitBulkParseResult({
-    required this.rows,
-    required this.errors,
-  });
+  const ProductUnitBulkParseResult({required this.rows, required this.errors});
 
   final List<ProductUnitBulkRow> rows;
   final List<String> errors;

@@ -20,7 +20,10 @@ AppSession _session(Set<String> permissions) {
 void main() {
   test('columns omit purchase_cost without full cost permissions', () {
     final session = _session({'product_units.view'});
-    expect(ProductUnitColumns.forSession(session), isNot(contains('purchase_cost')));
+    expect(
+      ProductUnitColumns.forSession(session),
+      isNot(contains('purchase_cost')),
+    );
   });
 
   test('columns include purchase_cost with all field permissions', () {

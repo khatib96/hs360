@@ -31,7 +31,8 @@ class ChartAccountListState {
       allAccounts.where((a) => matchesVisibleFilters(a, filters)).toList();
 
   List<ChartAccountTreeNode> get treeNodes {
-    bool predicate(ChartAccount account) => matchesVisibleFilters(account, filters);
+    bool predicate(ChartAccount account) =>
+        matchesVisibleFilters(account, filters);
     final filtered = filterAccountsForTree(
       allAccounts: allAccounts,
       visiblePredicate: predicate,
@@ -41,12 +42,15 @@ class ChartAccountListState {
   }
 
   Set<String> get searchAncestorIds => ancestorIdsToExpand(
-        allAccounts: allAccounts,
-        visiblePredicate: (a) => matchesVisibleFilters(a, filters),
-        search: filters.search,
-      );
+    allAccounts: allAccounts,
+    visiblePredicate: (a) => matchesVisibleFilters(a, filters),
+    search: filters.search,
+  );
 
-  Set<String> get effectiveExpandedIds => {...expandedIds, ...searchAncestorIds};
+  Set<String> get effectiveExpandedIds => {
+    ...expandedIds,
+    ...searchAncestorIds,
+  };
 
   ChartAccountListState copyWith({
     List<ChartAccount>? allAccounts,

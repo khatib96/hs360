@@ -26,7 +26,8 @@ class ProductUnitTable extends StatefulWidget {
   final Future<String?> Function(
     String unitId,
     ProductUnitSafeEditResult result,
-  ) onEdit;
+  )
+  onEdit;
 
   @override
   State<ProductUnitTable> createState() => _ProductUnitTableState();

@@ -30,6 +30,5 @@ enum MovementType {
   String toDb() => dbValue;
 
   bool get isManualAdjustment =>
-      this == MovementType.adjustmentIn ||
-      this == MovementType.adjustmentOut;
+      this == MovementType.adjustmentIn || this == MovementType.adjustmentOut;
 }

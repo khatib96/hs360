@@ -26,8 +26,7 @@ class InventoryMovementsScreen extends ConsumerWidget {
     final state = ref.watch(inventoryMovementsControllerProvider);
     final controller = ref.read(inventoryMovementsControllerProvider.notifier);
 
-    final showUnitCost =
-        session != null && canViewFullProductCosts(session);
+    final showUnitCost = session != null && canViewFullProductCosts(session);
     final showProductsSearchHint =
         session != null && !canViewProductsList(session);
 
@@ -91,9 +90,7 @@ class InventoryMovementsScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           if (visible.isEmpty)
-            Expanded(
-              child: Center(child: Text(l10n.inventoryMovementsEmpty)),
-            )
+            Expanded(child: Center(child: Text(l10n.inventoryMovementsEmpty)))
           else
             Expanded(
               child: InventoryMovementsTable(
@@ -113,10 +110,7 @@ class InventoryMovementsScreen extends ConsumerWidget {
       body: SizedBox.expand(
         child: Stack(
           children: [
-            Padding(
-              padding: const EdgeInsetsDirectional.all(24),
-              child: body,
-            ),
+            Padding(padding: const EdgeInsetsDirectional.all(24), child: body),
             if (state.isLoading && state.allRows.isNotEmpty)
               const Positioned(
                 top: 0,
@@ -149,10 +143,7 @@ class _InventoryMovementsErrorState extends StatelessWidget {
         children: [
           Text(message, textAlign: TextAlign.center),
           const SizedBox(height: 16),
-          FilledButton(
-            onPressed: onRetry,
-            child: Text(l10n.retry),
-          ),
+          FilledButton(onPressed: onRetry, child: Text(l10n.retry)),
         ],
       ),
     );

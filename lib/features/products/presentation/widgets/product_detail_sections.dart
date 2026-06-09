@@ -39,10 +39,7 @@ class ProductDetailOverviewSection extends StatelessWidget {
       children: [
         _Row(l10n.productFieldSku, product.sku),
         _Row(l10n.productFieldGroup, groupLabel),
-        _Row(
-          l10n.productFieldMode,
-          _modeLabel(l10n, product),
-        ),
+        _Row(l10n.productFieldMode, _modeLabel(l10n, product)),
         if (product.canBeRented)
           _Row(
             l10n.productFieldRentalType,
@@ -153,7 +150,10 @@ class ProductDetailUnitsSection extends ConsumerWidget {
       return ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _Row(l10n.productFieldUnitPrimary, unitOfMeasureLabel(product.unitPrimary)),
+          _Row(
+            l10n.productFieldUnitPrimary,
+            unitOfMeasureLabel(product.unitPrimary),
+          ),
           _Row(
             l10n.productFieldUnitSecondary,
             product.unitSecondary != null
@@ -166,7 +166,9 @@ class ProductDetailUnitsSection extends ConsumerWidget {
           ),
           _Row(
             l10n.productFieldSerialized,
-            product.isSerialized ? l10n.productStatusActive : l10n.productsNotAvailable,
+            product.isSerialized
+                ? l10n.productStatusActive
+                : l10n.productsNotAvailable,
           ),
           const SizedBox(height: 16),
           Text(l10n.productUnitsNotSerialized),
@@ -175,8 +177,9 @@ class ProductDetailUnitsSection extends ConsumerWidget {
     }
 
     final state = ref.watch(productDetailControllerProvider(productId));
-    final controller =
-        ref.read(productDetailControllerProvider(productId).notifier);
+    final controller = ref.read(
+      productDetailControllerProvider(productId).notifier,
+    );
 
     if (!canViewProductUnits(session)) {
       return Center(child: Text(l10n.productUnitsViewDenied));
@@ -285,9 +288,9 @@ class ProductDetailUnitsSection extends ConsumerWidget {
       input: result.input,
     );
     if (code != null && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(productsErrorMessage(l10n, code))),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(productsErrorMessage(l10n, code))));
     }
   }
 
@@ -312,9 +315,9 @@ class ProductDetailUnitsSection extends ConsumerWidget {
       units: result.units,
     );
     if (code != null && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(productsErrorMessage(l10n, code))),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(productsErrorMessage(l10n, code))));
     }
   }
 }

@@ -43,3 +43,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# M3 golden failures and benchmark results
+test/core/documents/goldens/failures/
+integration_test/documents/failures/
+scripts/benchmark/results/

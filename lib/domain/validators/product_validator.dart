@@ -78,25 +78,26 @@ class ProductValidator {
 
     final stepCodes = switch (step) {
       1 => {
-          ProductsException.nameArRequired,
-          ProductsException.nameEnRequired,
-          ProductsException.groupRequired,
-          ProductsException.productModeRequired,
-        },
+        ProductsException.nameArRequired,
+        ProductsException.nameEnRequired,
+        ProductsException.groupRequired,
+        ProductsException.productModeRequired,
+      },
       2 => {ProductsException.conversionFactorInvalid},
       3 => {
-          ProductsException.negativeValue,
-          ProductsException.salePriceBelowMin,
-        },
+        ProductsException.negativeValue,
+        ProductsException.salePriceBelowMin,
+      },
       4 => {
-          ProductsException.serializedRequiresPiece,
-          ProductsException.expectedLifespanInvalid,
-        },
+        ProductsException.serializedRequiresPiece,
+        ProductsException.expectedLifespanInvalid,
+      },
       _ => <String>{},
     };
 
-    final filtered =
-        all.codes.where((c) => step == 5 || stepCodes.contains(c)).toList();
+    final filtered = all.codes
+        .where((c) => step == 5 || stepCodes.contains(c))
+        .toList();
     if (filtered.isEmpty) return const ValidationResult.valid();
     return ValidationResult(codes: filtered);
   }

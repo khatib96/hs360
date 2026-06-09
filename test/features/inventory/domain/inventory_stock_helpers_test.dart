@@ -25,10 +25,7 @@ void main() {
 
   test('no low stock when reorder point is null', () {
     expect(
-      isLowStock(
-        totalAvailable: Decimal.zero,
-        reorderPoint: null,
-      ),
+      isLowStock(totalAvailable: Decimal.zero, reorderPoint: null),
       isFalse,
     );
   });

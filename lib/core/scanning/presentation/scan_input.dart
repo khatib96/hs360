@@ -7,11 +7,7 @@ import 'scan_controller.dart';
 
 /// Keyboard-wedge scanner input: resolves on Enter and clears the field.
 class ScanInput extends ConsumerStatefulWidget {
-  const ScanInput({
-    this.onResolved,
-    this.autofocus = false,
-    super.key,
-  });
+  const ScanInput({this.onResolved, this.autofocus = false, super.key});
 
   final ValueChanged<String>? onResolved;
   final bool autofocus;
@@ -62,16 +58,11 @@ class _ScanInputState extends ConsumerState<ScanInput> {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 ),
               )
-            : IconButton(
-                icon: const Icon(Icons.search),
-                onPressed: _submit,
-              ),
+            : IconButton(icon: const Icon(Icons.search), onPressed: _submit),
       ),
       textInputAction: TextInputAction.done,
       onSubmitted: (_) => _submit(),
-      inputFormatters: [
-        FilteringTextInputFormatter.singleLineFormatter,
-      ],
+      inputFormatters: [FilteringTextInputFormatter.singleLineFormatter],
     );
   }
 }

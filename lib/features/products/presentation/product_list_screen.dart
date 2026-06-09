@@ -33,22 +33,14 @@ class ProductListScreen extends ConsumerWidget {
     final listState = ref.watch(productListControllerProvider);
     final controller = ref.read(productListControllerProvider.notifier);
 
-    final canViewCosts =
-        session != null && canViewFullProductCosts(session);
-    final canViewStock =
-        session != null && canViewProductStock(session);
-    final canViewGroups =
-        session != null && canViewProductGroups(session);
-    final showNewProductAction =
-        session != null && canCreateProduct(session);
-    final canCreateGroup =
-        session != null && canCreateProductGroup(session);
-    final canEditGroup =
-        session != null && canEditProductGroup(session);
+    final canViewCosts = session != null && canViewFullProductCosts(session);
+    final canViewStock = session != null && canViewProductStock(session);
+    final canViewGroups = session != null && canViewProductGroups(session);
+    final showNewProductAction = session != null && canCreateProduct(session);
+    final canCreateGroup = session != null && canCreateProductGroup(session);
+    final canEditGroup = session != null && canEditProductGroup(session);
 
-    final groupsById = {
-      for (final g in listState.groups) g.id: g,
-    };
+    final groupsById = {for (final g in listState.groups) g.id: g};
 
     String groupLabelFor(String groupId) {
       if (!canViewGroups) return l10n.productsGroupUnavailable;
@@ -93,17 +85,10 @@ class ProductListScreen extends ConsumerWidget {
         canViewCosts: canViewCosts,
         onGroupSelected: controller.setGroupId,
         onAddGroup: () => _showGroupDialog(context, ref, languageCode),
-        onEditGroup: (group) => _showGroupDialog(
-          context,
-          ref,
-          languageCode,
-          initial: group,
-        ),
-        onDeactivateGroup: (group) => _confirmDeactivateGroup(
-          context,
-          ref,
-          group,
-        ),
+        onEditGroup: (group) =>
+            _showGroupDialog(context, ref, languageCode, initial: group),
+        onDeactivateGroup: (group) =>
+            _confirmDeactivateGroup(context, ref, group),
       );
     }
 
@@ -205,9 +190,9 @@ class ProductListScreen extends ConsumerWidget {
     );
 
     if (confirmed == true && context.mounted) {
-      await ref.read(productListControllerProvider.notifier).deactivateGroup(
-            group.id,
-          );
+      await ref
+          .read(productListControllerProvider.notifier)
+          .deactivateGroup(group.id);
     }
   }
 }

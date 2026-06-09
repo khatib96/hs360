@@ -29,7 +29,9 @@ class ProductGroupRepository {
     return client;
   }
 
-  Future<List<ProductGroup>> fetchProductGroups({bool activeOnly = false}) async {
+  Future<List<ProductGroup>> fetchProductGroups({
+    bool activeOnly = false,
+  }) async {
     try {
       var query = _requireClient.from('product_groups').select(_groupColumns);
       if (activeOnly) {

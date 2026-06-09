@@ -40,10 +40,7 @@ void main() {
         parentId: 'parent-1',
       );
       expect(
-        validator.validateCreate(
-          form,
-          parentType: AccountType.asset,
-        ).codes,
+        validator.validateCreate(form, parentType: AccountType.asset).codes,
         contains(AccountingException.parentTypeMismatch),
       );
     });
@@ -66,12 +63,14 @@ void main() {
         type: AccountType.income,
       );
       expect(
-        validator.validateUpdate(
-          form,
-          currentType: AccountType.expense,
-          currentParentId: 'parent-1',
-          parentType: AccountType.expense,
-        ).codes,
+        validator
+            .validateUpdate(
+              form,
+              currentType: AccountType.expense,
+              currentParentId: 'parent-1',
+              parentType: AccountType.expense,
+            )
+            .codes,
         contains(AccountingException.parentTypeMismatch),
       );
     });
@@ -83,12 +82,14 @@ void main() {
         type: AccountType.expense,
       );
       expect(
-        validator.validateUpdate(
-          form,
-          currentType: AccountType.income,
-          currentParentId: 'parent-1',
-          parentType: AccountType.expense,
-        ).isValid,
+        validator
+            .validateUpdate(
+              form,
+              currentType: AccountType.income,
+              currentParentId: 'parent-1',
+              parentType: AccountType.expense,
+            )
+            .isValid,
         isTrue,
       );
     });

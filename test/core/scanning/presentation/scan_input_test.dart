@@ -34,9 +34,7 @@ void main() {
 
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [
-          scanRepositoryProvider.overrideWith((ref) => fakeRepo),
-        ],
+        overrides: [scanRepositoryProvider.overrideWith((ref) => fakeRepo)],
         child: MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,

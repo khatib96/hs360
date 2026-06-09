@@ -20,7 +20,8 @@ String chartAccountErrorMessage(AppLocalizations l10n, String code) {
       l10n.chartAccountErrorTypeChangeUnsafe,
     AccountingException.accountHasActiveChildren =>
       l10n.chartAccountErrorHasActiveChildren,
-    AccountingException.immutableColumn => l10n.chartAccountErrorImmutableColumn,
+    AccountingException.immutableColumn =>
+      l10n.chartAccountErrorImmutableColumn,
     AccountingException.validationFailed => l10n.chartAccountValidationFailed,
     AccountingException.supabaseNotConfigured =>
       l10n.authErrorSupabaseNotConfigured,

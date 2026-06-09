@@ -27,10 +27,7 @@ AppSession _session({Set<String> permissions = const {'inventory.view'}}) {
     accountType: 'user',
     displayName: 'Test',
     preferredLocale: 'en',
-    permissions: AppPermissions(
-      isManager: false,
-      permissions: permissions,
-    ),
+    permissions: AppPermissions(isManager: false, permissions: permissions),
   );
 }
 
@@ -51,9 +48,7 @@ Widget _wrap(Widget child, List<Override> overrides) {
       supportedLocales: AppLocalizations.supportedLocales,
       builder: (context, appChild) {
         return MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            size: const Size(1600, 900),
-          ),
+          data: MediaQuery.of(context).copyWith(size: const Size(1600, 900)),
           child: appChild!,
         );
       },
@@ -64,7 +59,9 @@ Widget _wrap(Widget child, List<Override> overrides) {
 
 void main() {
   group('InventoryScreen manual adjustment', () {
-    testWidgets('hides manual adjustment without create permission', (tester) async {
+    testWidgets('hides manual adjustment without create permission', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1400, 900);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() {
@@ -73,30 +70,24 @@ void main() {
       });
 
       await tester.pumpWidget(
-        _wrap(
-          const InventoryScreen(),
-          [
-            authControllerProvider.overrideWith(
-              () => TestAuthController(
-                _session(
-                  permissions: {
-                    'inventory.view',
-                    'inventory_movements.view',
-                  },
-                ),
+        _wrap(const InventoryScreen(), [
+          authControllerProvider.overrideWith(
+            () => TestAuthController(
+              _session(
+                permissions: {'inventory.view', 'inventory_movements.view'},
               ),
             ),
-            inventoryRepositoryProvider.overrideWith(
-              (ref) => FakeInventoryRepository(),
-            ),
-            warehouseRepositoryProvider.overrideWith(
-              (ref) => FakeWarehouseRepository(),
-            ),
-            productRepositoryProvider.overrideWith(
-              (ref) => FakeProductRepository(),
-            ),
-          ],
-        ),
+          ),
+          inventoryRepositoryProvider.overrideWith(
+            (ref) => FakeInventoryRepository(),
+          ),
+          warehouseRepositoryProvider.overrideWith(
+            (ref) => FakeWarehouseRepository(),
+          ),
+          productRepositoryProvider.overrideWith(
+            (ref) => FakeProductRepository(),
+          ),
+        ]),
       );
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
@@ -104,7 +95,9 @@ void main() {
       expect(find.text('Manual adjustment'), findsNothing);
     });
 
-    testWidgets('shows manual adjustment with create permission', (tester) async {
+    testWidgets('shows manual adjustment with create permission', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1400, 900);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() {
@@ -113,46 +106,43 @@ void main() {
       });
 
       await tester.pumpWidget(
-        _wrap(
-          const InventoryScreen(),
-          [
-            authControllerProvider.overrideWith(
-              () => TestAuthController(
-                _session(
-                  permissions: {
-                    'inventory.view',
-                    'inventory_movements.create',
-                    'products.view',
-                    'warehouses.view',
-                  },
+        _wrap(const InventoryScreen(), [
+          authControllerProvider.overrideWith(
+            () => TestAuthController(
+              _session(
+                permissions: {
+                  'inventory.view',
+                  'inventory_movements.create',
+                  'products.view',
+                  'warehouses.view',
+                },
+              ),
+            ),
+          ),
+          inventoryRepositoryProvider.overrideWith(
+            (ref) => FakeInventoryRepository(
+              balances: [
+                InventoryBalance(
+                  id: 'b-1',
+                  tenantId: 't',
+                  warehouseId: 'wh-1',
+                  productId: 'p-1',
+                  qtyAvailable: Decimal.fromInt(10),
+                  qtyRented: Decimal.zero,
+                  qtyTrial: Decimal.zero,
+                  qtyMaintenance: Decimal.zero,
+                  qtyDamaged: Decimal.zero,
                 ),
-              ),
+              ],
             ),
-            inventoryRepositoryProvider.overrideWith(
-              (ref) => FakeInventoryRepository(
-                balances: [
-                  InventoryBalance(
-                    id: 'b-1',
-                    tenantId: 't',
-                    warehouseId: 'wh-1',
-                    productId: 'p-1',
-                    qtyAvailable: Decimal.fromInt(10),
-                    qtyRented: Decimal.zero,
-                    qtyTrial: Decimal.zero,
-                    qtyMaintenance: Decimal.zero,
-                    qtyDamaged: Decimal.zero,
-                  ),
-                ],
-              ),
-            ),
-            warehouseRepositoryProvider.overrideWith(
-              (ref) => FakeWarehouseRepository(),
-            ),
-            productRepositoryProvider.overrideWith(
-              (ref) => FakeProductRepository(),
-            ),
-          ],
-        ),
+          ),
+          warehouseRepositoryProvider.overrideWith(
+            (ref) => FakeWarehouseRepository(),
+          ),
+          productRepositoryProvider.overrideWith(
+            (ref) => FakeProductRepository(),
+          ),
+        ]),
       );
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));

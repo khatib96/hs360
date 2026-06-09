@@ -28,6 +28,8 @@ const _officePermissionIds = [
   'product_units.view',
   'suppliers.view',
   'chart_of_accounts.view',
+  'settings.templates.view',
+  'settings.templates.edit',
 ];
 
 bool isPublicRoute(String path) =>
@@ -52,30 +54,36 @@ bool canAccessField(AppSession session) =>
 
 /// True for `/products/{segment}/edit` where segment is not `new`.
 bool isProductEditPath(String path) {
-  final match =
-      RegExp(r'^/products/([^/]+)/edit$').firstMatch(_normalizePath(path));
+  final match = RegExp(
+    r'^/products/([^/]+)/edit$',
+  ).firstMatch(_normalizePath(path));
   if (match == null) return false;
   return match.group(1)! != 'new';
 }
 
 /// True for `/customers/{segment}/edit` where segment is not `new`.
 bool isCustomerEditPath(String path) {
-  final match =
-      RegExp(r'^/customers/([^/]+)/edit$').firstMatch(_normalizePath(path));
+  final match = RegExp(
+    r'^/customers/([^/]+)/edit$',
+  ).firstMatch(_normalizePath(path));
   if (match == null) return false;
   return match.group(1)! != 'new';
 }
 
 /// True for `/customers/{segment}` where segment is not `new`.
 bool isCustomerDetailPath(String path) {
-  final match = RegExp(r'^/customers/([^/]+)$').firstMatch(_normalizePath(path));
+  final match = RegExp(
+    r'^/customers/([^/]+)$',
+  ).firstMatch(_normalizePath(path));
   if (match == null) return false;
   return match.group(1)! != 'new';
 }
 
 /// True for `/suppliers/{segment}` where segment is not `new`.
 bool isSupplierDetailPath(String path) {
-  final match = RegExp(r'^/suppliers/([^/]+)$').firstMatch(_normalizePath(path));
+  final match = RegExp(
+    r'^/suppliers/([^/]+)$',
+  ).firstMatch(_normalizePath(path));
   if (match == null) return false;
   return match.group(1)! != 'new';
 }
@@ -135,6 +143,13 @@ bool _isPathAllowed(String path, AppSession session) {
   }
   if (path == AppRoutes.accounts) {
     return session.permissions.can('chart_of_accounts.view');
+  }
+  if (path == AppRoutes.templateSettings) {
+    return session.permissions.can('settings.templates.view') ||
+        session.permissions.can('settings.templates.edit');
+  }
+  if (path == AppRoutes.documentPreview) {
+    return true;
   }
 
   // Dashboard and Field specific permissions

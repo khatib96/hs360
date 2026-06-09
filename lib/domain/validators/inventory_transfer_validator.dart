@@ -5,7 +5,7 @@ import 'validation_result.dart';
 
 class InventoryTransferValidator {
   const InventoryTransferValidator({StockEngine? stockEngine})
-      : _stockEngine = stockEngine ?? const StockEngine();
+    : _stockEngine = stockEngine ?? const StockEngine();
 
   final StockEngine _stockEngine;
 
@@ -21,7 +21,9 @@ class InventoryTransferValidator {
       );
     }
     if (input.productId.trim().isEmpty) {
-      return const ValidationResult(codes: [InventoryException.productRequired]);
+      return const ValidationResult(
+        codes: [InventoryException.productRequired],
+      );
     }
 
     final stockResult = _stockEngine.validateTransfer(input);

@@ -80,10 +80,12 @@ class Product {
       descriptionEn: row['description_en'] as String?,
       groupId: row['group_id'] as String,
       productType: ProductType.fromDb(row['product_type'] as String?),
-      canBeSold: row['can_be_sold'] as bool? ??
+      canBeSold:
+          row['can_be_sold'] as bool? ??
           (ProductType.fromDb(row['product_type'] as String?) ==
               ProductType.saleOnly),
-      canBeRented: row['can_be_rented'] as bool? ??
+      canBeRented:
+          row['can_be_rented'] as bool? ??
           ProductType.fromDb(row['product_type'] as String?).isRental,
       unitPrimary: UnitOfMeasure.fromDb(row['unit_primary'] as String?),
       unitSecondary: row['unit_secondary'] != null

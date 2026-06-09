@@ -66,13 +66,15 @@ class ProductDetailUiState {
       stockUnavailable: stockUnavailable ?? this.stockUnavailable,
       errorCode: clearError ? null : (errorCode ?? this.errorCode),
       isUploadingImage: isUploadingImage ?? this.isUploadingImage,
-      imageErrorCode:
-          clearImageError ? null : (imageErrorCode ?? this.imageErrorCode),
+      imageErrorCode: clearImageError
+          ? null
+          : (imageErrorCode ?? this.imageErrorCode),
       units: units ?? this.units,
       unitsLoading: unitsLoading ?? this.unitsLoading,
       unitsUnavailable: unitsUnavailable ?? this.unitsUnavailable,
-      unitsErrorCode:
-          clearUnitsError ? null : (unitsErrorCode ?? this.unitsErrorCode),
+      unitsErrorCode: clearUnitsError
+          ? null
+          : (unitsErrorCode ?? this.unitsErrorCode),
       warehouses: warehouses ?? this.warehouses,
       stockWarehouses: stockWarehouses ?? this.stockWarehouses,
     );

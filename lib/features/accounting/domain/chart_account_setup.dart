@@ -18,18 +18,18 @@ class ChartAccountSetupIssues {
 }
 
 bool _hasValidArParent(List<ChartAccount> accounts) => accounts.any(
-      (a) =>
-          a.code == ChartAccountSetupIssues.accountsReceivableParentCode &&
-          a.type == AccountType.asset &&
-          a.isActive,
-    );
+  (a) =>
+      a.code == ChartAccountSetupIssues.accountsReceivableParentCode &&
+      a.type == AccountType.asset &&
+      a.isActive,
+);
 
 bool _hasValidApParent(List<ChartAccount> accounts) => accounts.any(
-      (a) =>
-          a.code == ChartAccountSetupIssues.accountsPayableParentCode &&
-          a.type == AccountType.liability &&
-          a.isActive,
-    );
+  (a) =>
+      a.code == ChartAccountSetupIssues.accountsPayableParentCode &&
+      a.type == AccountType.liability &&
+      a.isActive,
+);
 
 ChartAccountSetupIssues detectAccountingSetupIssues(
   List<ChartAccount> allAccounts,

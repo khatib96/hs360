@@ -44,8 +44,9 @@ class ScanController extends _$ScanController {
 
     state = const ScanLoading();
     try {
-      final result =
-          await ref.read(scanRepositoryProvider).resolveScanCode(trimmed);
+      final result = await ref
+          .read(scanRepositoryProvider)
+          .resolveScanCode(trimmed);
       state = ScanSuccess(result);
     } on ScanException catch (e) {
       state = ScanFailure(e.code);

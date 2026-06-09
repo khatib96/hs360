@@ -90,9 +90,7 @@ class ProductUnitRepository {
           .order('occurred_at', ascending: false);
 
       return (rows as List)
-          .map(
-            (r) => UnitTimelineEvent.fromRow(Map<String, dynamic>.from(r)),
-          )
+          .map((r) => UnitTimelineEvent.fromRow(Map<String, dynamic>.from(r)))
           .toList();
     } catch (e, st) {
       throw ProductsException.fromSupabase(e, st);

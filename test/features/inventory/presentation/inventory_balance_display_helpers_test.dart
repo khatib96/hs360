@@ -6,11 +6,7 @@ import 'package:hs360/features/inventory/domain/inventory_balance_row.dart';
 import 'package:hs360/features/inventory/presentation/inventory_balance_display_helpers.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
-InventoryBalanceRow _row({
-  String? sku,
-  String? nameAr,
-  String? nameEn,
-}) {
+InventoryBalanceRow _row({String? sku, String? nameAr, String? nameEn}) {
   return InventoryBalanceRow(
     balance: InventoryBalance(
       id: 'b-1',
@@ -48,11 +44,7 @@ void main() {
   });
 
   test('product label falls back to sku', () {
-    final label = inventoryBalanceProductLabel(
-      _row(sku: 'SKU-99'),
-      'en',
-      l10n,
-    );
+    final label = inventoryBalanceProductLabel(_row(sku: 'SKU-99'), 'en', l10n);
     expect(label, 'SKU-99');
   });
 

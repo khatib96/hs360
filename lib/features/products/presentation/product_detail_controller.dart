@@ -132,10 +132,10 @@ class ProductDetailController extends _$ProductDetailController {
 
     state = state.copyWith(unitsLoading: true, unitsUnavailable: false);
     try {
-      final warehousesById = {
-        for (final w in state.warehouses) w.id: w,
-      };
-      final units = await ref.read(productUnitRepositoryProvider).fetchUnitsByProductId(
+      final warehousesById = {for (final w in state.warehouses) w.id: w};
+      final units = await ref
+          .read(productUnitRepositoryProvider)
+          .fetchUnitsByProductId(
             productId,
             session,
             warehousesById: warehousesById,
@@ -148,8 +148,9 @@ class ProductDetailController extends _$ProductDetailController {
     } catch (e) {
       state = state.copyWith(
         unitsLoading: false,
-        unitsErrorCode:
-            e is ProductsException ? e.code : ProductsException.unknown,
+        unitsErrorCode: e is ProductsException
+            ? e.code
+            : ProductsException.unknown,
       );
     }
   }
@@ -163,7 +164,9 @@ class ProductDetailController extends _$ProductDetailController {
     if (session == null) return ProductsException.permissionDenied;
 
     try {
-      await ref.read(productUnitRepositoryProvider).createUnit(
+      await ref
+          .read(productUnitRepositoryProvider)
+          .createUnit(
             session: session,
             productId: productId,
             warehouseId: warehouseId,
@@ -185,7 +188,9 @@ class ProductDetailController extends _$ProductDetailController {
     if (session == null) return ProductsException.permissionDenied;
 
     try {
-      await ref.read(productUnitRepositoryProvider).bulkCreateUnits(
+      await ref
+          .read(productUnitRepositoryProvider)
+          .bulkCreateUnits(
             session: session,
             productId: productId,
             warehouseId: warehouseId,
@@ -207,11 +212,9 @@ class ProductDetailController extends _$ProductDetailController {
     if (session == null) return ProductsException.permissionDenied;
 
     try {
-      await ref.read(productUnitRepositoryProvider).updateUnitSafe(
-            session: session,
-            unitId: unitId,
-            input: input,
-          );
+      await ref
+          .read(productUnitRepositoryProvider)
+          .updateUnitSafe(session: session, unitId: unitId, input: input);
       await loadUnits(productId);
       return null;
     } catch (e) {
@@ -248,25 +251,26 @@ class ProductDetailController extends _$ProductDetailController {
 
     state = state.copyWith(isUploadingImage: true, clearImageError: true);
     try {
-      final url = await ref.read(productImageRepositoryProvider).uploadPrimaryImage(
+      final url = await ref
+          .read(productImageRepositoryProvider)
+          .uploadPrimaryImage(
             session: session,
             productId: productId,
             bytes: bytes,
             mimeType: mimeType,
             fileExtension: fileExtension,
           );
-      await ref.read(productRepositoryProvider).updateProductImageUrl(
-            session,
-            productId,
-            url,
-          );
+      await ref
+          .read(productRepositoryProvider)
+          .updateProductImageUrl(session, productId, url);
       await load(productId);
       state = state.copyWith(isUploadingImage: false);
     } catch (e) {
       state = state.copyWith(
         isUploadingImage: false,
-        imageErrorCode:
-            e is ProductsException ? e.code : ProductsException.unknown,
+        imageErrorCode: e is ProductsException
+            ? e.code
+            : ProductsException.unknown,
       );
     }
   }

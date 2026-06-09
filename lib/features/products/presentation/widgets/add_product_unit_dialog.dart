@@ -9,10 +9,7 @@ import '../../domain/product_unit_health_status.dart';
 import '../product_unit_display_helpers.dart';
 
 class AddProductUnitResult {
-  const AddProductUnitResult({
-    required this.warehouseId,
-    required this.input,
-  });
+  const AddProductUnitResult({required this.warehouseId, required this.input});
 
   final String warehouseId;
   final ProductUnitCreateInput input;
@@ -168,7 +165,9 @@ class _AddProductUnitDialogState extends State<_AddProductUnitDialog> {
               const SizedBox(height: 8),
               TextField(
                 controller: _notesController,
-                decoration: InputDecoration(labelText: l10n.productUnitFieldNotes),
+                decoration: InputDecoration(
+                  labelText: l10n.productUnitFieldNotes,
+                ),
                 maxLines: 2,
               ),
               if (_error != null) ...[

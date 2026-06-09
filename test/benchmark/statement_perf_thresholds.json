@@ -1,0 +1,7 @@
+{
+  "duration_ms_median": 45000,
+  "duration_ms_max": 60000,
+  "windows_private_bytes_peak": 536870912,
+  "android_pss_bytes_peak": 402653184,
+  "pdf_bytes_max": 5242880
+}

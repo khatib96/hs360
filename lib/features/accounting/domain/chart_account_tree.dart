@@ -2,10 +2,7 @@ import 'chart_account.dart';
 
 /// Node in a hierarchical chart-of-accounts tree.
 class ChartAccountTreeNode {
-  const ChartAccountTreeNode({
-    required this.account,
-    this.children = const [],
-  });
+  const ChartAccountTreeNode({required this.account, this.children = const []});
 
   final ChartAccount account;
   final List<ChartAccountTreeNode> children;

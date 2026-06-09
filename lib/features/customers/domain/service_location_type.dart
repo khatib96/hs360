@@ -8,13 +8,13 @@ enum ServiceLocationType {
   other;
 
   String toDb() => switch (this) {
-        ServiceLocationType.branch => 'branch',
-        ServiceLocationType.office => 'office',
-        ServiceLocationType.warehouse => 'warehouse',
-        ServiceLocationType.home => 'home',
-        ServiceLocationType.installationSite => 'installation_site',
-        ServiceLocationType.other => 'other',
-      };
+    ServiceLocationType.branch => 'branch',
+    ServiceLocationType.office => 'office',
+    ServiceLocationType.warehouse => 'warehouse',
+    ServiceLocationType.home => 'home',
+    ServiceLocationType.installationSite => 'installation_site',
+    ServiceLocationType.other => 'other',
+  };
 
   static ServiceLocationType fromDb(String? value) {
     return switch (value) {

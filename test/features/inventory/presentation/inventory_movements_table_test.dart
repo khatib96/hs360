@@ -38,7 +38,9 @@ Widget _wrap(Widget child, {required double width}) {
 }
 
 void main() {
-  testWidgets('wide table hides unit cost when showUnitCost is false', (tester) async {
+  testWidgets('wide table hides unit cost when showUnitCost is false', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       _wrap(
         InventoryMovementsTable(
@@ -58,7 +60,9 @@ void main() {
     expect(find.byType(PopupMenuButton<void>), findsNothing);
   });
 
-  testWidgets('wide table shows unit cost when showUnitCost is true', (tester) async {
+  testWidgets('wide table shows unit cost when showUnitCost is true', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       _wrap(
         InventoryMovementsTable(
@@ -76,7 +80,9 @@ void main() {
     expect(find.textContaining('99.5'), findsOneWidget);
   });
 
-  testWidgets('narrow card hides unit cost when showUnitCost is false', (tester) async {
+  testWidgets('narrow card hides unit cost when showUnitCost is false', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       _wrap(
         InventoryMovementsTable(

@@ -17,8 +17,7 @@ String productsErrorMessage(AppLocalizations l10n, String code) {
     ProductsException.conversionFactorInvalid =>
       l10n.productValidationConversionInvalid,
     ProductsException.salePriceBelowMin => l10n.productValidationSaleBelowMin,
-    ProductsException.productModeRequired =>
-      l10n.productValidationModeRequired,
+    ProductsException.productModeRequired => l10n.productValidationModeRequired,
     ProductsException.expectedLifespanInvalid =>
       l10n.productValidationExpectedLifespan,
     ProductsException.serializedRequiresPiece =>
@@ -34,7 +33,8 @@ String productsErrorMessage(AppLocalizations l10n, String code) {
     ProductsException.fieldNotSupported => l10n.productErrorFieldNotSupported,
     ProductsException.validationFailed => l10n.productValidationFailed,
     ProductsException.duplicateSerial => l10n.productUnitErrorDuplicateSerial,
-    ProductsException.notSerializedProduct => l10n.productUnitErrorNotSerialized,
+    ProductsException.notSerializedProduct =>
+      l10n.productUnitErrorNotSerialized,
     ProductsException.unitNotEditable => l10n.productUnitErrorNotEditable,
     ProductsException.bulkLimitExceeded => l10n.productUnitErrorBulkLimit,
     _ => l10n.productErrorUnknown,

@@ -77,7 +77,9 @@ void main() {
   }) {
     return ProviderScope(
       overrides: [
-        authControllerProvider.overrideWith(() => TestAuthController(appSession)),
+        authControllerProvider.overrideWith(
+          () => TestAuthController(appSession),
+        ),
         productUnitRepositoryProvider.overrideWith((ref) => unitRepo),
         warehouseRepositoryProvider.overrideWith(
           (ref) => FakeWarehouseRepository(
@@ -151,7 +153,10 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const Key('product-unit-serial-correction-card')), findsOneWidget);
+    expect(
+      find.byKey(const Key('product-unit-serial-correction-card')),
+      findsOneWidget,
+    );
     expect(find.text('Correct serial number'), findsOneWidget);
   });
 }

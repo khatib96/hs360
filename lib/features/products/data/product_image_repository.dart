@@ -58,7 +58,9 @@ class ProductImageRepository {
     );
 
     try {
-      await _requireClient.storage.from(_bucket).uploadBinary(
+      await _requireClient.storage
+          .from(_bucket)
+          .uploadBinary(
             path,
             bytes,
             fileOptions: FileOptions(contentType: contentType, upsert: false),

@@ -8,7 +8,9 @@ import 'package:hs360/features/auth/domain/app_session.dart';
 
 import '../fake_chart_account_repository.dart';
 
-AppSession _session({Set<String> permissions = const {'chart_of_accounts.view'}}) {
+AppSession _session({
+  Set<String> permissions = const {'chart_of_accounts.view'},
+}) {
   return AppSession(
     userId: 'u',
     email: 'e@test.com',
@@ -70,9 +72,7 @@ void main() {
 
   group('deriveAccountBadges', () {
     test('manual and inactive badges', () {
-      final badges = deriveAccountBadges(
-        sampleChartAccount(isActive: false),
-      );
+      final badges = deriveAccountBadges(sampleChartAccount(isActive: false));
       expect(badges, [
         ChartAccountBadgeKind.manual,
         ChartAccountBadgeKind.inactive,
@@ -96,10 +96,9 @@ void main() {
     test('manual account with edit permission', () {
       final actions = deriveAllowedActions(
         sampleChartAccount(),
-        _session(permissions: {
-          'chart_of_accounts.view',
-          'chart_of_accounts.edit',
-        }),
+        _session(
+          permissions: {'chart_of_accounts.view', 'chart_of_accounts.edit'},
+        ),
       );
       expect(actions.canEdit, isTrue);
       expect(actions.canDeactivate, isFalse);
@@ -108,11 +107,13 @@ void main() {
     test('system account has no edit or deactivate', () {
       final actions = deriveAllowedActions(
         sampleChartAccount(isSystem: true),
-        _session(permissions: {
-          'chart_of_accounts.view',
-          'chart_of_accounts.edit',
-          'chart_of_accounts.delete',
-        }),
+        _session(
+          permissions: {
+            'chart_of_accounts.view',
+            'chart_of_accounts.edit',
+            'chart_of_accounts.delete',
+          },
+        ),
       );
       expect(actions.canEdit, isFalse);
       expect(actions.canDeactivate, isFalse);
@@ -124,11 +125,13 @@ void main() {
           relatedEntityId: 'c1',
           relatedEntityTable: 'customers',
         ),
-        _session(permissions: {
-          'chart_of_accounts.view',
-          'chart_of_accounts.edit',
-          'chart_of_accounts.delete',
-        }),
+        _session(
+          permissions: {
+            'chart_of_accounts.view',
+            'chart_of_accounts.edit',
+            'chart_of_accounts.delete',
+          },
+        ),
       );
       expect(actions.canEdit, isFalse);
       expect(actions.canDeactivate, isFalse);

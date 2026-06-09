@@ -1958,4 +1958,173 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get productUnitTimelineSerialCorrection => 'تصحيح تسلسل';
+
+  @override
+  String get documentPreviewTitle => 'معاينة المستند';
+
+  @override
+  String get documentPreviewAction => 'معاينة PDF';
+
+  @override
+  String get documentPreviewAssetLabel => 'طباعة ملصق الأصل';
+
+  @override
+  String get documentPreviewEmpty => 'لا يوجد مستند للمعاينة.';
+
+  @override
+  String get documentPreviewPermissionDenied =>
+      'لا تملك صلاحية معاينة هذا المستند.';
+
+  @override
+  String get documentErrorUnknown =>
+      'تعذر إنشاء المستند. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get documentErrorNoTemplate => 'لم يتم إعداد قالب مستند افتراضي.';
+
+  @override
+  String get documentErrorStatementDateRange =>
+      'نطاق تاريخ كشف الحساب غير صالح.';
+
+  @override
+  String get documentErrorStatementTooLarge =>
+      'كشف الحساب يحتوي على عدد كبير جداً من الصفوف للطباعة.';
+
+  @override
+  String get documentErrorUnsupportedType => 'نوع المستند هذا غير مدعوم بعد.';
+
+  @override
+  String get documentErrorThermalTooLarge =>
+      'المحتوى كبير جداً للطباعة الحرارية.';
+
+  @override
+  String get documentErrorFontLoad => 'تعذر تحميل خطوط المستند.';
+
+  @override
+  String get documentErrorValidation => 'إعدادات المستند غير صالحة.';
+
+  @override
+  String get documentErrorTenantNotFound => 'لم يتم العثور على سياق المستأجر.';
+
+  @override
+  String get documentErrorNotConfigured => 'خدمة المستندات غير مهيأة.';
+
+  @override
+  String get documentErrorLogoInvalidUrl => 'يجب أن يستخدم رابط الشعار HTTPS.';
+
+  @override
+  String get documentErrorLogoTooLarge =>
+      'ملف الشعار كبير جداً (الحد الأقصى 512 كيلوبايت).';
+
+  @override
+  String get documentErrorLogoInvalidDimensions =>
+      'أبعاد الشعار كبيرة جداً (الحد الأقصى 4096 بكسل لكل جانب، و16 ميجابكسل إجمالاً).';
+
+  @override
+  String get documentErrorLogoUnsupportedFormat =>
+      'يجب أن يكون الشعار بصيغة PNG أو JPEG.';
+
+  @override
+  String get documentErrorLogoFetchFailed =>
+      'تعذر تنزيل الشعار. تحقق من الرابط وحاول مرة أخرى.';
+
+  @override
+  String get customerStatementFromDate => 'من';
+
+  @override
+  String get customerStatementToDate => 'إلى';
+
+  @override
+  String get templateSettingsTitle => 'قوالب المستندات';
+
+  @override
+  String get templateSettingsPermissionDenied =>
+      'لا تملك صلاحية عرض إعدادات القوالب.';
+
+  @override
+  String get templateSettingsLogoUrl => 'رابط الشعار (HTTPS)';
+
+  @override
+  String get templateSettingsPrimaryColor => 'اللون الأساسي (#RRGGBB)';
+
+  @override
+  String get templateSettingsSecondaryColor => 'اللون الثانوي (#RRGGBB)';
+
+  @override
+  String get templateSettingsDefaultLanguage => 'اللغة الافتراضية للمستند';
+
+  @override
+  String get templateSettingsInvoicePaper => 'ورق الفاتورة';
+
+  @override
+  String get templateSettingsAssetLabelPaper => 'ورق ملصق الأصل';
+
+  @override
+  String get templateSettingsVoucherPaper => 'ورق السند';
+
+  @override
+  String get templateSettingsHeaderSection => 'ترويسة المستند';
+
+  @override
+  String get templateSettingsHeaderAr => 'نص الترويسة (عربي)';
+
+  @override
+  String get templateSettingsHeaderEn => 'نص الترويسة (إنجليزي)';
+
+  @override
+  String get templateSettingsFooterSection => 'تذييل المستند';
+
+  @override
+  String get templateSettingsFooterAr => 'نص التذييل (عربي)';
+
+  @override
+  String get templateSettingsFooterEn => 'نص التذييل (إنجليزي)';
+
+  @override
+  String get templateSettingsOptionalColumnsSection => 'أعمدة اختيارية';
+
+  @override
+  String get templateSettingsOptionalSalesInvoice => 'فاتورة مبيعات';
+
+  @override
+  String get templateSettingsOptionalPurchaseInvoice => 'فاتورة مشتريات';
+
+  @override
+  String get templateSettingsOptionalCustomerStatement => 'كشف حساب عميل';
+
+  @override
+  String get templateSettingsOptionalQty => 'إظهار الكمية';
+
+  @override
+  String get templateSettingsOptionalUnitPrice => 'إظهار سعر الوحدة';
+
+  @override
+  String get templateSettingsOptionalDebit => 'إظهار المدين';
+
+  @override
+  String get templateSettingsOptionalCredit => 'إظهار الدائن';
+
+  @override
+  String get templateSettingsLanguageAr => 'العربية';
+
+  @override
+  String get templateSettingsLanguageEn => 'English';
+
+  @override
+  String get templateSettingsLanguageBilingual => 'ثنائي اللغة';
+
+  @override
+  String get templateSettingsPaperA4 => 'A4';
+
+  @override
+  String get templateSettingsPaperThermal => 'حراري 80mm';
+
+  @override
+  String get templateSettingsPaperLabel => 'ورق ملصقات';
+
+  @override
+  String get templateSettingsSaved => 'تم حفظ إعدادات المستند.';
+
+  @override
+  String get templateSettingsSave => 'حفظ الإعدادات';
 }

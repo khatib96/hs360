@@ -87,8 +87,9 @@ class InventoryBalancesState {
           ? null
           : (warehouseLabelsWarningCode ?? this.warehouseLabelsWarningCode),
       search: clearSearch ? null : (search ?? this.search),
-      warehouseId:
-          clearWarehouseFilter ? null : (warehouseId ?? this.warehouseId),
+      warehouseId: clearWarehouseFilter
+          ? null
+          : (warehouseId ?? this.warehouseId),
       lowStockOnly: lowStockOnly ?? this.lowStockOnly,
     );
   }

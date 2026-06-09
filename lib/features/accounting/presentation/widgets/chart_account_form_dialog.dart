@@ -67,10 +67,7 @@ class _ChartAccountFormDialogState extends State<ChartAccountFormDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                widget.title,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
+              Text(widget.title, style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 20),
               ChartAccountForm(
                 key: ValueKey('chart-account-form-${account?.id ?? 'new'}'),

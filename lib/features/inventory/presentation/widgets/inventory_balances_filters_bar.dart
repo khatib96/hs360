@@ -33,7 +33,8 @@ class InventoryBalancesFiltersBar extends StatefulWidget {
       _InventoryBalancesFiltersBarState();
 }
 
-class _InventoryBalancesFiltersBarState extends State<InventoryBalancesFiltersBar> {
+class _InventoryBalancesFiltersBarState
+    extends State<InventoryBalancesFiltersBar> {
   late final TextEditingController _searchController;
   Timer? _debounce;
 

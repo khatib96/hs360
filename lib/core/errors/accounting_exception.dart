@@ -31,7 +31,10 @@ class AccountingException extends AppException {
     final message = _extractMessage(error).toLowerCase();
 
     if (message.contains('tenant_not_found')) {
-      return AccountingException(code: tenantNotFound, technicalDetail: message);
+      return AccountingException(
+        code: tenantNotFound,
+        technicalDetail: message,
+      );
     }
     if (message.contains('permission_denied')) {
       return AccountingException(
@@ -55,7 +58,10 @@ class AccountingException extends AppException {
       );
     }
     if (message.contains('account_protected')) {
-      return AccountingException(code: accountProtected, technicalDetail: message);
+      return AccountingException(
+        code: accountProtected,
+        technicalDetail: message,
+      );
     }
     if (message.contains('account_type_change_unsafe')) {
       return AccountingException(
@@ -64,7 +70,10 @@ class AccountingException extends AppException {
       );
     }
     if (message.contains('immutable_column')) {
-      return AccountingException(code: immutableColumn, technicalDetail: message);
+      return AccountingException(
+        code: immutableColumn,
+        technicalDetail: message,
+      );
     }
     if (message.contains('validation_failed')) {
       return AccountingException(

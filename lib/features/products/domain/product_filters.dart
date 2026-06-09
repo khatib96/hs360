@@ -1,10 +1,6 @@
 import 'product_type.dart';
 
-enum ProductStockFilter {
-  inStock,
-  outOfStock,
-  lowStock,
-}
+enum ProductStockFilter { inStock, outOfStock, lowStock }
 
 /// Query filters for product list (repository applies to Supabase).
 class ProductFilters {

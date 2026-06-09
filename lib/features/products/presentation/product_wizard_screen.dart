@@ -61,14 +61,18 @@ class _ProductWizardScreenState extends ConsumerState<ProductWizardScreen> {
     if (_minSalePrice.text != (draft.minSalePrice ?? '')) {
       _minSalePrice.text = draft.minSalePrice ?? '';
     }
-    if (_avgCost.text != (draft.avgCost ?? '')) _avgCost.text = draft.avgCost ?? '';
+    if (_avgCost.text != (draft.avgCost ?? '')) {
+      _avgCost.text = draft.avgCost ?? '';
+    }
     if (_lastPurchase.text != (draft.lastPurchaseCost ?? '')) {
       _lastPurchase.text = draft.lastPurchaseCost ?? '';
     }
     if (_expectedLifespan.text != draft.expectedLifespanMonths) {
       _expectedLifespan.text = draft.expectedLifespanMonths;
     }
-    if (_barcode.text != (draft.barcode ?? '')) _barcode.text = draft.barcode ?? '';
+    if (_barcode.text != (draft.barcode ?? '')) {
+      _barcode.text = draft.barcode ?? '';
+    }
     if (_reorder.text != (draft.reorderPoint ?? '')) {
       _reorder.text = draft.reorderPoint ?? '';
     }
@@ -87,10 +91,13 @@ class _ProductWizardScreenState extends ConsumerState<ProductWizardScreen> {
       unitSecondary: base.unitSecondary,
       conversionFactor: _conversion.text,
       salePrice: _salePrice.text,
-      minSalePrice: _minSalePrice.text.trim().isEmpty ? null : _minSalePrice.text,
+      minSalePrice: _minSalePrice.text.trim().isEmpty
+          ? null
+          : _minSalePrice.text,
       avgCost: _avgCost.text.trim().isEmpty ? null : _avgCost.text,
-      lastPurchaseCost:
-          _lastPurchase.text.trim().isEmpty ? null : _lastPurchase.text,
+      lastPurchaseCost: _lastPurchase.text.trim().isEmpty
+          ? null
+          : _lastPurchase.text,
       expectedLifespanMonths: _expectedLifespan.text,
       reorderPoint: _reorder.text.trim().isEmpty ? null : _reorder.text,
       isSerialized: base.isSerialized,
@@ -106,16 +113,17 @@ class _ProductWizardScreenState extends ConsumerState<ProductWizardScreen> {
     final locale = ref.watch(localeProvider);
     final session = ref.watch(authControllerProvider).valueOrNull;
     final productId = widget.productId;
-    final state = ref.watch(productFormControllerProvider(productId: productId));
-    final notifier =
-        ref.read(productFormControllerProvider(productId: productId).notifier);
+    final state = ref.watch(
+      productFormControllerProvider(productId: productId),
+    );
+    final notifier = ref.read(
+      productFormControllerProvider(productId: productId).notifier,
+    );
 
     _bindControllers(state.draft);
 
-    final canWriteCosts =
-        session != null && canWriteProductCosts(session);
-    final canViewCosts =
-        session != null && canViewFullProductCosts(session);
+    final canWriteCosts = session != null && canWriteProductCosts(session);
+    final canViewCosts = session != null && canViewFullProductCosts(session);
 
     final stepLabels = [
       l10n.productWizardStepIdentity,
@@ -132,44 +140,45 @@ class _ProductWizardScreenState extends ConsumerState<ProductWizardScreen> {
       void onChanged(ProductFormDraft d) {
         notifier.updateDraft(_draftFromControllers(d));
       }
+
       stepBody = switch (state.stepIndex) {
         0 => ProductWizardIdentityStep(
-            draft: state.draft,
-            groups: state.groups,
-            languageCode: locale.languageCode,
-            canSelectGroup: state.canSelectGroup,
-            isEdit: state.isEdit,
-            onChanged: onChanged,
-            nameArController: _nameAr,
-            nameEnController: _nameEn,
-          ),
+          draft: state.draft,
+          groups: state.groups,
+          languageCode: locale.languageCode,
+          canSelectGroup: state.canSelectGroup,
+          isEdit: state.isEdit,
+          onChanged: onChanged,
+          nameArController: _nameAr,
+          nameEnController: _nameEn,
+        ),
         1 => ProductWizardUnitsStep(
-            draft: state.draft,
-            onChanged: onChanged,
-            conversionController: _conversion,
-          ),
+          draft: state.draft,
+          onChanged: onChanged,
+          conversionController: _conversion,
+        ),
         2 => ProductWizardPricingStep(
-            draft: state.draft,
-            canWriteCosts: canWriteCosts,
-            onChanged: onChanged,
-            salePriceController: _salePrice,
-            minSalePriceController: _minSalePrice,
-            avgCostController: _avgCost,
-            lastPurchaseController: _lastPurchase,
-          ),
+          draft: state.draft,
+          canWriteCosts: canWriteCosts,
+          onChanged: onChanged,
+          salePriceController: _salePrice,
+          minSalePriceController: _minSalePrice,
+          avgCostController: _avgCost,
+          lastPurchaseController: _lastPurchase,
+        ),
         3 => ProductWizardFlagsStep(
-            draft: state.draft,
-            canChangeSerialized: state.canChangeSerialized,
-            onChanged: onChanged,
-            barcodeController: _barcode,
-            expectedLifespanController: _expectedLifespan,
-            reorderController: _reorder,
-          ),
+          draft: state.draft,
+          canChangeSerialized: state.canChangeSerialized,
+          onChanged: onChanged,
+          barcodeController: _barcode,
+          expectedLifespanController: _expectedLifespan,
+          reorderController: _reorder,
+        ),
         _ => ProductWizardReviewStep(
-            draft: state.draft,
-            canViewCosts: canViewCosts,
-            l10n: l10n,
-          ),
+          draft: state.draft,
+          canViewCosts: canViewCosts,
+          l10n: l10n,
+        ),
       };
     }
 
@@ -229,7 +238,9 @@ class _ProductWizardScreenState extends ConsumerState<ProductWizardScreen> {
                           if (!notifier.validateCurrentStep()) return;
                           final result = await notifier.submit();
                           if (!context.mounted || result == null) return;
-                          final s = ref.read(authControllerProvider).valueOrNull;
+                          final s = ref
+                              .read(authControllerProvider)
+                              .valueOrNull;
                           if (result.isCreate) {
                             if (s != null &&
                                 (s.isManager ||

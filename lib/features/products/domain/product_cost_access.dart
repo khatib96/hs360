@@ -33,8 +33,7 @@ String productReadColumnsForSession(AppSession session) {
 }
 
 /// Non-cost columns for inventory balance / stock label hydration.
-const productStockLabelColumns =
-    'id, sku, name_ar, name_en, reorder_point';
+const productStockLabelColumns = 'id, sku, name_ar, name_en, reorder_point';
 
 String productStockLabelColumnsForSession(AppSession session) =>
     productStockLabelColumns;
@@ -60,7 +59,8 @@ ValidationResult validateProductCostWrite(
     codes.add(ProductsException.fieldNotSupported);
   }
 
-  if (_hasSubmittedExistingCostFields(input) && !canWriteProductCosts(session)) {
+  if (_hasSubmittedExistingCostFields(input) &&
+      !canWriteProductCosts(session)) {
     codes.add(ProductsException.permissionDenied);
   }
 

@@ -65,10 +65,7 @@ class ProductUnitDetailController extends _$ProductUnitDetailController {
         product: product,
       );
     } on ProductsException catch (e) {
-      state = ProductUnitDetailUiState(
-        isLoading: false,
-        errorCode: e.code,
-      );
+      state = ProductUnitDetailUiState(isLoading: false, errorCode: e.code);
     } catch (_) {
       state = const ProductUnitDetailUiState(
         isLoading: false,
@@ -91,7 +88,9 @@ class ProductUnitDetailController extends _$ProductUnitDetailController {
     );
 
     try {
-      await ref.read(productUnitRepositoryProvider).correctSerial(
+      await ref
+          .read(productUnitRepositoryProvider)
+          .correctSerial(
             session: session,
             unitId: state.unit!.id,
             newSerial: newSerial,

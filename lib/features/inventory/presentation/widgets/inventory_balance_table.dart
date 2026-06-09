@@ -35,14 +35,8 @@ class InventoryBalanceTable extends StatelessWidget {
               label: Text(l10n.inventoryBalanceAvailable),
               numeric: true,
             ),
-            DataColumn(
-              label: Text(l10n.inventoryBalanceRented),
-              numeric: true,
-            ),
-            DataColumn(
-              label: Text(l10n.inventoryBalanceTrial),
-              numeric: true,
-            ),
+            DataColumn(label: Text(l10n.inventoryBalanceRented), numeric: true),
+            DataColumn(label: Text(l10n.inventoryBalanceTrial), numeric: true),
             DataColumn(
               label: Text(l10n.inventoryBalanceMaintenance),
               numeric: true,
@@ -79,9 +73,9 @@ class InventoryBalanceTable extends StatelessWidget {
           title: Text(
             inventoryBalanceProductLabel(row, languageCode, l10n),
             style: low
-                ? Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: AppColors.warning,
-                    )
+                ? Theme.of(
+                    context,
+                  ).textTheme.titleMedium?.copyWith(color: AppColors.warning)
                 : null,
           ),
           subtitle: Column(
@@ -116,9 +110,9 @@ class InventoryBalanceTable extends StatelessWidget {
           Text(
             inventoryBalanceProductLabel(row, languageCode, l10n),
             style: low
-                ? Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.warning,
-                    )
+                ? Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: AppColors.warning)
                 : null,
           ),
         ),

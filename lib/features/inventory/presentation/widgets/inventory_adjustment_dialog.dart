@@ -73,7 +73,9 @@ class _InventoryAdjustmentDialogState
     _qtyController.addListener(() => setState(() {}));
     _unitCostController.addListener(() => setState(() {}));
     Future.microtask(() async {
-      await ref.read(inventoryAdjustmentControllerProvider.notifier).loadWarehouses();
+      await ref
+          .read(inventoryAdjustmentControllerProvider.notifier)
+          .loadWarehouses();
       if (!mounted) return;
       if (widget.prefillProductId != null) {
         final session = ref.read(authControllerProvider).valueOrNull;
@@ -163,7 +165,8 @@ class _InventoryAdjustmentDialogState
     final adjState = ref.read(inventoryAdjustmentControllerProvider);
     if (adjState.isSerialized) {
       setState(
-        () => _inlineError = l10n.inventoryErrorSerializedAdjustmentNotSupported,
+        () =>
+            _inlineError = l10n.inventoryErrorSerializedAdjustmentNotSupported,
       );
       return;
     }
@@ -328,7 +331,8 @@ class _InventoryAdjustmentDialogState
                   decimal: true,
                 ),
               ),
-              if (_movementType == MovementType.adjustmentIn && _canWriteCosts) ...[
+              if (_movementType == MovementType.adjustmentIn &&
+                  _canWriteCosts) ...[
                 const SizedBox(height: 8),
                 AppTextField(
                   label: l10n.inventoryAdjustmentUnitCost,

@@ -22,7 +22,10 @@ class InventoryException extends AppException {
   static const productRequired = 'inventory_product_required';
   static const unknown = 'unknown';
 
-  factory InventoryException.fromSupabase(Object error, [StackTrace? stackTrace]) {
+  factory InventoryException.fromSupabase(
+    Object error, [
+    StackTrace? stackTrace,
+  ]) {
     if (error is InventoryException) return error;
 
     final message = _extractMessage(error).toLowerCase();

@@ -87,7 +87,10 @@ class ProductFormDraft {
       canBeRented: canBeRented,
       unitPrimary: unitPrimary,
       unitSecondary: unitSecondary,
-      conversionFactor: _parseDecimal(conversionFactor, defaultValue: Decimal.one),
+      conversionFactor: _parseDecimal(
+        conversionFactor,
+        defaultValue: Decimal.one,
+      ),
       salePrice: _parseDecimal(salePrice, defaultValue: Decimal.zero),
       minSalePrice: _tryParse(minSalePrice),
       avgCost: _tryParse(avgCost),
@@ -108,13 +111,13 @@ class ProductFormDraft {
     final values = switch (step) {
       2 => <String?>[conversionFactor],
       3 => <String?>[
-          if (canBeSold) salePrice,
-          if (canWriteCosts) ...[
-            if (canBeSold) minSalePrice,
-            avgCost,
-            lastPurchaseCost,
-          ],
+        if (canBeSold) salePrice,
+        if (canWriteCosts) ...[
+          if (canBeSold) minSalePrice,
+          avgCost,
+          lastPurchaseCost,
         ],
+      ],
       4 => <String?>[reorderPoint],
       _ => const <String?>[],
     };

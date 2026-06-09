@@ -37,10 +37,7 @@ class WarehousesController extends _$WarehousesController {
 
   AppSession? get _session => ref.read(authControllerProvider).valueOrNull;
 
-  bool _shouldReloadForSession(
-    AppSession? previous,
-    AppSession next,
-  ) {
+  bool _shouldReloadForSession(AppSession? previous, AppSession next) {
     if (previous == null) return true;
     return previous.tenantId != next.tenantId ||
         previous.isManager != next.isManager ||
@@ -103,7 +100,9 @@ class WarehousesController extends _$WarehousesController {
     if (session == null || !canCreateWarehouse(session)) return null;
 
     try {
-      await ref.read(warehouseRepositoryProvider).createWarehouse(
+      await ref
+          .read(warehouseRepositoryProvider)
+          .createWarehouse(
             session,
             input,
             existingWarehouses: state.warehouses,
@@ -122,7 +121,9 @@ class WarehousesController extends _$WarehousesController {
     if (session == null || !canEditWarehouse(session)) return null;
 
     try {
-      await ref.read(warehouseRepositoryProvider).updateWarehouse(
+      await ref
+          .read(warehouseRepositoryProvider)
+          .updateWarehouse(
             session,
             id,
             input,
@@ -142,10 +143,9 @@ class WarehousesController extends _$WarehousesController {
     if (session == null || !canDeactivateWarehouse(session)) return null;
 
     try {
-      await ref.read(warehouseRepositoryProvider).deactivateWarehouse(
-            session,
-            id,
-          );
+      await ref
+          .read(warehouseRepositoryProvider)
+          .deactivateWarehouse(session, id);
       await refresh();
       return null;
     } on ProductsException catch (e) {

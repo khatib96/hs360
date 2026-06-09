@@ -83,9 +83,9 @@ class _CustomerEditScreenState extends ConsumerState<CustomerEditScreen> {
     if (!mounted) return;
     final l10n = AppLocalizations.of(context)!;
     if (errorCode == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.customerUpdated)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.customerUpdated)));
       if (context.canPop()) {
         context.pop();
       } else {
@@ -111,9 +111,9 @@ class _CustomerEditScreenState extends ConsumerState<CustomerEditScreen> {
     if (errorCode == null) {
       await _load();
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.customerAccountLinked)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.customerAccountLinked)));
       return;
     }
     setState(() => _isEnsuringAccount = false);
@@ -136,7 +136,10 @@ class _CustomerEditScreenState extends ConsumerState<CustomerEditScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              customerErrorMessage(l10n, _errorCode ?? CustomerException.unknown),
+              customerErrorMessage(
+                l10n,
+                _errorCode ?? CustomerException.unknown,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),

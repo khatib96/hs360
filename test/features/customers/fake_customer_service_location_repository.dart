@@ -9,8 +9,8 @@ class FakeCustomerServiceLocationRepository
   FakeCustomerServiceLocationRepository({
     List<CustomerServiceLocation> locations = const [],
     this.listError,
-  })  : locations = List<CustomerServiceLocation>.from(locations),
-        super(null);
+  }) : locations = List<CustomerServiceLocation>.from(locations),
+       super(null);
 
   List<CustomerServiceLocation> locations;
   Object? listError;
@@ -53,18 +53,12 @@ class FakeCustomerServiceLocationRepository
   }
 
   @override
-  Future<void> deactivateLocation(
-    AppSession session,
-    String locationId,
-  ) async {
+  Future<void> deactivateLocation(AppSession session, String locationId) async {
     throw UnimplementedError();
   }
 
   @override
-  Future<void> setPrimary(
-    AppSession session,
-    String locationId,
-  ) async {
+  Future<void> setPrimary(AppSession session, String locationId) async {
     throw UnimplementedError();
   }
 }

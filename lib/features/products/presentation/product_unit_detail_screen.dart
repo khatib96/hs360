@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
+import '../../../core/documents/domain/document_kind.dart';
+import '../../../core/documents/domain/document_permissions.dart';
 import '../../../core/localization/locale_controller.dart';
 import '../../../core/routing/app_routes.dart';
 import '../../../shared/widgets/app_shell.dart';
@@ -25,21 +28,23 @@ class ProductUnitDetailScreen extends ConsumerWidget {
     final locale = ref.watch(localeProvider);
     final session = ref.watch(authControllerProvider).valueOrNull;
     final state = ref.watch(productUnitDetailControllerProvider(unitId));
-    final controller =
-        ref.read(productUnitDetailControllerProvider(unitId).notifier);
-    final timelineState =
-        ref.watch(productUnitTimelineControllerProvider(unitId));
+    final controller = ref.read(
+      productUnitDetailControllerProvider(unitId).notifier,
+    );
+    final timelineState = ref.watch(
+      productUnitTimelineControllerProvider(unitId),
+    );
 
-    final canCorrect =
-        session != null && canCorrectProductUnitSerial(session);
+    final canCorrect = session != null && canCorrectProductUnitSerial(session);
+    final canPreviewLabel =
+        session != null &&
+        canPreviewDocument(session, DocumentKind.assetTagLabel);
 
     Widget body;
     if (state.isLoading) {
       body = Center(child: Text(l10n.loading));
     } else if (state.errorCode != null) {
-      body = Center(
-        child: Text(productsErrorMessage(l10n, state.errorCode!)),
-      );
+      body = Center(child: Text(productsErrorMessage(l10n, state.errorCode!)));
     } else if (state.unit == null) {
       body = Center(
         key: const Key('product-unit-detail-not-found'),
@@ -55,6 +60,25 @@ class ProductUnitDetailScreen extends ConsumerWidget {
             l10n: l10n,
             languageCode: locale.languageCode,
           ),
+          if (canPreviewLabel) ...[
+            const SizedBox(height: 12),
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: FilledButton.icon(
+                key: const Key('product-unit-label-preview'),
+                onPressed: () {
+                  context.push(
+                    AppRoutes.documentPreviewPath(
+                      kind: DocumentKind.assetTagLabel.documentType,
+                      entityId: unitId,
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.qr_code_2_outlined),
+                label: Text(l10n.documentPreviewAssetLabel),
+              ),
+            ),
+          ],
           const SizedBox(height: 16),
           ProductUnitSerialCorrectionCard(
             l10n: l10n,
@@ -62,10 +86,8 @@ class ProductUnitDetailScreen extends ConsumerWidget {
             isSubmitting: state.isSubmittingCorrection,
             errorCode: state.correctionErrorCode,
             showSuccess: state.correctionSuccess,
-            onSubmit: (newSerial, reason) => controller.correctSerial(
-                  newSerial: newSerial,
-                  reason: reason,
-                ),
+            onSubmit: (newSerial, reason) =>
+                controller.correctSerial(newSerial: newSerial, reason: reason),
           ),
           const SizedBox(height: 16),
           Text(

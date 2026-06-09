@@ -26,9 +26,9 @@ class SupplierFormDraft {
   factory SupplierFormDraft.fromSupplier(Supplier supplier) {
     final gov = supplier.governorate ?? '';
     final area = supplier.area ?? '';
-    final catalogAreas = areasForGovernorate(gov.isEmpty ? null : gov)
-        .map((a) => a.canonical)
-        .toList();
+    final catalogAreas = areasForGovernorate(
+      gov.isEmpty ? null : gov,
+    ).map((a) => a.canonical).toList();
     final inCatalog = catalogAreas.contains(area);
     return SupplierFormDraft(
       nameAr: supplier.nameAr,

@@ -73,10 +73,13 @@ class CustomerDetailHeader extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final languageCode = ref.watch(localeProvider).languageCode;
     final theme = Theme.of(context);
-    final locationsState =
-        ref.watch(customerLocationsControllerProvider(customerId));
-    final locationText =
-        _locationSummary(locationsState.activeLocations, languageCode);
+    final locationsState = ref.watch(
+      customerLocationsControllerProvider(customerId),
+    );
+    final locationText = _locationSummary(
+      locationsState.activeLocations,
+      languageCode,
+    );
 
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
@@ -142,7 +145,10 @@ class _StatusChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsetsDirectional.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsetsDirectional.symmetric(
+        horizontal: 8,
+        vertical: 4,
+      ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(4),
@@ -150,9 +156,9 @@ class _StatusChip extends StatelessWidget {
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: color,
-              fontWeight: FontWeight.w600,
-            ),
+          color: color,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }

@@ -27,10 +27,7 @@ AppSession _session({required Set<String> permissions}) {
     accountType: 'user',
     displayName: 'Test',
     preferredLocale: 'en',
-    permissions: AppPermissions(
-      isManager: false,
-      permissions: permissions,
-    ),
+    permissions: AppPermissions(isManager: false, permissions: permissions),
   );
 }
 
@@ -99,15 +96,13 @@ Widget _wrapDialog({
 
 void main() {
   group('InventoryAdjustmentDialog cost gates', () {
-    testWidgets('hides stock-in option without cost write permission',
-        (tester) async {
+    testWidgets('hides stock-in option without cost write permission', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         _wrapDialog(
           session: _session(
-            permissions: {
-              'inventory_movements.create',
-              'products.view',
-            },
+            permissions: {'inventory_movements.create', 'products.view'},
           ),
         ),
       );
@@ -117,15 +112,13 @@ void main() {
       expect(find.text('Adjustment out'), findsOneWidget);
     });
 
-    testWidgets('hides unit cost field without cost write permission',
-        (tester) async {
+    testWidgets('hides unit cost field without cost write permission', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         _wrapDialog(
           session: _session(
-            permissions: {
-              'inventory_movements.create',
-              'products.view',
-            },
+            permissions: {'inventory_movements.create', 'products.view'},
           ),
         ),
       );
@@ -134,24 +127,19 @@ void main() {
       expect(find.text('Unit cost'), findsNothing);
     });
 
-    testWidgets('hides WAC preview without full cost view permission',
-        (tester) async {
+    testWidgets('hides WAC preview without full cost view permission', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         _wrapDialog(
           session: _session(
-            permissions: {
-              'inventory_movements.create',
-              'products.view',
-            },
+            permissions: {'inventory_movements.create', 'products.view'},
           ),
         ),
       );
       await tester.pumpAndSettle();
 
-      await tester.enterText(
-        find.byType(TextFormField),
-        '2',
-      );
+      await tester.enterText(find.byType(TextFormField), '2');
       await tester.pump();
 
       expect(

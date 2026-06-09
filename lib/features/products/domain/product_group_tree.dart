@@ -2,10 +2,7 @@ import 'product_group.dart';
 
 /// Node in a hierarchical product group tree.
 class ProductGroupTreeNode {
-  const ProductGroupTreeNode({
-    required this.group,
-    this.children = const [],
-  });
+  const ProductGroupTreeNode({required this.group, this.children = const []});
 
   final ProductGroup group;
   final List<ProductGroupTreeNode> children;

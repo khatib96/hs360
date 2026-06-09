@@ -20,6 +20,8 @@ abstract final class AppRoutes {
   static const suppliers = '/suppliers';
   static const suppliersDetail = '/suppliers/:id';
   static const accounts = '/accounts';
+  static const templateSettings = '/settings/templates';
+  static const documentPreview = '/documents/preview';
 
   static const loginName = 'login';
   static const forgotPasswordName = 'forgotPassword';
@@ -41,6 +43,8 @@ abstract final class AppRoutes {
   static const suppliersName = 'suppliers';
   static const suppliersDetailName = 'suppliersDetail';
   static const accountsName = 'accounts';
+  static const templateSettingsName = 'templateSettings';
+  static const documentPreviewName = 'documentPreview';
 
   static String customerDetailPath(String id) =>
       '/customers/${Uri.encodeComponent(id)}';
@@ -53,4 +57,23 @@ abstract final class AppRoutes {
 
   static String productUnitDetailPath(String id) =>
       '/product-units/${Uri.encodeComponent(id)}';
+
+  static String documentPreviewPath({
+    required String kind,
+    required String entityId,
+    DateTime? from,
+    DateTime? to,
+  }) {
+    final params = <String, String>{'kind': kind, 'entityId': entityId};
+    if (from != null) params['from'] = _dateOnly(from);
+    if (to != null) params['to'] = _dateOnly(to);
+    return Uri(path: documentPreview, queryParameters: params).toString();
+  }
+
+  static String _dateOnly(DateTime date) {
+    final y = date.year.toString().padLeft(4, '0');
+    final m = date.month.toString().padLeft(2, '0');
+    final d = date.day.toString().padLeft(2, '0');
+    return '$y-$m-$d';
+  }
 }

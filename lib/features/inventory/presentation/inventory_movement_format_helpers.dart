@@ -21,7 +21,10 @@ String formatMovementQuantity(Decimal qty) => formatQuantity(qty);
 String formatMovementUnitCost(Decimal unitCost, String languageCode) =>
     formatMoney(unitCost, locale: languageCode);
 
-String truncateMovementNotes(String? notes, {int maxLength = movementNotesTableMaxLength}) {
+String truncateMovementNotes(
+  String? notes, {
+  int maxLength = movementNotesTableMaxLength,
+}) {
   final text = notes?.trim();
   if (text == null || text.isEmpty) return '';
   if (text.length <= maxLength) return text;

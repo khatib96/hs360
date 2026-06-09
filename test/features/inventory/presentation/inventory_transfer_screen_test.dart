@@ -48,9 +48,7 @@ Widget _wrap(Widget child, List<Override> overrides) {
       supportedLocales: AppLocalizations.supportedLocales,
       builder: (context, appChild) {
         return MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            size: const Size(1600, 900),
-          ),
+          data: MediaQuery.of(context).copyWith(size: const Size(1600, 900)),
           child: appChild!,
         );
       },
@@ -70,32 +68,29 @@ void main() {
       });
 
       await tester.pumpWidget(
-        _wrap(
-          const InventoryTransfersScreen(),
-          [
-            authControllerProvider.overrideWith(
-              () => TestAuthController(_session()),
+        _wrap(const InventoryTransfersScreen(), [
+          authControllerProvider.overrideWith(
+            () => TestAuthController(_session()),
+          ),
+          inventoryRepositoryProvider.overrideWith(
+            (ref) => FakeInventoryRepository(
+              transferWarehouses: const [
+                TransferWarehouseOption(
+                  id: 'w1',
+                  nameAr: 'رئيسي',
+                  nameEn: 'Main',
+                  type: 'main',
+                ),
+                TransferWarehouseOption(
+                  id: 'w2',
+                  nameAr: 'فرع',
+                  nameEn: 'Branch',
+                  type: 'branch',
+                ),
+              ],
             ),
-            inventoryRepositoryProvider.overrideWith(
-              (ref) => FakeInventoryRepository(
-                transferWarehouses: const [
-                  TransferWarehouseOption(
-                    id: 'w1',
-                    nameAr: 'رئيسي',
-                    nameEn: 'Main',
-                    type: 'main',
-                  ),
-                  TransferWarehouseOption(
-                    id: 'w2',
-                    nameAr: 'فرع',
-                    nameEn: 'Branch',
-                    type: 'branch',
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ]),
       );
 
       await tester.pumpAndSettle();
@@ -110,7 +105,9 @@ void main() {
       expect(find.text(l10n.inventoryTransferSelectProduct), findsOneWidget);
     });
 
-    testWidgets('submit without warehouses shows source required', (tester) async {
+    testWidgets('submit without warehouses shows source required', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1400, 900);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() {
@@ -119,39 +116,39 @@ void main() {
       });
 
       await tester.pumpWidget(
-        _wrap(
-          const InventoryTransfersScreen(),
-          [
-            authControllerProvider.overrideWith(
-              () => TestAuthController(_session()),
+        _wrap(const InventoryTransfersScreen(), [
+          authControllerProvider.overrideWith(
+            () => TestAuthController(_session()),
+          ),
+          inventoryRepositoryProvider.overrideWith(
+            (ref) => FakeInventoryRepository(
+              transferWarehouses: const [
+                TransferWarehouseOption(
+                  id: 'w1',
+                  nameAr: 'رئيسي',
+                  nameEn: 'Main',
+                  type: 'main',
+                ),
+              ],
             ),
-            inventoryRepositoryProvider.overrideWith(
-              (ref) => FakeInventoryRepository(
-                transferWarehouses: const [
-                  TransferWarehouseOption(
-                    id: 'w1',
-                    nameAr: 'رئيسي',
-                    nameEn: 'Main',
-                    type: 'main',
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ]),
       );
 
       await tester.pumpAndSettle();
 
       final l10n = lookupAppLocalizations(const Locale('en'));
-      await tester.tap(find.widgetWithText(FilledButton, l10n.inventoryTransferTitle));
+      await tester.tap(
+        find.widgetWithText(FilledButton, l10n.inventoryTransferTitle),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text(l10n.inventorySourceWarehouseRequired), findsOneWidget);
     });
 
-    testWidgets('serialized result clears previous product selection',
-        (tester) async {
+    testWidgets('serialized result clears previous product selection', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1400, 900);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() {
@@ -196,15 +193,12 @@ void main() {
       );
 
       await tester.pumpWidget(
-        _wrap(
-          const InventoryTransfersScreen(),
-          [
-            authControllerProvider.overrideWith(
-              () => TestAuthController(_session()),
-            ),
-            inventoryRepositoryProvider.overrideWith((ref) => inventoryRepo),
-          ],
-        ),
+        _wrap(const InventoryTransfersScreen(), [
+          authControllerProvider.overrideWith(
+            () => TestAuthController(_session()),
+          ),
+          inventoryRepositoryProvider.overrideWith((ref) => inventoryRepo),
+        ]),
       );
       await tester.pumpAndSettle();
 

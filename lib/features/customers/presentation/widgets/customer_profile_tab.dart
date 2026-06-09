@@ -44,7 +44,8 @@ class CustomerProfileTab extends ConsumerWidget {
             alignment: AlignmentDirectional.centerEnd,
             child: FilledButton.icon(
               key: const Key('customer-profile-edit'),
-              onPressed: () => context.go(AppRoutes.customerEditPath(customer.id)),
+              onPressed: () =>
+                  context.go(AppRoutes.customerEditPath(customer.id)),
               icon: const Icon(Icons.edit_outlined),
               label: Text(l10n.customerActionEdit),
             ),
@@ -53,13 +54,22 @@ class CustomerProfileTab extends ConsumerWidget {
         ProfileFormSection(
           title: l10n.customerSectionIdentity,
           children: [
-            ProfileMetadataRow(label: l10n.customerFieldCode, value: customer.code),
+            ProfileMetadataRow(
+              label: l10n.customerFieldCode,
+              value: customer.code,
+            ),
             ProfileMetadataRow(
               label: l10n.customerTypeLabel,
               value: _typeLabel(l10n),
             ),
-            ProfileMetadataRow(label: l10n.customerFieldNameAr, value: customer.nameAr),
-            ProfileMetadataRow(label: l10n.customerFieldNameEn, value: customer.nameEn),
+            ProfileMetadataRow(
+              label: l10n.customerFieldNameAr,
+              value: customer.nameAr,
+            ),
+            ProfileMetadataRow(
+              label: l10n.customerFieldNameEn,
+              value: customer.nameEn,
+            ),
             ProfileMetadataRow(
               label: l10n.customerFieldVip,
               value: customer.isVip ? l10n.customerVip : l10n.customerNonVip,
@@ -79,7 +89,10 @@ class CustomerProfileTab extends ConsumerWidget {
               label: l10n.customerFieldPhonePrimary,
               value: customer.phonePrimary,
             ),
-            ProfileMetadataRow(label: l10n.customerFieldEmail, value: customer.email),
+            ProfileMetadataRow(
+              label: l10n.customerFieldEmail,
+              value: customer.email,
+            ),
             if (isCompany) ...[
               ProfileMetadataRow(
                 label: l10n.customerFieldContactName,
@@ -101,7 +114,8 @@ class CustomerProfileTab extends ConsumerWidget {
           children: [
             ProfileMetadataRow(
               label: l10n.customerFieldGovernorate,
-              value: customer.governorate == null || customer.governorate!.isEmpty
+              value:
+                  customer.governorate == null || customer.governorate!.isEmpty
                   ? null
                   : governorateLabel(customer.governorate!, languageCode),
             ),
@@ -139,7 +153,10 @@ class CustomerProfileTab extends ConsumerWidget {
           ProfileFormSection(
             title: l10n.customerFieldNotes,
             children: [
-              ProfileMetadataRow(label: l10n.customerFieldNotes, value: customer.notes),
+              ProfileMetadataRow(
+                label: l10n.customerFieldNotes,
+                value: customer.notes,
+              ),
             ],
           ),
       ],

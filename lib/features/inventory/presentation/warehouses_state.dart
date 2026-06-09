@@ -20,8 +20,8 @@ class WarehousesState {
   bool get hasEmployeeLookupWarning => employeeLookupErrorCode != null;
 
   Map<String, WarehouseAssignableEmployee> get employeesById => {
-        for (final e in employees) e.id: e,
-      };
+    for (final e in employees) e.id: e,
+  };
 
   WarehousesState copyWith({
     List<Warehouse>? warehouses,

@@ -22,19 +22,12 @@ List<ChartAccount> parentOptionsForCreate(
   AccountType selectedType,
 ) {
   return allAccounts
-      .where(
-        (a) =>
-            a.isActive &&
-            a.type == selectedType &&
-            !a.isEntityLinked,
-      )
+      .where((a) => a.isActive && a.type == selectedType && !a.isEntityLinked)
       .toList()
     ..sort((a, b) => a.code.compareTo(b.code));
 }
 
 List<ChartAccount> allEligibleParentOptions(List<ChartAccount> allAccounts) {
-  return allAccounts
-      .where((a) => a.isActive && !a.isEntityLinked)
-      .toList()
+  return allAccounts.where((a) => a.isActive && !a.isEntityLinked).toList()
     ..sort((a, b) => a.code.compareTo(b.code));
 }

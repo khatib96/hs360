@@ -117,10 +117,14 @@ class FakeInventoryRepository extends InventoryRepository {
       result = result.where((m) => productIds.contains(m.productId)).toList();
     }
     if (occurredFrom != null) {
-      result = result.where((m) => !m.occurredAt.isBefore(occurredFrom)).toList();
+      result = result
+          .where((m) => !m.occurredAt.isBefore(occurredFrom))
+          .toList();
     }
     if (occurredBefore != null) {
-      result = result.where((m) => m.occurredAt.isBefore(occurredBefore)).toList();
+      result = result
+          .where((m) => m.occurredAt.isBefore(occurredBefore))
+          .toList();
     }
     if (result.length > limit) {
       result = result.take(limit).toList();

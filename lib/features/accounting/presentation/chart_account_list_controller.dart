@@ -77,8 +77,7 @@ class ChartAccountListController extends _$ChartAccountListController {
         final rootIds = accounts
             .where(
               (account) =>
-                  account.isSystem &&
-                  _categoryRootCodes.contains(account.code),
+                  account.isSystem && _categoryRootCodes.contains(account.code),
             )
             .map((account) => account.id)
             .toSet();
@@ -140,9 +139,7 @@ class ChartAccountListController extends _$ChartAccountListController {
   }
 
   void clearFilters() {
-    state = state.copyWith(
-      filters: const ChartAccountFilters(isActive: true),
-    );
+    state = state.copyWith(filters: const ChartAccountFilters(isActive: true));
   }
 
   void toggleExpanded(String id) {
@@ -175,7 +172,9 @@ class ChartAccountListController extends _$ChartAccountListController {
     return null;
   }
 
-  Future<ChartAccountSubmitResult> submitCreate(ChartAccountFormState input) async {
+  Future<ChartAccountSubmitResult> submitCreate(
+    ChartAccountFormState input,
+  ) async {
     final session = _session;
     if (session == null ||
         !canViewChartOfAccounts(session) ||

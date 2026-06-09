@@ -53,7 +53,9 @@ class WarehouseRepository {
 
   Future<List<WarehouseAssignableEmployee>> fetchAssignableEmployees() async {
     try {
-      final rows = await _requireClient.rpc('list_warehouse_assignable_employees');
+      final rows = await _requireClient.rpc(
+        'list_warehouse_assignable_employees',
+      );
       return (rows as List)
           .map(
             (r) => WarehouseAssignableEmployee.fromRow(

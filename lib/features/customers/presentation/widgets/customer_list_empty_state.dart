@@ -26,7 +26,11 @@ class CustomerListEmptyState extends StatelessWidget {
             color: theme.colorScheme.outline,
           ),
           const SizedBox(height: 16),
-          Text(isFiltered ? l10n.customerListEmptyFiltered : l10n.customerListEmpty),
+          Text(
+            isFiltered
+                ? l10n.customerListEmptyFiltered
+                : l10n.customerListEmpty,
+          ),
           if (canCreate && !isFiltered) ...[
             const SizedBox(height: 8),
             Text(l10n.customerAdd, style: theme.textTheme.bodySmall),

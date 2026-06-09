@@ -7,9 +7,7 @@ import 'package:hs360/features/inventory/domain/inventory_transfer_form_state.da
 void main() {
   const validator = InventoryTransferValidator();
 
-  InventoryTransferFormState validForm({
-    Decimal? sourceQty,
-  }) {
+  InventoryTransferFormState validForm({Decimal? sourceQty}) {
     return InventoryTransferFormState(
       fromWarehouseId: 'wh-from',
       toWarehouseId: 'wh-to',
@@ -84,9 +82,7 @@ void main() {
   });
 
   test('rejects empty notes', () {
-    final result = validator.validate(
-      validForm().copyWithNotes('   '),
-    );
+    final result = validator.validate(validForm().copyWithNotes('   '));
     expect(result.isValid, isFalse);
   });
 
@@ -109,9 +105,7 @@ void main() {
   });
 
   test('rejects insufficient stock', () {
-    final result = validator.validate(
-      validForm(sourceQty: Decimal.one),
-    );
+    final result = validator.validate(validForm(sourceQty: Decimal.one));
     expect(result.codes, contains(InventoryException.insufficientStock));
   });
 }

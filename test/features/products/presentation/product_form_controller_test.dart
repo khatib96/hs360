@@ -24,10 +24,7 @@ AppSession _session({Set<String> permissions = const {'products.create'}}) {
     accountType: 'user',
     displayName: 'Test',
     preferredLocale: 'en',
-    permissions: AppPermissions(
-      isManager: false,
-      permissions: permissions,
-    ),
+    permissions: AppPermissions(isManager: false, permissions: permissions),
   );
 }
 
@@ -77,7 +74,9 @@ void main() {
     final notifier = container.read(
       productFormControllerProvider(productId: null).notifier,
     );
-    final state = container.read(productFormControllerProvider(productId: null));
+    final state = container.read(
+      productFormControllerProvider(productId: null),
+    );
     expect(state.blockCreateWithoutGroups, isTrue);
     expect(notifier.validateCurrentStep(), isFalse);
     expect(
@@ -98,15 +97,12 @@ void main() {
       overrides: [
         authControllerProvider.overrideWith(
           () => TestAuthController(
-            _session(
-              permissions: {
-                'products.create',
-                'product_groups.view',
-              },
-            ),
+            _session(permissions: {'products.create', 'product_groups.view'}),
           ),
         ),
-        productRepositoryProvider.overrideWith((ref) => FakeProductRepository()),
+        productRepositoryProvider.overrideWith(
+          (ref) => FakeProductRepository(),
+        ),
         productGroupRepositoryProvider.overrideWith(
           (ref) => FakeProductGroupRepository(),
         ),

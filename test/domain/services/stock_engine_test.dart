@@ -10,14 +10,20 @@ void main() {
 
   test('previewAdjustmentDelta in is positive', () {
     expect(
-      engine.previewAdjustmentDelta(MovementType.adjustmentIn, Decimal.fromInt(5)),
+      engine.previewAdjustmentDelta(
+        MovementType.adjustmentIn,
+        Decimal.fromInt(5),
+      ),
       Decimal.fromInt(5),
     );
   });
 
   test('previewAdjustmentDelta out is negative', () {
     expect(
-      engine.previewAdjustmentDelta(MovementType.adjustmentOut, Decimal.fromInt(5)),
+      engine.previewAdjustmentDelta(
+        MovementType.adjustmentOut,
+        Decimal.fromInt(5),
+      ),
       Decimal.fromInt(-5),
     );
   });

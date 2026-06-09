@@ -29,18 +29,12 @@ class InventoryMovementsWideTable extends StatelessWidget {
       DataColumn(label: Text(l10n.inventoryMovementType)),
       DataColumn(label: Text(l10n.inventoryMovementProduct)),
       DataColumn(label: Text(l10n.inventoryMovementWarehouse)),
-      DataColumn(
-        label: Text(l10n.inventoryMovementQuantity),
-        numeric: true,
-      ),
+      DataColumn(label: Text(l10n.inventoryMovementQuantity), numeric: true),
       DataColumn(label: Text(l10n.inventoryMovementReference)),
       DataColumn(label: Text(l10n.inventoryMovementCreatedBy)),
       DataColumn(label: Text(l10n.inventoryMovementNotes)),
       if (showUnitCost)
-        DataColumn(
-          label: Text(l10n.inventoryMovementUnitCost),
-          numeric: true,
-        ),
+        DataColumn(label: Text(l10n.inventoryMovementUnitCost), numeric: true),
     ];
 
     return SingleChildScrollView(
@@ -49,9 +43,7 @@ class InventoryMovementsWideTable extends StatelessWidget {
         child: DataTable(
           headingRowColor: WidgetStateProperty.all(AppColors.neutral50),
           columns: columns,
-          rows: [
-            for (final row in rows) _dataRow(context, l10n, row),
-          ],
+          rows: [for (final row in rows) _dataRow(context, l10n, row)],
         ),
       ),
     );
@@ -64,15 +56,12 @@ class InventoryMovementsWideTable extends StatelessWidget {
   ) {
     final notesFull = row.notes?.trim() ?? '';
     final notesDisplay = movementNotesForTable(row.notes, l10n);
-    final notesTruncated = truncateMovementNotes(row.notes) != notesFull &&
-        notesFull.isNotEmpty;
+    final notesTruncated =
+        truncateMovementNotes(row.notes) != notesFull && notesFull.isNotEmpty;
 
     Widget notesCell = Text(notesDisplay);
     if (notesTruncated) {
-      notesCell = Tooltip(
-        message: notesFull,
-        child: notesCell,
-      );
+      notesCell = Tooltip(message: notesFull, child: notesCell);
     }
 
     return DataRow(

@@ -68,12 +68,16 @@ class _EditProductUnitDialogState extends State<_EditProductUnitDialog> {
             const SizedBox(height: 12),
             TextField(
               controller: _barcodeController,
-              decoration: InputDecoration(labelText: l10n.productUnitFieldBarcode),
+              decoration: InputDecoration(
+                labelText: l10n.productUnitFieldBarcode,
+              ),
             ),
             const SizedBox(height: 8),
             DropdownButtonFormField<ProductUnitHealthStatus>(
               initialValue: _health,
-              decoration: InputDecoration(labelText: l10n.productUnitFieldHealth),
+              decoration: InputDecoration(
+                labelText: l10n.productUnitFieldHealth,
+              ),
               items: ProductUnitHealthStatus.values
                   .map(
                     (h) => DropdownMenuItem(
@@ -89,7 +93,9 @@ class _EditProductUnitDialogState extends State<_EditProductUnitDialog> {
             const SizedBox(height: 8),
             TextField(
               controller: _notesController,
-              decoration: InputDecoration(labelText: l10n.productUnitFieldNotes),
+              decoration: InputDecoration(
+                labelText: l10n.productUnitFieldNotes,
+              ),
               maxLines: 3,
             ),
           ],

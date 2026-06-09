@@ -14,7 +14,9 @@ import 'package:hs360/features/auth/presentation/auth_controller.dart';
 
 import '../fake_chart_account_repository.dart';
 
-AppSession _session({Set<String> permissions = const {'chart_of_accounts.view'}}) {
+AppSession _session({
+  Set<String> permissions = const {'chart_of_accounts.view'},
+}) {
   return AppSession(
     userId: 'u',
     email: 'e@test.com',
@@ -53,13 +55,13 @@ ProviderContainer _container(
 void main() {
   group('ChartAccountListController', () {
     test('single fetch on refresh', () async {
-      final repo = FakeChartAccountRepository(
-        accounts: [sampleChartAccount()],
-      );
+      final repo = FakeChartAccountRepository(accounts: [sampleChartAccount()]);
       final container = _container(repo);
       addTearDown(container.dispose);
 
-      await container.read(chartAccountListControllerProvider.notifier).refresh();
+      await container
+          .read(chartAccountListControllerProvider.notifier)
+          .refresh();
 
       expect(repo.fetchCount, 1);
       expect(
@@ -82,7 +84,9 @@ void main() {
       final container = _container(repo);
       addTearDown(container.dispose);
 
-      await container.read(chartAccountListControllerProvider.notifier).refresh();
+      await container
+          .read(chartAccountListControllerProvider.notifier)
+          .refresh();
       container
           .read(chartAccountListControllerProvider.notifier)
           .setType(AccountType.asset);
@@ -97,14 +101,13 @@ void main() {
       final repo = FakeChartAccountRepository(accounts: const []);
       final container = _container(
         repo,
-        permissions: {
-          'chart_of_accounts.view',
-          'chart_of_accounts.create',
-        },
+        permissions: {'chart_of_accounts.view', 'chart_of_accounts.create'},
       );
       addTearDown(container.dispose);
 
-      await container.read(chartAccountListControllerProvider.notifier).refresh();
+      await container
+          .read(chartAccountListControllerProvider.notifier)
+          .refresh();
 
       final result = await container
           .read(chartAccountListControllerProvider.notifier)
@@ -127,14 +130,13 @@ void main() {
       final repo = FakeChartAccountRepository(accounts: const []);
       final container = _container(
         repo,
-        permissions: {
-          'chart_of_accounts.view',
-          'chart_of_accounts.create',
-        },
+        permissions: {'chart_of_accounts.view', 'chart_of_accounts.create'},
       );
       addTearDown(container.dispose);
 
-      await container.read(chartAccountListControllerProvider.notifier).refresh();
+      await container
+          .read(chartAccountListControllerProvider.notifier)
+          .refresh();
 
       final result = await container
           .read(chartAccountListControllerProvider.notifier)
@@ -153,13 +155,13 @@ void main() {
     });
 
     test('deactivate denied without permission', () async {
-      final repo = FakeChartAccountRepository(
-        accounts: [sampleChartAccount()],
-      );
+      final repo = FakeChartAccountRepository(accounts: [sampleChartAccount()]);
       final container = _container(repo);
       addTearDown(container.dispose);
 
-      await container.read(chartAccountListControllerProvider.notifier).refresh();
+      await container
+          .read(chartAccountListControllerProvider.notifier)
+          .refresh();
 
       final code = await container
           .read(chartAccountListControllerProvider.notifier)

@@ -49,7 +49,9 @@ class _SupplierFormDialogState extends ConsumerState<SupplierFormDialog> {
     setState(() => _isSubmitting = false);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(supplierErrorMessage(AppLocalizations.of(context)!, errorCode)),
+        content: Text(
+          supplierErrorMessage(AppLocalizations.of(context)!, errorCode),
+        ),
       ),
     );
   }
@@ -66,9 +68,9 @@ class _SupplierFormDialogState extends ConsumerState<SupplierFormDialog> {
     final l10n = AppLocalizations.of(context)!;
     if (errorCode == null) {
       Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.supplierAccountLinked)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.supplierAccountLinked)));
       return;
     }
     ScaffoldMessenger.of(context).showSnackBar(
@@ -85,7 +87,9 @@ class _SupplierFormDialogState extends ConsumerState<SupplierFormDialog> {
         : SupplierFormDraft.fromSupplier(initial);
     final session = ref.watch(authControllerProvider).valueOrNull;
     final width = MediaQuery.sizeOf(context).width;
-    final dialogWidth = width >= 1000 ? 960.0 : (width >= 720 ? 900.0 : width * 0.95);
+    final dialogWidth = width >= 1000
+        ? 960.0
+        : (width >= 720 ? 900.0 : width * 0.95);
 
     return AlertDialog(
       title: Text(_isEdit ? l10n.editSupplierTitle : l10n.createSupplierTitle),

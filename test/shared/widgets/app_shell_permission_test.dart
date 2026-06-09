@@ -66,10 +66,7 @@ void main() {
     await tester.pumpWidget(
       buildTestApp(
         appSession: session(permissions: {'visits.view_assigned'}),
-        child: const AppShell(
-          title: 'Shell',
-          body: SizedBox.shrink(),
-        ),
+        child: const AppShell(title: 'Shell', body: SizedBox.shrink()),
       ),
     );
     await tester.pumpAndSettle();
@@ -86,10 +83,7 @@ void main() {
     await tester.pumpWidget(
       buildTestApp(
         appSession: session(),
-        child: const AppShell(
-          title: 'Blocked',
-          body: SizedBox.shrink(),
-        ),
+        child: const AppShell(title: 'Blocked', body: SizedBox.shrink()),
       ),
     );
     await tester.pumpAndSettle();
@@ -97,40 +91,41 @@ void main() {
     expect(find.text(l10n.dashboard), findsNothing);
   });
 
-  testWidgets('products list hides new product action without create permission', (
-    tester,
-  ) async {
-    final l10n = lookupAppLocalizations(const Locale('en'));
+  testWidgets(
+    'products list hides new product action without create permission',
+    (tester) async {
+      final l10n = lookupAppLocalizations(const Locale('en'));
 
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          authControllerProvider.overrideWith(
-            () => TestAuthController(session(permissions: {'products.view'})),
-          ),
-          productRepositoryProvider.overrideWith(
-            (ref) => FakeProductRepository(),
-          ),
-          productGroupRepositoryProvider.overrideWith(
-            (ref) => FakeProductGroupRepository(),
-          ),
-        ],
-        child: MaterialApp(
-          locale: const Locale('en'),
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: MediaQuery(
-            data: const MediaQueryData(size: Size(1024, 768)),
-            child: const ProductListScreen(),
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authControllerProvider.overrideWith(
+              () => TestAuthController(session(permissions: {'products.view'})),
+            ),
+            productRepositoryProvider.overrideWith(
+              (ref) => FakeProductRepository(),
+            ),
+            productGroupRepositoryProvider.overrideWith(
+              (ref) => FakeProductGroupRepository(),
+            ),
+          ],
+          child: MaterialApp(
+            locale: const Locale('en'),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: MediaQuery(
+              data: const MediaQueryData(size: Size(1024, 768)),
+              child: const ProductListScreen(),
+            ),
           ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
+      );
+      await tester.pumpAndSettle();
 
-    expect(find.text(l10n.products), findsWidgets);
-    expect(find.text(l10n.productsNew), findsNothing);
-  });
+      expect(find.text(l10n.products), findsWidgets);
+      expect(find.text(l10n.productsNew), findsNothing);
+    },
+  );
 
   testWidgets('inventory page hides movement actions without movement grants', (
     tester,

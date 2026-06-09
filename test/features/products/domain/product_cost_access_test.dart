@@ -3,9 +3,7 @@ import 'package:hs360/features/auth/domain/app_permissions.dart';
 import 'package:hs360/features/auth/domain/app_session.dart';
 import 'package:hs360/features/products/domain/product_cost_access.dart';
 
-AppSession _session({
-  required AppPermissions permissions,
-}) {
+AppSession _session({required AppPermissions permissions}) {
   return AppSession(
     userId: 'u',
     email: 'e@test.com',
@@ -59,10 +57,7 @@ void main() {
         accountType: 'manager',
         displayName: 'Test',
         preferredLocale: 'ar',
-        permissions: AppPermissions(
-          isManager: false,
-          permissions: const {},
-        ),
+        permissions: AppPermissions(isManager: false, permissions: const {}),
       );
       expect(canViewFullProductCosts(session), isFalse);
     });
@@ -76,7 +71,10 @@ void main() {
       );
 
       expect(productReadTableForSession(session), 'products_safe');
-      expect(productReadColumnsForSession(session), isNot(contains('avg_cost')));
+      expect(
+        productReadColumnsForSession(session),
+        isNot(contains('avg_cost')),
+      );
       expect(
         productReadColumnsForSession(session),
         isNot(contains('last_purchase_cost')),

@@ -37,10 +37,7 @@ class InventoryTransferController extends _$InventoryTransferController {
         isLoadingWarehouses: false,
       );
     } on InventoryException catch (e) {
-      state = state.copyWith(
-        isLoadingWarehouses: false,
-        errorCode: e.code,
-      );
+      state = state.copyWith(isLoadingWarehouses: false, errorCode: e.code);
     } catch (_) {
       state = state.copyWith(
         isLoadingWarehouses: false,
@@ -67,15 +64,9 @@ class InventoryTransferController extends _$InventoryTransferController {
       final products = await ref
           .read(inventoryRepositoryProvider)
           .searchTransferProducts(session, trimmed);
-      state = state.copyWith(
-        searchResults: products,
-        isSearching: false,
-      );
+      state = state.copyWith(searchResults: products, isSearching: false);
     } catch (_) {
-      state = state.copyWith(
-        searchResults: const [],
-        isSearching: false,
-      );
+      state = state.copyWith(searchResults: const [], isSearching: false);
     }
   }
 
@@ -117,7 +108,9 @@ class InventoryTransferController extends _$InventoryTransferController {
     }
 
     try {
-      final qty = await ref.read(inventoryRepositoryProvider).getTransferSourceQty(
+      final qty = await ref
+          .read(inventoryRepositoryProvider)
+          .getTransferSourceQty(
             session,
             warehouseId: fromWarehouseId,
             productId: product.id,
@@ -162,10 +155,9 @@ class InventoryTransferController extends _$InventoryTransferController {
         sourceQtyAvailable: state.sourceQtyAvailable,
       );
 
-      await ref.read(inventoryRepositoryProvider).recordInventoryTransfer(
-            session,
-            form,
-          );
+      await ref
+          .read(inventoryRepositoryProvider)
+          .recordInventoryTransfer(session, form);
 
       if (canViewInventoryBalances(session)) {
         await ref.read(inventoryBalancesControllerProvider.notifier).refresh();

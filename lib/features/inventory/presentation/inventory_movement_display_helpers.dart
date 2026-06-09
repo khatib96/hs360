@@ -76,10 +76,7 @@ String movementTypeLabel(MovementType type, AppLocalizations l10n) {
   };
 }
 
-String referenceLabel(
-  InventoryMovementRow row,
-  AppLocalizations l10n,
-) {
+String referenceLabel(InventoryMovementRow row, AppLocalizations l10n) {
   final table = row.referenceTable?.trim();
   final id = row.referenceId?.trim();
   if ((table == null || table.isEmpty) && (id == null || id.isEmpty)) {

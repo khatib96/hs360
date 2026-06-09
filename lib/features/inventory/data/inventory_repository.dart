@@ -60,7 +60,9 @@ class InventoryRepository {
     String? warehouseId,
   }) async {
     try {
-      var query = _requireClient.from('inventory_balances').select(_balanceColumns);
+      var query = _requireClient
+          .from('inventory_balances')
+          .select(_balanceColumns);
       if (productId != null) {
         query = query.eq('product_id', productId);
       }
@@ -188,10 +190,7 @@ class InventoryRepository {
     try {
       final rows = await _requireClient.rpc(
         'search_transfer_products',
-        params: {
-          'p_search': query.trim(),
-          'p_limit': limit,
-        },
+        params: {'p_search': query.trim(), 'p_limit': limit},
       );
       return (rows as List)
           .map(
@@ -217,10 +216,7 @@ class InventoryRepository {
     try {
       final response = await _requireClient.rpc(
         'get_transfer_source_qty',
-        params: {
-          'p_warehouse_id': warehouseId,
-          'p_product_id': productId,
-        },
+        params: {'p_warehouse_id': warehouseId, 'p_product_id': productId},
       );
       return parseDecimal(response);
     } catch (e, st) {

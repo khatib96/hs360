@@ -60,9 +60,9 @@ class WarehouseTable extends StatelessWidget {
           return DataRow(
             color: warehouse.isActive
                 ? null
-                : WidgetStateProperty.all(AppColors.neutral50.withValues(
-                    alpha: 0.6,
-                  )),
+                : WidgetStateProperty.all(
+                    AppColors.neutral50.withValues(alpha: 0.6),
+                  ),
             cells: [
               DataCell(
                 Text(
@@ -74,12 +74,7 @@ class WarehouseTable extends StatelessWidget {
                         ),
                 ),
               ),
-              DataCell(
-                _WarehouseTypeBadge(
-                  type: warehouse.type,
-                  l10n: l10n,
-                ),
-              ),
+              DataCell(_WarehouseTypeBadge(type: warehouse.type, l10n: l10n)),
               DataCell(Text(employeeLabel ?? l10n.productsNotAvailable)),
               DataCell(
                 Text(
@@ -102,7 +97,10 @@ class WarehouseTable extends StatelessWidget {
                     children: [
                       if (canViewStock)
                         IconButton(
-                          icon: const Icon(Icons.inventory_2_outlined, size: 20),
+                          icon: const Icon(
+                            Icons.inventory_2_outlined,
+                            size: 20,
+                          ),
                           tooltip: l10n.inventory,
                           onPressed: () => onViewStock(warehouse),
                         ),
@@ -131,10 +129,7 @@ class WarehouseTable extends StatelessWidget {
 }
 
 class _WarehouseTypeBadge extends StatelessWidget {
-  const _WarehouseTypeBadge({
-    required this.type,
-    required this.l10n,
-  });
+  const _WarehouseTypeBadge({required this.type, required this.l10n});
 
   final WarehouseType type;
   final AppLocalizations l10n;

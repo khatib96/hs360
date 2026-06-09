@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 
 /// Responsive two-column form layout for profile dialogs.
 class ProfileFormLayout extends StatelessWidget {
-  const ProfileFormLayout({
-    required this.children,
-    super.key,
-  });
+  const ProfileFormLayout({required this.children, super.key});
 
   final List<Widget> children;
 
@@ -108,7 +105,11 @@ class ProfileLabeledField extends StatelessWidget {
 }
 
 class ProfileMetadataRow extends StatelessWidget {
-  const ProfileMetadataRow({required this.label, required this.value, super.key});
+  const ProfileMetadataRow({
+    required this.label,
+    required this.value,
+    super.key,
+  });
 
   final String label;
   final String? value;

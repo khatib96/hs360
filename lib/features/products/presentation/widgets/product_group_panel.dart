@@ -222,8 +222,8 @@ class _GroupTreeTile extends StatelessWidget {
           title: Text(
             label,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: group.isActive ? null : AppColors.neutral600,
-                ),
+              color: group.isActive ? null : AppColors.neutral600,
+            ),
           ),
           trailing: canEditGroup
               ? PopupMenuButton<String>(

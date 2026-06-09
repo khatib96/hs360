@@ -46,7 +46,10 @@ void main() {
   });
 
   test('created_by null shows not recorded', () {
-    expect(createdByLabel(null, l10n), l10n.inventoryMovementCreatedByNotRecorded);
+    expect(
+      createdByLabel(null, l10n),
+      l10n.inventoryMovementCreatedByNotRecorded,
+    );
   });
 
   test('created_by shows short id', () {

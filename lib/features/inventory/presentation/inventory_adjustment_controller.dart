@@ -40,10 +40,7 @@ class InventoryAdjustmentController extends _$InventoryAdjustmentController {
         isLoadingWarehouses: false,
       );
     } on InventoryException catch (e) {
-      state = state.copyWith(
-        isLoadingWarehouses: false,
-        errorCode: e.code,
-      );
+      state = state.copyWith(isLoadingWarehouses: false, errorCode: e.code);
     } catch (_) {
       state = state.copyWith(
         isLoadingWarehouses: false,
@@ -67,19 +64,15 @@ class InventoryAdjustmentController extends _$InventoryAdjustmentController {
 
     state = state.copyWith(isSearching: true, clearError: true);
     try {
-      final products = await ref.read(productRepositoryProvider).fetchProducts(
+      final products = await ref
+          .read(productRepositoryProvider)
+          .fetchProducts(
             ProductFilters(search: trimmed, isActive: true),
             session,
           );
-      state = state.copyWith(
-        searchResults: products,
-        isSearching: false,
-      );
+      state = state.copyWith(searchResults: products, isSearching: false);
     } catch (_) {
-      state = state.copyWith(
-        searchResults: const [],
-        isSearching: false,
-      );
+      state = state.copyWith(searchResults: const [], isSearching: false);
     }
   }
 
@@ -201,10 +194,9 @@ class InventoryAdjustmentController extends _$InventoryAdjustmentController {
         currentQtyAvailable: state.currentQtyAvailable,
       );
 
-      await ref.read(inventoryRepositoryProvider).recordInventoryAdjustment(
-            session,
-            form,
-          );
+      await ref
+          .read(inventoryRepositoryProvider)
+          .recordInventoryAdjustment(session, form);
 
       await ref.read(inventoryBalancesControllerProvider.notifier).refresh();
 

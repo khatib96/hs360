@@ -44,10 +44,7 @@ class InventoryBalancesController extends _$InventoryBalancesController {
 
   AppSession? get _session => ref.read(authControllerProvider).valueOrNull;
 
-  bool _shouldReloadForSession(
-    AppSession? previous,
-    AppSession next,
-  ) {
+  bool _shouldReloadForSession(AppSession? previous, AppSession next) {
     if (previous == null) return true;
     return previous.tenantId != next.tenantId ||
         previous.isManager != next.isManager ||

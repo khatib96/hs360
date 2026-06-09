@@ -8,7 +8,8 @@ import '../../domain/validators/validation_result.dart';
 class CostEngine {
   const CostEngine();
 
-  bool movementAffectsWac(MovementType type) => type == MovementType.adjustmentIn;
+  bool movementAffectsWac(MovementType type) =>
+      type == MovementType.adjustmentIn;
 
   ValidationResult validateUnitCostForAdjustmentIn(Decimal? unitCost) {
     if (unitCost == null) {

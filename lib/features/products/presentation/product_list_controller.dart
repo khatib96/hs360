@@ -121,7 +121,9 @@ class ProductListController extends _$ProductListController {
     return a.length == b.length && a.containsAll(b);
   }
 
-  Future<List<ProductGroup>> _loadGroups(ProductGroupRepository groupRepo) async {
+  Future<List<ProductGroup>> _loadGroups(
+    ProductGroupRepository groupRepo,
+  ) async {
     if (!_canViewGroups) return const [];
     try {
       return await groupRepo.fetchProductGroups(activeOnly: false);
@@ -257,10 +259,9 @@ class ProductListController extends _$ProductListController {
     final session = _session;
     if (session == null || !canEditProductGroup(session)) return;
 
-    await ref.read(productGroupRepositoryProvider).deactivateProductGroup(
-          session,
-          id,
-        );
+    await ref
+        .read(productGroupRepositoryProvider)
+        .deactivateProductGroup(session, id);
     await refresh();
   }
 }

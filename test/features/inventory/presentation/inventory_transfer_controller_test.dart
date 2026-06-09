@@ -27,10 +27,7 @@ AppSession _session({
     accountType: 'user',
     displayName: 'Test',
     preferredLocale: 'en',
-    permissions: AppPermissions(
-      isManager: false,
-      permissions: permissions,
-    ),
+    permissions: AppPermissions(isManager: false, permissions: permissions),
   );
 }
 
@@ -59,8 +56,9 @@ void main() {
       );
       addTearDown(container.dispose);
 
-      final notifier =
-          container.read(inventoryTransferControllerProvider.notifier);
+      final notifier = container.read(
+        inventoryTransferControllerProvider.notifier,
+      );
       await notifier.selectProduct(
         const TransferProductOption(
           id: 'p-1',
@@ -85,88 +83,95 @@ void main() {
       expect(inventoryRepo.transferCallCount, 1);
     });
 
-    test('serialized select keeps selectedProduct null and skips qty hydration',
-        () async {
-      final inventoryRepo = FakeInventoryRepository();
-      final container = ProviderContainer(
-        overrides: [
-          authControllerProvider.overrideWith(
-            () => TestAuthController(_session()),
+    test(
+      'serialized select keeps selectedProduct null and skips qty hydration',
+      () async {
+        final inventoryRepo = FakeInventoryRepository();
+        final container = ProviderContainer(
+          overrides: [
+            authControllerProvider.overrideWith(
+              () => TestAuthController(_session()),
+            ),
+            inventoryRepositoryProvider.overrideWith((ref) => inventoryRepo),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        final notifier = container.read(
+          inventoryTransferControllerProvider.notifier,
+        );
+        await notifier.selectProduct(
+          const TransferProductOption(
+            id: 'p-ser',
+            sku: 'SER',
+            nameAr: 'ar',
+            nameEn: 'Serialized',
+            isSerialized: true,
+            unitPrimary: 'piece',
           ),
-          inventoryRepositoryProvider.overrideWith((ref) => inventoryRepo),
-        ],
-      );
-      addTearDown(container.dispose);
+        );
 
-      final notifier =
-          container.read(inventoryTransferControllerProvider.notifier);
-      await notifier.selectProduct(
-        const TransferProductOption(
-          id: 'p-ser',
-          sku: 'SER',
-          nameAr: 'ar',
-          nameEn: 'Serialized',
-          isSerialized: true,
-          unitPrimary: 'piece',
-        ),
-      );
+        final state = container.read(inventoryTransferControllerProvider);
+        expect(state.selectedProduct, isNull);
+        expect(state.sourceQtyAvailable, isNull);
+        expect(
+          state.errorCode,
+          InventoryException.serializedTransferNotSupported,
+        );
+        expect(inventoryRepo.getTransferSourceQtyCallCount, 0);
+      },
+    );
 
-      final state = container.read(inventoryTransferControllerProvider);
-      expect(state.selectedProduct, isNull);
-      expect(state.sourceQtyAvailable, isNull);
-      expect(
-        state.errorCode,
-        InventoryException.serializedTransferNotSupported,
-      );
-      expect(inventoryRepo.getTransferSourceQtyCallCount, 0);
-    });
+    test(
+      'serialized select clears previous non-serialized selection',
+      () async {
+        final inventoryRepo = FakeInventoryRepository(
+          transferSourceQty: Decimal.fromInt(8),
+        );
+        final container = ProviderContainer(
+          overrides: [
+            authControllerProvider.overrideWith(
+              () => TestAuthController(_session()),
+            ),
+            inventoryRepositoryProvider.overrideWith((ref) => inventoryRepo),
+          ],
+        );
+        addTearDown(container.dispose);
 
-    test('serialized select clears previous non-serialized selection', () async {
-      final inventoryRepo = FakeInventoryRepository(
-        transferSourceQty: Decimal.fromInt(8),
-      );
-      final container = ProviderContainer(
-        overrides: [
-          authControllerProvider.overrideWith(
-            () => TestAuthController(_session()),
+        final notifier = container.read(
+          inventoryTransferControllerProvider.notifier,
+        );
+        await notifier.selectProduct(
+          const TransferProductOption(
+            id: 'p-normal',
+            sku: 'NORMAL',
+            nameAr: 'ar',
+            nameEn: 'Normal',
+            isSerialized: false,
+            unitPrimary: 'piece',
           ),
-          inventoryRepositoryProvider.overrideWith((ref) => inventoryRepo),
-        ],
-      );
-      addTearDown(container.dispose);
+        );
+        await notifier.hydrateSourceQty('wh-from');
 
-      final notifier =
-          container.read(inventoryTransferControllerProvider.notifier);
-      await notifier.selectProduct(
-        const TransferProductOption(
-          id: 'p-normal',
-          sku: 'NORMAL',
-          nameAr: 'ar',
-          nameEn: 'Normal',
-          isSerialized: false,
-          unitPrimary: 'piece',
-        ),
-      );
-      await notifier.hydrateSourceQty('wh-from');
+        await notifier.selectProduct(
+          const TransferProductOption(
+            id: 'p-ser',
+            sku: 'SER',
+            nameAr: 'ar',
+            nameEn: 'Serialized',
+            isSerialized: true,
+            unitPrimary: 'piece',
+          ),
+        );
 
-      await notifier.selectProduct(
-        const TransferProductOption(
-          id: 'p-ser',
-          sku: 'SER',
-          nameAr: 'ar',
-          nameEn: 'Serialized',
-          isSerialized: true,
-          unitPrimary: 'piece',
-        ),
-      );
-
-      final state = container.read(inventoryTransferControllerProvider);
-      expect(state.selectedProduct, isNull);
-      expect(state.sourceQtyAvailable, isNull);
-      expect(
-        state.errorCode,
-        InventoryException.serializedTransferNotSupported,
-      );
-    });
+        final state = container.read(inventoryTransferControllerProvider);
+        expect(state.selectedProduct, isNull);
+        expect(state.sourceQtyAvailable, isNull);
+        expect(
+          state.errorCode,
+          InventoryException.serializedTransferNotSupported,
+        );
+      },
+    );
   });
 }

@@ -252,9 +252,7 @@ class ProductRepository {
 
       final map = <String, ProductStockLabel>{};
       for (final row in rows as List) {
-        final label = ProductStockLabel.fromRow(
-          Map<String, dynamic>.from(row),
-        );
+        final label = ProductStockLabel.fromRow(Map<String, dynamic>.from(row));
         map[label.id] = label;
       }
       return map;

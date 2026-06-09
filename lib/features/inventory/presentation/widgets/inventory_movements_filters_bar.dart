@@ -49,7 +49,8 @@ class InventoryMovementsFiltersBar extends StatefulWidget {
       _InventoryMovementsFiltersBarState();
 }
 
-class _InventoryMovementsFiltersBarState extends State<InventoryMovementsFiltersBar> {
+class _InventoryMovementsFiltersBarState
+    extends State<InventoryMovementsFiltersBar> {
   late final TextEditingController _searchController;
   Timer? _debounce;
 
@@ -160,7 +161,7 @@ class _InventoryMovementsFiltersBarState extends State<InventoryMovementsFilters
                                 widget.languageCode,
                               )
                             : '${localizedWarehouseName(warehouse, widget.languageCode)} '
-                                '(${l10n.warehouseInactive})',
+                                  '(${l10n.warehouseInactive})',
                       ),
                     ),
                 ],
@@ -217,7 +218,8 @@ class _InventoryMovementsFiltersBarState extends State<InventoryMovementsFilters
                 ),
               ),
             ),
-            if (widget.occurredFromDate != null || widget.occurredToDate != null)
+            if (widget.occurredFromDate != null ||
+                widget.occurredToDate != null)
               IconButton(
                 tooltip: l10n.productsFilterClear,
                 onPressed: () {

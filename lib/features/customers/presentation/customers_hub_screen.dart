@@ -25,8 +25,7 @@ class CustomersHubScreen extends ConsumerWidget {
     final showCustomers = session != null && canViewCustomers(session);
     final showSuppliers = session != null && canViewSuppliers(session);
 
-    final visibleTabCount =
-        (showCustomers ? 1 : 0) + (showSuppliers ? 1 : 0);
+    final visibleTabCount = (showCustomers ? 1 : 0) + (showSuppliers ? 1 : 0);
 
     Widget body;
     if (visibleTabCount == 0) {
@@ -55,10 +54,7 @@ class CustomersHubScreen extends ConsumerWidget {
             ),
             const Expanded(
               child: TabBarView(
-                children: [
-                  CustomersTabBody(),
-                  SuppliersTabBody(),
-                ],
+                children: [CustomersTabBody(), SuppliersTabBody()],
               ),
             ),
           ],

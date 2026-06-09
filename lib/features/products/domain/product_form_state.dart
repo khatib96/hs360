@@ -30,9 +30,9 @@ class ProductFormState {
     this.reorderPoint,
     this.isActive = true,
     this.imageUrl,
-  })  : canBeRented = canBeRented ?? productType.isRental,
-        conversionFactor = conversionFactor ?? Decimal.one,
-        salePrice = salePrice ?? Decimal.zero;
+  }) : canBeRented = canBeRented ?? productType.isRental,
+       conversionFactor = conversionFactor ?? Decimal.one,
+       salePrice = salePrice ?? Decimal.zero;
 
   final String? barcode;
   final String nameAr;
@@ -40,6 +40,7 @@ class ProductFormState {
   final String? descriptionAr;
   final String? descriptionEn;
   final String groupId;
+
   /// Rental kind when [canBeRented] is true. [ProductType.saleOnly] is used
   /// for non-rental products to preserve the existing database enum.
   final ProductType productType;

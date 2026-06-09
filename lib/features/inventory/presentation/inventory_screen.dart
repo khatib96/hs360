@@ -19,10 +19,7 @@ import 'widgets/inventory_balance_table.dart';
 import 'widgets/inventory_balances_filters_bar.dart';
 
 class InventoryScreen extends ConsumerWidget {
-  const InventoryScreen({
-    this.initialWarehouseId,
-    super.key,
-  });
+  const InventoryScreen({this.initialWarehouseId, super.key});
 
   final String? initialWarehouseId;
 
@@ -99,9 +96,7 @@ class InventoryScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           if (filtered.isEmpty)
-            Expanded(
-              child: Center(child: Text(l10n.inventoryBalancesEmpty)),
-            )
+            Expanded(child: Center(child: Text(l10n.inventoryBalancesEmpty)))
           else ...[
             _SummaryBar(rows: filtered, l10n: l10n),
             const SizedBox(height: 12),
@@ -155,10 +150,7 @@ class InventoryScreen extends ConsumerWidget {
       body: SizedBox.expand(
         child: Stack(
           children: [
-            Padding(
-              padding: const EdgeInsetsDirectional.all(24),
-              child: body,
-            ),
+            Padding(padding: const EdgeInsetsDirectional.all(24), child: body),
             if (state.isLoading && state.allRows.isNotEmpty)
               const Positioned(
                 top: 0,
@@ -220,17 +212,14 @@ Future<void> _openManualAdjustment(
     prefillWarehouseId: warehouseId,
   );
   if (success == true && context.mounted) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.inventoryAdjustmentSuccess)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(l10n.inventoryAdjustmentSuccess)));
   }
 }
 
 class _InventoryErrorState extends StatelessWidget {
-  const _InventoryErrorState({
-    required this.message,
-    required this.onRetry,
-  });
+  const _InventoryErrorState({required this.message, required this.onRetry});
 
   final String message;
   final VoidCallback onRetry;
@@ -244,10 +233,7 @@ class _InventoryErrorState extends StatelessWidget {
         children: [
           Text(message, textAlign: TextAlign.center),
           const SizedBox(height: 16),
-          FilledButton(
-            onPressed: onRetry,
-            child: Text(l10n.retry),
-          ),
+          FilledButton(onPressed: onRetry, child: Text(l10n.retry)),
         ],
       ),
     );

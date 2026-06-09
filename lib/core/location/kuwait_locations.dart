@@ -113,10 +113,7 @@ const List<KuwaitGovernorate> kuwaitGovernorates = [
       KuwaitArea(canonical: 'hadiya', nameAr: 'هدية'),
       KuwaitArea(canonical: 'jaber_al_ali', nameAr: 'جابر العلي'),
       KuwaitArea(canonical: 'eqaila', nameAr: 'العقيلة'),
-      KuwaitArea(
-        canonical: 'fahaheel_industrial',
-        nameAr: 'الفحيحيل الصناعية',
-      ),
+      KuwaitArea(canonical: 'fahaheel_industrial', nameAr: 'الفحيحيل الصناعية'),
       KuwaitArea(canonical: 'sabah_al_ahmad', nameAr: 'صباح الأحمد'),
       KuwaitArea(canonical: 'ali_sabah_al_salem', nameAr: 'علي صباح السالم'),
       KuwaitArea(canonical: 'khiran_city', nameAr: 'مدينة الخيران'),
@@ -129,24 +126,22 @@ const List<KuwaitGovernorate> kuwaitGovernorates = [
     nameAr: 'الفروانية',
     nameEn: 'Farwaniya',
     areas: [
-      KuwaitArea(canonical: 'farwaniya', nameAr: 'الفروانية', nameEn: 'Farwaniya'),
+      KuwaitArea(
+        canonical: 'farwaniya',
+        nameAr: 'الفروانية',
+        nameEn: 'Farwaniya',
+      ),
       KuwaitArea(canonical: 'omariya', nameAr: 'العمرية'),
       KuwaitArea(canonical: 'rabiya', nameAr: 'الرابية'),
       KuwaitArea(canonical: 'khaitan', nameAr: 'خيطان'),
       KuwaitArea(canonical: 'jleeb_al_shuyoukh', nameAr: 'جليب الشيوخ'),
       KuwaitArea(canonical: 'abdullah_al_mubarak', nameAr: 'عبدالله المبارك'),
-      KuwaitArea(
-        canonical: 'sabah_al_nasser',
-        nameAr: 'ضاحية صباح الناصر',
-      ),
+      KuwaitArea(canonical: 'sabah_al_nasser', nameAr: 'ضاحية صباح الناصر'),
       KuwaitArea(canonical: 'andalus', nameAr: 'الأندلس'),
       KuwaitArea(canonical: 'firdous', nameAr: 'الفردوس'),
       KuwaitArea(canonical: 'sabah_al_salem', nameAr: 'صباح السالم'),
       KuwaitArea(canonical: 'shadadiya', nameAr: 'الشدادية'),
-      KuwaitArea(
-        canonical: 'rabiya_industrial',
-        nameAr: 'الرابية الصناعية',
-      ),
+      KuwaitArea(canonical: 'rabiya_industrial', nameAr: 'الرابية الصناعية'),
       KuwaitArea(canonical: 'dajeej', nameAr: 'الضجيج'),
       KuwaitArea(canonical: 'riggae', nameAr: 'الرقعي'),
       KuwaitArea(canonical: 'rai', nameAr: 'الري'),
@@ -203,7 +198,10 @@ KuwaitGovernorate? kuwaitGovernorateByCanonical(String? canonical) {
   return null;
 }
 
-KuwaitArea? kuwaitAreaByCanonical(String? governorateCanonical, String? areaCanonical) {
+KuwaitArea? kuwaitAreaByCanonical(
+  String? governorateCanonical,
+  String? areaCanonical,
+) {
   final gov = kuwaitGovernorateByCanonical(governorateCanonical);
   if (gov == null || areaCanonical == null) return null;
   for (final a in gov.areas) {
@@ -248,9 +246,9 @@ List<String> areaDropdownValues({
   required String? governorateCanonical,
   String? currentValue,
 }) {
-  final values = areasForGovernorate(governorateCanonical)
-      .map((a) => a.canonical)
-      .toList();
+  final values = areasForGovernorate(
+    governorateCanonical,
+  ).map((a) => a.canonical).toList();
   if (currentValue != null &&
       currentValue.isNotEmpty &&
       currentValue != kuwaitAreaOtherCanonical &&

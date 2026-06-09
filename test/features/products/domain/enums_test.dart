@@ -22,8 +22,16 @@ void main() {
   group('UnitOfMeasure', () {
     test('round-trips all values', () {
       const values = [
-        'piece', 'liter', 'ml', 'gram', 'kg',
-        'box', 'bottle', 'carton', 'meter', 'pack',
+        'piece',
+        'liter',
+        'ml',
+        'gram',
+        'kg',
+        'box',
+        'bottle',
+        'carton',
+        'meter',
+        'pack',
       ];
       for (final v in values) {
         expect(UnitOfMeasure.fromDb(v).toDb(), v);
@@ -42,11 +50,19 @@ void main() {
   group('MovementType', () {
     test('round-trips all values from 003_enums.sql', () {
       const values = [
-        'purchase', 'sale', 'rental_out', 'rental_return',
-        'refill', 'transfer_out', 'transfer_in',
-        'adjustment_in', 'adjustment_out',
-        'sale_return', 'purchase_return',
-        'maintenance_in', 'maintenance_out',
+        'purchase',
+        'sale',
+        'rental_out',
+        'rental_return',
+        'refill',
+        'transfer_out',
+        'transfer_in',
+        'adjustment_in',
+        'adjustment_out',
+        'sale_return',
+        'purchase_return',
+        'maintenance_in',
+        'maintenance_out',
       ];
       for (final v in values) {
         expect(MovementType.fromDb(v).toDb(), v);
@@ -57,8 +73,15 @@ void main() {
   group('UnitStatus', () {
     test('round-trips all values', () {
       const values = [
-        'available_new', 'available_used', 'rented', 'trial',
-        'maintenance', 'sold', 'damaged', 'lost', 'retired',
+        'available_new',
+        'available_used',
+        'rented',
+        'trial',
+        'maintenance',
+        'sold',
+        'damaged',
+        'lost',
+        'retired',
       ];
       for (final v in values) {
         expect(UnitStatus.fromDb(v).toDb(), v);

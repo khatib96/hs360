@@ -20,6 +20,10 @@ import '../../features/inventory/presentation/inventory_movements_screen.dart';
 import '../../features/inventory/presentation/inventory_transfers_screen.dart';
 import '../../features/inventory/presentation/inventory_screen.dart';
 import '../../features/inventory/presentation/warehouses_screen.dart';
+import '../../core/documents/domain/document_kind.dart';
+import '../../core/documents/presentation/document_preview_screen.dart';
+import '../../core/documents/presentation/document_preview_state.dart';
+import '../../features/settings/presentation/template_settings_screen.dart';
 import 'app_routes.dart';
 import 'route_guards.dart';
 import 'router_refresh_notifier.dart';
@@ -74,23 +78,20 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.productsEdit,
         name: AppRoutes.productsEditName,
-        builder: (context, state) => ProductWizardScreen(
-          productId: state.pathParameters['id'],
-        ),
+        builder: (context, state) =>
+            ProductWizardScreen(productId: state.pathParameters['id']),
       ),
       GoRoute(
         path: AppRoutes.productsDetail,
         name: AppRoutes.productsDetailName,
-        builder: (context, state) => ProductDetailScreen(
-          productId: state.pathParameters['id']!,
-        ),
+        builder: (context, state) =>
+            ProductDetailScreen(productId: state.pathParameters['id']!),
       ),
       GoRoute(
         path: AppRoutes.productUnitsDetail,
         name: AppRoutes.productUnitsDetailName,
-        builder: (context, state) => ProductUnitDetailScreen(
-          unitId: state.pathParameters['id']!,
-        ),
+        builder: (context, state) =>
+            ProductUnitDetailScreen(unitId: state.pathParameters['id']!),
       ),
       GoRoute(
         path: AppRoutes.warehouses,
@@ -107,16 +108,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.customersEdit,
         name: AppRoutes.customersEditName,
-        builder: (context, state) => CustomerEditScreen(
-          customerId: state.pathParameters['id']!,
-        ),
+        builder: (context, state) =>
+            CustomerEditScreen(customerId: state.pathParameters['id']!),
       ),
       GoRoute(
         path: AppRoutes.customersDetail,
         name: AppRoutes.customersDetailName,
-        builder: (context, state) => CustomerDetailScreen(
-          customerId: state.pathParameters['id']!,
-        ),
+        builder: (context, state) =>
+            CustomerDetailScreen(customerId: state.pathParameters['id']!),
       ),
       GoRoute(
         path: AppRoutes.customers,
@@ -133,9 +132,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.suppliers,
         name: AppRoutes.suppliersName,
-        builder: (context, state) => const CustomersHubScreen(
-          initialTab: CustomersHubTab.suppliers,
-        ),
+        builder: (context, state) =>
+            const CustomersHubScreen(initialTab: CustomersHubTab.suppliers),
       ),
       GoRoute(
         path: AppRoutes.accounts,
@@ -151,6 +149,35 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.inventoryTransfers,
         name: AppRoutes.inventoryTransfersName,
         builder: (context, state) => const InventoryTransfersScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.templateSettings,
+        name: AppRoutes.templateSettingsName,
+        builder: (context, state) => const TemplateSettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.documentPreview,
+        name: AppRoutes.documentPreviewName,
+        builder: (context, state) {
+          final query = state.uri.queryParameters;
+          final kind = DocumentKind.fromDocumentType(query['kind']);
+          final entityId = query['entityId'];
+          if (kind == null || entityId == null || entityId.isEmpty) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid document preview request')),
+            );
+          }
+          DateTime? parseDate(String? raw) =>
+              raw == null || raw.isEmpty ? null : DateTime.tryParse(raw);
+          return DocumentPreviewScreen(
+            args: DocumentPreviewArgs(
+              kind: kind,
+              entityId: entityId,
+              fromDate: parseDate(query['from']),
+              toDate: parseDate(query['to']),
+            ),
+          );
+        },
       ),
     ],
   );

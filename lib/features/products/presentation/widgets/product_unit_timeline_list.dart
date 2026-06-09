@@ -46,8 +46,8 @@ class ProductUnitTimelineList extends StatelessWidget {
                   Text(events[i].notes!),
               ],
             ),
-            isThreeLine: events[i].notes != null &&
-                events[i].notes!.trim().isNotEmpty,
+            isThreeLine:
+                events[i].notes != null && events[i].notes!.trim().isNotEmpty,
           ),
         ],
       ],
@@ -57,7 +57,8 @@ class ProductUnitTimelineList extends StatelessWidget {
   String _titleForEvent(AppLocalizations l10n, UnitTimelineEvent event) {
     return switch (event.titleKey) {
       'unit_timeline.acquisition' => l10n.productUnitTimelineAcquisition,
-      'unit_timeline.purchase_invoice' => l10n.productUnitTimelinePurchaseInvoice,
+      'unit_timeline.purchase_invoice' =>
+        l10n.productUnitTimelinePurchaseInvoice,
       'unit_timeline.inventory_movement' =>
         l10n.productUnitTimelineInventoryMovement,
       'unit_timeline.reconciled' => l10n.productUnitTimelineReconciled,

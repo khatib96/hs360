@@ -54,7 +54,8 @@ class _BulkProductUnitsDialog extends StatefulWidget {
   final AppLocalizations l10n;
 
   @override
-  State<_BulkProductUnitsDialog> createState() => _BulkProductUnitsDialogState();
+  State<_BulkProductUnitsDialog> createState() =>
+      _BulkProductUnitsDialogState();
 }
 
 class _BulkProductUnitsDialogState extends State<_BulkProductUnitsDialog> {
@@ -176,9 +177,7 @@ class _BulkProductUnitsDialogState extends State<_BulkProductUnitsDialog> {
                 controller: _pasteController,
                 maxLines: null,
                 expands: true,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                ),
+                decoration: const InputDecoration(border: OutlineInputBorder()),
               ),
             ),
             const SizedBox(height: 8),

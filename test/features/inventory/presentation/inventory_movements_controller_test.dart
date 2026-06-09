@@ -17,7 +17,9 @@ import '../fake_inventory_repository.dart';
 import '../fake_warehouse_repository.dart';
 import '../../products/fake_product_repositories.dart';
 
-AppSession _session({Set<String> permissions = const {'inventory_movements.view'}}) {
+AppSession _session({
+  Set<String> permissions = const {'inventory_movements.view'},
+}) {
   return AppSession(
     userId: 'u',
     email: 'e@test.com',
@@ -26,10 +28,7 @@ AppSession _session({Set<String> permissions = const {'inventory_movements.view'
     accountType: 'user',
     displayName: 'Test',
     preferredLocale: 'en',
-    permissions: AppPermissions(
-      isManager: false,
-      permissions: permissions,
-    ),
+    permissions: AppPermissions(isManager: false, permissions: permissions),
   );
 }
 
@@ -61,9 +60,7 @@ InventoryMovement _movement({
 void main() {
   group('InventoryMovementsController', () {
     test('loads movements and never calls fetchInventoryBalances', () async {
-      final inventoryRepo = FakeInventoryRepository(
-        movements: [_movement()],
-      );
+      final inventoryRepo = FakeInventoryRepository(movements: [_movement()]);
       final container = ProviderContainer(
         overrides: [
           authControllerProvider.overrideWith(
@@ -78,7 +75,9 @@ void main() {
             ),
           ),
           inventoryRepositoryProvider.overrideWith((ref) => inventoryRepo),
-          productRepositoryProvider.overrideWith((ref) => FakeProductRepository()),
+          productRepositoryProvider.overrideWith(
+            (ref) => FakeProductRepository(),
+          ),
           warehouseRepositoryProvider.overrideWith(
             (ref) => FakeWarehouseRepository(),
           ),
@@ -97,21 +96,14 @@ void main() {
     });
 
     test('zero product search matches skips movements repo', () async {
-      final inventoryRepo = FakeInventoryRepository(
-        movements: [_movement()],
-      );
-      final productRepo = FakeProductRepository(
-        searchProductIdsResult: {},
-      );
+      final inventoryRepo = FakeInventoryRepository(movements: [_movement()]);
+      final productRepo = FakeProductRepository(searchProductIdsResult: {});
       final container = ProviderContainer(
         overrides: [
           authControllerProvider.overrideWith(
             () => TestAuthController(
               _session(
-                permissions: {
-                  'inventory_movements.view',
-                  'products.view',
-                },
+                permissions: {'inventory_movements.view', 'products.view'},
               ),
             ),
           ),
@@ -152,10 +144,7 @@ void main() {
           authControllerProvider.overrideWith(
             () => TestAuthController(
               _session(
-                permissions: {
-                  'inventory_movements.view',
-                  'products.view',
-                },
+                permissions: {'inventory_movements.view', 'products.view'},
               ),
             ),
           ),
@@ -192,7 +181,9 @@ void main() {
             ),
           ),
           inventoryRepositoryProvider.overrideWith((ref) => inventoryRepo),
-          productRepositoryProvider.overrideWith((ref) => FakeProductRepository()),
+          productRepositoryProvider.overrideWith(
+            (ref) => FakeProductRepository(),
+          ),
           warehouseRepositoryProvider.overrideWith(
             (ref) => FakeWarehouseRepository(),
           ),
@@ -200,8 +191,9 @@ void main() {
       );
       addTearDown(container.dispose);
 
-      final notifier =
-          container.read(inventoryMovementsControllerProvider.notifier);
+      final notifier = container.read(
+        inventoryMovementsControllerProvider.notifier,
+      );
       notifier.setOccurredFromDate(DateTime(2026, 5, 10));
       notifier.setOccurredToDate(DateTime(2026, 5, 12));
       await Future<void>.delayed(const Duration(milliseconds: 50));
@@ -220,7 +212,9 @@ void main() {
             ),
           ),
           inventoryRepositoryProvider.overrideWith((ref) => inventoryRepo),
-          productRepositoryProvider.overrideWith((ref) => FakeProductRepository()),
+          productRepositoryProvider.overrideWith(
+            (ref) => FakeProductRepository(),
+          ),
           warehouseRepositoryProvider.overrideWith(
             (ref) => FakeWarehouseRepository(),
           ),
@@ -228,8 +222,9 @@ void main() {
       );
       addTearDown(container.dispose);
 
-      final notifier =
-          container.read(inventoryMovementsControllerProvider.notifier);
+      final notifier = container.read(
+        inventoryMovementsControllerProvider.notifier,
+      );
       notifier.setOccurredToDate(DateTime(2026, 5, 10));
       await Future<void>.delayed(const Duration(milliseconds: 50));
       notifier.setOccurredFromDate(DateTime(2026, 5, 15));
@@ -242,19 +237,14 @@ void main() {
     });
 
     test('hydration failure keeps movement rows', () async {
-      final inventoryRepo = FakeInventoryRepository(
-        movements: [_movement()],
-      );
+      final inventoryRepo = FakeInventoryRepository(movements: [_movement()]);
       final productRepo = FakeProductRepository(stockLabelsThrows: true);
       final container = ProviderContainer(
         overrides: [
           authControllerProvider.overrideWith(
             () => TestAuthController(
               _session(
-                permissions: {
-                  'inventory_movements.view',
-                  'products.view',
-                },
+                permissions: {'inventory_movements.view', 'products.view'},
               ),
             ),
           ),
@@ -304,8 +294,9 @@ void main() {
           .read(inventoryMovementsControllerProvider.notifier)
           .refresh();
 
-      final notifier =
-          container.read(inventoryMovementsControllerProvider.notifier);
+      final notifier = container.read(
+        inventoryMovementsControllerProvider.notifier,
+      );
       notifier.setSearch('alpha');
       await Future<void>.delayed(const Duration(milliseconds: 350));
 
@@ -324,7 +315,9 @@ void main() {
             () => TestAuthController(_session(permissions: {})),
           ),
           inventoryRepositoryProvider.overrideWith((ref) => inventoryRepo),
-          productRepositoryProvider.overrideWith((ref) => FakeProductRepository()),
+          productRepositoryProvider.overrideWith(
+            (ref) => FakeProductRepository(),
+          ),
           warehouseRepositoryProvider.overrideWith(
             (ref) => FakeWarehouseRepository(),
           ),
@@ -355,7 +348,9 @@ void main() {
             ),
           ),
           inventoryRepositoryProvider.overrideWith((ref) => inventoryRepo),
-          productRepositoryProvider.overrideWith((ref) => FakeProductRepository()),
+          productRepositoryProvider.overrideWith(
+            (ref) => FakeProductRepository(),
+          ),
           warehouseRepositoryProvider.overrideWith(
             (ref) => FakeWarehouseRepository(),
           ),

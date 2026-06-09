@@ -27,7 +27,8 @@ void main() {
   });
 
   test('parses CSV with optional header', () {
-    final raw = 'serial_number,barcode,purchase_cost\n'
+    final raw =
+        'serial_number,barcode,purchase_cost\n'
         'HS-1,628001,10\n'
         'HS-2,,20';
     final result = parser.parse(raw);

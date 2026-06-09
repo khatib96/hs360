@@ -16,7 +16,9 @@ import '../fake_inventory_repository.dart';
 import '../../products/fake_product_repositories.dart';
 import '../fake_warehouse_repository.dart';
 
-AppSession _session({Set<String> permissions = const {'inventory_movements.create'}}) {
+AppSession _session({
+  Set<String> permissions = const {'inventory_movements.create'},
+}) {
   return AppSession(
     userId: 'u',
     email: 'e@test.com',
@@ -25,10 +27,7 @@ AppSession _session({Set<String> permissions = const {'inventory_movements.creat
     accountType: 'user',
     displayName: 'Test',
     preferredLocale: 'en',
-    permissions: AppPermissions(
-      isManager: false,
-      permissions: permissions,
-    ),
+    permissions: AppPermissions(isManager: false, permissions: permissions),
   );
 }
 
@@ -65,14 +64,19 @@ void main() {
           warehouseRepositoryProvider.overrideWith(
             (ref) => FakeWarehouseRepository(),
           ),
-          productRepositoryProvider.overrideWith((ref) => FakeProductRepository()),
+          productRepositoryProvider.overrideWith(
+            (ref) => FakeProductRepository(),
+          ),
         ],
       );
       addTearDown(container.dispose);
 
-      await container.read(inventoryBalancesControllerProvider.notifier).refresh();
-      final notifier =
-          container.read(inventoryAdjustmentControllerProvider.notifier);
+      await container
+          .read(inventoryBalancesControllerProvider.notifier)
+          .refresh();
+      final notifier = container.read(
+        inventoryAdjustmentControllerProvider.notifier,
+      );
 
       final error = await notifier.submit(
         movementType: MovementType.adjustmentIn,

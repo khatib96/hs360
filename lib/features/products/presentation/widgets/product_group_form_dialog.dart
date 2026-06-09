@@ -32,8 +32,12 @@ class _ProductGroupFormDialogState extends State<ProductGroupFormDialog> {
   @override
   void initState() {
     super.initState();
-    _nameArController = TextEditingController(text: widget.initial?.nameAr ?? '');
-    _nameEnController = TextEditingController(text: widget.initial?.nameEn ?? '');
+    _nameArController = TextEditingController(
+      text: widget.initial?.nameAr ?? '',
+    );
+    _nameEnController = TextEditingController(
+      text: widget.initial?.nameEn ?? '',
+    );
     _parentId = widget.initial?.parentId;
     final excludedId = widget.excludeGroupId;
     if (excludedId != null && _parentId != null) {
@@ -75,7 +79,8 @@ class _ProductGroupFormDialogState extends State<ProductGroupFormDialog> {
 
     final descendants = <String>{};
     void visit(String parentId) {
-      for (final child in childrenByParent[parentId] ?? const <ProductGroup>[]) {
+      for (final child
+          in childrenByParent[parentId] ?? const <ProductGroup>[]) {
         if (!descendants.add(child.id)) continue;
         visit(child.id);
       }

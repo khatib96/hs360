@@ -79,15 +79,18 @@ class InventoryMovementsState {
           ? null
           : (warehouseLabelsWarningCode ?? this.warehouseLabelsWarningCode),
       search: clearSearch ? null : (search ?? this.search),
-      warehouseId:
-          clearWarehouseFilter ? null : (warehouseId ?? this.warehouseId),
-      movementType:
-          clearMovementType ? null : (movementType ?? this.movementType),
+      warehouseId: clearWarehouseFilter
+          ? null
+          : (warehouseId ?? this.warehouseId),
+      movementType: clearMovementType
+          ? null
+          : (movementType ?? this.movementType),
       occurredFromDate: clearOccurredFrom
           ? null
           : (occurredFromDate ?? this.occurredFromDate),
-      occurredToDate:
-          clearOccurredTo ? null : (occurredToDate ?? this.occurredToDate),
+      occurredToDate: clearOccurredTo
+          ? null
+          : (occurredToDate ?? this.occurredToDate),
       limit: limit ?? this.limit,
       serverSideProductSearch:
           serverSideProductSearch ?? this.serverSideProductSearch,

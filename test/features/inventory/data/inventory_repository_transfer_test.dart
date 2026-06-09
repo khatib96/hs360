@@ -18,10 +18,7 @@ AppSession _session({Set<String> permissions = const {}}) {
     accountType: 'user',
     displayName: 'Test',
     preferredLocale: 'en',
-    permissions: AppPermissions(
-      isManager: false,
-      permissions: permissions,
-    ),
+    permissions: AppPermissions(isManager: false, permissions: permissions),
   );
 }
 
@@ -38,18 +35,21 @@ InventoryTransferFormState _transferForm() {
 
 void main() {
   group('InventoryRepository transfer methods', () {
-    test('recordInventoryTransfer without permission throws before RPC', () async {
-      final fake = FakeInventoryRepository();
-      await expectLater(
-        fake.recordInventoryTransfer(_session(), _transferForm()),
-        throwsA(
-          predicate<InventoryException>(
-            (e) => e.code == InventoryException.permissionDenied,
+    test(
+      'recordInventoryTransfer without permission throws before RPC',
+      () async {
+        final fake = FakeInventoryRepository();
+        await expectLater(
+          fake.recordInventoryTransfer(_session(), _transferForm()),
+          throwsA(
+            predicate<InventoryException>(
+              (e) => e.code == InventoryException.permissionDenied,
+            ),
           ),
-        ),
-      );
-      expect(fake.transferCallCount, 0);
-    });
+        );
+        expect(fake.transferCallCount, 0);
+      },
+    );
 
     test('repository gates permission before RPC', () async {
       final repo = InventoryRepository(null);

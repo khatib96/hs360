@@ -1,6 +1,219 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-06-07 (Session: Phase 5 M1/M2 hardening closure — permanent regression suite complete).
+> Updated 2026-06-10 (Session: Phase 5 M3 Arabic PDF correctness closure).
+
+---
+
+## Session 2026-06-10 - Phase 5 M3 Arabic PDF Correctness Closure
+
+### Final status
+
+- The M3 visual gate was reopened after Arabic text was found disconnected or reversed in rendered report images.
+- The defect was fixed and protected by Arabic-only Windows and Android PDF goldens.
+- **Phase 5 M3 is closed.** Arabic, bilingual, performance, analysis, and test gates all pass on the final code.
+
+### Root causes and fixes
+
+- The `pdf` package only applies Arabic shaping when a text run is explicitly RTL; bilingual Arabic/English strings had been combined into one LTR text widget.
+- Localized Arabic and English are now emitted as separate RTL and LTR runs.
+- Table headers, row values, totals, tenant/party details, metadata, notes, payment details, footer, and asset identity use content-aware direction.
+- Latin identifiers inside Arabic documents remain LTR, preventing values such as `C-001` and `SN-12345` from being reversed.
+- Arabic monetary labels use `د.ك`; English labels retain `KWD`.
+- The statement table keeps a fast raw-string path for non-Arabic cells in bilingual documents, avoiding thousands of unnecessary widgets while preserving directed widgets for Arabic content and Arabic-only output.
+- PDF golden and benchmark wrappers now drain child-process stdout/stderr, preventing pipe-buffer stalls and retaining useful failure output.
+
+### Final visual and performance gates
+
+```text
+Windows PDF goldens                                   -> 10/10 compare-only passed
+Android PDF goldens                                   -> 10/10 compare-only passed
+Arabic-only goldens                                   -> customer statement + asset tag label
+Visual inspection                                     -> connected Arabic; correct RTL; C-001 and SN-12345 remain LTR
+Windows 1000-row benchmark median / max                -> 29,826 ms / 34,710 ms
+Android 1000-row benchmark median / max                -> 42,901 ms / 54,122 ms
+Performance thresholds                                -> median <=45s; max <=60s; passed on both platforms
+```
+
+### Final Flutter and environment gates
+
+```text
+flutter analyze                                       -> no issues
+flutter test                                          -> 492 passed
+Windows debug/profile builds through gates            -> passed
+Android debug/profile builds through gates            -> passed
+Docker/Supabase health                                -> all enabled services healthy, including Vector
+```
+
+### Manual acceptance phrases
+
+- Verify `شركة تجريبية`, `عميل عربي`, `فاتورة مبيعات`, `الرصيد الافتتاحي`, and `الإجمالي`.
+- Verify Arabic letters are connected and read right-to-left.
+- Verify `C-001`, `SN-12345`, dates, numbers, and QR payloads are not reversed.
+
+---
+
+## Session 2026-06-09 - Phase 5 M3 Tier A Closure
+
+### Final status
+
+- Docker Desktop virtualization was restored and the local Supabase stack became operational.
+- The invalid conditional Tier B label was superseded by a complete **Tier A pass at the database cap of 1000 statement rows**.
+- **Phase 5 M3 is closed.** No M3 gate remains skipped or externally blocked.
+
+### Final corrective work
+
+- Fixed benchmark process exit handling, metadata transport, Android `adb` discovery, timeout handling, and result-artifact validation.
+- Added a device-safe PDF golden driver because Flutter 3.41.6 passes an invalid Windows path URI through the stock device-golden proxy.
+- Added Windows and Android golden baselines with update and compare-only wrappers.
+- Fixed clipped asset labels, duplicate localized company/product/party text, missing statement running balances, and raw totals keys.
+- Kept statement money as decimal strings and added a normalized serialized-money fast path without `double` conversion.
+- Moved `KWD` from every statement money cell to the debit/credit/balance headers, preserving meaning while reducing PDF layout cost.
+- Retained all earlier hardening: measured thermal pages, tenant optional columns, strict logo loading, template validation, read-only template ACLs, and restricted audit helpers.
+
+### Database and integration gates
+
+```text
+npx supabase db reset                                  -> migrations 001-057 passed
+scripts/test/run_sql_suites.ps1                        -> Phase A/B/C and pollution rerun passed
+npx supabase db lint --local --level warning           -> exit 0; pre-existing warnings only
+Windows Supabase seeded-template integration           -> passed; 6 templates
+Android Supabase seeded-template integration           -> passed; 6 templates
+Docker/Supabase post-restart health                     -> all enabled services healthy, including Vector
+```
+
+### Tier A performance
+
+```text
+Cap / workload                                         -> 1000 rows, 43 pages
+Windows median / max                                   -> 21,594 ms / 21,598 ms
+Windows peak memory / PDF size                         -> 168,792,064 B / 165,686 B
+Android median / max                                   -> 36,029 ms / 41,108 ms
+Android peak memory / PDF size                         -> 196,899,840 B / 165,686 B
+Thresholds                                             -> median 45s, max 60s, memory 512MiB/384MiB, PDF 5MiB
+Result                                                 -> passed on both platforms
+```
+
+### Flutter and visual gates
+
+```text
+dart run build_runner build --delete-conflicting-outputs -> passed
+flutter gen-l10n                                         -> passed
+dart format --output=none --set-exit-if-changed ...      -> 485 files, 0 changed
+flutter analyze                                          -> no issues
+flutter test                                             -> 487 passed
+Windows PDF goldens                                      -> 8/8 update + compare-only passed
+Android PDF goldens                                      -> 8/8 update + compare-only passed
+Visual inspection                                        -> statement and asset label passed
+flutter build windows                                    -> Release hs360.exe passed
+flutter build apk --debug                                -> app-debug.apk passed
+PowerShell parser                                        -> all M3 scripts valid
+git diff --check                                         -> passed
+```
+
+### Residual note
+
+- `build_runner` reports that SDK language version 3.11 is newer than the transitive `analyzer` language version 3.9. This is a dependency-tooling warning only; generation, analysis, tests, and both builds pass.
+- Supabase Analytics on Windows requires Docker Desktop's unauthenticated API on `localhost:2375`. It was enabled together with IPv6 DNS filtering because the local Supabase network is IPv4-only. Keep this machine and port limited to trusted local development.
+
+---
+
+## Session 2026-06-08 — Phase 5 M3 Corrective Closure (v9)
+
+### Context
+
+- Executed standalone M3 corrective plan v9: hardened migration 057, block-split PDF renderer, isolate protocol, SQL pollution gate, benchmark wrapper, golden policy, integration tests.
+
+### Corrective highlights (057 + Flutter)
+
+- **`m3_statement_row_limit()` = 1000**; zero-safe no-account statement payload; stable `je.id/jl.id` ordering; root `notes: null`.
+- **ACL:** `REVOKE ALL` + `GRANT SELECT` on `document_templates` / `tenant_document_settings`; TRUNCATE denied tests.
+- **Validator:** 4-arg `validate_document_template_body(..., p_schema_version)`; payment_voucher rejected at all layers.
+- **Renderer:** `lib/core/documents/services/pdf/` with 12 block files; thermal measure/reject >1200mm; label 18×10mm + 1mm gap; notes empty when null.
+- **Isolate:** `Isolate.run(() => documentRenderWorker(dto))`; decimal money strings in DTO.
+- **Benchmark:** `test_driver/benchmark_driver.dart` + `scripts/benchmark/run_statement_perf.ps1` (1800s timeout; null exit-code fix).
+- **Goldens:** root `flutter_test_config.dart` host comparator; integration test installs `GoldenPdfComparator`; Windows baselines under `test/core/documents/goldens/windows/`.
+- **Integration:** `integration_test/documents/supabase_seeded_templates_test.dart` + `scripts/integration/run_supabase_templates.ps1` (stderr-safe status parse; targets supabase test only).
+
+### Verification (Windows Tier B — 2026-06-08)
+
+```text
+npx supabase db reset                          → 001–057 applied cleanly
+scripts/test/run_sql_suites.ps1                → Phase A/B/C passed (pollution gate)
+flutter analyze                                → no issues
+flutter test                                   → 476 passed
+flutter gen-l10n                               → ok
+dart format lib test integration_test …        → ok
+flutter build windows                          → Release hs360.exe
+flutter build apk --debug                      → app-debug.apk
+scripts/benchmark/run_statement_perf.ps1       → passed (1000 lines; median ~33.5s; peak mem ~159MB)
+integration_test/documents/pdf_golden_test.dart -d windows → 8/8 passed
+scripts/integration/run_supabase_templates.ps1 -Platform windows → passed (6 templates + payment_voucher reject)
+```
+
+### Tier A skips (documented)
+
+```text
+SKIPPED: Android perf benchmark (no device/emulator in gate run)
+SKIPPED: Android PDF goldens (no device/emulator in gate run)
+SKIPPED: Android Supabase integration (no device/emulator in gate run)
+```
+
+**Label:** M3 CONDITIONAL CLOSURE — Windows gates green; Android Tier A not run in this environment.
+
+### M3 status
+
+- **Corrective closure complete (Windows Tier B).** Next: Phase 5 M4 — tax foundation per finance plan.
+
+---
+
+## Session 2026-06-07 — Phase 5 M3 Closure (Document Templates + PDF Renderer)
+
+### Context
+
+- Implemented approved M3 plan: migration [`057_phase_5_document_templates.sql`](supabase/migrations/057_phase_5_document_templates.sql), Flutter `lib/core/documents/`, settings screen, preview integration, SQL + Flutter tests.
+
+### Database (057)
+
+- **`document_templates`:** read-only for clients; six seeded templates per tenant; `validate_document_template_body`; bootstrap trigger + backfill.
+- **`tenant_document_settings`:** RPC-only writes via `upsert_tenant_document_settings`.
+- **RPCs:** `get_effective_document_template`, `get_tenant_document_settings`, `upsert_tenant_document_settings`, `get_customer_statement_document_payload` (range-correct summary, 5000-row provisional cap, 365-day inclusive window), `get_product_unit_label_payload` (requires `product_units.view`).
+- **Audit:** `audit_log_row()` extended for `tenant_document_settings`; INSERT/UPDATE audited.
+- **RLS:** SELECT with `settings.templates.view OR edit`; REVOKE direct writes on both tables.
+- **SQL suite:** [`phase_5_document_templates.sql`](supabase/tests/phase_5_document_templates.sql) (17 cases: backfill, validator, RLS, label perms, date range, legacy invoice view, logo HTTPS, no-default, audit, summary math, tenant_settings fallback, statement_range_too_large, anon denial, direct settings write denial).
+
+### Flutter
+
+- **Core:** domain, repository, validator, `PdfFontRegistry`, `PdfDocumentRenderer`, `LogoLoader` (image package), QR encoder, permissions (preview vs export, legacy `invoices.view`).
+- **UI:** `/settings/templates`, `/documents/preview` (statement + asset label); PdfPreview export gated; statement tab + unit detail preview buttons.
+- **Fonts:** Noto Sans + Noto Sans Arabic under `assets/fonts/noto/` + OFL.txt.
+- **Deps:** `pdf`, `printing`, `http`, `image`.
+
+### Verification
+
+```text
+flutter analyze                                → no issues
+flutter test                                   → 405 passed (+24 M3)
+flutter test test/manual/arabic_pdf_prototype_test.dart → passed (prototype gate)
+flutter test test/core/documents/services/pdf_document_renderer_test.dart → 2000-line statement perf gate passed (~19s, 5000-row SQL cap retained)
+flutter build windows                          → succeeded
+flutter build apk --debug                      → succeeded
+npx supabase db reset                          → 001–057 applied cleanly
+phase_1d_rls … phase_5_document_templates.sql  → all passed
+npx supabase db lint --local --level warning   → pre-existing warnings only (057: m3_default_template_body stable fix applied)
+```
+
+### File-size notes (M3)
+
+- [`057_phase_5_document_templates.sql`](supabase/migrations/057_phase_5_document_templates.sql) ~1098 lines — single migration with seeds/validators/RPCs (intentional).
+- [`pdf_document_renderer.dart`](lib/core/documents/services/pdf_document_renderer.dart) ~570 lines — block rendering; dynamic `MultiPage.maxPages` for large statements/invoices.
+
+### M3 status
+
+- **Closed.** Next: Phase 5 M4 — tax foundation per finance plan.
+
+### Explicit non-goals (honored)
+
+- No edits to migrations ≤056; no stamp/signature columns; no payment_voucher template; no truncated financial PDFs; no production invoice fixture routes.
 
 ---
 

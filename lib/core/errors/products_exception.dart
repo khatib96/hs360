@@ -35,7 +35,10 @@ class ProductsException extends AppException {
   static const supabaseNotConfigured = 'supabaseNotConfigured';
   static const unknown = 'unknown';
 
-  factory ProductsException.fromSupabase(Object error, [StackTrace? stackTrace]) {
+  factory ProductsException.fromSupabase(
+    Object error, [
+    StackTrace? stackTrace,
+  ]) {
     if (error is ProductsException) return error;
 
     final message = _extractMessage(error).toLowerCase();
@@ -50,10 +53,7 @@ class ProductsException extends AppException {
       );
     }
     if (message.contains('duplicate_serial')) {
-      return ProductsException(
-        code: duplicateSerial,
-        technicalDetail: message,
-      );
+      return ProductsException(code: duplicateSerial, technicalDetail: message);
     }
     if (message.contains('not_serialized_product')) {
       return ProductsException(
@@ -62,10 +62,7 @@ class ProductsException extends AppException {
       );
     }
     if (message.contains('unit_not_editable')) {
-      return ProductsException(
-        code: unitNotEditable,
-        technicalDetail: message,
-      );
+      return ProductsException(code: unitNotEditable, technicalDetail: message);
     }
     if (message.contains('23505') || message.contains('unique')) {
       if (message.contains('ux_warehouses_active_van_agent')) {

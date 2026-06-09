@@ -44,9 +44,15 @@ class ProductWizardIdentityStep extends StatelessWidget {
               actions: [const SizedBox.shrink()],
             ),
           ),
-        AppTextField(label: l10n.productFieldNameAr, controller: nameArController),
+        AppTextField(
+          label: l10n.productFieldNameAr,
+          controller: nameArController,
+        ),
         const SizedBox(height: 12),
-        AppTextField(label: l10n.productFieldNameEn, controller: nameEnController),
+        AppTextField(
+          label: l10n.productFieldNameEn,
+          controller: nameEnController,
+        ),
         const SizedBox(height: 12),
         if (canSelectGroup)
           DropdownButtonFormField<String>(
@@ -93,8 +99,8 @@ class ProductWizardIdentityStep extends StatelessWidget {
                 ..canBeRented = enabled
                 ..productType = enabled
                     ? (draft.productType.isRental
-                        ? draft.productType
-                        : ProductType.assetRental)
+                          ? draft.productType
+                          : ProductType.assetRental)
                     : ProductType.saleOnly,
             );
           },
@@ -164,15 +170,19 @@ class ProductWizardUnitsStep extends StatelessWidget {
         const SizedBox(height: 12),
         DropdownButtonFormField<UnitOfMeasure?>(
           initialValue: draft.unitSecondary,
-          decoration:
-              InputDecoration(labelText: l10n.productFieldUnitSecondary),
+          decoration: InputDecoration(
+            labelText: l10n.productFieldUnitSecondary,
+          ),
           items: [
             DropdownMenuItem<UnitOfMeasure?>(
               value: null,
               child: Text(l10n.productNoSecondaryUnit),
             ),
             ...UnitOfMeasure.values.map(
-              (u) => DropdownMenuItem(value: u, child: Text(unitOfMeasureLabel(u))),
+              (u) => DropdownMenuItem(
+                value: u,
+                child: Text(unitOfMeasureLabel(u)),
+              ),
             ),
           ],
           onChanged: (v) {
@@ -232,7 +242,9 @@ class ProductWizardPricingStep extends StatelessWidget {
             AppTextField(
               label: l10n.productFieldMinSalePrice,
               controller: minSalePriceController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
             ),
           ],
           const SizedBox(height: 12),
@@ -277,7 +289,10 @@ class ProductWizardFlagsStep extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        AppTextField(label: l10n.productFieldBarcode, controller: barcodeController),
+        AppTextField(
+          label: l10n.productFieldBarcode,
+          controller: barcodeController,
+        ),
         const SizedBox(height: 8),
         SwitchListTile(
           title: Text(l10n.productFieldSerialized),
@@ -287,11 +302,10 @@ class ProductWizardFlagsStep extends StatelessWidget {
           value: draft.isSerialized,
           onChanged: canChangeSerialized
               ? (v) => onChanged(
-                    draft
-                      ..isSerialized = v
-                      ..unitPrimary =
-                          v ? UnitOfMeasure.piece : draft.unitPrimary,
-                  )
+                  draft
+                    ..isSerialized = v
+                    ..unitPrimary = v ? UnitOfMeasure.piece : draft.unitPrimary,
+                )
               : null,
         ),
         SwitchListTile(
@@ -341,8 +355,10 @@ class ProductWizardReviewStep extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        Text(l10n.productWizardReviewTitle,
-            style: Theme.of(context).textTheme.titleMedium),
+        Text(
+          l10n.productWizardReviewTitle,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
         const SizedBox(height: 12),
         _line(l10n.productFieldNameAr, draft.nameAr),
         _line(l10n.productFieldNameEn, draft.nameEn),

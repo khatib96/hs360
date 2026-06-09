@@ -47,10 +47,7 @@ class ProductUnitDetailHeader extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                unit.serialNumber,
-                style: theme.textTheme.headlineSmall,
-              ),
+              Text(unit.serialNumber, style: theme.textTheme.headlineSmall),
               const SizedBox(height: 12),
               Wrap(spacing: 8, runSpacing: 8, children: chips),
               const SizedBox(height: 16),
@@ -58,12 +55,7 @@ class ProductUnitDetailHeader extends StatelessWidget {
                 spacing: 24,
                 runSpacing: 12,
                 children: fields
-                    .map(
-                      (field) => SizedBox(
-                        width: 220,
-                        child: field,
-                      ),
-                    )
+                    .map((field) => SizedBox(width: 220, child: field))
                     .toList(),
               ),
             ],

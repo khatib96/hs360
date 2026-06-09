@@ -33,10 +33,7 @@ String unitStatusLabel(AppLocalizations l10n, UnitStatus status) {
   };
 }
 
-String unitHealthLabel(
-  AppLocalizations l10n,
-  ProductUnitHealthStatus health,
-) {
+String unitHealthLabel(AppLocalizations l10n, ProductUnitHealthStatus health) {
   return switch (health) {
     ProductUnitHealthStatus.good => l10n.productUnitHealthGood,
     ProductUnitHealthStatus.needsService => l10n.productUnitHealthNeedsService,

@@ -31,8 +31,7 @@ class WarehousesScreen extends ConsumerWidget {
     final state = ref.watch(warehousesControllerProvider);
     final controller = ref.read(warehousesControllerProvider.notifier);
 
-    final canCreate =
-        session != null && canCreateWarehouse(session);
+    final canCreate = session != null && canCreateWarehouse(session);
     final canEdit = session != null && canEditWarehouse(session);
     final canViewStock = session != null && canViewInventoryBalances(session);
 
@@ -94,11 +93,8 @@ class WarehousesScreen extends ConsumerWidget {
                 state: state,
                 initial: warehouse,
               ),
-              onDeactivate: (warehouse) => _confirmDeactivate(
-                context,
-                ref,
-                warehouse,
-              ),
+              onDeactivate: (warehouse) =>
+                  _confirmDeactivate(context, ref, warehouse),
             ),
           ),
         ],
@@ -113,21 +109,14 @@ class WarehousesScreen extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.add),
             tooltip: l10n.warehouseAdd,
-            onPressed: () => _showFormDialog(
-              context,
-              ref,
-              languageCode,
-              state: state,
-            ),
+            onPressed: () =>
+                _showFormDialog(context, ref, languageCode, state: state),
           ),
       ],
       body: SizedBox.expand(
         child: Stack(
           children: [
-            Padding(
-              padding: const EdgeInsetsDirectional.all(24),
-              child: body,
-            ),
+            Padding(padding: const EdgeInsetsDirectional.all(24), child: body),
             if (state.isLoading && state.warehouses.isNotEmpty)
               const Positioned(
                 top: 0,
@@ -226,9 +215,7 @@ class WarehousesScreen extends ConsumerWidget {
 
     if (errorCode != null && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(warehouseErrorMessage(l10n, errorCode)),
-        ),
+        SnackBar(content: Text(warehouseErrorMessage(l10n, errorCode))),
       );
     }
   }
@@ -267,10 +254,7 @@ class _WarehousesEmptyState extends StatelessWidget {
 }
 
 class _WarehousesErrorState extends StatelessWidget {
-  const _WarehousesErrorState({
-    required this.message,
-    required this.onRetry,
-  });
+  const _WarehousesErrorState({required this.message, required this.onRetry});
 
   final String message;
   final VoidCallback onRetry;
@@ -284,10 +268,7 @@ class _WarehousesErrorState extends StatelessWidget {
         children: [
           Text(message, textAlign: TextAlign.center),
           const SizedBox(height: 16),
-          FilledButton(
-            onPressed: onRetry,
-            child: Text(l10n.retry),
-          ),
+          FilledButton(onPressed: onRetry, child: Text(l10n.retry)),
         ],
       ),
     );

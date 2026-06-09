@@ -28,14 +28,18 @@ class ProductTypeBadge extends StatelessWidget {
       ProductType.saleOnly => '',
     };
     final label = switch ((canBeSold, canBeRented)) {
-      (true, true) => '${l10n.productModeSale} + ${l10n.productModeRental}'
-          ' ($rentalKind)',
+      (true, true) =>
+        '${l10n.productModeSale} + ${l10n.productModeRental}'
+            ' ($rentalKind)',
       (false, true) => '${l10n.productModeRental} ($rentalKind)',
       _ => l10n.productModeSale,
     };
 
     return Container(
-      padding: const EdgeInsetsDirectional.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsetsDirectional.symmetric(
+        horizontal: 8,
+        vertical: 4,
+      ),
       decoration: BoxDecoration(
         color: AppColors.goldSoft.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(4),
@@ -53,11 +57,16 @@ class ProductActiveBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final label = isActive ? l10n.productStatusActive : l10n.productStatusInactive;
+    final label = isActive
+        ? l10n.productStatusActive
+        : l10n.productStatusInactive;
     final color = isActive ? AppColors.success : AppColors.neutral600;
 
     return Container(
-      padding: const EdgeInsetsDirectional.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsetsDirectional.symmetric(
+        horizontal: 8,
+        vertical: 4,
+      ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(4),
@@ -103,9 +112,9 @@ class ProductStockBadge extends StatelessWidget {
     if (reorderPoint != null && qty <= reorderPoint!) {
       return Text(
         '${l10n.productStockLow} (${formatQuantity(qty)})',
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: AppColors.warning,
-            ),
+        style: Theme.of(
+          context,
+        ).textTheme.labelSmall?.copyWith(color: AppColors.warning),
       );
     }
 
@@ -115,8 +124,9 @@ class ProductStockBadge extends StatelessWidget {
     );
   }
 
-  TextStyle? _mutedStyle(BuildContext context) =>
-      Theme.of(context).textTheme.labelSmall?.copyWith(color: AppColors.neutral600);
+  TextStyle? _mutedStyle(BuildContext context) => Theme.of(
+    context,
+  ).textTheme.labelSmall?.copyWith(color: AppColors.neutral600);
 }
 
 /// Em dash placeholder for unavailable numeric cells.
@@ -128,9 +138,9 @@ class ProductEmDashCell extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     return Text(
       l10n.productsNotAvailable,
-      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: AppColors.neutral600,
-          ),
+      style: Theme.of(
+        context,
+      ).textTheme.bodyMedium?.copyWith(color: AppColors.neutral600),
     );
   }
 }

@@ -84,12 +84,9 @@ class CustomerLocationsController extends _$CustomerLocationsController {
 
     state = state.copyWith(isMutating: true, clearError: true);
     try {
-      await ref.read(customerServiceLocationRepositoryProvider).updateLocation(
-            session,
-            customerId,
-            locationId,
-            input,
-          );
+      await ref
+          .read(customerServiceLocationRepositoryProvider)
+          .updateLocation(session, customerId, locationId, input);
       await refresh();
       state = state.copyWith(isMutating: false);
       return null;

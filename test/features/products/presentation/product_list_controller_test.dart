@@ -22,10 +22,7 @@ AppSession _session({Set<String> permissions = const {'products.view'}}) {
     accountType: 'user',
     displayName: 'Test',
     preferredLocale: 'en',
-    permissions: AppPermissions(
-      isManager: false,
-      permissions: permissions,
-    ),
+    permissions: AppPermissions(isManager: false, permissions: permissions),
   );
 }
 
@@ -68,13 +65,9 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           authControllerProvider.overrideWith(
-            () => TestAuthController(
-              _session(permissions: {'products.view'}),
-            ),
+            () => TestAuthController(_session(permissions: {'products.view'})),
           ),
-          productRepositoryProvider.overrideWith(
-            (ref) => productRepository,
-          ),
+          productRepositoryProvider.overrideWith((ref) => productRepository),
           productGroupRepositoryProvider.overrideWith(
             (ref) => FakeProductGroupRepository(),
           ),
@@ -98,16 +91,12 @@ void main() {
         overrides: [
           authControllerProvider.overrideWith(
             () => TestAuthController(
-              _session(
-                permissions: {'products.view', 'inventory.view'},
-              ),
+              _session(permissions: {'products.view', 'inventory.view'}),
             ),
           ),
           productRepositoryProvider.overrideWith(
-            (ref) => FakeProductRepository(
-              products: [product],
-              stockThrows: true,
-            ),
+            (ref) =>
+                FakeProductRepository(products: [product], stockThrows: true),
           ),
           productGroupRepositoryProvider.overrideWith(
             (ref) => FakeProductGroupRepository(),
@@ -130,9 +119,7 @@ void main() {
         overrides: [
           authControllerProvider.overrideWith(
             () => TestAuthController(
-              _session(
-                permissions: {'products.view', 'product_groups.view'},
-              ),
+              _session(permissions: {'products.view', 'product_groups.view'}),
             ),
           ),
           productRepositoryProvider.overrideWith(

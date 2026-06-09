@@ -70,9 +70,12 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final state = ref.watch(customerDetailControllerProvider(widget.customerId));
-    final controller =
-        ref.read(customerDetailControllerProvider(widget.customerId).notifier);
+    final state = ref.watch(
+      customerDetailControllerProvider(widget.customerId),
+    );
+    final controller = ref.read(
+      customerDetailControllerProvider(widget.customerId).notifier,
+    );
 
     return AppShell(
       title: l10n.customerDetails,
@@ -141,13 +144,34 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
           controller: _tabController,
           isScrollable: true,
           tabs: [
-            Tab(key: const Key('customer-tab-profile'), text: l10n.customerProfile),
-            Tab(key: const Key('customer-tab-locations'), text: l10n.customerLocations),
-            Tab(key: const Key('customer-tab-contracts'), text: l10n.customerContracts),
-            Tab(key: const Key('customer-tab-invoices'), text: l10n.customerInvoices),
-            Tab(key: const Key('customer-tab-vouchers'), text: l10n.customerVouchers),
-            Tab(key: const Key('customer-tab-statement'), text: l10n.customerStatement),
-            Tab(key: const Key('customer-tab-timeline'), text: l10n.customerTimeline),
+            Tab(
+              key: const Key('customer-tab-profile'),
+              text: l10n.customerProfile,
+            ),
+            Tab(
+              key: const Key('customer-tab-locations'),
+              text: l10n.customerLocations,
+            ),
+            Tab(
+              key: const Key('customer-tab-contracts'),
+              text: l10n.customerContracts,
+            ),
+            Tab(
+              key: const Key('customer-tab-invoices'),
+              text: l10n.customerInvoices,
+            ),
+            Tab(
+              key: const Key('customer-tab-vouchers'),
+              text: l10n.customerVouchers,
+            ),
+            Tab(
+              key: const Key('customer-tab-statement'),
+              text: l10n.customerStatement,
+            ),
+            Tab(
+              key: const Key('customer-tab-timeline'),
+              text: l10n.customerTimeline,
+            ),
           ],
         ),
         Expanded(

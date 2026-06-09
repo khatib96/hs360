@@ -17,7 +17,10 @@ class SupplierException extends AppException {
   static const supabaseNotConfigured = 'supabaseNotConfigured';
   static const unknown = 'unknown';
 
-  factory SupplierException.fromSupabase(Object error, [StackTrace? stackTrace]) {
+  factory SupplierException.fromSupabase(
+    Object error, [
+    StackTrace? stackTrace,
+  ]) {
     if (error is SupplierException) return error;
 
     final message = _extractMessage(error).toLowerCase();
@@ -26,7 +29,10 @@ class SupplierException extends AppException {
       return SupplierException(code: tenantNotFound, technicalDetail: message);
     }
     if (message.contains('permission_denied')) {
-      return SupplierException(code: permissionDenied, technicalDetail: message);
+      return SupplierException(
+        code: permissionDenied,
+        technicalDetail: message,
+      );
     }
     if (message.contains('ap_parent_missing')) {
       return SupplierException(code: apParentMissing, technicalDetail: message);
@@ -41,7 +47,10 @@ class SupplierException extends AppException {
       return SupplierException(code: immutableColumn, technicalDetail: message);
     }
     if (message.contains('validation_failed')) {
-      return SupplierException(code: validationFailed, technicalDetail: message);
+      return SupplierException(
+        code: validationFailed,
+        technicalDetail: message,
+      );
     }
 
     return SupplierException(code: unknown, technicalDetail: message);

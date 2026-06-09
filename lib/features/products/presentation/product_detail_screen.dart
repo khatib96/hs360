@@ -28,14 +28,13 @@ class ProductDetailScreen extends ConsumerWidget {
     final languageCode = locale.languageCode;
     final session = ref.watch(authControllerProvider).valueOrNull;
     final state = ref.watch(productDetailControllerProvider(productId));
-    final controller =
-        ref.read(productDetailControllerProvider(productId).notifier);
+    final controller = ref.read(
+      productDetailControllerProvider(productId).notifier,
+    );
 
     final canEdit = session != null && canEditProduct(session);
-    final canViewCosts =
-        session != null && canViewFullProductCosts(session);
-    final canViewStock =
-        session != null && canViewProductStock(session);
+    final canViewCosts = session != null && canViewFullProductCosts(session);
+    final canViewStock = session != null && canViewProductStock(session);
 
     String groupLabel = l10n.productsGroupUnavailable;
     if (session != null && canViewProductGroups(session)) {

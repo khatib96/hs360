@@ -44,7 +44,9 @@ class _InventoryTransfersScreenState
     _qtyController.addListener(() => setState(() {}));
     _productSearchController.addListener(_onProductSearchControllerChanged);
     Future.microtask(
-      () => ref.read(inventoryTransferControllerProvider.notifier).loadWarehouses(),
+      () => ref
+          .read(inventoryTransferControllerProvider.notifier)
+          .loadWarehouses(),
     );
   }
 
@@ -65,7 +67,9 @@ class _InventoryTransfersScreenState
   void _onSearchChanged(String value) {
     _searchDebounce?.cancel();
     _searchDebounce = Timer(const Duration(milliseconds: 300), () {
-      ref.read(inventoryTransferControllerProvider.notifier).searchProducts(value);
+      ref
+          .read(inventoryTransferControllerProvider.notifier)
+          .searchProducts(value);
     });
   }
 
@@ -168,9 +172,9 @@ class _InventoryTransfersScreenState
     if (!mounted) return;
     if (errorCode == null) {
       _clearProductFields();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.inventoryTransferSuccess)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.inventoryTransferSuccess)));
       return;
     }
     setState(
@@ -242,7 +246,9 @@ class _InventoryTransfersScreenState
                           '${p.sku} — ${localizedTransferProductName(p, languageCode)}',
                         ),
                         subtitle: p.isSerialized
-                            ? Text(l10n.inventoryErrorSerializedTransferNotSupported)
+                            ? Text(
+                                l10n.inventoryErrorSerializedTransferNotSupported,
+                              )
                             : null,
                         onTap: () => _selectProduct(p),
                       ),
@@ -272,8 +278,10 @@ class _InventoryTransfersScreenState
                     ),
                   ],
                   const SizedBox(height: 12),
-                  Text(l10n.inventoryTransferNotes,
-                      style: Theme.of(context).textTheme.titleSmall),
+                  Text(
+                    l10n.inventoryTransferNotes,
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
                   const SizedBox(height: 8),
                   TextFormField(
                     controller: _notesController,
@@ -297,7 +305,9 @@ class _InventoryTransfersScreenState
                             ? const SizedBox(
                                 width: 20,
                                 height: 20,
-                                child: CircularProgressIndicator(strokeWidth: 2),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
                               )
                             : Text(l10n.inventoryTransferTitle),
                       ),

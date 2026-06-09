@@ -135,7 +135,9 @@ class _WarehouseFormDialogState extends State<WarehouseFormDialog> {
                   const SizedBox(height: 12),
                   DropdownButtonFormField<String?>(
                     initialValue: _agentId,
-                    decoration: InputDecoration(labelText: l10n.warehouseEmployee),
+                    decoration: InputDecoration(
+                      labelText: l10n.warehouseEmployee,
+                    ),
                     items: [
                       DropdownMenuItem(
                         value: null,

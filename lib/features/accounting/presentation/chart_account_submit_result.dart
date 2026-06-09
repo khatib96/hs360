@@ -15,6 +15,5 @@ class ChartAccountSubmitFailure extends ChartAccountSubmitResult {
   final List<String> errorCodes;
 }
 
-typedef ChartAccountFormSubmitHandler = Future<ChartAccountSubmitResult> Function(
-  ChartAccountFormState state,
-);
+typedef ChartAccountFormSubmitHandler =
+    Future<ChartAccountSubmitResult> Function(ChartAccountFormState state);

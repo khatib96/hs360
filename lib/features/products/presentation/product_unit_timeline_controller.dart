@@ -50,10 +50,7 @@ class ProductUnitTimelineController extends _$ProductUnitTimelineController {
           .fetchUnitTimeline(unitId, session);
       state = ProductUnitTimelineState(isLoading: false, events: events);
     } on ProductsException catch (e) {
-      state = ProductUnitTimelineState(
-        isLoading: false,
-        errorCode: e.code,
-      );
+      state = ProductUnitTimelineState(isLoading: false, errorCode: e.code);
     } catch (_) {
       state = const ProductUnitTimelineState(
         isLoading: false,
