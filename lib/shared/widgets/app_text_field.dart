@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
 
 /// Labeled form field with optional password visibility toggle.
 class AppTextField extends StatefulWidget {
@@ -68,7 +68,7 @@ class _AppTextFieldState extends State<AppTextField> {
           tooltip: tooltip,
           onPressed: () => setState(() => _obscured = !_obscured),
           icon: Icon(
-            _obscured ? LucideIcons.eye : LucideIcons.eyeOff,
+            _obscured ? LucideIcons.eye : LucideIcons.eye_off,
             size: 20,
           ),
         ),

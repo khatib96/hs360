@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
 
 import '../../core/theme/app_theme.dart';
 import 'error_banner.dart';
@@ -26,7 +26,7 @@ class MessageBanner extends StatelessWidget {
     final (Color color, IconData icon) = switch (variant) {
       MessageBannerVariant.success => (
         AppColors.success,
-        LucideIcons.checkCircle2,
+        LucideIcons.circle_check,
       ),
       MessageBannerVariant.info => (AppColors.info, LucideIcons.info),
       MessageBannerVariant.error => (AppColors.error, Icons.error_outline),

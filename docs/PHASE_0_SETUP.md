@@ -32,6 +32,16 @@ Optional Android:
 flutter run -d android
 ```
 
+iOS (macOS only):
+
+```bash
+flutter run -d ios
+# or with local Supabase:
+./scripts/run-local.sh ios
+```
+
+On a physical iPhone, use your Mac's LAN IP for `SUPABASE_URL` (not `127.0.0.1`).
+
 ---
 
 ## Verify Environment

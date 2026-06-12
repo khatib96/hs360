@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hs360/l10n/app_localizations.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
 
 import '../../../../core/routing/app_routes.dart';
 import '../auth_controller.dart';
@@ -17,7 +17,7 @@ class SignOutIconButton extends ConsumerWidget {
 
     return IconButton(
       tooltip: l10n.logout,
-      icon: const Icon(LucideIcons.logOut),
+      icon: const Icon(LucideIcons.log_out),
       onPressed: () => _signOut(context, ref),
     );
   }
