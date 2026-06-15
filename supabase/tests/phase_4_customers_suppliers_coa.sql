@@ -261,23 +261,37 @@ begin
   v_cust := create_customer('{"name_ar":"عميل تحديث مباشر","phone_primary":"+96550000777","create_account":true}'::jsonb);
   v_sup := create_supplier('{"name_ar":"مورد تحديث مباشر","create_account":true}'::jsonb);
 
-  update customers set name_ar = 'hack' where id = v_cust;
-  get diagnostics v_cnt = row_count;
-  if v_cnt <> 0 then
-    raise exception 'case16 failed: direct customer update affected % rows', v_cnt;
-  end if;
+  begin
+    update customers set name_ar = 'hack' where id = v_cust;
+    get diagnostics v_cnt = row_count;
+    if v_cnt <> 0 then
+      raise exception 'case16 failed: direct customer update affected % rows', v_cnt;
+    end if;
+  exception
+    when insufficient_privilege then null;
+  end;
 
-  update suppliers set name_ar = 'hack' where id = v_sup;
-  get diagnostics v_cnt = row_count;
-  if v_cnt <> 0 then
-    raise exception 'case16 failed: direct supplier update affected % rows', v_cnt;
-  end if;
+  begin
+    update suppliers set name_ar = 'hack' where id = v_sup;
+    get diagnostics v_cnt = row_count;
+    if v_cnt <> 0 then
+      raise exception 'case16 failed: direct supplier update affected % rows', v_cnt;
+    end if;
+  exception
+    when insufficient_privilege then null;
+  end;
 
-  update chart_of_accounts set name_ar = 'hack' where tenant_id = v_tenant_a and code = '1101';
-  get diagnostics v_cnt = row_count;
-  if v_cnt <> 0 then
-    raise exception 'case16 failed: direct chart_of_accounts update affected % rows', v_cnt;
-  end if;
+  begin
+    update chart_of_accounts
+    set name_ar = 'hack'
+    where tenant_id = v_tenant_a and code = '1101';
+    get diagnostics v_cnt = row_count;
+    if v_cnt <> 0 then
+      raise exception 'case16 failed: direct chart_of_accounts update affected % rows', v_cnt;
+    end if;
+  exception
+    when insufficient_privilege then null;
+  end;
 end $$;
 rollback;
 
@@ -344,25 +358,40 @@ begin
   select account_id into v_cust_acct from customers where id = v_cust;
   v_manual := create_chart_account('{"code":"9001","name_ar":"يدوي","name_en":"Manual","type":"expense"}'::jsonb);
 
-  delete from customers where id = v_cust;
-  get diagnostics v_cnt = row_count;
-  if v_cnt <> 0 then raise exception 'case18a failed: customer delete removed % rows', v_cnt; end if;
+  begin
+    delete from customers where id = v_cust;
+    get diagnostics v_cnt = row_count;
+    if v_cnt <> 0 then raise exception 'case18a failed: customer delete removed % rows', v_cnt; end if;
+  exception when insufficient_privilege then null;
+  end;
 
-  delete from suppliers where id = v_sup;
-  get diagnostics v_cnt = row_count;
-  if v_cnt <> 0 then raise exception 'case18b failed: supplier delete removed % rows', v_cnt; end if;
+  begin
+    delete from suppliers where id = v_sup;
+    get diagnostics v_cnt = row_count;
+    if v_cnt <> 0 then raise exception 'case18b failed: supplier delete removed % rows', v_cnt; end if;
+  exception when insufficient_privilege then null;
+  end;
 
-  delete from chart_of_accounts where tenant_id = v_tenant_a and code = '1101';
-  get diagnostics v_cnt = row_count;
-  if v_cnt <> 0 then raise exception 'case18c failed: system CoA delete removed % rows', v_cnt; end if;
+  begin
+    delete from chart_of_accounts where tenant_id = v_tenant_a and code = '1101';
+    get diagnostics v_cnt = row_count;
+    if v_cnt <> 0 then raise exception 'case18c failed: system CoA delete removed % rows', v_cnt; end if;
+  exception when insufficient_privilege then null;
+  end;
 
-  delete from chart_of_accounts where id = v_cust_acct;
-  get diagnostics v_cnt = row_count;
-  if v_cnt <> 0 then raise exception 'case18d failed: linked CoA delete removed % rows', v_cnt; end if;
+  begin
+    delete from chart_of_accounts where id = v_cust_acct;
+    get diagnostics v_cnt = row_count;
+    if v_cnt <> 0 then raise exception 'case18d failed: linked CoA delete removed % rows', v_cnt; end if;
+  exception when insufficient_privilege then null;
+  end;
 
-  delete from chart_of_accounts where id = v_manual;
-  get diagnostics v_cnt = row_count;
-  if v_cnt <> 0 then raise exception 'case18e failed: manual CoA delete removed % rows', v_cnt; end if;
+  begin
+    delete from chart_of_accounts where id = v_manual;
+    get diagnostics v_cnt = row_count;
+    if v_cnt <> 0 then raise exception 'case18e failed: manual CoA delete removed % rows', v_cnt; end if;
+  exception when insufficient_privilege then null;
+  end;
 end $$;
 rollback;
 
@@ -482,11 +511,15 @@ begin
   v_manual := create_chart_account('{"code":"9200","name_ar":"يدوي","name_en":"Manual","type":"expense"}'::jsonb);
   perform set_config('test.phase4.manual', v_manual::text, true);
 
-  update chart_of_accounts set is_system = true where id = v_manual;
-  get diagnostics v_cnt = row_count;
-  if v_cnt <> 0 then
-    raise exception 'case22 failed: authenticated escalated is_system (% rows)', v_cnt;
-  end if;
+  begin
+    update chart_of_accounts set is_system = true where id = v_manual;
+    get diagnostics v_cnt = row_count;
+    if v_cnt <> 0 then
+      raise exception 'case22 failed: authenticated escalated is_system (% rows)', v_cnt;
+    end if;
+  exception
+    when insufficient_privilege then null;
+  end;
 end $$;
 reset role;
 do $$

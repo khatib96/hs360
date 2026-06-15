@@ -16,7 +16,7 @@ abstract final class SupabaseClientProvider {
     return Supabase.instance.client;
   }
 
-  /// Initializes Supabase when URL and anon key are provided via dart-define.
+  /// Initializes Supabase when URL and a public API key are provided.
   /// Does not block the app if the local stack is down or keys are missing.
   static Future<void> initialize() async {
     if (_initialized) return;
@@ -25,7 +25,7 @@ abstract final class SupabaseClientProvider {
       _log.w(
         'Supabase anon key missing. Run with:\n'
         '  flutter run --dart-define=SUPABASE_ANON_KEY=<from supabase status -o env>\n'
-        'Or use scripts/run-local.ps1',
+        'Or use scripts/run-local.sh / scripts/run-local.ps1',
       );
       return;
     }
@@ -33,7 +33,7 @@ abstract final class SupabaseClientProvider {
     try {
       await Supabase.initialize(
         url: Env.supabaseUrl,
-        anonKey: Env.supabaseAnonKey,
+        publishableKey: Env.supabaseAnonKey,
       );
       _initialized = true;
       _log.i('Supabase client configured for ${Env.supabaseUrl}');

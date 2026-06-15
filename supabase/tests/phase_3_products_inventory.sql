@@ -771,26 +771,49 @@ begin
 end $$;
 rollback;
 
--- 17b. M6: update_product_unit_safe + unit_not_editable on rented.
+-- 17b. M6: update_product_unit_safe allows safe fields.
 begin;
+do $$
+declare
+  v_product_id uuid := '00000000-0000-0000-0000-000000000901';
+  v_warehouse uuid := '00000000-0000-0000-0000-000000000701';
+  v_unit_id uuid;
+begin
+  insert into product_units (
+    tenant_id,
+    product_id,
+    serial_number,
+    status,
+    current_warehouse_id,
+    acquired_at
+  )
+  values (
+    '00000000-0000-0000-0000-000000000101',
+    v_product_id,
+    'M6-EDIT-1',
+    'available_new',
+    v_warehouse,
+    current_date
+  )
+  returning id into v_unit_id;
+
+  perform set_config('test.m6.edit_unit_id', v_unit_id::text, true);
+end $$;
+
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 
 do $$
 declare
-  v_product_id uuid := '00000000-0000-0000-0000-000000000901';
-  v_warehouse uuid := '00000000-0000-0000-0000-000000000701';
-  v_units jsonb := jsonb_build_array(jsonb_build_object('serial_number', 'M6-EDIT-1'));
-  v_unit_id uuid;
+  v_unit_id uuid := current_setting('test.m6.edit_unit_id')::uuid;
   v_barcode text;
 begin
-  perform create_product_units(v_product_id, v_warehouse, v_units);
-
-  select id into v_unit_id
-  from product_units
-  where serial_number = 'M6-EDIT-1';
-
-  perform update_product_unit_safe(v_unit_id, 'BC-M6', 'Note M6', 'needs_service');
+  perform update_product_unit_safe(
+    v_unit_id,
+    'BC-M6',
+    'Note M6',
+    'needs_service'
+  );
 
   select barcode into v_barcode
   from product_units
@@ -799,21 +822,58 @@ begin
   if v_barcode <> 'BC-M6' then
     raise exception 'M6 safe update: barcode expected BC-M6, got %', v_barcode;
   end if;
+end $$;
+rollback;
 
-  update product_units
-  set status = 'rented'
-  where id = v_unit_id
-    and tenant_id = '00000000-0000-0000-0000-000000000101';
+-- 17c. M6: update_product_unit_safe rejects rented units.
+begin;
+do $$
+declare
+  v_unit_id uuid;
+begin
+  insert into product_units (
+    tenant_id,
+    product_id,
+    serial_number,
+    status,
+    current_warehouse_id,
+    acquired_at
+  )
+  values (
+    '00000000-0000-0000-0000-000000000101',
+    '00000000-0000-0000-0000-000000000901',
+    'M6-EDIT-RENTED-1',
+    'rented',
+    '00000000-0000-0000-0000-000000000701',
+    current_date
+  )
+  returning id into v_unit_id;
 
+  perform set_config('test.m6.rented_unit_id', v_unit_id::text, true);
+end $$;
+
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+
+do $$
+declare
+  v_unit_id uuid := current_setting('test.m6.rented_unit_id')::uuid;
+  v_rejected boolean := false;
+begin
   begin
     perform update_product_unit_safe(v_unit_id, 'X', null, null);
-    raise exception 'M6 rented edit: expected unit_not_editable';
   exception
     when others then
-      if position('unit_not_editable' in sqlerrm) = 0 then
+      if position('unit_not_editable' in sqlerrm) > 0 then
+        v_rejected := true;
+      else
         raise;
       end if;
   end;
+
+  if not v_rejected then
+    raise exception 'M6 rented edit: update unexpectedly succeeded';
+  end if;
 end $$;
 rollback;
 

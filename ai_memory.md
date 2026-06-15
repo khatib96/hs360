@@ -1,6 +1,73 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-06-10 (Session: Phase 5 M3 Arabic PDF correctness closure).
+> Updated 2026-06-15 (Session: Phase 5 M4 closure after adversarial sign-off).
+
+---
+
+## Session 2026-06-15 - Phase 5 M4 Tax Foundation Closure
+
+Adversarial corrective pass and closure blockers resolved:
+
+- Migration [`059_phase_5_tax_foundation.sql`](supabase/migrations/059_phase_5_tax_foundation.sql): tax settings/rates, snapshots, gates, math RPCs, RLS/ACL.
+- SQL suite [`phase_5_tax_foundation.sql`](supabase/tests/phase_5_tax_foundation.sql): 28 cases + pollution-free concurrency script.
+- Dart domain [`lib/domain/finance/`](lib/domain/finance/) with PostgreSQL parity fixtures.
+- [`phase_5_tax_foundation_concurrency.sh`](supabase/tests/phase_5_tax_foundation_concurrency.sh): exactly-one-winner race, seeded posting accounts (no provisioning pollution), postgres-only EXIT cleanup.
+
+### Verification
+
+```text
+npx supabase db reset                          → 001–059 applied
+./scripts/test/run_sql_suites.sh (×2, no reset) → Phase A/B/C passed both runs
+flutter analyze                                → no issues
+flutter test                                   → 516 passed
+git diff --check                               → clean
+```
+
+**Phase 5 M4 is closed.** Next: M5 — `060_phase_5_purchase_invoice_rpc.sql`.
+
+---
+
+## Session 2026-06-15 - Phase 5 M4 Adversarial Corrective Pass (superseded — closed)
+
+Independent review found seven gaps; all fixed and re-verified. See closure session above.
+
+---
+
+## Session 2026-06-15 - Phase 5 M4 Tax Foundation Closure (superseded — invalidated)
+
+Prior session claimed M4 closure before adversarial review; superseded by corrective pass and final closure above.
+
+---
+
+## Session 2026-06-14 - macOS Readiness and API ACL Review
+
+### Findings and corrective work (historical — superseded by M4 closure 2026-06-15)
+
+- ~~Phase 5 M4 is closed~~ — stale at time of writing; M4 was pending until 2026-06-15 adversarial sign-off (now closed).
+- Reviewed the Apple-platform commit added after M3.
+- Replaced migration `058` blanket authenticated grants with policy-derived
+  table privileges. Client roles no longer receive TRUNCATE, broad routine
+  EXECUTE, or default privileges that bypass RPC-only boundaries.
+- Reserved migration `059` for M4 Tax Foundation and shifted later planned
+  Phase 5 migrations by one.
+- Added `scripts/test/run_sql_suites.sh` for the existing A/B/C SQL pollution
+  gate on macOS/Linux.
+- `scripts/run-local.sh` now defaults to the macOS desktop target; pass `ios`
+  explicitly for the simulator/device.
+- Updated Supabase initialization to the current `publishableKey` API.
+
+### Environment notes
+
+- Flutter 3.44.2 / Dart 3.12.2 and CocoaPods 1.16.2 are installed.
+- Xcode 26.5 first-launch status is complete. A macOS build could not finish
+  inside the Codex sandbox because CoreSimulator/SwiftPM cache services were
+  blocked; retry from the normal Terminal remains required.
+- Local Supabase reset through migration `058` passed.
+- `scripts/test/run_sql_suites.sh` passed Phase A, M3 Phase B, and the Phase C
+  pollution rerun.
+- `flutter analyze` passes with no issues. Flutter widget tests could not run
+  inside the Codex sandbox because `flutter_tester` was terminated before its
+  localhost harness connected.
 
 ---
 
@@ -162,7 +229,7 @@ SKIPPED: Android Supabase integration (no device/emulator in gate run)
 
 ### M3 status
 
-- **Corrective closure complete (Windows Tier B).** Next: Phase 5 M4 — tax foundation per finance plan.
+- **Corrective closure complete (Windows Tier B).** ~~Next: Phase 5 M4 — tax foundation per finance plan.~~ *(superseded — M4 closed 2026-06-15.)*
 
 ---
 
@@ -209,7 +276,7 @@ npx supabase db lint --local --level warning   → pre-existing warnings only (0
 
 ### M3 status
 
-- **Closed.** Next: Phase 5 M4 — tax foundation per finance plan.
+- **Closed.** ~~Next: Phase 5 M4 — tax foundation per finance plan.~~ *(superseded — M4 closed 2026-06-15.)*
 
 ### Explicit non-goals (honored)
 
@@ -526,10 +593,9 @@ PowerShell note: pipe SQL tests with `Get-Content -Raw … | docker exec -i supa
 - **Phase 2 complete** - auth, routing, permissions, locale (M0-M8).
 - **Phase 3 complete** - products and inventory (M0-M8).
 - **Phase 4 M0-M8 complete** - customers, suppliers, CoA, service locations, coordinates, engineering closure through migration [`052`](supabase/migrations/052_phase_4_closure_hardening.sql).
-- **Phase 5 M1/M2 complete** — hardening via [`056`](supabase/migrations/056_phase_5_m1_m2_hardening.sql); M3 document templates next (`057`).
-- **Phase 5 M1 complete** - finance schema hardening via [`053`](supabase/migrations/053_phase_5_journal_source_enum.sql) + [`054`](supabase/migrations/054_phase_5_finance_foundation.sql): document sequences (SI/PI/RV/PV/JE), dual-field idempotency, `books_locked_through`, tenant-safe composite FKs, RPC-only finance writes, journal immutability, 17 new permissions, 8 posting RPC stubs. SQL suite [`phase_5_finance_foundation.sql`](supabase/tests/phase_5_finance_foundation.sql) passes; all Phase 1/3/4 suites still pass; `flutter analyze` clean; 376 Flutter tests green.
-- **Phase 5 M2 complete** - asset identity, serial, scan, timeline via [`055`](supabase/migrations/055_phase_5_asset_identity_scan_timeline.sql): SKU auto-generation, barcode uniqueness, unit events/timeline view, scan resolver, reconcile/correct serial RPCs; Flutter scanning core + product unit detail screen at `/product-units/:id`; SKU removed from product wizard. SQL suite [`phase_5_asset_identity.sql`](supabase/tests/phase_5_asset_identity.sql) passes; all prior SQL suites pass; `flutter analyze` clean; 381 Flutter tests green.
-- **Next:** Phase 5 M3 — `057_phase_5_document_templates.sql`.
+- **Phase 5 M1–M3 complete** — finance foundation, asset identity, document templates/PDF through migrations [`053`](supabase/migrations/053_phase_5_journal_source_enum.sql)–[`058`](supabase/migrations/058_grant_api_role_table_privileges.sql).
+- **Phase 5 M4 complete** — tax foundation and money math via [`059`](supabase/migrations/059_phase_5_tax_foundation.sql); adversarial review and closure blockers resolved 2026-06-15.
+- **Next:** Phase 5 M5 — `060_phase_5_purchase_invoice_rpc.sql`.
 
 ---
 

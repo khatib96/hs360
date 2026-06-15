@@ -35,7 +35,7 @@
   "authErrorUserInactive": "حساب المستخدم غير نشط",
   "authErrorSupabaseNotConfigured": "إعداد Supabase غير مكتمل",
   "authErrorUnknown": "حدث خطأ غير متوقع. حاول مرة أخرى",
-  "authMissingAnonKey": "مفتاح Supabase المحلي غير مضبوط. شغّل التطبيق عبر scripts/run-local.ps1",
+  "authMissingAnonKey": "مفتاح Supabase المحلي غير مضبوط. شغّل التطبيق عبر سكربت التشغيل المحلي المناسب",
   "authInitFailed": "تعذر تهيئة Supabase. تحقق من تشغيل الخدمة المحلية",
   "resetPasswordSuccess": "إذا كان البريد مسجلاً، ستصلك تعليمات إعادة تعيين كلمة المرور.",
   "forgotPasswordTitle": "إعادة تعيين كلمة المرور",

@@ -231,9 +231,49 @@ create table tenant_settings (
   receipt_footer_ar text,
   receipt_footer_en text,
 
+  -- Tax (M4, migration 059)
+  tax_enabled boolean not null default false,
+  tax_registration_number text,
+  default_tax_rate_id uuid,                       -- composite FK (tenant_id, default_tax_rate_id) → tax_rates
+
   updated_at timestamptz default now()
 );
 ```
+
+Tax columns on `tenant_settings` are writable only through the `update_tax_settings()` RPC (column-level write gate). `default_tax_rate_id` is the series anchor for the tenant's default tax code; it advances automatically when `create_tax_rate` rolls a new version for that code.
+
+### 3.2 `tax_rates` (M4)
+
+```sql
+create type product_tax_class as enum (
+  'taxable', 'zero_rated', 'exempt', 'non_taxable'
+);
+
+create table tax_rates (
+  id uuid primary key default gen_random_uuid(),
+  tenant_id uuid not null references tenants(id),
+  code text not null,
+  name_ar text not null,
+  name_en text not null,
+  rate numeric(9,6) not null,                   -- 0–100
+  effective_from date not null,
+  effective_to date,                              -- null = open-ended
+  output_account_id uuid references chart_of_accounts(id),
+  input_account_id uuid references chart_of_accounts(id),
+  expense_account_id uuid references chart_of_accounts(id),
+  is_recoverable boolean not null default true,
+  is_active boolean not null default true,
+  created_at timestamptz default now(),
+  created_by uuid references auth.users(id),
+  updated_at timestamptz,
+  updated_by uuid references auth.users(id),
+  unique (tenant_id, id),
+  unique (tenant_id, code, effective_from)        -- append-only versioning per code
+);
+-- EXCLUDE USING gist prevents overlapping effective ranges for same (tenant_id, code)
+```
+
+Reserved tax account codes (`1151` input recoverable, `2151` output payable, `5151` non-recoverable expense) are provisioned only while the internal tax-account provisioning gate is active. Versions are append-only; historical resolution for past invoice dates uses code + date range and ignores `is_active`.
 
 ---
 
@@ -450,6 +490,7 @@ create table products (
 
   reorder_point numeric(15,3),
   is_active boolean default true,
+  tax_class product_tax_class not null default 'non_taxable',  -- M4; editable via products.edit
   image_url text,
 
   created_at timestamptz default now(),
@@ -1088,8 +1129,44 @@ create table invoice_lines (
   unit_price numeric(15,3) not null,
   discount_pct numeric(5,2) default 0,
   cost_price numeric(15,3),                       -- snapshot
+  gross_amount numeric(15,3) not null default 0,
+  discount_amount numeric(15,3) not null default 0,
+  before_tax_amount numeric(15,3) not null default 0,
+  after_tax_amount numeric(15,3) not null default 0,
+  tax_rate_id uuid,                               -- composite FK (tenant_id, tax_rate_id) → tax_rates
+  tax_rate numeric(9,6) not null default 0,
+  tax_class product_tax_class not null default 'non_taxable',
+  taxable_amount numeric(15,3) not null default 0,
+  tax_amount numeric(15,3) not null default 0,
   line_total numeric(15,3) not null,
-  line_order int not null
+  line_order int not null,
+  constraint chk_invoice_lines_snapshot_amounts check (
+    gross_amount >= 0 and discount_amount >= 0
+    and before_tax_amount >= 0 and after_tax_amount >= 0
+    and line_total >= 0 and taxable_amount >= 0 and tax_amount >= 0
+    and after_tax_amount = before_tax_amount + tax_amount
+    and line_total = after_tax_amount
+  ),
+  constraint chk_invoice_lines_tax_snapshot_class check (
+    (
+      tax_class in ('exempt', 'non_taxable')
+      and tax_rate_id is null and tax_rate = 0
+      and taxable_amount = 0 and tax_amount = 0
+    )
+    or (
+      tax_class = 'zero_rated'
+      and tax_rate_id is null and tax_rate = 0 and tax_amount = 0
+      and taxable_amount = before_tax_amount
+    )
+    or (
+      tax_class = 'taxable' and tax_rate_id is not null
+      and taxable_amount = before_tax_amount
+    )
+    or (
+      tax_class = 'taxable' and tax_rate_id is null
+      and tax_rate = 0 and taxable_amount = 0 and tax_amount = 0
+    )
+  )
 );
 
 create index idx_invlines_invoice on invoice_lines(invoice_id);

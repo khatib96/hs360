@@ -134,7 +134,7 @@
   "@authErrorUnknown": {
     "description": "Unknown auth error"
   },
-  "authMissingAnonKey": "Local Supabase key is missing. Run the app via scripts/run-local.ps1",
+  "authMissingAnonKey": "Local Supabase key is missing. Start the app with the local run script",
   "@authMissingAnonKey": {
     "description": "Missing anon key banner"
   },

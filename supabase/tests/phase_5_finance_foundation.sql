@@ -145,9 +145,31 @@ begin
 
   begin
     insert into invoice_lines (
-      tenant_id, invoice_id, product_id, qty, unit_price, line_total, line_order
+      tenant_id,
+      invoice_id,
+      product_id,
+      qty,
+      unit_price,
+      gross_amount,
+      discount_amount,
+      before_tax_amount,
+      after_tax_amount,
+      line_total,
+      line_order
     )
-    values (v_tenant_b, v_invoice_id, v_product, 1, 1, 1, 1);
+    values (
+      v_tenant_b,
+      v_invoice_id,
+      v_product,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1
+    );
     raise exception 'case5 failed: cross-tenant invoice line succeeded';
   exception
     when foreign_key_violation then

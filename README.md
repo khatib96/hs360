@@ -99,9 +99,11 @@ Each tenant can override branding via build config — see `DEPLOYMENT.md` secti
 
 ## Status
 
-🟡 **Planning phase complete.** Documentation is being normalized before implementation begins. Phase 0 starts after the canonical decisions are accepted.
+**Phase 5 is in progress.** M1 finance foundations, M2 asset identity, M3 document
+templates/PDF rendering, and M4 tax foundation/money math are complete (migration `059`,
+adversarial sign-off 2026-06-15).
 
-Next: Provision dev VPS → install Supabase via Docker → run migrations 001–030 → scaffold Flutter app.
+Next: Phase 5 M5 Purchase Invoice Engine (`060_phase_5_purchase_invoice_rpc.sql`).
 
 ---
 

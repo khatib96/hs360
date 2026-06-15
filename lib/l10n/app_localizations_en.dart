@@ -119,7 +119,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authMissingAnonKey =>
-      'Local Supabase key is missing. Run the app via scripts/run-local.ps1';
+      'Local Supabase key is missing. Start the app with the local run script';
 
   @override
   String get authInitFailed =>

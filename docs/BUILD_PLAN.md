@@ -391,7 +391,8 @@ Acceptance:
 
 ## Phase 5 — Invoices, Vouchers & Journal (≈ 8-12 weeks)
 
-**Status:** [ ] Planned on 2026-06-06. The detailed M0-M10 execution plan in
+**Status:** [~] In progress. M1–M4 are complete; M5 Purchase Invoice Engine is next.
+The detailed M0-M10 execution plan in
 `PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md` supersedes the older task ordering
 below where they conflict. In particular, quotations and manual journal
 posting are outside the strict Phase 5 MVP.

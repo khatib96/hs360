@@ -311,7 +311,7 @@ abstract class AppLocalizations {
   /// Missing anon key banner
   ///
   /// In en, this message translates to:
-  /// **'Local Supabase key is missing. Run the app via scripts/run-local.ps1'**
+  /// **'Local Supabase key is missing. Start the app with the local run script'**
   String get authMissingAnonKey;
 
   /// Supabase init failed banner

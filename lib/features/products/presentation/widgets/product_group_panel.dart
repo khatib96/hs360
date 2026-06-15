@@ -171,12 +171,23 @@ class _GroupTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      dense: true,
-      selected: selected,
-      selectedTileColor: AppColors.goldSoft.withValues(alpha: 0.6),
-      title: Text(label, style: Theme.of(context).textTheme.bodyMedium),
-      onTap: onTap,
+    const borderRadius = BorderRadius.all(Radius.circular(8));
+
+    return Material(
+      color: selected
+          ? AppColors.goldSoft.withValues(alpha: 0.6)
+          : Colors.transparent,
+      borderRadius: borderRadius,
+      clipBehavior: Clip.antiAlias,
+      child: ListTile(
+        dense: true,
+        shape: const RoundedRectangleBorder(borderRadius: borderRadius),
+        tileColor: Colors.transparent,
+        selected: selected,
+        selectedTileColor: Colors.transparent,
+        title: Text(label, style: Theme.of(context).textTheme.bodyMedium),
+        onTap: onTap,
+      ),
     );
   }
 }
@@ -208,51 +219,62 @@ class _GroupTreeTile extends StatelessWidget {
     final label = localizedGroupName(group, languageCode);
     final selected = selectedGroupId == group.id;
 
+    const borderRadius = BorderRadius.all(Radius.circular(8));
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        ListTile(
-          dense: true,
-          selected: selected,
-          selectedTileColor: AppColors.goldSoft.withValues(alpha: 0.6),
-          contentPadding: EdgeInsetsDirectional.only(
-            start: 12 + depth * 16.0,
-            end: 4,
-          ),
-          title: Text(
-            label,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: group.isActive ? null : AppColors.neutral600,
+        Material(
+          color: selected
+              ? AppColors.goldSoft.withValues(alpha: 0.6)
+              : Colors.transparent,
+          borderRadius: borderRadius,
+          clipBehavior: Clip.antiAlias,
+          child: ListTile(
+            dense: true,
+            shape: const RoundedRectangleBorder(borderRadius: borderRadius),
+            tileColor: Colors.transparent,
+            selected: selected,
+            selectedTileColor: Colors.transparent,
+            contentPadding: EdgeInsetsDirectional.only(
+              start: 12 + depth * 16.0,
+              end: 4,
             ),
-          ),
-          trailing: canEditGroup
-              ? PopupMenuButton<String>(
-                  icon: const Icon(Icons.more_vert, size: 18),
-                  onSelected: (action) {
-                    switch (action) {
-                      case 'edit':
-                        onEdit(group);
-                      case 'deactivate':
-                        if (group.isActive) onDeactivate(group);
-                    }
-                  },
-                  itemBuilder: (context) {
-                    final l10n = AppLocalizations.of(context)!;
-                    return [
-                      PopupMenuItem(
-                        value: 'edit',
-                        child: Text(l10n.productGroupEdit),
-                      ),
-                      if (group.isActive)
+            title: Text(
+              label,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: group.isActive ? null : AppColors.neutral600,
+              ),
+            ),
+            trailing: canEditGroup
+                ? PopupMenuButton<String>(
+                    icon: const Icon(Icons.more_vert, size: 18),
+                    onSelected: (action) {
+                      switch (action) {
+                        case 'edit':
+                          onEdit(group);
+                        case 'deactivate':
+                          if (group.isActive) onDeactivate(group);
+                      }
+                    },
+                    itemBuilder: (context) {
+                      final l10n = AppLocalizations.of(context)!;
+                      return [
                         PopupMenuItem(
-                          value: 'deactivate',
-                          child: Text(l10n.productGroupDeactivate),
+                          value: 'edit',
+                          child: Text(l10n.productGroupEdit),
                         ),
-                    ];
-                  },
-                )
-              : null,
-          onTap: () => onSelected(group.id),
+                        if (group.isActive)
+                          PopupMenuItem(
+                            value: 'deactivate',
+                            child: Text(l10n.productGroupDeactivate),
+                          ),
+                      ];
+                    },
+                  )
+                : null,
+            onTap: () => onSelected(group.id),
+          ),
         ),
         ...node.children.map(
           (child) => _GroupTreeTile(

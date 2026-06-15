@@ -341,11 +341,10 @@ class _NavigationTile extends StatelessWidget {
         horizontal: 12,
         vertical: 4,
       ),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: isActive ? AppColors.gold : Colors.transparent,
-          borderRadius: borderRadius,
-        ),
+      child: Material(
+        color: isActive ? AppColors.gold : Colors.transparent,
+        borderRadius: borderRadius,
+        clipBehavior: Clip.antiAlias,
         child: ListTile(
           contentPadding: const EdgeInsetsDirectional.symmetric(horizontal: 16),
           leading: Icon(item.icon, color: foreground),

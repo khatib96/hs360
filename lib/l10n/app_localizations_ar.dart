@@ -119,7 +119,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get authMissingAnonKey =>
-      'مفتاح Supabase المحلي غير مضبوط. شغّل التطبيق عبر scripts/run-local.ps1';
+      'مفتاح Supabase المحلي غير مضبوط. شغّل التطبيق عبر سكربت التشغيل المحلي المناسب';
 
   @override
   String get authInitFailed =>

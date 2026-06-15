@@ -3,7 +3,7 @@
 > Purpose: implement the first production-safe accounting cycle for HS360:
 > purchase -> inventory/WAC -> sale -> receivable -> receipt/payment -> journal.
 >
-> Status: M1/M2 hardening complete through migration `056` (2026-06-07). M3 (document templates) is next.
+> Status: M1–M4 complete through migration `059` (2026-06-15). M5 Purchase Invoice Engine is next.
 >
 > Canonical sources: `CANONICAL_DECISIONS.md`, `PAYMENT_SYSTEM.md`,
 > `DATABASE_SCHEMA.md`, `MVP_SCOPE.md`, and
@@ -1162,7 +1162,7 @@ RPCs are implemented.
 
 ### Suggested Migration
 
-`058_phase_5_tax_foundation.sql`
+`059_phase_5_tax_foundation.sql`
 
 ### Database
 
@@ -1311,6 +1311,21 @@ Cover:
 - Purchase and sales posting account IDs are resolvable before M5/M6.
 - No government filing/e-invoicing behavior is introduced.
 
+### Closure (2026-06-15)
+
+**Migration:** [`059_phase_5_tax_foundation.sql`](../supabase/migrations/059_phase_5_tax_foundation.sql)
+
+Delivered all 26 locked plan corrections plus adversarial corrective pass (resulting-state
+validation, active-rate enforcement, tax snapshot CHECK constraints, all-or-none account IDs,
+CoA trigger ACL, authoritative legacy backfill). SQL suite: 28 cases +
+[`phase_5_tax_foundation_concurrency.sh`](../supabase/tests/phase_5_tax_foundation_concurrency.sh)
+(exactly-one-winner, pollution-free). Dart parity in [`lib/domain/finance/`](../lib/domain/finance/).
+
+**Verification:** `supabase db reset`; `./scripts/test/run_sql_suites.sh` twice without reset;
+`flutter analyze`; `flutter test` (516); `git diff --check`.
+
+**Next:** M5 — `060_phase_5_purchase_invoice_rpc.sql`.
+
 ---
 
 ## M5 - Purchase Invoice Engine
@@ -1325,7 +1340,7 @@ invoice + lines + stock + serialized units + WAC + A/P + journal
 
 ### Suggested Migration
 
-`059_phase_5_purchase_invoice_rpc.sql`
+`060_phase_5_purchase_invoice_rpc.sql`
 
 ### RPC
 
@@ -1464,7 +1479,7 @@ Record a sale atomically and support safe reversal of posting mistakes.
 
 ### Suggested Migration
 
-`060_phase_5_sales_invoice_rpc.sql`
+`061_phase_5_sales_invoice_rpc.sql`
 
 ### RPCs
 
@@ -1597,7 +1612,7 @@ Complete the cash movement cycle and maintain invoice payment status safely.
 
 ### Suggested Migration
 
-`061_phase_5_voucher_allocation_rpc.sql`
+`062_phase_5_voucher_allocation_rpc.sql`
 
 ### Receipt RPC
 
@@ -2336,11 +2351,12 @@ Update:
 | `055_phase_5_asset_identity_scan_timeline.sql` | SKU/serial generation, reconcile/correct, scan resolver, unit events/timeline |
 | `056_phase_5_m1_m2_hardening.sql` | M1/M2 security/accounting hardening (ACL, journal, audit, reconcile, scan, metadata) |
 | `057_phase_5_document_templates.sql` | JSON templates and tenant document settings |
-| `058_phase_5_tax_foundation.sql` | tax settings/rates/classes/snapshots and math helpers |
-| `059_phase_5_purchase_invoice_rpc.sql` | purchase draft/confirm, units, stock, WAC, A/P journal |
-| `060_phase_5_sales_invoice_rpc.sql` | sales confirm, stock-out, cost snapshot, A/R/revenue/COGS, cancellation |
-| `061_phase_5_voucher_allocation_rpc.sql` | receipt/payment/allocation/cancellation |
-| `062_phase_5_finance_views_hardening.sql` | bounded read RPCs/views, indexes, final ACL/trigger hardening |
+| `058_grant_api_role_table_privileges.sql` | local/self-hosted PostgREST table ACL compatibility without weakening RPC boundaries |
+| `059_phase_5_tax_foundation.sql` | tax settings/rates/classes/snapshots and math helpers |
+| `060_phase_5_purchase_invoice_rpc.sql` | purchase draft/confirm, units, stock, WAC, A/P journal |
+| `061_phase_5_sales_invoice_rpc.sql` | sales confirm, stock-out, cost snapshot, A/R/revenue/COGS, cancellation |
+| `062_phase_5_voucher_allocation_rpc.sql` | receipt/payment/allocation/cancellation |
+| `063_phase_5_finance_views_hardening.sql` | bounded read RPCs/views, indexes, final ACL/trigger hardening |
 
 Migration names are planned, not reserved. If implementation uncovers a reason
 to split a migration, preserve dependency order and document the change.

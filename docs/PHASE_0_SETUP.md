@@ -7,7 +7,8 @@
 
 ## What Was Done
 
-- Flutter project created in repo root (`com.hs360`, Windows + Android).
+- Flutter project created in repo root (`com.hs360`, Windows, macOS, Android,
+  and iOS).
 - Core architecture folders under `lib/` (core, data, domain, features, shared).
 - Riverpod + GoRouter + theme + bilingual ARB localization (ar default, RTL/LTR).
 - Dashboard placeholder screen with HS360 branding colors from `DESIGN_SYSTEM.md`.
@@ -32,15 +33,21 @@ Optional Android:
 flutter run -d android
 ```
 
-iOS (macOS only):
+macOS desktop:
 
 ```bash
-flutter run -d ios
-# or with local Supabase:
+./scripts/run-local.sh
+```
+
+iOS simulator/device:
+
+```bash
 ./scripts/run-local.sh ios
 ```
 
 On a physical iPhone, use your Mac's LAN IP for `SUPABASE_URL` (not `127.0.0.1`).
+Before the first Apple build, open Xcode once and install its requested
+components, or run `sudo xcodebuild -runFirstLaunch`.
 
 ---
 
@@ -55,7 +62,8 @@ docker --version
 docker compose version
 ```
 
-Expected on this machine (2026-05-16): Flutter 3.41.6, Dart 3.11.4, Docker available. Supabase CLI was **not** installed — local `config.toml` was not generated; install CLI later when starting Phase 1 database work.
+Current Apple baseline (2026-06-14): Flutter 3.44.2, Dart 3.12.2, Xcode 26.5,
+CocoaPods 1.16.2, and Docker Desktop with the local Supabase stack.
 
 ---
 
@@ -66,6 +74,13 @@ flutter pub get
 dart format .
 flutter analyze
 flutter test
+```
+
+On macOS, reset and run the SQL regression gate with:
+
+```bash
+npx --yes supabase db reset
+./scripts/test/run_sql_suites.sh
 ```
 
 ---
