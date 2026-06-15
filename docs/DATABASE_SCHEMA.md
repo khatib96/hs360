@@ -1457,8 +1457,17 @@ Full implementations in `BUILD_PLAN.md`. Names and signatures:
 | `deactivate_customer_service_location(...)` | Soft-deactivates a service location when safe |
 | `set_primary_customer_service_location(...)` | Makes one active location the customer's primary site |
 | `create_rental_contract(...)` | Atomic: contract + lines + asset reservation + first invoice + journal |
-| `record_purchase_invoice(...)` | Invoice + WAC recalc + inventory in |
+| `record_opening_stock(...)` | Opening inventory + WAC + opening-equity journal |
+| `record_inventory_document(...)` | Financial stock-in/out + movement + WAC/value + journal |
+| `record_stock_count(...)` | Count snapshot + derived differences + movements + journal |
+| `record_purchase_invoice(p_data jsonb, p_idempotency_key uuid) returns uuid` | M5: confirmed purchase — stock, units, WAC, A/P journal; optional `p_data.invoice_id` confirms draft on same row |
+| `save_invoice_draft(p_data jsonb) returns uuid` | M5: create/update purchase draft with server totals |
+| `discard_invoice_draft(p_invoice_id uuid) returns uuid` | M5: delete purchase draft (creator or manager) |
+| `list_purchase_invoices(...filters...) returns setof record` | M5: tenant-scoped purchase list (`invoices.view_purchase`) |
+| `get_purchase_invoice_detail(p_invoice_id uuid) returns jsonb` | M5: purchase invoice header, lines, units, journal link |
 | `record_sales_invoice(...)` | Invoice + stock out + journal |
+| `record_sales_return(...)` | Linked sales return + stock restore + credit + journal |
+| `record_purchase_return(...)` | Linked purchase return + stock/value reversal + credit + journal |
 | `record_refill_visit(...)` | Inventory out + invoice/charge + optional voucher |
 | `close_contract(...)` | Return asset + final settlement |
 | `recalculate_wac(product_id)` | Recompute weighted avg cost |
@@ -1527,6 +1536,13 @@ Full implementations in `BUILD_PLAN.md`. Names and signatures:
 050_service_location_coordinates_foundation.sql -- M5.7 coordinate source/quality foundation
 051_google_maps_url_coordinate_resolution.sql -- M5.7 URL resolution persistence and primary-location sync
 052_phase_4_closure_hardening.sql -- M8 RPC ACLs and tenant-safe CoA/customer/supplier FKs
+053-059_phase_5_*.sql -- implemented Phase 5 M1-M4 foundation
+060_phase_5_purchase_invoice_rpc.sql -- M5 purchase draft/confirm, units, stock, WAC, A/P journal
+061_phase_5_sales_invoice_rpc.sql -- planned M6 sales/cancellation engine
+062_phase_5_voucher_allocation_rpc.sql -- planned M7 vouchers/allocations
+063_phase_5_return_invoice_rpc.sql -- planned M7.5 returns/credits
+064_phase_5_finance_views_hardening.sql -- planned final bounded views/hardening
+TBD_phase_5_inventory_accounting.sql -- deferred M4.5 pending accountant review
 ```
 
 Add FKs that were forward-references (e.g. `product_units.current_contract_id -> contracts.id`, `product_units.current_service_location_id -> customer_service_locations.id`) at the end of each table's migration once both exist, or in the later feature migration that introduces the referenced table.

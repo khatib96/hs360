@@ -10,9 +10,6 @@ cd "$repo_root"
 
 tenant_a='00000000-0000-0000-0000-000000000101'
 owner_sub='00000000-0000-0000-0000-000000000201'
-output_account='00000000-0000-0000-0000-000000000504'  # 2101 A/P liability
-input_account='00000000-0000-0000-0000-000000000501'   # 1101 cash asset
-expense_account='00000000-0000-0000-0000-000000000507' # 5101 COGS expense
 
 tmpdir="$(mktemp -d)"
 code="CONCUR$(date +%s)"
@@ -62,10 +59,7 @@ select public.create_tax_rate(
     'name_ar', 'ضريبة',
     'name_en', 'Concurrent First Version',
     'rate', 5,
-    'effective_from', current_date,
-    'output_account_id', '${output_account}',
-    'input_account_id', '${input_account}',
-    'expense_account_id', '${expense_account}'
+    'effective_from', current_date
   )
 );
 "

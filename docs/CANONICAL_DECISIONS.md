@@ -1,6 +1,7 @@
 # CANONICAL_DECISIONS.md — Source of Truth
 
-> Updated 2026-06-03 with Phase 4 M5.6 capability decisions.
+> Updated 2026-06-15 with inventory-accounting, return-document, and
+> year-end-close placement decisions.
 > If this file conflicts with any older document, this file wins.
 
 ---
@@ -64,6 +65,49 @@ Tax support is an invoice-foundation concern, not a Phase 4/M7 chart-of-accounts
 - Old invoices must never be recomputed from a newer tax rate. Historical invoices keep the tax values saved on their lines.
 - Tax posting accounts such as `Input VAT Recoverable` and `Output VAT Payable` should be seeded as protected system accounts when Tax Foundation is implemented, not required during Phase 4 M7.
 - Kuwait/default v1 tenants may run with tax disabled and zero tax amounts, but the invoice structure must remain tax-ready.
+
+---
+
+## 2.6 Inventory Accounting and Financial Close
+
+**Implementation status (2026-06-15): deferred pending external accountant
+review.** The placement and safety boundaries remain recorded, but the specific
+opening-equity, capital/drawings, gain/loss, internal-consumption, stock-count,
+and valuation-bucket choices are not approved for implementation yet.
+
+Inventory quantity and inventory value must never diverge after the Phase 5
+finance engine becomes operational.
+
+- Phase 5 M4.5 supersedes the Phase 3 rule that manual inventory adjustments
+  have no journal entry.
+- Opening stock is a dedicated financial inventory document:
+  `Dr Inventory / Cr Opening Balance Equity`.
+- Owner-contributed stock uses owner capital, not inventory gain.
+- Owner withdrawals use owner drawings, not an operating expense.
+- In-period found surplus posts to inventory gain income.
+- Shrinkage, damage, expiry, and write-off post to an inventory loss/expense
+  account.
+- Internal consumption posts to an explicitly allowed expense account.
+- Warehouse transfers produce paired inventory movements but no general-ledger
+  journal because ownership and total inventory value do not change.
+- A stock count is one immutable document whose lines compare system quantity
+  with counted quantity and create only the required positive/negative
+  movements and accounting lines.
+- Generic stock-in/stock-out cannot accept an unrestricted counter-account ID.
+  A tenant-scoped, permission-controlled reason must resolve to an allowed
+  posting account and direction.
+- Every confirmed inventory financial document is RPC-only, idempotent,
+  immutable, audited, period-lock aware, and linked to a balanced journal.
+- Sales returns and purchase returns are distinct financial documents linked to
+  the original invoice. They are not aliases for cancellation and are
+  implemented in Phase 5 M7.5 after the voucher/credit settlement foundation.
+- Full fiscal periods and year-end close belong in Phase 10 after trial balance
+  and P&L reporting exist. Year-end close zeros income/expense accounts into
+  retained earnings; it does not reset inventory or other balance-sheet
+  accounts.
+- M5 may proceed independently using the existing Phase 3 WAC basis
+  (`qty_available` across warehouses) and must not implement any deferred M4.5
+  account mapping or alter the legacy inventory-adjustment RPC.
 
 ---
 

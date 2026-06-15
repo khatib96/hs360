@@ -103,7 +103,9 @@ Each tenant can override branding via build config — see `DEPLOYMENT.md` secti
 templates/PDF rendering, and M4 tax foundation/money math are complete (migration `059`,
 adversarial sign-off 2026-06-15).
 
-Next: Phase 5 M5 Purchase Invoice Engine (`060_phase_5_purchase_invoice_rpc.sql`).
+M4.5 Inventory Accounting and Opening Stock is deferred pending external
+accountant review. Next: Phase 5 M5 Purchase Invoice Engine
+(`060_phase_5_purchase_invoice_rpc.sql`).
 
 ---
 

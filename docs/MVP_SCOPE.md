@@ -48,9 +48,19 @@
 - Automatic monthly rental invoice.
 - Manual sales invoice.
 - Manual purchase invoice.
+- Sales return linked to the original sales invoice.
+- Purchase return linked to the original purchase invoice.
 - Confirm/cancel lifecycle.
 - Journal entries created by RPCs.
 - Basic JSON-template PDF/print output.
+
+### Inventory Accounting
+
+- Opening-stock document with an opening-equity journal.
+- Financial stock-in and stock-out with controlled reason/account mapping.
+- Stock-count adjustment document that posts quantity and value differences.
+- Warehouse transfers remain non-financial because total owned inventory value
+  does not change.
 
 ### Vouchers
 
@@ -98,6 +108,7 @@
 - Visual document template editor.
 - Internal operations map with clustering.
 - Full P&L reports.
+- Fiscal-period management and year-end closing workflow (Phase 10).
 - Contract profitability dashboard beyond stored snapshots.
 - Certificate pinning.
 - Multi-currency invoices and exchange rates.

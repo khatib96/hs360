@@ -141,7 +141,8 @@ The full catalog includes permissions for:
 - `customers`, `customers.ledger`, `customer_service_locations` (read via `customers.view`, mutate via `customers.edit` unless dedicated permissions are introduced)
 - `suppliers`
 - `products`, `product_units`, `product_groups`
-- `inventory`, `warehouses`, `inventory_movements`
+- `inventory`, `warehouses`, `inventory_movements`, `inventory_documents`,
+  `inventory_adjustment_reasons`
 - `contracts`, `contract_lines`, `contract_oil_changes`
 - `visits` (field operations)
 - `invoices` (with sub-types: sales, purchase, rental, returns)
@@ -437,8 +438,18 @@ Khalid with 0 permissions is flagged — he can log in but sees nothing useful.
 │    [✓] View invoices                                     │
 │    [ ] Create sales invoice                              │
 │    [ ] Create purchase invoice                           │
+│    [ ] Create sales return                               │
+│    [ ] Create purchase return                            │
 │    [ ] Edit invoices                                     │
 │    [ ] Cancel invoices                                   │
+│                                                          │
+│  ▼ Inventory Accounting                                  │
+│    [ ] View inventory documents                          │
+│    [ ] Record opening stock ⚠                            │
+│    [ ] Record stock adjustments                          │
+│    [ ] Record stock counts                               │
+│    [ ] Cancel inventory documents ⚠                      │
+│    [ ] Manage adjustment reasons/accounts ⚠              │
 │                                                          │
 │  ▼ Vouchers                                              │
 │    [✓] View vouchers                                     │

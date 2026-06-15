@@ -385,7 +385,9 @@ Audit log entries are immutable. There is no UPDATE or DELETE policy on `audit_l
 Some actions require a `reason` field as part of the request:
 
 - Min-profit override on contract → reason required
-- Inventory adjustment_out (loss/damage) → reason required
+- Opening stock, inventory stock-in/out, and stock count → controlled reason
+  required; stock-out loss/damage/expiry must resolve to an allowed account
+- Sales/purchase return → reason required
 - Cancel an invoice → reason required
 - Cancel a voucher → reason required
 - Manual journal entry → description required

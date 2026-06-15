@@ -331,24 +331,37 @@ begin;
 do $$
 declare
   v_tenant_a uuid := '00000000-0000-0000-0000-000000000101';
+  v_si_next bigint;
+  v_je_next bigint;
   v_si1 text;
   v_si2 text;
   v_je1 text;
 begin
   perform set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-000000000201', true);
 
+  select next_value into v_si_next
+  from public.document_sequences
+  where tenant_id = v_tenant_a and sequence_key = 'SI';
+
+  select next_value into v_je_next
+  from public.document_sequences
+  where tenant_id = v_tenant_a and sequence_key = 'JE';
+
   v_si1 := public.next_document_number('SI');
   v_si2 := public.next_document_number('SI');
   v_je1 := public.next_document_number('JE');
 
-  if v_si1 <> 'SI-000001' then
-    raise exception 'case10 failed: SI first number %', v_si1;
+  if v_si1 <> 'SI-' || lpad(v_si_next::text, 6, '0') then
+    raise exception 'case10 failed: SI first number % expected SI-%',
+      v_si1, lpad(v_si_next::text, 6, '0');
   end if;
-  if v_si2 <> 'SI-000002' then
-    raise exception 'case11 failed: SI second number %', v_si2;
+  if v_si2 <> 'SI-' || lpad((v_si_next + 1)::text, 6, '0') then
+    raise exception 'case11 failed: SI second number % expected SI-%',
+      v_si2, lpad((v_si_next + 1)::text, 6, '0');
   end if;
-  if v_je1 <> 'JE-000001' then
-    raise exception 'case11b failed: JE first number %', v_je1;
+  if v_je1 <> 'JE-' || lpad(v_je_next::text, 6, '0') then
+    raise exception 'case11b failed: JE first number % expected JE-%',
+      v_je1, lpad(v_je_next::text, 6, '0');
   end if;
 end $$;
 rollback;

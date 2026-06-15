@@ -31,7 +31,33 @@ Every invoice and voucher generates a **journal entry**. Journal entries are dou
 | `opening_balance_customer` | Initial customer debt | Dr A/R, Cr Equity |
 | `opening_balance_supplier` | Initial supplier credit | Dr Equity, Cr A/P |
 
-### 2.2 Invoice Lifecycle
+Sales and purchase returns are linked documents, not cancellation aliases:
+
+| Type | Direction | Core effect |
+|------|-----------|-------------|
+| `sales_return` | Customer returns sold goods | Reverse revenue/tax/A/R and restore inventory/COGS when safe |
+| `purchase_return` | Goods returned to supplier | Reduce A/P and reverse inventory/input tax using original snapshots |
+
+### 2.2 Inventory Financial Documents
+
+Inventory adjustments are not invoices, but they are financial source
+documents and must post to the journal.
+
+| Document/reason | Posting |
+|-----------------|---------|
+| Opening stock | Dr Inventory, Cr Opening Balance Equity |
+| Owner contribution | Dr Inventory, Cr Owner's Capital |
+| Found surplus | Dr Inventory, Cr Inventory Gain |
+| Shrinkage/damage/expiry | Dr Inventory Loss, Cr Inventory |
+| Owner withdrawal | Dr Owner's Drawings, Cr Inventory |
+| Internal consumption | Dr Allowed Expense, Cr Inventory |
+| Warehouse transfer | No GL entry; paired stock movements only |
+
+A stock count stores system quantity, counted quantity, and the resulting
+delta. Positive and negative differences use their configured gain/loss
+reasons. Confirmed documents are immutable and corrected by reversal.
+
+### 2.3 Invoice Lifecycle
 
 ```
 DRAFT  →  CONFIRMED  →  PARTIALLY_PAID  →  PAID
@@ -45,7 +71,7 @@ DRAFT  →  CONFIRMED  →  PARTIALLY_PAID  →  PAID
 - **Paid:** sum of allocated vouchers ≥ total
 - **Cancelled:** reversal journal entry posted
 
-### 2.3 Rental Monthly Invoices
+### 2.4 Rental Monthly Invoices
 
 Generated automatically by `monthly_billing_job()`:
 
@@ -504,8 +530,14 @@ Tenant can configure mappings in settings.
 
 ## 12. Closing the Books
 
-Phase 4 feature, not in v1. When implemented:
-- Monthly close: locks the period; no edits to prior months without Manager/approver override
-- Year-end close: zeros out income/expense, posts net to retained earnings
+Phase 5 keeps the lightweight `books_locked_through` posting lock. Full fiscal
+periods and year-end close are implemented in Phase 10 after trial balance and
+P&L reporting are available.
 
-For v1, the books are always "open" — corrections can be made any time. The audit log records every change.
+- Period close locks posting and cancellation through the closed date.
+- Reopening requires a dedicated permission, reason, and audit event.
+- Year-end close zeros income and expense accounts into retained earnings.
+- Balance-sheet accounts, including inventory, A/R, A/P, cash, and equity,
+  carry forward and are not reset.
+- Opening-stock and opening-party documents remain historical source documents;
+  year-end close does not recreate them.

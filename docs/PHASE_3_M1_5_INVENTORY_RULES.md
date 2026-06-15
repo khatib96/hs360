@@ -2,6 +2,11 @@
 
 > Updated 2026-05-20.
 > Milestone: lock inventory rules before Flutter repositories and UI (M2+).
+>
+> Supersession note (2026-06-15): Phase 5 M4.5 in
+> `PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md` supersedes the Phase 3
+> no-journal rule for manual adjustments once its migration is applied. The
+> existing Phase 3 RPC remains the current implementation until then.
 
 ## Canonical status
 
@@ -28,7 +33,8 @@ If `BUILD_PLAN.md`, `PHASE_3_PRODUCTS_INVENTORY_PLAN.md`, `ai_memory.md`, or ad-
 - Serialized unit-level stock adjustment RPCs (**M6 / M7D**).
 - Purchase/sales invoice stock RPCs (**Phase 5**).
 - Contract/visit stock RPCs (**Phase 6 / Phase 8**).
-- Accounting journal entries from inventory adjustments.
+- Accounting journal entries from inventory adjustments (deferred here and
+  assigned to Phase 5 M4.5).
 
 M1.5 **locks rules** for future M2/M7 work; it does not add new executable behavior except optional DB comments.
 
@@ -105,7 +111,7 @@ Audit: `trg_audit_inventory_movements_insert` logs new movements. Adjustment rea
 | `adjustment_out` | Does **not** change `avg_cost` or `last_purchase_cost` |
 | Transfers (future) | Do **not** change WAC |
 | WAC quantity basis (M1) | `coalesce(sum(qty_available), 0)` across all warehouses for the product |
-| Journal entries | **None** for Phase 3 manual adjustments |
+| Journal entries | **None in the Phase 3 implementation; Phase 5 M4.5 replaces this with journal-backed inventory documents** |
 
 ### WAC formula (adjustment_in)
 

@@ -1,6 +1,85 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-06-15 (Session: Phase 5 M4 closure after adversarial sign-off).
+> Updated 2026-06-15 (Session: M5 Purchase Invoice Engine closed).
+
+---
+
+## Session 2026-06-15 - M5 Purchase Invoice Engine Closed
+
+Delivered Phase 5 M5 as SQL-only milestone
+[`060_phase_5_purchase_invoice_rpc.sql`](supabase/migrations/060_phase_5_purchase_invoice_rpc.sql):
+
+- **Posting RPC:** `record_purchase_invoice(p_data, p_idempotency_key)` — atomic
+  confirmed purchase with stock, serialized units, WAC, balanced A/P journal,
+  idempotency (advisory lock → resolve → post), optional `invoice_id` draft
+  confirm on same row.
+- **Draft/read RPCs:** `save_invoice_draft`, `discard_invoice_draft`,
+  `list_purchase_invoices`, `get_purchase_invoice_detail`.
+- **Internal helpers** (revoked from `authenticated`): normalize/hash,
+  supplier A/P validation, inventory 1301 resolver, WAC helper
+  (`v_old_qty = v_post_qty - incoming_qty`), unit insert without stock
+  double-count.
+- **Tests:** [`phase_5_purchase_invoices.sql`](supabase/tests/phase_5_purchase_invoices.sql)
+  (39 cases) + [`phase_5_purchase_invoices_concurrency.sh`](supabase/tests/phase_5_purchase_invoices_concurrency.sh)
+  (idempotency race + concurrent WAC).
+- **Suite runner:** Phase D in [`scripts/test/run_sql_suites.sh`](scripts/test/run_sql_suites.sh).
+- **Out of scope (unchanged):** M4.5 inventory accounting, Flutter UI,
+  `record_inventory_adjustment`, sales/returns/vouchers.
+
+**Verification:** `supabase db reset`; `./scripts/test/run_sql_suites.sh` twice
+without reset; `flutter analyze`; `flutter test` (516); `git diff --check`.
+
+**Adversarial review:** tenant/ACL guards on reads and writes; strict payload
+allowlists and JSON types; stable product locks; WAC value-based aggregation;
+partial-commit case 37; pollution-free concurrency cleanup; no idempotency
+exception swallowing.
+
+**Next:** M6 — `061_phase_5_sales_invoice_rpc.sql`.
+
+---
+
+## Session 2026-06-15 - M4.5 Deferred, M5 Purchase Resumed
+
+Owner decision:
+
+- Defer **Phase 5 M4.5 Inventory Accounting and Opening Stock** until external
+  accountants review opening stock, capital/drawings, inventory gains/losses,
+  internal consumption, and stock-count treatment.
+- M4.5 is not cancelled and remains required before Phase 5 M10 closure.
+- No migration number is reserved for deferred M4.5.
+- Resume **M5 Purchase Invoice Engine** now as
+  `060_phase_5_purchase_invoice_rpc.sql`.
+- Planned sequence returns to sales `061`, vouchers `062`, returns `063`, and
+  finance views/hardening `064`.
+- M5 must not change `record_inventory_adjustment`, create opening/capital/gain/
+  loss accounts, or implement stock-count/generic adjustment accounting.
+- M5 preserves the current Phase 3 WAC basis:
+  `sum(qty_available)` across all warehouses, isolated behind an internal
+  helper so it can be revisited after accountant approval.
+
+**Next:** Phase 5 M5 — `060_phase_5_purchase_invoice_rpc.sql`.
+
+---
+
+## Session 2026-06-15 - Inventory Accounting, Returns, and Close Plan Placement
+
+Canonical plan correction after M4 closure:
+
+- Inserted **Phase 5 M4.5 Inventory Accounting and Opening Stock** conceptually
+  before closure. Its migration was later deferred and unnumbered pending
+  accountant review.
+- M4.5 replaces the Phase 3 no-journal adjustment rule with RPC-only,
+  idempotent, journal-backed opening stock, stock-in/out, and stock-count
+  documents. Warehouse transfers remain non-financial.
+- Historical numbering proposal was superseded by the deferral decision above.
+- Sales/purchase returns are linked numbered documents using original
+  tax/cost snapshots; they are not cancellation aliases.
+- Full fiscal periods and year-end close belong to **Phase 10** after trial
+  balance, P&L, and inventory-to-GL reconciliation. Income/expense close to
+  retained earnings; balance-sheet accounts carry forward.
+
+**Superseded next step:** M5 purchase at
+`060_phase_5_purchase_invoice_rpc.sql`.
 
 ---
 
@@ -23,7 +102,8 @@ flutter test                                   → 516 passed
 git diff --check                               → clean
 ```
 
-**Phase 5 M4 is closed.** Next: M5 — `060_phase_5_purchase_invoice_rpc.sql`.
+**Phase 5 M4 is closed.** Current next step: M5 —
+`060_phase_5_purchase_invoice_rpc.sql`.
 
 ---
 
@@ -595,7 +675,8 @@ PowerShell note: pipe SQL tests with `Get-Content -Raw … | docker exec -i supa
 - **Phase 4 M0-M8 complete** - customers, suppliers, CoA, service locations, coordinates, engineering closure through migration [`052`](supabase/migrations/052_phase_4_closure_hardening.sql).
 - **Phase 5 M1–M3 complete** — finance foundation, asset identity, document templates/PDF through migrations [`053`](supabase/migrations/053_phase_5_journal_source_enum.sql)–[`058`](supabase/migrations/058_grant_api_role_table_privileges.sql).
 - **Phase 5 M4 complete** — tax foundation and money math via [`059`](supabase/migrations/059_phase_5_tax_foundation.sql); adversarial review and closure blockers resolved 2026-06-15.
-- **Next:** Phase 5 M5 — `060_phase_5_purchase_invoice_rpc.sql`.
+- **Next:** Phase 5 M5 — `060_phase_5_purchase_invoice_rpc.sql`; M4.5 is
+  deferred pending accountant review and remains required before M10 close.
 
 ---
 

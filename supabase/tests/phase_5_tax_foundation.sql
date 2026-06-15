@@ -176,6 +176,13 @@ declare
   v_tenant_a uuid := '00000000-0000-0000-0000-000000000101';
   v_parent_id uuid;
 begin
+  perform public.allow_tax_account_provisioning();
+  alter table public.chart_of_accounts disable trigger trg_enforce_chart_account_protection;
+  delete from public.chart_of_accounts
+  where tenant_id = v_tenant_a
+    and code = '2151';
+  alter table public.chart_of_accounts enable trigger trg_enforce_chart_account_protection;
+
   select id into v_parent_id
   from public.chart_of_accounts
   where tenant_id = v_tenant_a

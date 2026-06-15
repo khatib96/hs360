@@ -1,14 +1,18 @@
 # RPC_SPEC.md — Required Stored Function Contracts
 
-> Updated 2026-05-16 to resolve conflicts before Phase 0.
-> Mutating RPCs are atomic, tenant-aware, permission-checked, and idempotent with `p_client_id`.
+> Updated 2026-06-15 for Phase 5 finance contracts.
+> The detailed Phase 5 contracts in
+> `PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md` supersede older positional
+> invoice signatures in this file.
 
 ---
 
 ## Common Rules
 
-- Every mutating RPC accepts `p_client_id text`.
-- Re-sending the same `p_client_id` returns the existing result.
+- Existing operational/offline RPCs may accept `p_client_id text`.
+- Phase 5 financial RPCs accept `p_idempotency_key uuid` plus canonical payload
+  hashing. Re-sending the same key and payload returns the existing result;
+  reusing it with a different payload raises `idempotency_payload_mismatch`.
 - RPCs derive tenant from `current_tenant_id()`, not from a client-supplied tenant id.
 - RPCs call `user_has_permission()` before doing work.
 - RPCs raise stable application errors, not raw internal messages.
@@ -20,6 +24,7 @@ Standard errors:
 | `permission_denied` | User lacks required permission |
 | `tenant_not_found` | No active tenant for `auth.uid()` |
 | `duplicate_client_id` | Same client id points to a different operation |
+| `idempotency_payload_mismatch` | Finance idempotency key was reused with a different canonical payload |
 | `validation_failed` | Required input is missing or invalid |
 | `insufficient_stock` | Inventory would go negative |
 | `below_min_profit` | Contract profit is below tenant threshold |
@@ -81,34 +86,65 @@ Errors:
 
 ---
 
+## Inventory Financial Documents
+
+Phase 5 M4.5 replaces non-financial manual adjustments with:
+
+```sql
+record_opening_stock(p_data jsonb, p_idempotency_key uuid)
+record_inventory_document(p_data jsonb, p_idempotency_key uuid)
+record_stock_count(p_data jsonb, p_idempotency_key uuid)
+cancel_inventory_document(
+  p_document_id uuid,
+  p_reason text,
+  p_idempotency_key uuid
+)
+```
+
+These RPCs atomically create the source document, movements, balances,
+serialized-unit changes, WAC/value snapshots, and balanced journal. Warehouse
+transfers remain non-financial.
+
+---
+
 ## `record_purchase_invoice`
 
 Creates a confirmed purchase invoice, inventory movement, WAC recalculation, and journal entry.
 
 ```sql
 create or replace function record_purchase_invoice(
-  p_client_id text,
-  p_supplier_id uuid,
-  p_invoice_date date,
-  p_due_date date,
-  p_warehouse_id uuid,
-  p_lines jsonb,
-  p_notes text default null
+  p_data jsonb,
+  p_idempotency_key uuid
 ) returns uuid;
 ```
 
-`p_lines` shape:
+`p_data` shape:
 
 ```json
-[
-  {"product_id":"uuid","qty":"10.000","unit":"liter","unit_cost":"10.000","product_unit_serials":["HS-001","HS-002"]}
-]
+{
+  "supplier_id": "uuid",
+  "date": "2026-06-15",
+  "due_date": "2026-07-15",
+  "warehouse_id": "uuid",
+  "notes": "optional",
+  "lines": [
+    {
+      "product_id": "uuid",
+      "qty": "2.000",
+      "unit_price": "10.000",
+      "discount_pct": "0",
+      "line_order": 1,
+      "units": [
+        {"serial_number": "HS-001", "barcode": "optional"},
+        {"serial_number": "HS-002", "barcode": "optional"}
+      ]
+    }
+  ]
+}
 ```
 
-Requires:
-
-- `invoices.create_purchase`
-- `inventory_movements.create`
+Requires `invoices.create_purchase`. The RPC owns all internal stock/journal
+writes; callers do not require direct table-write permission.
 
 Returns: `invoices.id`
 
@@ -126,20 +162,12 @@ Creates a confirmed sales invoice, inventory movement, cost snapshot, and journa
 
 ```sql
 create or replace function record_sales_invoice(
-  p_client_id text,
-  p_customer_id uuid,
-  p_invoice_date date,
-  p_due_date date,
-  p_warehouse_id uuid,
-  p_lines jsonb,
-  p_notes text default null
+  p_data jsonb,
+  p_idempotency_key uuid
 ) returns uuid;
 ```
 
-Requires:
-
-- `invoices.create_sales`
-- `inventory_movements.create`
+Requires `invoices.create_sales`.
 
 Returns: `invoices.id`
 
@@ -149,6 +177,26 @@ Errors:
 - `validation_failed`
 - `insufficient_stock`
 - `journal_unbalanced`
+
+---
+
+## Sales and Purchase Returns
+
+Phase 5 M7.5 adds linked return documents:
+
+```sql
+record_sales_return(p_data jsonb, p_idempotency_key uuid)
+record_purchase_return(p_data jsonb, p_idempotency_key uuid)
+cancel_return_invoice(
+  p_return_invoice_id uuid,
+  p_reason text,
+  p_idempotency_key uuid
+)
+```
+
+Each return references the original invoice and original lines, enforces
+cumulative returnable quantity, and uses frozen tax/cost snapshots. Returns are
+not cancellation aliases.
 
 ---
 

@@ -1,9 +1,12 @@
 # Phase 5 - Invoices, Vouchers & Journal Plan
 
 > Purpose: implement the first production-safe accounting cycle for HS360:
-> purchase -> inventory/WAC -> sale -> receivable -> receipt/payment -> journal.
+> opening inventory -> purchase/WAC -> sale -> return/credit ->
+> receipt/payment -> journal.
 >
-> Status: M1–M4 complete through migration `059` (2026-06-15). M5 Purchase Invoice Engine is next.
+> Status: M1–M4 complete through migration `059` (2026-06-15). M4.5 Inventory
+> Accounting and Opening Stock is deferred pending external accountant review.
+> M5 Purchase Invoice Engine is closed (2026-06-15). M6 Sales Invoice Engine is next.
 >
 > Canonical sources: `CANONICAL_DECISIONS.md`, `PAYMENT_SYSTEM.md`,
 > `DATABASE_SCHEMA.md`, `MVP_SCOPE.md`, and
@@ -18,27 +21,29 @@ Phase 5 is not only an invoice screen. It is the first phase in which product,
 inventory, customer, supplier, chart-of-accounts, permissions, and document
 printing become one atomic financial workflow.
 
-The phase has five tightly connected responsibilities:
+The phase has six tightly connected responsibilities:
 
 1. Finish the asset identity foundation needed by serialized purchases and
    future contracts.
 2. Add the structured JSON print engine needed by invoices, vouchers,
    statements, and asset labels.
 3. Add the tax and deterministic money foundation before any invoice posting.
-4. Implement RPC-only purchase, sales, voucher, allocation, cancellation, and
-   journal posting.
-5. Expose the workflow through responsive Arabic/English Flutter screens and
+4. Replace non-financial manual stock changes with journal-backed opening
+   stock, stock-in/out, and stock-count documents.
+5. Implement RPC-only purchase, sales, returns, voucher, allocation,
+   cancellation, and journal posting.
+6. Expose the workflow through responsive Arabic/English Flutter screens and
    close it with database, domain, widget, integration, and manual acceptance
    verification.
 
 The old three-week estimate in `BUILD_PLAN.md` is no longer realistic because
 Phase 5 now includes Asset/Barcode/Print and Tax Foundation work that was not in
 the original finance-only estimate. A professional implementation should be
-planned as approximately 8 to 12 focused weeks for one developer with AI
+planned as approximately 10 to 14 focused weeks for one developer with AI
 assistance, depending on local Docker recovery and PDF/font integration.
 
-The implementation is divided into `M0` through `M10`. M0 is a mandatory
-baseline gate. M1-M10 are the ten implementation and closure milestones.
+The implementation is divided into `M0` through `M10`, with inserted
+accounting milestones `M4.5` and `M7.5`. M0 is a mandatory baseline gate.
 
 ---
 
@@ -48,8 +53,12 @@ At the end of Phase 5:
 
 - A purchase invoice increases stock, updates WAC, creates serialized units
   when required, creates A/P, and posts a balanced journal entry.
+- Opening stock, manual stock-in/out, and stock-count differences always create
+  balanced inventory accounting; warehouse transfers remain non-financial.
 - A sales invoice validates stock, snapshots cost and tax, decreases stock,
   creates A/R, recognizes revenue and COGS, and posts balanced journal entries.
+- Sales and purchase returns are linked to their original invoices and reverse
+  quantity, tax, party balance, and inventory value using frozen snapshots.
 - A receipt voucher moves money into cash/bank, reduces customer A/R, and
   allocates the payment to one or more invoices.
 - A payment voucher moves money out of cash/bank, reduces supplier A/P or posts
@@ -175,25 +184,29 @@ No Phase 5 schema work should be layered on an unverified local database.
 11. Concurrency-safe financial document numbering.
 12. Server-owned invoice calculations and rounding.
 13. Persisted invoice drafts through RPCs.
-14. Confirmed purchase invoices.
-15. Confirmed sales invoices.
-16. Receipt vouchers with FIFO, manual, and unallocated-credit modes.
-17. Supplier/direct-account payment vouchers.
-18. Safe invoice and voucher cancellation through reversals.
-19. System-generated journal entry/detail screens.
-20. Cash/bank account activity with running balance.
-21. Customer invoice/voucher tab integration.
-22. Supplier financial detail and basic statement integration.
-23. Customer statement PDF using the shared renderer.
-24. Arabic/English responsive UI and permission coverage.
-25. SQL, Dart, widget, integration, performance, and manual close gates.
+14. Journal-backed opening-stock documents.
+15. Journal-backed stock-in, stock-out, and stock-count documents.
+16. Controlled inventory adjustment reasons and counter-account mapping.
+17. Confirmed purchase invoices.
+18. Confirmed sales invoices.
+19. Linked sales-return and purchase-return documents.
+20. Receipt vouchers with FIFO, manual, and unallocated-credit modes.
+21. Supplier/direct-account payment vouchers.
+22. Safe invoice, return, inventory-document, and voucher cancellation through
+    reversals where business preconditions allow it.
+23. System-generated journal entry/detail screens.
+24. Cash/bank account activity with running balance.
+25. Customer invoice/voucher tab integration.
+26. Supplier financial detail and basic statement integration.
+27. Customer statement PDF using the shared renderer.
+28. Arabic/English responsive UI and permission coverage.
+29. SQL, Dart, widget, integration, performance, and manual close gates.
 
 ### Explicitly Out of Scope
 
 The following are not Phase 5 completion blockers:
 
 - quotations and quotation conversion;
-- sales-return and purchase-return business workflows;
 - unrestricted/manual journal entry creation;
 - journal approval workflow;
 - multi-currency invoices or FX accounting;
@@ -209,6 +222,7 @@ The following are not Phase 5 completion blockers:
 - contract billing and refill-generated invoices;
 - mobile field collection workflow;
 - full P&L, trial balance, and financial report suite;
+- full fiscal-period and year-end-close workflow (assigned to Phase 10);
 - expanding serialized warehouse transfers unless a Phase 5 acceptance case
   proves it is required.
 
@@ -270,6 +284,12 @@ Suggested v1 formats:
 | Purchase invoice | `PI-000001` |
 | Receipt voucher | `RV-000001` |
 | Payment voucher | `PV-000001` |
+| Opening stock | `OS-000001` |
+| Stock in | `STI-000001` |
+| Stock out | `STO-000001` |
+| Stock count | `SC-000001` |
+| Sales return | `SR-000001` |
+| Purchase return | `PR-000001` |
 | Journal entry | `JE-000001` |
 | Internal product SKU | `SKU-000001` |
 | Generated asset serial | configurable prefix + zero-padded number |
@@ -427,9 +447,9 @@ Invoice cancellation is rejected when:
 - a serialized sold unit no longer satisfies the reversal preconditions;
 - a later product movement makes purchase-WAC reversal unsafe.
 
-For v1 purchase cancellation, require no later movement for each affected
-product/warehouse after the invoice movement. Otherwise use a future purchase
-return workflow.
+For purchase cancellation, require no later movement for each affected
+product/warehouse after the invoice movement. Otherwise require a purchase
+return through M7.5.
 
 Voucher cancellation:
 
@@ -473,6 +493,71 @@ The renderer must never recalculate accounting totals independently.
 Do not implement quotations inside Phase 5 merely because the old build plan
 lists them. The strict MVP and canonical decisions exclude them.
 
+### 21. Inventory Adjustments Are Financial Source Documents
+
+After M4.5, no normal application path may change owned inventory quantity or
+value without a source document and balanced journal, except a warehouse
+transfer that preserves total owned quantity/value.
+
+- Opening stock: `Dr Inventory / Cr Opening Balance Equity`.
+- Owner contribution: `Dr Inventory / Cr Owner's Capital`.
+- Found surplus: `Dr Inventory / Cr Inventory Gain`.
+- Shrinkage/damage/expiry/write-off:
+  `Dr Inventory Loss or allowed expense / Cr Inventory`.
+- Owner withdrawal: `Dr Owner's Drawings / Cr Inventory`.
+- Internal consumption: `Dr allowed expense / Cr Inventory`.
+- Warehouse transfer: paired stock movements, no GL journal.
+
+The client cannot supply an unrestricted counter account. It selects a
+permission-controlled reason whose direction and posting account are validated
+by the server.
+
+### 22. Stock Count Is One Document, Not Two Fake Invoices
+
+A stock count snapshots system quantity, accepts counted quantity, and derives
+the difference:
+
+```text
+delta > 0  -> adjustment_in + inventory gain/value posting
+delta < 0  -> adjustment_out + inventory loss/value posting
+delta = 0  -> no movement and no journal line for that item
+```
+
+One count may contain positive, negative, and zero lines. Its journal aggregates
+the resulting inventory debits/credits and counter accounts.
+
+### 23. Inventory Costing for Financial Adjustments
+
+- WAC is based on all owned inventory buckets, not only `qty_available`.
+- Opening stock and external stock-in use the confirmed incoming unit cost and
+  update WAC.
+- Stock-out uses the locked current WAC snapshot and does not recalculate WAC.
+- A found surplus uses current WAC by default; if no positive-cost basis exists,
+  an authorized cost input is required.
+- Serialized stock-in requires one unit identity per quantity.
+- Serialized stock-out requires concrete unit IDs and an allowed terminal or
+  non-available status transition.
+- Product-unit helpers used here must not apply an additional stock delta.
+
+### 24. Returns Are Not Cancellations
+
+- Cancellation corrects a posting mistake and reverses the whole document only
+  when its state is still safely reversible.
+- A sales return or purchase return is a new numbered document linked to the
+  original invoice and may be partial.
+- Cumulative returned quantity may not exceed the original line quantity.
+- Return tax and cost use frozen original snapshots, not current configuration.
+- Paid-document returns create party credit/refund obligations handled by the
+  voucher/credit allocation engine.
+
+### 25. Year-End Close Placement
+
+Phase 5 keeps `books_locked_through` as the lightweight posting lock. Full
+fiscal periods, trial balance, closing entries, reopening controls, and
+year-end transfer of net income to retained earnings belong to Phase 10.
+Inventory and all other balance-sheet accounts carry forward; they are not
+zeroed at year end.
+
 ---
 
 ## Milestone Overview
@@ -484,9 +569,11 @@ lists them. The strict MVP and canonical decisions exclude them.
 | M2 | Asset Identity, Serial, Scan, and Timeline | Reliable serialized-asset identity foundation |
 | M3 | JSON Templates and Print Renderer | Shared Arabic/English local print engine |
 | M4 | Tax Foundation and Money Math | Historical tax snapshots and deterministic totals |
+| M4.5 | Inventory Accounting and Opening Stock | **Deferred pending accountant review; required before Phase 5 close** |
 | M5 | Purchase Invoice Engine | Atomic purchase, stock, units, WAC, A/P, journal |
 | M6 | Sales Invoice and Cancellation Engine | Atomic sale, stock-out, A/R, revenue, COGS |
 | M7 | Voucher, Allocation, and Payment Engine | Receipt/payment cycle with reversals |
+| M7.5 | Sales/Purchase Return and Credit Engine | Partial linked returns, credits, refunds, and snapshot reversals |
 | M8 | Dart Finance Layer, Routes, and Localization | Testable application layer and guarded navigation |
 | M9 | Finance UI and Cross-Module Integration | Operational desktop/mobile finance workflows |
 | M10 | Hardening, Verification, and Phase Close | Proven accounting cycle and documented closure |
@@ -1324,7 +1411,257 @@ CoA trigger ACL, authoritative legacy backfill). SQL suite: 28 cases +
 **Verification:** `supabase db reset`; `./scripts/test/run_sql_suites.sh` twice without reset;
 `flutter analyze`; `flutter test` (516); `git diff --check`.
 
-**Next:** M5 — `060_phase_5_purchase_invoice_rpc.sql`.
+**Next:** M6 — `061_phase_5_sales_invoice_rpc.sql`.
+
+---
+
+## M4.5 - Inventory Accounting and Opening Stock
+
+### Status
+
+**Deferred on 2026-06-15 pending consultation with external accountants.**
+
+The business/accounting treatment of opening stock, owner capital/drawings,
+inventory gains/losses, internal consumption, and stock-count differences must
+be reviewed before implementation.
+
+- This milestone is not cancelled.
+- No migration number is reserved for it while deferred.
+- Do not create its tables, accounts, permissions, RPCs, or compatibility
+  wrapper during M5.
+- Do not change `record_inventory_adjustment(...)` as part of M5.
+- M4.5 remains required before Phase 5 M10 closure and before generic inventory
+  adjustments are accepted as a production-complete financial workflow.
+
+### Goal
+
+Close the existing Phase 3 gap where manual stock adjustments change quantity
+and WAC without changing the inventory asset account.
+
+Every owned-inventory value change must become:
+
+```text
+inventory document + lines + movements + balances + units/WAC + journal
+```
+
+Warehouse transfers remain movement-only because they do not change total
+owned quantity or value.
+
+### Suggested Migration
+
+TBD after accountant review. Do not consume a migration number until the
+accounting decisions are approved.
+
+### Data Model
+
+Add RPC-only, tenant-safe tables such as:
+
+- `inventory_documents`;
+- `inventory_document_lines`;
+- `inventory_adjustment_reasons`.
+
+Required document types:
+
+- `opening_stock`;
+- `stock_in`;
+- `stock_out`;
+- `stock_count`.
+
+Add sequence keys `OS`, `STI`, `STO`, and `SC`.
+
+Required document metadata:
+
+- UUID, tenant, status, date, warehouse;
+- server-generated document number;
+- idempotency key/payload hash;
+- required reason and notes;
+- journal entry link;
+- confirmation/cancellation/reversal metadata;
+- creator/confirmer and timestamps.
+
+Lines snapshot:
+
+- product and optional concrete unit IDs;
+- system quantity when applicable;
+- counted/incoming/outgoing quantity;
+- derived delta;
+- unit-cost/WAC snapshot;
+- total inventory value;
+- reason/account snapshot;
+- line order.
+
+Confirmed lines are immutable.
+
+### Permissions
+
+Add:
+
+- `inventory_documents.view`;
+- `inventory_documents.create_opening`;
+- `inventory_documents.create_adjustment`;
+- `inventory_documents.create_stock_count`;
+- `inventory_documents.cancel`;
+- `inventory_adjustment_reasons.manage`.
+
+Opening stock and reason management are manager-sensitive by default.
+
+### Protected Accounts and Reasons
+
+Provision protected posting leaves under the existing account roots:
+
+- Opening Balance Equity;
+- Owner's Capital;
+- Owner's Drawings;
+- Inventory Gain;
+- Inventory Loss/Adjustment Expense.
+
+Create controlled system reasons for:
+
+- opening stock;
+- owner contribution;
+- found surplus;
+- shrinkage;
+- damage;
+- expiry;
+- write-off;
+- owner withdrawal;
+- internal consumption;
+- correction/reversal.
+
+Tenant-defined reasons may be allowed later, but their account type, direction,
+posting-leaf state, tenant, active state, and protected-account restrictions
+must be validated. The client never supplies a free-form posting account to the
+confirmation RPC.
+
+### RPCs
+
+Implement:
+
+```text
+record_opening_stock(p_data jsonb, p_idempotency_key uuid)
+record_inventory_document(p_data jsonb, p_idempotency_key uuid)
+record_stock_count(p_data jsonb, p_idempotency_key uuid)
+cancel_inventory_document(
+  p_document_id uuid,
+  p_reason text,
+  p_idempotency_key uuid
+)
+list_inventory_documents(filters, cursor/page, limit)
+get_inventory_document_detail(document_id)
+```
+
+Replace `record_inventory_adjustment(...)` with a compatibility wrapper over
+the financial document engine so the existing Phase 3 UI no longer creates
+unposted stock changes. Its default stock-in/out reasons map to Inventory Gain
+and Inventory Loss until the M9 reason picker is delivered.
+
+### Posting Rules
+
+Opening stock:
+
+```text
+Dr Inventory
+Cr Opening Balance Equity
+```
+
+Stock-in:
+
+```text
+Dr Inventory
+Cr reason-resolved Equity or Income account
+```
+
+Stock-out:
+
+```text
+Dr reason-resolved Expense or Drawings account
+Cr Inventory
+```
+
+Stock count:
+
+- positive lines use the configured gain reason;
+- negative lines use the configured loss reason;
+- zero-difference lines create no movement/journal amount;
+- one balanced journal aggregates all line effects.
+
+Never insert zero-value journal lines.
+
+### Cost and Quantity Rules
+
+- Use all owned stock buckets when deriving WAC quantity.
+- Opening stock and external stock-in require an authorized non-negative unit
+  cost and update WAC in stable product order.
+- Stock-out values inventory at the locked current WAC and leaves WAC unchanged.
+- Found surplus uses current WAC; require an authorized cost only when no valid
+  cost basis exists.
+- Stock count snapshots system quantity under row locks before deriving delta.
+- Negative stock is forbidden.
+- Serialized stock-in requires whole quantity and exact unique serial/barcode
+  identities.
+- Serialized stock-out/count loss requires concrete available unit IDs.
+- Unit inserts/status changes must not create an extra movement, balance delta,
+  or WAC update.
+
+### Opening Stock Guard
+
+Opening stock is an initialization document, not a routine adjustment:
+
+- require a dedicated permission;
+- reject dates in locked periods;
+- reject duplicate opening import keys;
+- warn/reject when later operational movements already exist for the same
+  product/warehouse unless an explicit manager migration mode is approved;
+- preserve the document forever after confirmation.
+
+### Cancellation
+
+Cancellation is allowed only when:
+
+- no later affected product/warehouse movement makes reversal unsafe;
+- serialized units have no downstream activity;
+- the period is open;
+- a non-empty reason and cancellation permission are present.
+
+Otherwise raise `correction_document_required`. Never hard-delete a confirmed
+inventory document.
+
+### SQL Tests
+
+Create:
+
+`supabase/tests/phase_5_inventory_accounting.sql`
+
+Cover:
+
+- opening stock quantity, WAC, and equity posting;
+- owner-contributed stock;
+- normal stock-in and inventory gain;
+- shrinkage/damage/expiry stock-out and expense posting;
+- owner withdrawal to drawings;
+- internal-consumption account validation;
+- positive, negative, mixed, and zero stock counts;
+- all-owned-buckets WAC basis;
+- serialized stock-in/out without double-counting;
+- transfer produces no journal;
+- idempotent retry and concurrent duplicate submit;
+- cross-tenant and permission denial;
+- locked-period denial;
+- direct-write denial;
+- safe cancellation and blocked unsafe cancellation;
+- compatibility `record_inventory_adjustment` creates a journal;
+- forced late-failure rollback of document, stock, WAC, units, and journal.
+
+### Acceptance
+
+- Inventory movements and the inventory GL account cannot diverge through a
+  normal stock adjustment path.
+- Opening stock posts against opening equity exactly once.
+- A mixed stock count produces only the required movements and one balanced
+  journal.
+- Transfers do not create profit, loss, or equity.
+- Existing adjustment UI calls become financially posted without waiting for
+  M9.
 
 ---
 
@@ -1400,16 +1737,41 @@ Any failure rolls back all steps.
 
 ### WAC
 
-Implement an internal helper:
+Implement an internal purchase WAC helper:
 
 ```text
 recalculate_wac(product_id)
 ```
 
-or a deterministic incremental helper shared with purchase posting.
+or a deterministic incremental helper used by purchase posting.
+
+Because M4.5 is deferred, M5 preserves the currently implemented Phase 3 WAC
+quantity basis:
+
+```text
+sum(inventory_balances.qty_available) across all warehouses for the product
+```
+
+Do not change the valuation-bucket policy in M5. Keep the helper isolated so a
+later approved M4.5 decision can revise it with focused migration/tests.
 
 Do not expose broad direct execute permission. If a manager repair RPC is
 needed, wrap it with permission, reason, and audit.
+
+### Deferred-M4.5 Scope Guard
+
+M5 must not implement or alter:
+
+- opening stock;
+- generic stock-in/stock-out accounting;
+- stock-count/reconciliation documents;
+- owner capital or drawings accounts;
+- inventory gain/loss reason mappings;
+- the legacy `record_inventory_adjustment(...)` behavior;
+- warehouse-transfer accounting;
+- fiscal-period or year-end-close behavior.
+
+M5 owns only confirmed purchase effects and their required purchase journal.
 
 ### Drafts
 
@@ -1468,6 +1830,38 @@ Cover:
 - Duplicate network submit cannot duplicate the purchase.
 - Any validation/posting failure leaves no partial invoice, stock, unit, or
   journal data.
+
+### Status — closed 2026-06-15
+
+Delivered in [`060_phase_5_purchase_invoice_rpc.sql`](../supabase/migrations/060_phase_5_purchase_invoice_rpc.sql):
+
+- `record_purchase_invoice`, `save_invoice_draft`, `discard_invoice_draft`,
+  `list_purchase_invoices`, `get_purchase_invoice_detail`.
+- Internal-only helpers for normalize/hash, supplier A/P, inventory 1301, WAC,
+  serialized units (no stock double-count).
+- Draft confirm updates the same invoice row; manager vs creator ownership on
+  drafts.
+- Idempotency: tenant + permission → validate key → normalize → hash
+  (includes `invoice_id`) → advisory lock → resolve → post.
+- Confirm and draft payloads use explicit top/line/unit allowlists and strict
+  JSON types; malformed UUID/date/numeric values fail as `validation_failed`.
+- WAC preserves Phase 3 `sum(qty_available)` policy via isolated internal helper.
+
+**Tests:** 39 SQL cases in
+[`phase_5_purchase_invoices.sql`](../supabase/tests/phase_5_purchase_invoices.sql);
+[`phase_5_purchase_invoices_concurrency.sh`](../supabase/tests/phase_5_purchase_invoices_concurrency.sh);
+Phase D wired in [`run_sql_suites.sh`](../scripts/test/run_sql_suites.sh).
+The concurrency gate restores tax settings, PI/JE sequences, audit rows, test
+products, supplier/account, invoices, movements, units, and journals.
+
+**Verification:** `supabase db reset`; `./scripts/test/run_sql_suites.sh` twice
+without reset; `flutter analyze`; `flutter test` (516); `git diff --check`.
+
+**Next:** M6 — `061_phase_5_sales_invoice_rpc.sql`.
+
+**Remaining risks:** no automatic deadlock retry (M10); tax-enabled tenants need
+provisioned posting accounts; serialized same-product multi-line rejected until
+optional `invoice_line_id` on units.
 
 ---
 
@@ -1694,6 +2088,10 @@ Implement internal helpers:
 - `validate_manual_allocations`
 - `recompute_invoice_payment_state`
 
+The settlement model must also consume customer/supplier credits created by
+M7.5 returns without rewriting or deleting the original invoice, return,
+voucher, or allocation rows.
+
 FIFO ordering:
 
 1. due date, nulls after dated invoices;
@@ -1771,6 +2169,135 @@ Cover:
 
 ---
 
+## M7.5 - Sales/Purchase Return and Credit Engine
+
+### Goal
+
+Implement partial or full commercial returns as new linked financial documents,
+not as cancellation aliases.
+
+### Suggested Migration
+
+`063_phase_5_return_invoice_rpc.sql`
+
+### RPCs
+
+Implement:
+
+```text
+record_sales_return(p_data jsonb, p_idempotency_key uuid)
+record_purchase_return(p_data jsonb, p_idempotency_key uuid)
+cancel_return_invoice(
+  p_return_invoice_id uuid,
+  p_reason text,
+  p_idempotency_key uuid
+)
+```
+
+Read RPCs:
+
+- `list_return_invoices(filters, cursor/page, limit)`;
+- `get_return_invoice_detail(invoice_id)`;
+- `list_returnable_invoice_lines(original_invoice_id)`;
+- `list_available_party_credits(party_id, direction)`.
+
+### Data and Validation
+
+- Return invoice type is `sales_return` or `purchase_return`.
+- Add sequence keys `SR` and `PR`.
+- Add `invoices.create_sales_return`, `invoices.create_purchase_return`, and
+  `invoices.view_returns`; return cancellation also requires `invoices.cancel`.
+- Require `original_invoice_id`.
+- Every return line references one original invoice line.
+- Original and return tenant, party, product, currency, and direction match.
+- Cumulative returned quantity cannot exceed original confirmed quantity.
+- Use original tax-rate/class/amount logic proportionally at currency precision.
+- Use original line cost snapshot for inventory restoration/removal.
+- Require a reason and optional notes.
+- Lock original invoice, return links, units, products, and balances in stable
+  order.
+- Preserve exact-once idempotency under concurrent return attempts.
+
+### Sales Return Posting
+
+Commercial side:
+
+```text
+Dr Sales Returns / Contra-Revenue
+Dr Output Tax Payable
+Cr Customer A/R or Customer Credit
+```
+
+Inventory side:
+
+```text
+Dr Inventory
+Cr COGS
+```
+
+- Restore non-serialized stock using the original frozen cost snapshot.
+- Restore serialized units only when the concrete sold units are eligible and
+  have no conflicting downstream ownership/activity.
+- Recalculate WAC deterministically when restored cost differs from current WAC.
+
+### Purchase Return Posting
+
+```text
+Dr Supplier A/P or Supplier Credit
+Cr Inventory
+Cr Input Tax Recoverable
+```
+
+- Require sufficient reversible stock.
+- Serialized purchase return requires the original concrete purchased units.
+- Remove inventory using the original acquisition/tax-capitalization snapshot.
+- Recalculate WAC deterministically after removing returned acquisition value.
+- If later movements make value reversal unsafe, reject with
+  `return_not_safely_reversible`.
+
+### Credits, Allocations, and Refunds
+
+- An unpaid return may reduce the related party outstanding through a linked
+  credit allocation.
+- A paid sales return creates customer credit until allocated or refunded.
+- A paid purchase return creates supplier credit until allocated or received.
+- Allocation rows are immutable and reversed, never deleted.
+- Cash refunds/receipts use voucher flows and their own journal entries.
+- Return cancellation is blocked while active credit/refund allocations exist.
+
+### SQL Tests
+
+Create:
+
+`supabase/tests/phase_5_returns.sql`
+
+Cover:
+
+- full and partial sales return;
+- full and partial purchase return;
+- cumulative over-return rejection;
+- original line/party/tenant mismatch;
+- recoverable/non-recoverable tax reversal;
+- serialized identity requirements;
+- sales return stock/WAC/COGS restoration;
+- purchase return stock/WAC/A/P reversal;
+- unpaid credit allocation;
+- paid return credit/refund lifecycle;
+- concurrent return protection;
+- idempotent retry;
+- safe cancellation and allocation-blocked cancellation;
+- complete rollback after late failure.
+
+### Acceptance
+
+- Returns preserve the original invoice and create their own final number.
+- Returned quantities, tax, stock value, party balance, and journal remain
+  traceable to original snapshots.
+- A return after payment creates a controlled credit/refund obligation.
+- Cancellation and return workflows cannot be confused or double-applied.
+
+---
+
 ## M8 - Dart Finance Layer, Routes, and Localization
 
 ### Goal
@@ -1793,6 +2320,10 @@ lib/features/vouchers/presentation/
 lib/features/journal/domain/
 lib/features/journal/data/
 lib/features/journal/presentation/
+
+lib/features/inventory_accounting/domain/
+lib/features/inventory_accounting/data/
+lib/features/inventory_accounting/presentation/
 
 lib/features/finance_shared/domain/
 lib/features/finance_shared/presentation/
@@ -1826,6 +2357,9 @@ At minimum:
 - `InvoiceTotals`
 - `InvoiceType`
 - `InvoiceStatus`
+- `ReturnInvoiceDraft`
+- `ReturnableInvoiceLine`
+- `PartyCredit`
 - `VoucherSummary`
 - `VoucherDetail`
 - `VoucherAllocation`
@@ -1835,6 +2369,11 @@ At minimum:
 - `JournalEntryDetail`
 - `JournalLine`
 - `CashBankActivityRow`
+- `InventoryDocumentSummary`
+- `InventoryDocumentDetail`
+- `InventoryDocumentLine`
+- `InventoryAdjustmentReason`
+- `StockCountDraft`
 - `DocumentSequenceDisplay` only if required for diagnostics
 
 All money and quantities use `Decimal`.
@@ -1845,7 +2384,11 @@ Pure validators for:
 
 - sales draft;
 - purchase draft;
+- sales/purchase return;
 - serialized line/unit count;
+- opening stock;
+- stock-in/stock-out reason and cost;
+- stock-count quantity/delta;
 - due date;
 - discount;
 - manual allocations;
@@ -1899,6 +2442,13 @@ Add:
 /journal
 /journal/:id
 /cash-bank
+/inventory/documents
+/inventory/documents/opening-stock
+/inventory/documents/stock-in
+/inventory/documents/stock-out
+/inventory/documents/stock-count
+/inventory/documents/:id
+/invoices/:id/return
 /product-units/:id
 /settings/tax
 /settings/templates
@@ -1968,7 +2518,7 @@ Deliver usable finance workflows on desktop and narrow mobile layouts.
 
 Filters:
 
-- sales/purchase;
+- sales/purchase/sales-return/purchase-return;
 - status;
 - date range;
 - customer/supplier;
@@ -2026,6 +2576,29 @@ Sections:
 8. save draft/confirm.
 
 Bulk serial entry must validate count before confirmation.
+
+### Return Forms
+
+- Start from the original confirmed invoice.
+- Show remaining returnable quantity per original line.
+- Require return reason.
+- Use original tax/cost snapshots; do not offer editable tax or cost.
+- Require concrete unit selection for serialized lines.
+- Show customer/supplier credit or refund consequence before confirmation.
+
+### Inventory Financial Documents
+
+Upgrade the existing inventory-adjustment surface to support:
+
+- opening stock;
+- stock-in with controlled reason;
+- stock-out with controlled reason;
+- stock count with system quantity, counted quantity, and derived delta;
+- immutable document detail with movements and journal link.
+
+The UI never offers a free-form counter account. It selects an allowed reason
+returned by the server. Warehouse transfers remain in the transfer workflow and
+show “no financial effect”.
 
 ### Invoice Detail
 
@@ -2174,6 +2747,8 @@ screen.
 
 - A user can complete purchase, sale, receipt, and payment workflows without
   using SQL.
+- A user can post opening stock, financial stock adjustments, stock counts, and
+  linked returns without direct table writes.
 - Customer and supplier financial tabs show real bounded data.
 - Journal source navigation works.
 - Invoice/voucher/statement/asset-label printing works.
@@ -2198,9 +2773,11 @@ Run a clean reset, then all SQL suites in migration order:
 - Phase 5 finance foundation;
 - Phase 5 asset identity;
 - Phase 5 tax;
+- Phase 5 inventory accounting/opening stock;
 - Phase 5 purchase invoices;
 - Phase 5 sales invoices;
 - Phase 5 vouchers;
+- Phase 5 returns/credits;
 - final Phase 5 security/closure suite.
 
 Suggested final suite:
@@ -2212,25 +2789,28 @@ Suggested final suite:
 Use deterministic fixture values:
 
 1. Create or select supplier/customer accounts.
-2. Purchase 100 non-serialized oil units.
-3. Verify quantity, movement, WAC, A/P, and journal.
-4. Purchase two serialized devices.
-5. Verify two units, labels, timeline, and no double-counting.
-6. Sell a quantity of oil.
-7. Verify stock decrease, A/R, revenue, tax if enabled, COGS, and inventory.
-8. Sell one serialized unit.
-9. Verify required unit identity and sold state.
-10. Record partial receipt with FIFO allocation.
-11. Verify invoice partially paid.
-12. Record remaining receipt.
-13. Verify invoice paid.
-14. Record supplier payment.
-15. Verify A/P reduction and bank/cash movement.
-16. Cancel a safe test voucher and verify complete reversal.
-17. Cancel a safe test invoice and verify complete reversal.
-18. Confirm unsafe cancellation cases are rejected.
-19. Render Arabic/English invoice, voucher, statement, and asset label.
-20. Verify journal entries balance at every step.
+2. Record opening stock and verify inventory/equity/WAC.
+3. Record mixed positive/negative stock count and verify gain/loss posting.
+4. Verify a warehouse transfer creates no GL journal.
+5. Purchase 100 non-serialized oil units.
+6. Verify quantity, movement, WAC, A/P, and journal.
+7. Purchase two serialized devices.
+8. Verify two units, labels, timeline, and no double-counting.
+9. Sell a quantity of oil.
+10. Verify stock decrease, A/R, revenue, tax if enabled, COGS, and inventory.
+11. Sell one serialized unit.
+12. Verify required unit identity and sold state.
+13. Record partial receipt with FIFO allocation.
+14. Verify invoice partially paid.
+15. Record remaining receipt and verify paid state.
+16. Record supplier payment and verify A/P/cash movement.
+17. Record partial sales and purchase returns.
+18. Verify original snapshots, inventory value, tax, party credit, and journal.
+19. Cancel a safe test voucher/document and verify complete reversal.
+20. Confirm unsafe cancellation and over-return cases are rejected.
+21. Render Arabic/English invoice, return, inventory document, voucher,
+    statement, and asset label.
+22. Verify journal entries balance at every step.
 
 ### Security Matrix
 
@@ -2240,6 +2820,8 @@ Test:
 - zero-permission user;
 - sales-only user;
 - purchase-only user;
+- inventory-opening/adjustment/count users;
+- returns-only user;
 - receipt-only user;
 - payment-only user;
 - journal-view user;
@@ -2255,8 +2837,10 @@ Test:
 Test:
 
 - duplicate idempotency key;
+- two simultaneous stock counts/adjustments for the same product;
 - two simultaneous sales against last stock;
 - two simultaneous allocations against one outstanding invoice;
+- two simultaneous partial returns against the same original line;
 - document sequence concurrency;
 - serial generation concurrency;
 - WAC updates on concurrent purchases;
@@ -2267,6 +2851,8 @@ Test:
 Verify indexes and query plans for:
 
 - invoice list by tenant/type/date/status;
+- inventory-document list and stock-count detail;
+- returnable-line and return-credit lookups;
 - party invoice list;
 - voucher list;
 - open invoice allocation picker;
@@ -2331,7 +2917,9 @@ Update:
 - Asset serial/scan/label foundation is reliable.
 - Tax and money calculations are deterministic.
 - Purchase and sales invoices post atomically.
+- Opening stock, financial adjustments, and stock counts post atomically.
 - Vouchers and allocations post atomically.
+- Sales/purchase returns and credits post atomically.
 - Cancellations preserve history and reverse safely.
 - Journal entries are balanced, immutable, and source-linked.
 - Customer/supplier finance views are operational.
@@ -2355,8 +2943,10 @@ Update:
 | `059_phase_5_tax_foundation.sql` | tax settings/rates/classes/snapshots and math helpers |
 | `060_phase_5_purchase_invoice_rpc.sql` | purchase draft/confirm, units, stock, WAC, A/P journal |
 | `061_phase_5_sales_invoice_rpc.sql` | sales confirm, stock-out, cost snapshot, A/R/revenue/COGS, cancellation |
-| `062_phase_5_voucher_allocation_rpc.sql` | receipt/payment/allocation/cancellation |
-| `063_phase_5_finance_views_hardening.sql` | bounded read RPCs/views, indexes, final ACL/trigger hardening |
+| `062_phase_5_voucher_allocation_rpc.sql` | receipt/payment/allocation/cancellation and credit settlement foundation |
+| `063_phase_5_return_invoice_rpc.sql` | sales/purchase returns, original-line links, credits/refunds |
+| `064_phase_5_finance_views_hardening.sql` | bounded read RPCs/views, indexes, final ACL/trigger hardening |
+| `TBD_phase_5_inventory_accounting.sql` | deferred M4.5 after accountant approval; do not reserve a number yet |
 
 Migration names are planned, not reserved. If implementation uncovers a reason
 to split a migration, preserve dependency order and document the change.
@@ -2371,9 +2961,11 @@ to split a migration, preserve dependency order and document the change.
 | `phase_5_asset_identity.sql` | SKU, serial, reconcile, correct, resolver, timeline |
 | `phase_5_m1_m2_hardening.sql` | ACL, journal concurrency, audit, reconcile, scan policy, metadata |
 | `phase_5_tax_foundation.sql` | tax classes/rates/snapshots/math |
+| `phase_5_inventory_accounting.sql` | opening stock, adjustments, stock counts, WAC/value, rollback |
 | `phase_5_purchase_invoices.sql` | purchase, units, balances, WAC, A/P, rollback |
 | `phase_5_sales_invoices.sql` | sales, stock, cost, A/R, COGS, cancellation |
 | `phase_5_vouchers.sql` | receipt/payment/allocation/cancellation |
+| `phase_5_returns.sql` | linked returns, tax/cost snapshots, credits/refunds, rollback |
 | `phase_5_finance_closure.sql` | permissions, tenant isolation, regression, E2E invariants |
 
 Every suite should use transactions and roll back its test data.
@@ -2388,14 +2980,18 @@ Every suite should use transactions and roll back its test data.
 | 2 | M2 | finish serialized identity before purchase invoice units |
 | 3 | M3 | establish one print model before document screens |
 | 4 | M4 | lock tax/math before invoice posting |
-| 5 | M5 | purchase is the inventory/WAC foundation |
-| 6 | M6 | sales consumes inventory cost and creates A/R/revenue |
-| 7 | M7 | vouchers complete cash and allocation cycle |
-| 8 | M8 | build typed application layer and guarded routes |
-| 9 | M9 | deliver operational screens and integrations |
-| 10 | M10 | reset, regression, E2E, performance, and close |
+| 5 | M5 | purchase is next; preserve current adjustment/WAC policies outside purchase |
+| 6 | M4.5 | deferred; schedule after accountant review and before M10 close |
+| 7 | M6 | sales consumes inventory cost and creates A/R/revenue |
+| 8 | M7 | vouchers complete cash and allocation cycle |
+| 9 | M7.5 | returns depend on invoice snapshots and credit settlement |
+| 10 | M8 | build typed application layer and guarded routes |
+| 11 | M9 | deliver operational screens and integrations |
+| 12 | M10 | reset, regression, E2E, performance, and close |
 
-Do not start M5/M6 posting SQL before M4 money/tax fixtures pass.
+M5 may start after M4 money/tax fixtures pass. Deferred M4.5 must pass before
+M10 Phase 5 closure, but M5 must not anticipate or silently implement its
+unapproved accounting decisions.
 
 ---
 
@@ -2404,12 +3000,20 @@ Do not start M5/M6 posting SQL before M4 money/tax fixtures pass.
 | Area | Scenario | Expected |
 |------|----------|----------|
 | Permissions | zero-permission user opens invoices URL | redirected/blocked |
+| Opening stock | confirmed initialization | inventory/WAC/equity update once |
+| Stock-in | owner contribution | inventory debited, capital credited |
+| Stock-out | shrinkage/damage | loss expense debited, inventory credited |
+| Stock count | mixed differences | derived movements and one balanced journal |
+| Transfer | warehouse-to-warehouse | quantity moves; no GL amount changes |
 | Purchase | non-serialized purchase | stock/WAC/A/P/journal update once |
 | Purchase | serialized quantity 2 with 2 units | exactly 2 units and one stock delta |
 | Purchase | serialized quantity/serial mismatch | rejected with no partial data |
 | Sales | quantity exceeds stock | rejected |
 | Sales | serialized line without unit | rejected |
 | Sales | valid sale | A/R, revenue, COGS, stock, journal correct |
+| Return | partial sales return | original snapshots, stock, A/R credit, journal correct |
+| Return | partial purchase return | stock, WAC, A/P credit, tax reversal correct |
+| Return | quantity above remaining returnable | rejected without partial data |
 | Price | below minimum without override | rejected |
 | Tax | tax disabled | tax zero, totals correct |
 | Tax | taxable line | snapshots and posting correct |
@@ -2455,6 +3059,8 @@ Mitigation:
 
 - stable row locks;
 - SQL-owned calculation;
+- all-owned-buckets quantity basis;
+- shared M4.5/M5/M7.5 value helpers;
 - purchase concurrency tests;
 - no sales recalculation.
 
@@ -2519,6 +3125,24 @@ Mitigation:
 - no manual journal;
 - no bank-import reconciliation.
 
+### Risk 11 - Inventory/GL Divergence
+
+Mitigation:
+
+- replace the legacy adjustment RPC with a journal-backed wrapper;
+- no direct balance/movement writes;
+- stock-count and opening-stock rollback tests;
+- transfer explicitly asserted as zero-GL.
+
+### Risk 12 - Return/Cancellation Confusion
+
+Mitigation:
+
+- cancellation is whole-document error reversal;
+- returns are numbered linked documents;
+- cumulative return quantity constraints;
+- immutable credit/refund allocations.
+
 ---
 
 ## Estimated Delivery
@@ -2531,15 +3155,17 @@ Approximate focused effort:
 | M2 | 4-6 days |
 | M3 | 4-6 days |
 | M4 | 3-5 days |
+| M4.5 | 3-5 days |
 | M5 | 4-6 days |
 | M6 | 4-6 days |
 | M7 | 4-6 days |
+| M7.5 | 4-6 days |
 | M8 | 3-5 days |
 | M9 | 6-9 days |
 | M10 | 3-5 days |
 
-Total: approximately 38-59 focused development days before contingency. With
-overlap, reusable patterns, and AI assistance, a practical target is 8-12
+Total: approximately 45-70 focused development days before contingency. With
+overlap, reusable patterns, and AI assistance, a practical target is 10-14
 calendar weeks of concentrated work. Accounting correctness gates should not
 be removed to meet the older three-week estimate.
 
@@ -2547,14 +3173,15 @@ be removed to meet the older three-week estimate.
 
 ## Starting Point for the Next Coding Session
 
-Start with **M0 only**:
+Start with **M5 only**:
 
-1. recover the local Docker/Supabase environment;
-2. run a clean reset through migration `052`;
-3. run all existing SQL suites;
-4. run Flutter verification;
-5. record the clean baseline in this plan and `ai_memory.md`;
-6. then implement `053_phase_5_journal_source_enum.sql` and `054_phase_5_finance_foundation.sql`.
+1. preserve the passing M1-M4 baseline through migration `059`;
+2. implement `060_phase_5_purchase_invoice_rpc.sql`;
+3. reuse M4 tax/money helpers and the current Phase 3 `qty_available` WAC basis;
+4. do not implement or modify any deferred M4.5 behavior;
+5. add and pass `phase_5_purchase_invoices.sql`, including concurrency,
+   idempotency, serialized double-counting, and late-failure rollback;
+6. rerun all existing SQL suites twice without reset;
+7. run Flutter analysis/tests and document the M5 baseline.
 
-Do not start invoice UI or posting RPCs before the M0 baseline and M1 accounting
-invariants are complete.
+M4.5 remains a required pre-M10 closure milestone after accountant review.

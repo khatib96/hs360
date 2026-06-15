@@ -17,12 +17,12 @@
 | **2 - Authentication & Routing** | Done | not recorded |
 | **3 - Products & Inventory** | Done | 2026-05-30 |
 | **4 - Customers, Suppliers & CoA** | Engineering complete | 2026-06-06 |
-| **5 - Invoices, Vouchers & Journal** | Planned | M0-M10 plan created 2026-06-06 |
+| **5 - Invoices, Vouchers & Journal** | In progress | M1-M5 complete; M4.5 deferred; M6 next |
 | **6 - Contracts** | Not started | - |
 | **7 - Calendar** | Not started | - |
 | **8 - Mobile Field Ops** | Not started | - |
 | **9 - POS, Maintenance & HR** | Not started | - |
-| **10 - Reports** | Not started | - |
+| **10 - Reports & Close** | Not started | - |
 | **11 - Communications** | Not started | - |
 | **12 - Polish & Production** | Not started | - |
 
@@ -389,16 +389,19 @@ Acceptance:
 
 ---
 
-## Phase 5 — Invoices, Vouchers & Journal (≈ 8-12 weeks)
+## Phase 5 — Invoices, Vouchers & Journal (≈ 10-14 weeks)
 
-**Status:** [~] In progress. M1–M4 are complete; M5 Purchase Invoice Engine is next.
-The detailed M0-M10 execution plan in
+**Status:** [~] In progress. M1–M4 are complete. Inserted M4.5 Inventory
+Accounting and Opening Stock is deferred pending accountant review; M6
+Sales Invoice Engine is next.
+The detailed M0-M10 execution plan with inserted M4.5/M7.5 milestones in
 `PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md` supersedes the older task ordering
 below where they conflict. In particular, quotations and manual journal
 posting are outside the strict Phase 5 MVP.
 
 ### Goal
-Full accounting cycle works. Purchase → Sale → Receipt → P&L.
+Full accounting cycle works. Opening stock → Purchase → Sale → Return →
+Receipt/Payment → P&L.
 
 ### Tasks
 
@@ -497,13 +500,49 @@ Acceptance:
 - Sales invoice posting can credit output tax separately from revenue.
 - Purchase invoice posting can debit recoverable input tax or tax expense according to the tax-rate settings.
 
+**5.0B Inventory Accounting & Opening Stock Foundation**
+
+**Status:** Deferred pending external accountant review. It remains required
+before Phase 5 closure, but it does not block starting M5 purchase.
+
+- Add financial inventory documents for:
+  - opening stock;
+  - stock-in;
+  - stock-out;
+  - stock count/reconciliation.
+- Add controlled adjustment reasons mapped to allowed posting accounts:
+  - opening equity;
+  - owner capital/drawings;
+  - inventory gain;
+  - shrinkage/damage/expiry/write-off loss;
+  - internal-consumption expense.
+- Replace the legacy `record_inventory_adjustment` implementation with a
+  journal-backed compatibility path.
+- Use all owned inventory buckets for WAC quantity.
+- Keep warehouse transfers non-financial: paired movements, no journal.
+- Support serialized adjustment identities without double-counting.
+
+Acceptance:
+- Opening stock posts Dr Inventory / Cr Opening Balance Equity.
+- Stock count differences create only required movements and one balanced journal.
+- Inventory movements and the inventory GL account cannot diverge through the app.
+- Transfers never create income, expense, capital, or inventory-value changes.
+
+While deferred, M5 must not change the legacy adjustment RPC or implement any
+opening-stock/capital/gain/loss/count behavior. Purchase WAC keeps the current
+Phase 3 `qty_available`-only basis until the accounting review is approved.
+
 **5.1 Stored Functions**
 Implement all RPCs per `DATABASE_SCHEMA.md` section 19:
 - `record_purchase_invoice`
 - `record_sales_invoice`
+- `record_sales_return`
+- `record_purchase_return`
 - `recalculate_wac` (called by the above)
 - Each must create the journal entries
 - `record_purchase_invoice` must create `product_units` for serialized purchase lines in the same transaction as balances, WAC, and journal entries.
+- Returns are numbered documents linked to original invoice lines. They use
+  original tax/cost snapshots and are not cancellation aliases.
 
 **5.2 Invoice Screens (Desktop)**
 - Invoices list (filterable by type, status, customer)
@@ -534,13 +573,16 @@ Implement all RPCs per `DATABASE_SCHEMA.md` section 19:
 - Export as PDF
 
 ### Deliverables
-- A full purchase → sale → payment cycle works
+- A full opening stock → purchase → sale → return → payment cycle works
+- Financial inventory adjustments and stock counts work
 - Journal entries auto-generated and balanced
 - PDFs printable
 
 ### Acceptance
 - Record a purchase of 100 oil units → balance + WAC update
 - Record a sale → A/R increases, inventory decreases
+- Record partial sales/purchase returns → original snapshots and credits reverse correctly
+- Record mixed stock count → inventory gain/loss journal balances
 - Record a receipt voucher → A/R clears
 - Print invoice PDF in Arabic and English
 
@@ -741,7 +783,7 @@ Add-on modules that round out the system.
 
 ---
 
-## Phase 10 — Reports & Dashboards (≈ 2 weeks)
+## Phase 10 — Reports, Dashboards & Financial Close (≈ 3-4 weeks)
 
 ### Goal
 All key reports work. Managers can answer business questions in under a minute.
@@ -764,14 +806,29 @@ All key reports work. Managers can answer business questions in under a minute.
 15. Data Quality Warnings: missing GPS, products without cost, contracts without refill day, duplicate phone numbers
 16. Operations Map: reusable map widget with typed layers and clustering, starting with service locations/today's visits and later rented assets
 17. Document Template Editor: visual/settings-based editor on top of the Phase 5 JSON template model
+18. Trial Balance: opening, period debits/credits, and closing balance by account
+19. Inventory-to-GL Reconciliation: compare inventory valuation with account `1301`
+20. Fiscal Period & Year-End Close:
+   - `fiscal_years` and `accounting_periods` with open/closed state
+   - close preflight for balanced journals, unposted documents, and inventory/GL reconciliation
+   - period close that blocks posting/cancellation through the closed date
+   - audited reopen with dedicated permission and required reason
+   - idempotent year-end closing entry that zeros income/expense into retained earnings
+   - carry forward all balance-sheet accounts without resetting inventory, cash, A/R, A/P, or equity
 
 ### Deliverables
 - All reports per `PROJECT.md` 3.1 working
 - Each exportable to PDF and CSV
 - Smart operational dashboards are available to Managers
+- Trial balance and inventory/GL reconciliation support a controlled annual close
+- Fiscal years can be closed and reopened only through audited workflows
 
 ### Acceptance
 - Generate P&L for last month in <30 seconds
+- Trial balance is balanced and agrees with journal lines
+- Inventory valuation agrees with the inventory GL before close
+- Year-end close transfers net income to retained earnings exactly once
+- Closing a year does not zero inventory or any other balance-sheet account
 - "Is contract X profitable?" answerable in <5 clicks
 - Contract Health Score identifies at-risk contracts without manual spreadsheet work
 - Debt Priority List gives a ranked collection queue
@@ -872,16 +929,16 @@ These are out of v1 scope but worth noting for the roadmap:
 | 2 — Auth | 1 wk | 4 wk |
 | 3 — Products | 2 wk | 6 wk |
 | 4 — Customers | 1 wk | 7 wk |
-| 5 — Invoices & Vouchers | 8-12 wk | 15-19 wk |
-| 6 — Contracts | 4 wk | 19-23 wk |
-| 7 — Calendar | 2 wk | 21-25 wk |
-| 8 — Mobile | 4 wk | 25-29 wk |
-| 9 — POS + Maint + HR | 3 wk | 28-32 wk |
-| 10 — Reports | 2 wk | 30-34 wk |
-| 11 — Comms | 2 wk | 32-36 wk |
-| 12 — Polish & Launch | 3 wk | **35-39 wk** |
+| 5 — Invoices & Vouchers | 10-14 wk | 17-21 wk |
+| 6 — Contracts | 4 wk | 21-25 wk |
+| 7 — Calendar | 2 wk | 23-27 wk |
+| 8 — Mobile | 4 wk | 27-31 wk |
+| 9 — POS + Maint + HR | 3 wk | 30-34 wk |
+| 10 — Reports & Close | 3-4 wk | 33-38 wk |
+| 11 — Comms | 2 wk | 35-40 wk |
+| 12 — Polish & Launch | 3 wk | **38-43 wk** |
 
-**Total: ~35-39 weeks (~8-9 months)** of focused work. Realistic for solo+AI; faster if you skip non-essential features in v1 (POS, advanced HR, full notifications).
+**Total: ~38-43 weeks (~9-10 months)** of focused work. Realistic for solo+AI; faster if you skip non-essential features in v1 (POS, advanced HR, full notifications).
 
 ---
 
