@@ -1,6 +1,54 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-06-17 (Session: M7 Voucher Engine closed).
+> Updated 2026-06-17 (Session: M7.5 Returns/Credits implemented; refund allocation model corrected).
+
+---
+
+## Session 2026-06-17 - M7.5 Return/Credit Engine Implemented + Refund Allocation Correction
+
+Delivered Phase 5 M7.5 as SQL-only milestone:
+
+- Added `063_phase_5_return_journal_source_enum.sql` for isolated
+  `journal_source` enum values: returns, reversals, and refund vouchers.
+- Added `064_phase_5_return_invoice_rpc.sql` for linked sales/purchase returns,
+  credit allocations, SR/PR sequences, return permissions, COA 4102/2150/1160,
+  return write/read RPCs, credit application, refund vouchers, and M7 effective
+  outstanding hardening.
+- Added `phase_5_returns.sql` and `phase_5_returns_concurrency.sh`; suite runner
+  now includes Phase G after M7 vouchers.
+- Updated finance foundation sequence expectations for SR/PR.
+
+Post-implementation correction from owner review:
+
+- Refunds must behave like ERP account settlements: a return creates party
+  credit, then one or more refund vouchers consume that credit by cash/bank
+  method.
+- Removed the effective "one cash refund per return" model by keying
+  `cash_refund` allocations by `(tenant_id, source_invoice_id, voucher_id)`.
+- Added `voucher_id` linkage on `invoice_credit_allocations`, with allocation
+  shape constraints so `cash_refund` rows are always tied to a voucher and
+  original/future allocations are not.
+- `record_customer_refund_voucher` and `record_supplier_refund_receipt` now keep
+  the old single-return call path and also accept `allocations` in `p_data` for
+  one voucher allocated across multiple return invoices.
+- Return detail now exposes refund voucher id/number in credit allocations.
+- Returns test case 24 now covers a customer refund voucher split across two
+  returns plus a second voucher against the same return, proving partial/multiple
+  refunds and voucher linkage.
+
+Verification note:
+
+- Cursor reported: `npx supabase db reset`, `./scripts/test/run_sql_suites.sh`
+  twice, `flutter analyze`, `flutter test`, and `git diff --check` passed before
+  the refund allocation correction.
+- Codex static verification after the correction: trailing-whitespace check
+  passed. Local `npx supabase db reset` could not run inside Codex because Docker
+  socket access is blocked in this sandbox. Owner should rerun the SQL suite
+  before pushing.
+
+**Next:** Run full verification after the refund allocation correction, then
+continue to Phase 5 M8 Dart Finance Layer / Routes / Localization. M4.5 remains
+deferred pending accountant review and required before Phase 5 M10 close.
 
 ---
 

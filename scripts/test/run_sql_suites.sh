@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Phase 5 SQL regression gate:
-# Phase A = M1-M3 baseline, Phase B = M4 tax, Phase C = baseline pollution rerun.
+# Phase A = M1-M3 baseline, Phase B = M4 tax, Phase G = M7.5 returns,
+# Phase C = baseline pollution rerun.
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "$0")/../.." && pwd)"
@@ -84,6 +85,18 @@ for suite in "${phase_f_suites[@]}"; do
 done
 
 bash "$repo_root/supabase/tests/phase_5_vouchers_concurrency.sh" "$container_name"
+
+printf 'Phase G: Phase 5 M7.5 returns\n'
+
+phase_g_suites=(
+  "supabase/tests/phase_5_returns.sql"
+)
+
+for suite in "${phase_g_suites[@]}"; do
+  run_suite "$suite"
+done
+
+bash "$repo_root/supabase/tests/phase_5_returns_concurrency.sh" "$container_name"
 
 printf 'Phase C: baseline pollution gate\n'
 for suite in "${phase_a_suites[@]}"; do
