@@ -1,6 +1,56 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-06-16 (Session: M6 Sales Invoice Engine closed).
+> Updated 2026-06-17 (Session: M7 Voucher Engine closed).
+
+---
+
+## Session 2026-06-16 - M7 Voucher, Allocation, and Payment Engine Closed
+
+Delivered Phase 5 M7 as SQL-only milestone
+[`062_phase_5_voucher_allocation_rpc.sql`](supabase/migrations/062_phase_5_voucher_allocation_rpc.sql):
+
+- **Schema:** three-mode `chk_vouchers_party_direction` (receipt/customer,
+  supplier payment, direct account payment); `trg_audit_vouchers_status`.
+- **Write RPCs:** `record_receipt_voucher`, `record_payment_voucher`
+  (supplier fifo/manual only — unallocated supplier payments rejected),
+  `cancel_voucher` with journal idempotency.
+- **Read RPCs:** `list_vouchers`, `get_voucher_detail`,
+  `list_open_customer_invoices`, `list_open_supplier_invoices`,
+  `get_cash_bank_activity` (opening balance from pre-range posted lines).
+- **Validators:** structural cash/bank check (no `11xx` prefix rule); direct
+  payment deny-list (inventory 1301, entity A/R/A/P, cash/bank debit,
+  protected roots); manual allocation rejects empty/zero-sum payloads.
+- **Tests:** [`phase_5_vouchers.sql`](supabase/tests/phase_5_vouchers.sql)
+  (33 cases: exact/partial/FIFO/manual/unallocated receipts, supplier payment,
+  direct expense, rejections, cancel, idempotency, permissions, period lock,
+  direct-write denial, `cancel_invoice` blocker after real allocation, helper
+  ACL, rollback, read RPCs, opening balance).
+  [`phase_5_vouchers_concurrency.sh`](supabase/tests/phase_5_vouchers_concurrency.sh)
+  (idempotency race + invoice over-allocation race).
+- **Suite runner:** Phase F in
+  [`scripts/test/run_sql_suites.sh`](scripts/test/run_sql_suites.sh), after M6
+  and before the Phase C pollution rerun.
+- **Out of scope (unchanged):** Flutter UI, M7.5 returns, M4.5 inventory
+  accounting, employee/HR vouchers, manual journals, weakening RPC-only write
+  boundaries.
+
+**Verification:** `npx supabase db reset`; `./scripts/test/run_sql_suites.sh`
+twice (pollution gate); `flutter analyze`; `flutter test` (516);
+`git diff --check`.
+
+**Codex review note (2026-06-17):** implementation inspected after Cursor
+closure. One direct-account payment validation gap was corrected: seeded
+cash/bank posting accounts (`1101`/`1102`) are rejected as direct debit
+accounts, including the case where the debit bank account differs from the
+credited cash account. The M7 SQL suite case 12 now covers the seeded bank
+account as well as inventory, A/R, A/P, and same-cash debit rejection.
+
+**Final verification after Codex correction (reported by owner, 2026-06-17):**
+`./scripts/test/run_sql_suites.sh` passed with `All SQL suite phases passed`;
+`flutter analyze` reported no issues; `flutter test` passed 516 tests;
+`git diff --check` was clean.
+
+**Next:** M7.5 / returns — `063_phase_5_return_invoice_rpc.sql` (per plan sequence).
 
 ---
 
