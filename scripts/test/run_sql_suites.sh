@@ -61,6 +61,18 @@ done
 
 bash "$repo_root/supabase/tests/phase_5_purchase_invoices_concurrency.sh" "$container_name"
 
+printf 'Phase E: Phase 5 M6 sales invoices\n'
+
+phase_e_suites=(
+  "supabase/tests/phase_5_sales_invoices.sql"
+)
+
+for suite in "${phase_e_suites[@]}"; do
+  run_suite "$suite"
+done
+
+bash "$repo_root/supabase/tests/phase_5_sales_invoices_concurrency.sh" "$container_name"
+
 printf 'Phase C: baseline pollution gate\n'
 for suite in "${phase_a_suites[@]}"; do
   run_suite "$suite"

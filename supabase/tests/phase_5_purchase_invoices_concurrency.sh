@@ -19,7 +19,6 @@ test_passed=0
 state_ready=0
 setup_ready=0
 supplier_id=''
-supplier_account_id=''
 idem_product_id=''
 wac_product_id=''
 prior_tax_enabled=''
@@ -39,7 +38,6 @@ cleanup() {
     docker exec -i "$container_name" psql -U postgres -d postgres \
       -v ON_ERROR_STOP=1 \
       -v supplier_id="$supplier_id" \
-      -v supplier_account_id="$supplier_account_id" \
       -v idem_product_id="$idem_product_id" \
       -v wac_product_id="$wac_product_id" <<SQL || cleanup_exit=$?
 begin;
@@ -95,13 +93,18 @@ delete from public.products
 where tenant_id = '${tenant_a}'::uuid
   and id in (:'idem_product_id'::uuid, :'wac_product_id'::uuid);
 
+create temp table m5_cleanup_accounts on commit drop as
+select account_id
+from public.suppliers
+where id = :'supplier_id'::uuid;
+
 delete from public.suppliers
 where tenant_id = '${tenant_a}'::uuid
   and id = :'supplier_id'::uuid;
 
 delete from public.chart_of_accounts
 where tenant_id = '${tenant_a}'::uuid
-  and id = :'supplier_account_id'::uuid;
+  and id in (select account_id from m5_cleanup_accounts);
 
 alter table public.journal_lines enable trigger trg_enforce_posted_journal_line_immutability;
 alter table public.journal_entries enable trigger trg_enforce_posted_journal_entry_immutability;
@@ -153,8 +156,6 @@ begin
     where id in ('${idem_product_id}'::uuid, '${wac_product_id}'::uuid)
   ) or exists (
     select 1 from public.suppliers where id = '${supplier_id}'::uuid
-  ) or exists (
-    select 1 from public.chart_of_accounts where id = '${supplier_account_id}'::uuid
   ) then
     raise exception 'm5_concurrency_cleanup_failed';
   end if;
@@ -284,11 +285,9 @@ wac_product as (
 )
 select
   supplier.id::text || ',' ||
-  s.account_id::text || ',' ||
   idem_product.id::text || ',' ||
   wac_product.id::text
-from supplier
-join public.suppliers s on s.id = supplier.id,
+from supplier,
 idem_product,
 wac_product;
 commit;
@@ -296,15 +295,14 @@ commit;
 
 setup_ids="$(
   docker exec -i "$container_name" psql -U postgres -d postgres -At -v ON_ERROR_STOP=1 -c "$setup_sql" \
-    | grep -E '^[0-9a-f-]{36},[0-9a-f-]{36},[0-9a-f-]{36},[0-9a-f-]{36}$' \
+    | grep -E '^[0-9a-f-]{36},[0-9a-f-]{36},[0-9a-f-]{36}$' \
     | tail -1
 )"
-IFS=',' read -r supplier_id supplier_account_id idem_product_id wac_product_id <<<"$setup_ids"
+IFS=',' read -r supplier_id idem_product_id wac_product_id <<<"$setup_ids"
 
-if [[ -z "$supplier_id" || -z "$supplier_account_id" \
-  || -z "$idem_product_id" || -z "$wac_product_id" ]]; then
-  printf 'Concurrency setup failed: supplier=%s account=%s idem_product=%s wac_product=%s\n' \
-    "$supplier_id" "$supplier_account_id" "$idem_product_id" "$wac_product_id" >&2
+if [[ -z "$supplier_id" || -z "$idem_product_id" || -z "$wac_product_id" ]]; then
+  printf 'Concurrency setup failed: supplier=%s idem_product=%s wac_product=%s\n' \
+    "$supplier_id" "$idem_product_id" "$wac_product_id" >&2
   exit 1
 fi
 setup_ready=1

@@ -1,6 +1,52 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-06-15 (Session: M5 Purchase Invoice Engine closed).
+> Updated 2026-06-16 (Session: M6 Sales Invoice Engine closed).
+
+---
+
+## Session 2026-06-16 - M6 Sales Invoice Engine Closed
+
+Delivered Phase 5 M6 as SQL-only milestone
+[`061_phase_5_sales_invoice_rpc.sql`](supabase/migrations/061_phase_5_sales_invoice_rpc.sql):
+
+- **Posting RPC:** `record_sales_invoice(p_data, p_idempotency_key)` —
+  idempotent confirmed sale with strict payload normalization, stock-out,
+  serialized unit validation, frozen COGS snapshots, per-account output-tax
+  posting, and balanced A/R, revenue, COGS, and inventory journal lines.
+- **Cancellation RPC:** `cancel_invoice(p_invoice_id, p_reason,
+  p_idempotency_key)` — shared sales/purchase cancellation with safety guards,
+  negative reversal movements, reversal journals, no row deletion, payment and
+  allocation blockers, serialized unit restore from `unit_events` metadata, and
+  purchase cancellation WAC reversal on the current global `sum(qty_available)`
+  basis.
+- **Read RPCs:** `list_sales_invoices` and `get_sales_invoice_detail`.
+- **Tests:** [`phase_5_sales_invoices.sql`](supabase/tests/phase_5_sales_invoices.sql)
+  covers sales posting, serialized identity, aggregate stock, min-price gate,
+  multi-rate output VAT, COGS snapshots, WAC unchanged by sale, idempotency,
+  tenant isolation, cancellation, purchase cancellation safe/unsafe paths, and
+  rollback. [`phase_5_sales_invoices_concurrency.sh`](supabase/tests/phase_5_sales_invoices_concurrency.sh)
+  covers racing sales against last stock.
+- **Suite runner:** Phase E in
+  [`scripts/test/run_sql_suites.sh`](scripts/test/run_sql_suites.sh), after M5
+  and before the Phase C pollution rerun.
+- **Collateral fixes:** [`phase_5_finance_foundation.sql`](supabase/tests/phase_5_finance_foundation.sql)
+  case 12 now expects `validation_failed` from the implemented sales RPC;
+  [`phase_5_purchase_invoices_concurrency.sh`](supabase/tests/phase_5_purchase_invoices_concurrency.sh)
+  cleanup now derives the supplier account at cleanup time.
+- **Out of scope (unchanged):** sales drafts, Flutter UI, M4.5 inventory
+  accounting, vouchers/allocations, and linked return documents.
+
+**Verification reported by implementation agent:** `npx supabase db reset`;
+`./scripts/test/run_sql_suites.sh` including Phase C pollution gate;
+`flutter analyze`; `flutter test` (516); `git diff --check`.
+
+**Codex review:** migration and tests inspected after implementation; no
+blocking issue found. Guardrails confirmed for 4101 income, output VAT
+liability, serialized aggregate stock decrement, cancellation-vs-return
+movement distinction, unit metadata restore, purchase movement guard, and
+concurrency coverage.
+
+**Next:** M7 — `062_phase_5_voucher_allocation_rpc.sql`.
 
 ---
 

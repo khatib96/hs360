@@ -366,7 +366,7 @@ begin
 end $$;
 rollback;
 
--- 12. Authenticated can call RPC stub (feature_not_implemented).
+-- 12. Authenticated sales RPC rejects invalid payload (validation_failed).
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
@@ -377,7 +377,7 @@ begin
     raise exception 'case12 failed: stub returned without error';
   exception
     when others then
-      if sqlerrm not like '%feature_not_implemented%' then
+      if sqlerrm not like '%validation_failed%' then
         raise;
       end if;
   end;
