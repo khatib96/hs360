@@ -88,22 +88,60 @@ Errors:
 
 ## Inventory Financial Documents
 
-Phase 5 M4.5 replaces non-financial manual adjustments with:
+Phase 5 M4.5 (migrations `065`–`070`) replaces non-financial manual adjustments with:
 
 ```sql
-record_opening_stock(p_data jsonb, p_idempotency_key uuid)
-record_inventory_document(p_data jsonb, p_idempotency_key uuid)
-record_stock_count(p_data jsonb, p_idempotency_key uuid)
+record_opening_stock(p_data jsonb, p_idempotency_key uuid) returns uuid
+record_inventory_document(p_data jsonb, p_idempotency_key uuid) returns uuid
+record_stock_count(p_data jsonb, p_idempotency_key uuid) returns uuid
 cancel_inventory_document(
   p_document_id uuid,
   p_reason text,
   p_idempotency_key uuid
-)
+) returns uuid
+list_inventory_documents(
+  p_filters jsonb default '{}'::jsonb,
+  p_cursor text default null,
+  p_limit int default 50
+) returns setof record
+get_inventory_document_detail(p_document_id uuid) returns jsonb
+list_inventory_adjustment_reasons(
+  p_document_type text default null
+) returns setof record
 ```
+
+`record_inventory_document` accepts `document_type: stock_in | stock_out` in
+`p_data` only. There are no separate public stock-in/stock-out RPCs.
 
 These RPCs atomically create the source document, movements, balances,
 serialized-unit changes, WAC/value snapshots, and balanced journal. Warehouse
 transfers remain non-financial.
+
+**Permissions:** `inventory_documents.create_opening`,
+`inventory_documents.create_adjustment`, `inventory_documents.create_stock_count`,
+`inventory_documents.cancel`, `inventory_documents.view`.
+
+**Payload rules:**
+
+- Client-supplied `counter_account_id` / `account_id` on lines → `validation_failed`.
+- Stock-in requires `unit_cost` unless the reason allows WAC fallback (`found_surplus`).
+- Stock-out rejects client `unit_cost`; values at locked WAC.
+- Stock count uses warehouse `qty_available`; WAC uses all owned buckets.
+- All-zero stock count → document and movements only; no `journal_entries` row.
+
+**Legacy wrapper:** `record_inventory_adjustment(...)` remains single-line,
+non-serialized, returns `movement_id` (not document id). It calls the internal
+posting engine directly so Phase 3 `inventory_movements.create` permission still
+applies.
+
+**Cancellation:** safe reversal only; blocked cases return
+`correction_document_required`. Reversal journal source is
+`inventory_document_reversal` (not a reason row). Idempotent cancel replay returns
+the same document id when key and payload match a prior successful cancel.
+Serialized documents reject cancel in M4.5 (`correction_document_required`).
+
+**Errors:** `permission_denied`, `validation_failed`, `insufficient_stock`,
+`journal_unbalanced`, `correction_document_required`, `books_locked`.
 
 ---
 

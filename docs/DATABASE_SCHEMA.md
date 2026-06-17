@@ -652,6 +652,33 @@ create index idx_movements_occurred on inventory_movements(occurred_at desc);
 create index idx_movements_ref on inventory_movements(reference_table, reference_id);
 ```
 
+### 8.3 Inventory financial documents (M4.5)
+
+> **M4.5 (`065`–`070`):** journal-backed inventory documents replace non-financial
+> manual adjustments. Writes are RPC-only; direct client INSERT/UPDATE/DELETE on
+> `inventory_documents`, `inventory_document_lines`, and `inventory_adjustment_reasons`
+> is denied. Movements reference `reference_table = 'inventory_document'`.
+
+Document types: `opening_stock`, `stock_in`, `stock_out`, `stock_count`.
+
+Sequence keys: `OS`, `STI`, `STO`, `SC`.
+
+Protected posting accounts (per tenant): Opening Balance Equity `3101`, Owner's
+Capital `3102`, Owner's Drawings `3201`, Inventory Gain `4102`, Inventory
+Loss/Adjustment Expense `5152`, Internal Consumption Expense `5901`.
+
+System reasons resolve server-side to posting accounts; clients never supply
+counter-account IDs. `list_inventory_adjustment_reasons` omits account IDs.
+
+Warehouse transfers remain movement-only (no GL). Stock count compares warehouse
+`qty_available` to counted quantity; WAC valuation uses all owned product buckets.
+
+Cancel idempotency: reversal `journal_entries` store `idempotency_key` /
+`idempotency_payload_hash`; documents also store `cancellation_idempotency_*`
+when no reversal journal is created. Serialized documents reject cancel with
+`correction_document_required`. Document `confirmed_at` uses `clock_timestamp()`
+on insert for safe-cancel ordering.
+
 ---
 
 ## 9. Customers & Suppliers
@@ -1457,9 +1484,13 @@ Full implementations in `BUILD_PLAN.md`. Names and signatures:
 | `deactivate_customer_service_location(...)` | Soft-deactivates a service location when safe |
 | `set_primary_customer_service_location(...)` | Makes one active location the customer's primary site |
 | `create_rental_contract(...)` | Atomic: contract + lines + asset reservation + first invoice + journal |
-| `record_opening_stock(...)` | Opening inventory + WAC + opening-equity journal |
-| `record_inventory_document(...)` | Financial stock-in/out + movement + WAC/value + journal |
-| `record_stock_count(...)` | Count snapshot + derived differences + movements + journal |
+| `record_opening_stock(...)` | M4.5: opening inventory + WAC + opening-equity journal |
+| `record_inventory_document(...)` | M4.5: financial stock-in/out + movement + WAC/value + journal |
+| `record_stock_count(...)` | M4.5: count snapshot + derived differences + movements + journal |
+| `cancel_inventory_document(...)` | M4.5: safe reversal journal + stock reversal when allowed |
+| `list_inventory_documents(...)` | M4.5: tenant-scoped inventory document list |
+| `get_inventory_document_detail(...)` | M4.5: document header, lines, journal link |
+| `list_inventory_adjustment_reasons(...)` | M4.5: reason catalog (no account IDs exposed) |
 | `record_purchase_invoice(p_data jsonb, p_idempotency_key uuid) returns uuid` | M5: confirmed purchase — stock, units, WAC, A/P journal; optional `p_data.invoice_id` confirms draft on same row |
 | `save_invoice_draft(p_data jsonb) returns uuid` | M5: create/update purchase draft with server totals |
 | `discard_invoice_draft(p_invoice_id uuid) returns uuid` | M5: delete purchase draft (creator or manager) |
@@ -1540,9 +1571,14 @@ Full implementations in `BUILD_PLAN.md`. Names and signatures:
 060_phase_5_purchase_invoice_rpc.sql -- M5 purchase draft/confirm, units, stock, WAC, A/P journal
 061_phase_5_sales_invoice_rpc.sql -- planned M6 sales/cancellation engine
 062_phase_5_voucher_allocation_rpc.sql -- planned M7 vouchers/allocations
-063_phase_5_return_invoice_rpc.sql -- planned M7.5 returns/credits
-064_phase_5_finance_views_hardening.sql -- planned final bounded views/hardening
-TBD_phase_5_inventory_accounting.sql -- deferred M4.5 pending accountant review
+063_phase_5_return_journal_source_enum.sql -- M7.5 return journal sources
+064_phase_5_return_invoice_rpc.sql -- M7.5 returns/credits
+065_phase_5_inventory_journal_source_enum.sql -- M4.5 inventory journal sources
+066_phase_5_inventory_accounting_schema.sql -- M4.5 inventory document schema
+067_phase_5_inventory_accounting_helpers.sql -- M4.5 posting engine and WAC helpers
+068_phase_5_inventory_accounting_rpc.sql -- M4.5 public RPCs and adjustment wrapper
+069_phase_5_inventory_cancel_idempotency.sql -- M4.5 cancel idempotency and serialized cancel guard
+070_phase_5_inventory_confirm_timestamps.sql -- M4.5 monotonic confirm timestamps for safe cancel
 ```
 
 Add FKs that were forward-references (e.g. `product_units.current_contract_id -> contracts.id`, `product_units.current_service_location_id -> customer_service_locations.id`) at the end of each table's migration once both exist, or in the later feature migration that introduces the referenced table.

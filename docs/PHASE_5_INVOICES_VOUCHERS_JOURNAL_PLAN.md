@@ -4,9 +4,10 @@
 > opening inventory -> purchase/WAC -> sale -> return/credit ->
 > receipt/payment -> journal.
 >
-> Status: M1–M4 complete through migration `059` (2026-06-15). M4.5 Inventory
-> Accounting and Opening Stock is deferred pending external accountant review.
-> M5 Purchase Invoice Engine is closed (2026-06-15). M6 Sales Invoice Engine is next.
+> Status: M1–M4 complete through migration `059` (2026-06-15). **M4.5 Inventory
+> Accounting and Opening Stock is complete** (migrations `065`–`070`, 2026-06-17).
+> M5 Purchase Invoice Engine is closed (2026-06-15). M6–M7.5 and M8 are complete;
+> M9 Finance UI is next.
 >
 > Canonical sources: `CANONICAL_DECISIONS.md`, `PAYMENT_SYSTEM.md`,
 > `DATABASE_SCHEMA.md`, `MVP_SCOPE.md`, and
@@ -569,7 +570,7 @@ zeroed at year end.
 | M2 | Asset Identity, Serial, Scan, and Timeline | Reliable serialized-asset identity foundation |
 | M3 | JSON Templates and Print Renderer | Shared Arabic/English local print engine |
 | M4 | Tax Foundation and Money Math | Historical tax snapshots and deterministic totals |
-| M4.5 | Inventory Accounting and Opening Stock | **Deferred pending accountant review; required before Phase 5 close** |
+| M4.5 | Inventory Accounting and Opening Stock | **Complete** — journal-backed opening stock, stock-in/out, stock counts (`065`–`070`) |
 | M5 | Purchase Invoice Engine | Atomic purchase, stock, units, WAC, A/P, journal |
 | M6 | Sales Invoice and Cancellation Engine | Atomic sale, stock-out, A/R, revenue, COGS |
 | M7 | Voucher, Allocation, and Payment Engine | Receipt/payment cycle with reversals |
@@ -1419,19 +1420,20 @@ CoA trigger ACL, authoritative legacy backfill). SQL suite: 28 cases +
 
 ### Status
 
-**Deferred on 2026-06-15 pending consultation with external accountants.**
+**Implemented on 2026-06-17** in migrations `065`–`070`:
 
-The business/accounting treatment of opening stock, owner capital/drawings,
-inventory gains/losses, internal consumption, and stock-count differences must
-be reviewed before implementation.
+| Migration | Responsibility |
+|-----------|----------------|
+| `065_phase_5_inventory_journal_source_enum.sql` | `opening_stock`, `inventory_stock_in`, `inventory_stock_out`, `stock_count`, `inventory_document_reversal` journal sources |
+| `066_phase_5_inventory_accounting_schema.sql` | `inventory_documents`, `inventory_document_lines`, `inventory_adjustment_reasons`; OS/STI/STO/SC sequences; permissions; protected accounts; RLS/idempotency |
+| `067_phase_5_inventory_accounting_helpers.sql` | WAC helpers (all owned buckets), reason resolution, `confirm_inventory_document_internal` posting engine |
+| `068_phase_5_inventory_accounting_rpc.sql` | Public RPCs, payload hash/idempotency, `record_inventory_adjustment` compatibility wrapper |
+| `069_phase_5_inventory_cancel_idempotency.sql` | Cancel payload hash/idempotency replay; `cancellation_idempotency_*` columns; serialized cancel guard |
+| `070_phase_5_inventory_confirm_timestamps.sql` | Monotonic `confirmed_at` on document insert; safe-cancel ordering by later confirmed documents |
 
-- This milestone is not cancelled.
-- No migration number is reserved for it while deferred.
-- Do not create its tables, accounts, permissions, RPCs, or compatibility
-  wrapper during M5.
-- Do not change `record_inventory_adjustment(...)` as part of M5.
-- M4.5 remains required before Phase 5 M10 closure and before generic inventory
-  adjustments are accepted as a production-complete financial workflow.
+**Verification:** `supabase db reset`; `./scripts/test/run_sql_suites.sh` (Phase C.5);
+`phase_5_inventory_accounting_concurrency.sh`; `flutter analyze`; `flutter test`;
+`git diff --check`. Test suite: `phase_5_inventory_accounting.sql` (25 cases).
 
 ### Goal
 
@@ -1449,8 +1451,7 @@ owned quantity or value.
 
 ### Suggested Migration
 
-TBD after accountant review. Do not consume a migration number until the
-accounting decisions are approved.
+Implemented as `065`–`070` (enum, schema, helpers, RPCs, cancel hardening).
 
 ### Data Model
 
@@ -1525,8 +1526,11 @@ Create controlled system reasons for:
 - expiry;
 - write-off;
 - owner withdrawal;
-- internal consumption;
-- correction/reversal.
+- internal consumption.
+
+Cancellation uses journal source `inventory_document_reversal` and
+`cancel_inventory_document(...)` — not a tenant reason row. Serialized
+documents reject cancel with `correction_document_required` in M4.5.
 
 Tenant-defined reasons may be allowed later, but their account type, direction,
 posting-leaf state, tenant, active state, and protected-account restrictions
@@ -1745,33 +1749,26 @@ recalculate_wac(product_id)
 
 or a deterministic incremental helper used by purchase posting.
 
-Because M4.5 is deferred, M5 preserves the currently implemented Phase 3 WAC
-quantity basis:
+M5 was implemented before M4.5 and therefore preserves the purchase-specific
+Phase 3 WAC quantity basis:
 
 ```text
 sum(inventory_balances.qty_available) across all warehouses for the product
 ```
 
-Do not change the valuation-bucket policy in M5. Keep the helper isolated so a
-later approved M4.5 decision can revise it with focused migration/tests.
+via `apply_purchase_wac_internal`. M4.5 (`065`–`070`) adds a separate
+inventory-document WAC helper using all owned buckets; purchase posting behavior
+is unchanged.
 
 Do not expose broad direct execute permission. If a manager repair RPC is
 needed, wrap it with permission, reason, and audit.
 
-### Deferred-M4.5 Scope Guard
+### M5 historical scope guard (pre-M4.5)
 
-M5 must not implement or alter:
-
-- opening stock;
-- generic stock-in/stock-out accounting;
-- stock-count/reconciliation documents;
-- owner capital or drawings accounts;
-- inventory gain/loss reason mappings;
-- the legacy `record_inventory_adjustment(...)` behavior;
-- warehouse-transfer accounting;
-- fiscal-period or year-end-close behavior.
-
-M5 owns only confirmed purchase effects and their required purchase journal.
+While M5 was in flight, it correctly did not implement opening stock, generic
+stock-in/out accounting, stock counts, owner capital/drawings mappings, or
+legacy adjustment rewrites. M4.5 subsequently closed that gap in `065`–`070`.
+M5 still owns only confirmed purchase effects and the purchase journal.
 
 ### Drafts
 
@@ -2944,9 +2941,13 @@ Update:
 | `060_phase_5_purchase_invoice_rpc.sql` | purchase draft/confirm, units, stock, WAC, A/P journal |
 | `061_phase_5_sales_invoice_rpc.sql` | sales confirm, stock-out, cost snapshot, A/R/revenue/COGS, cancellation |
 | `062_phase_5_voucher_allocation_rpc.sql` | receipt/payment/allocation/cancellation and credit settlement foundation |
-| `063_phase_5_return_invoice_rpc.sql` | sales/purchase returns, original-line links, credits/refunds |
-| `064_phase_5_finance_views_hardening.sql` | bounded read RPCs/views, indexes, final ACL/trigger hardening |
-| `TBD_phase_5_inventory_accounting.sql` | deferred M4.5 after accountant approval; do not reserve a number yet |
+| `064_phase_5_return_invoice_rpc.sql` | sales/purchase returns, original-line links, credits/refunds |
+| `065_phase_5_inventory_journal_source_enum.sql` | M4.5 inventory journal_source enum values |
+| `066_phase_5_inventory_accounting_schema.sql` | M4.5 inventory document schema, accounts, permissions, sequences |
+| `067_phase_5_inventory_accounting_helpers.sql` | M4.5 posting engine, WAC helpers, reason provisioning |
+| `068_phase_5_inventory_accounting_rpc.sql` | M4.5 public RPCs and legacy adjustment wrapper |
+| `069_phase_5_inventory_cancel_idempotency.sql` | M4.5 cancel idempotency replay and serialized cancel guard |
+| `070_phase_5_inventory_confirm_timestamps.sql` | M4.5 monotonic document timestamps for safe-cancel ordering |
 
 Migration names are planned, not reserved. If implementation uncovers a reason
 to split a migration, preserve dependency order and document the change.
@@ -2981,7 +2982,7 @@ Every suite should use transactions and roll back its test data.
 | 3 | M3 | establish one print model before document screens |
 | 4 | M4 | lock tax/math before invoice posting |
 | 5 | M5 | purchase is next; preserve current adjustment/WAC policies outside purchase |
-| 6 | M4.5 | deferred; schedule after accountant review and before M10 close |
+| 6 | M4.5 | journal-backed opening stock, stock-in/out, stock counts (`065`–`070`) |
 | 7 | M6 | sales consumes inventory cost and creates A/R/revenue |
 | 8 | M7 | vouchers complete cash and allocation cycle |
 | 9 | M7.5 | returns depend on invoice snapshots and credit settlement |
@@ -2989,9 +2990,8 @@ Every suite should use transactions and roll back its test data.
 | 11 | M9 | deliver operational screens and integrations |
 | 12 | M10 | reset, regression, E2E, performance, and close |
 
-M5 may start after M4 money/tax fixtures pass. Deferred M4.5 must pass before
-M10 Phase 5 closure, but M5 must not anticipate or silently implement its
-unapproved accounting decisions.
+M5 may start after M4 money/tax fixtures pass. M4.5 is complete and covered by
+Phase C.5 in `run_sql_suites.sh` before M5 purchase regression.
 
 ---
 
@@ -3173,15 +3173,12 @@ be removed to meet the older three-week estimate.
 
 ## Starting Point for the Next Coding Session
 
-Start with **M5 only**:
+Start with **M9 Finance UI and Cross-Module Integration**:
 
-1. preserve the passing M1-M4 baseline through migration `059`;
-2. implement `060_phase_5_purchase_invoice_rpc.sql`;
-3. reuse M4 tax/money helpers and the current Phase 3 `qty_available` WAC basis;
-4. do not implement or modify any deferred M4.5 behavior;
-5. add and pass `phase_5_purchase_invoices.sql`, including concurrency,
-   idempotency, serialized double-counting, and late-failure rollback;
-6. rerun all existing SQL suites twice without reset;
-7. run Flutter analysis/tests and document the M5 baseline.
+1. preserve the passing M1–M7.5 + M4.5 baseline through migration `070`;
+2. wire `lib/features/inventory_accounting/` to the M4.5 RPCs;
+3. deliver operational inventory document screens (opening stock, stock-in/out, counts);
+4. rerun `./scripts/test/run_sql_suites.sh` twice without reset;
+5. run Flutter analysis/tests and document the M9 baseline.
 
-M4.5 remains a required pre-M10 closure milestone after accountant review.
+M4.5 backend is complete; Flutter inventory accounting UI remains in M9.

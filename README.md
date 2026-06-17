@@ -99,13 +99,9 @@ Each tenant can override branding via build config — see `DEPLOYMENT.md` secti
 
 ## Status
 
-**Phase 5 is in progress.** M1 finance foundations, M2 asset identity, M3 document
-templates/PDF rendering, and M4 tax foundation/money math are complete (migration `059`,
-adversarial sign-off 2026-06-15).
-
-M4.5 Inventory Accounting and Opening Stock is deferred pending external
-accountant review. Next: Phase 5 M5 Purchase Invoice Engine
-(`060_phase_5_purchase_invoice_rpc.sql`).
+**Phase 5 is in progress.** M1–M8 and M4.5 backend are complete through migration
+`070` (2026-06-17). Next: Phase 5 M9 Finance UI and Cross-Module Integration
+(wire `lib/features/inventory_accounting/` to M4.5 RPCs).
 
 ---
 

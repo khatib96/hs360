@@ -50,6 +50,18 @@ for suite in "${phase_b_suites[@]}"; do
 done
 bash "$repo_root/supabase/tests/phase_5_tax_foundation_concurrency.sh" "$container_name"
 
+printf 'Phase C.5: Phase 5 M4.5 inventory accounting\n'
+
+phase_c5_suites=(
+  "supabase/tests/phase_5_inventory_accounting.sql"
+)
+
+for suite in "${phase_c5_suites[@]}"; do
+  run_suite "$suite"
+done
+
+bash "$repo_root/supabase/tests/phase_5_inventory_accounting_concurrency.sh" "$container_name"
+
 printf 'Phase D: Phase 5 M5 purchase invoices\n'
 
 phase_d_suites=(

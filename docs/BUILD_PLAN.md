@@ -17,7 +17,7 @@
 | **2 - Authentication & Routing** | Done | not recorded |
 | **3 - Products & Inventory** | Done | 2026-05-30 |
 | **4 - Customers, Suppliers & CoA** | Engineering complete | 2026-06-06 |
-| **5 - Invoices, Vouchers & Journal** | In progress | M1-M5 complete; M4.5 deferred; M6 next |
+| **5 - Invoices, Vouchers & Journal** | In progress | M1–M8 complete; M4.5 backend complete; M9 next |
 | **6 - Contracts** | Not started | - |
 | **7 - Calendar** | Not started | - |
 | **8 - Mobile Field Ops** | Not started | - |
@@ -391,9 +391,8 @@ Acceptance:
 
 ## Phase 5 — Invoices, Vouchers & Journal (≈ 10-14 weeks)
 
-**Status:** [~] In progress. M1–M4 are complete. Inserted M4.5 Inventory
-Accounting and Opening Stock is deferred pending accountant review; M6
-Sales Invoice Engine is next.
+**Status:** [~] In progress. M1–M8 and M4.5 backend are complete; M9 Finance UI
+is next.
 The detailed M0-M10 execution plan with inserted M4.5/M7.5 milestones in
 `PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md` supersedes the older task ordering
 below where they conflict. In particular, quotations and manual journal
@@ -502,35 +501,27 @@ Acceptance:
 
 **5.0B Inventory Accounting & Opening Stock Foundation**
 
-**Status:** Deferred pending external accountant review. It remains required
-before Phase 5 closure, but it does not block starting M5 purchase.
+**Status:** Complete (migrations `065`–`070`, 2026-06-17). Required before Phase 5
+M10 close; backend done — Flutter repository/UI remains M9.
 
-- Add financial inventory documents for:
-  - opening stock;
-  - stock-in;
-  - stock-out;
-  - stock count/reconciliation.
-- Add controlled adjustment reasons mapped to allowed posting accounts:
-  - opening equity;
-  - owner capital/drawings;
-  - inventory gain;
-  - shrinkage/damage/expiry/write-off loss;
-  - internal-consumption expense.
-- Replace the legacy `record_inventory_adjustment` implementation with a
-  journal-backed compatibility path.
-- Use all owned inventory buckets for WAC quantity.
-- Keep warehouse transfers non-financial: paired movements, no journal.
-- Support serialized adjustment identities without double-counting.
+Delivered:
+- Financial inventory documents: opening stock, stock-in, stock-out, stock count.
+- Controlled adjustment reasons mapped to allowed posting accounts (opening equity,
+  owner capital/drawings, inventory gain, loss, internal consumption).
+- Journal-backed `record_inventory_adjustment` compatibility wrapper.
+- All-owned-buckets WAC for inventory documents; warehouse transfers non-financial.
+- Serialized stock-in/out via M4.5 RPCs; cancel idempotency and safe-cancel guards
+  (`069`–`070`).
 
-Acceptance:
+Acceptance (verified):
 - Opening stock posts Dr Inventory / Cr Opening Balance Equity.
 - Stock count differences create only required movements and one balanced journal.
 - Inventory movements and the inventory GL account cannot diverge through the app.
 - Transfers never create income, expense, capital, or inventory-value changes.
 
-While deferred, M5 must not change the legacy adjustment RPC or implement any
-opening-stock/capital/gain/loss/count behavior. Purchase WAC keeps the current
-Phase 3 `qty_available`-only basis until the accounting review is approved.
+While M5 was in flight (before M4.5 landed), purchase WAC correctly stayed on
+the Phase 3 `qty_available` basis. M4.5 (`065`–`070`) now provides journal-backed
+inventory documents without altering purchase WAC behavior.
 
 **5.1 Stored Functions**
 Implement all RPCs per `DATABASE_SCHEMA.md` section 19:

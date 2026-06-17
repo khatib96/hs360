@@ -70,10 +70,12 @@ Tax support is an invoice-foundation concern, not a Phase 4/M7 chart-of-accounts
 
 ## 2.6 Inventory Accounting and Financial Close
 
-**Implementation status (2026-06-15): deferred pending external accountant
-review.** The placement and safety boundaries remain recorded, but the specific
-opening-equity, capital/drawings, gain/loss, internal-consumption, stock-count,
-and valuation-bucket choices are not approved for implementation yet.
+**Implementation status (2026-06-17): approved and implemented in migrations
+`065`–`070`.** Inventory financial documents post through RPC-only
+`inventory_documents` with balanced journals. Purchase invoice WAC continues to
+use `qty_available` via `apply_purchase_wac_internal`; inventory-document WAC
+uses all owned buckets via `apply_inventory_wac_internal`. Cancel supports
+idempotent replay; serialized document cancel is rejected in M4.5.
 
 Inventory quantity and inventory value must never diverge after the Phase 5
 finance engine becomes operational.
@@ -105,9 +107,9 @@ finance engine becomes operational.
   and P&L reporting exist. Year-end close zeros income/expense accounts into
   retained earnings; it does not reset inventory or other balance-sheet
   accounts.
-- M5 may proceed independently using the existing Phase 3 WAC basis
-  (`qty_available` across warehouses) and must not implement any deferred M4.5
-  account mapping or alter the legacy inventory-adjustment RPC.
+- M5 purchase posting preserves the existing `apply_purchase_wac_internal`
+  (`qty_available` across warehouses). M4.5 inventory documents use a separate
+  all-owned-buckets WAC helper and do not alter purchase WAC behavior.
 
 ---
 

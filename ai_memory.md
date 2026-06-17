@@ -1,6 +1,173 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-06-17 (Session: M7.5 Returns/Credits implemented; refund allocation model corrected).
+> Updated 2026-06-17 (Session: Phase 5 M4.5 closed — migrations `065`–`070`; M9 not started).
+
+---
+
+## Session 2026-06-17 - Phase 5 M4.5 Corrective Pass (Closure)
+
+Follow-up hardening before M4.5 close (M9 still not started). **M4.5 is complete
+through migration `070`.**
+
+### Migrations added
+
+- **`069_phase_5_inventory_cancel_idempotency.sql`** — cancel payload hash/idempotency
+  replay via reversal `journal_entries` + `cancellation_idempotency_*` columns;
+  serialized documents reject cancel with `correction_document_required`.
+- **`070_phase_5_inventory_confirm_timestamps.sql`** — `clock_timestamp()` on document
+  insert for monotonic `confirmed_at`; safe-cancel blocks when later confirmed
+  documents affect the same product/warehouse.
+
+### Tests added (`phase_5_inventory_accounting.sql` cases 15–25)
+
+Serialized stock-in/out; cancel safe/unsafe/idempotent/mismatch; permission denied;
+cross-tenant cancel; forced journal rollback; all-owned-buckets WAC (`qty_rented`);
+reason-specific postings (owner_withdrawal, internal_consumption, damage/expiry/write_off).
+
+### Verification
+
+- `supabase db reset` + `./scripts/test/run_sql_suites.sh` — all phases green
+- `flutter analyze` / `flutter test` (572) / `git diff --check` — clean
+
+**Next:** M9 Finance UI (wire inventory accounting repository); do not start until explicitly requested.
+
+---
+
+## Session 2026-06-17 - Phase 5 M4.5 Inventory Accounting and Opening Stock Closed
+
+Delivered Phase 5 M4.5 as SQL-first inventory financial documents:
+
+### Migrations (`065`–`070`)
+
+- **`065`–`068`** — initial M4.5 delivery (enum, schema, helpers, public RPCs).
+- **`069`** — cancel idempotency replay; serialized cancel guard.
+- **`070`** — monotonic `confirmed_at` for safe-cancel ordering.
+
+### Public RPC surface
+
+- `record_opening_stock`, `record_inventory_document` (stock_in/stock_out in payload),
+  `record_stock_count`, `cancel_inventory_document`,
+  `list_inventory_documents`, `get_inventory_document_detail`,
+  `list_inventory_adjustment_reasons` (no account IDs exposed).
+
+### Tests and suite runner
+
+- `supabase/tests/phase_5_inventory_accounting.sql` — 25 acceptance cases (was 14).
+- `supabase/tests/phase_5_inventory_accounting_concurrency.sh` — parallel idempotent
+  stock-in with EXIT cleanup (no baseline pollution).
+- `scripts/test/run_sql_suites.sh` — Phase C.5 between Phase B (M4 tax) and Phase D (M5).
+
+### Key decisions preserved
+
+- Purchase WAC (`apply_purchase_wac_internal`) unchanged; inventory-document WAC
+  uses separate all-owned-buckets helper.
+- Warehouse transfers stay non-financial.
+- Zero-WAC legacy stock-out allowed (movement only, no journal).
+- Cancellation: safe reversal only; else `correction_document_required`.
+
+### Verification
+
+- `supabase db reset` + `./scripts/test/run_sql_suites.sh` — all phases green.
+- `flutter analyze` / `flutter test` / `git diff --check` — run at session close.
+
+### Out of scope (unchanged)
+
+- Flutter inventory accounting UI/repository wiring (M9).
+- Full correction-document workflow.
+
+**Next:** Phase 5 M9 — Finance UI; wire `lib/features/inventory_accounting/` to M4.5 RPCs.
+
+---
+
+## Session 2026-06-17 - Phase 5 M8 Dart Finance Layer, Routes, and Localization Closed
+
+Delivered Phase 5 M8 as Flutter application-layer milestone
+([`bd3c36f`](bd3c36f) — 155 files, +11,281 lines):
+
+### M8A — Shared foundation
+
+- Added [`lib/features/finance_shared/`](lib/features/finance_shared/) domain:
+  financial document status, payment method, party reference, date range,
+  pagination cursor, currency total DTO, idempotency session, granular
+  [`finance_permissions.dart`](lib/features/finance_shared/domain/finance_permissions.dart).
+- Added [`FinanceException`](lib/core/errors/finance_exception.dart) with
+  Postgres token mapping and finance validation codes.
+- Added canonical [`MoneyDisplay`](lib/features/finance_shared/presentation/money_display.dart)
+  + cached [`tenantCurrencyFormatProvider`](lib/features/finance_shared/presentation/tenant_currency_provider.dart)
+  using `TenantCurrencyFormat` / `formatDocumentMoney` (no `formatMoney` / `double`).
+- Extended [`JournalSource`](lib/features/accounting/domain/journal_source.dart) with
+  M7.5 return/refund values; centralized labels in finance_shared.
+
+### M8B — Models, mappers, repositories
+
+- **Invoices:** domain models + [`invoice_repository`](lib/features/invoices/data/invoice_repository.dart)
+  / [`invoice_rpc_mapper`](lib/features/invoices/data/invoice_rpc_mapper.dart).
+  Typed detail RPCs; `fetchInvoiceDetail(id, type?)` probes allowed RPCs when
+  type missing; mutations pass `p_idempotency_key`; no Dart document numbering.
+- **Vouchers:** domain + repository using migration **064** signatures for
+  open-invoice lists and record voucher RPCs.
+- **Journal / cash-bank:** RLS bounded `.select()` on `journal_entries` /
+  `journal_lines`; `get_cash_bank_activity` JSON mapping.
+- **Tax:** [`tax_settings_repository`](lib/features/settings/data/tax_settings_repository.dart)
+  — rates via `list_tax_rates`, patch via `update_tax_settings`.
+  **Read gap documented:** no `get_tax_settings()` RPC; no SQL patch in M8.
+- **Inventory accounting:** domain stub only under
+  [`lib/features/inventory_accounting/domain/`](lib/features/inventory_accounting/domain/);
+  no live SQL-backed repository (M4.5 deferred).
+
+### M8C — Validators + controllers
+
+- 13 pure validators in [`lib/domain/validators/`](lib/domain/validators/) — called
+  from **controllers before submit**, not from repositories.
+- Riverpod controllers: invoice list/form/detail, voucher list/form/detail,
+  journal list/detail, cash-bank activity, tax settings (rates-only minimal).
+- Idempotency key lifecycle in form controllers via `FinanceIdempotencySession`.
+- Invoice detail enforces type-specific view permission after load;
+  cancel requires `invoices.cancel`.
+
+### M8D — Routes, nav, placeholders, l10n
+
+- Finance routes in [`app_routes.dart`](lib/core/routing/app_routes.dart) with
+  `invoiceDetailPath(id, type: …)` query param; guards in
+  [`route_guards.dart`](lib/core/routing/route_guards.dart).
+- Nav items (permission-gated): Invoices, Vouchers, Journal, Cash & Bank.
+  **No** inventory documents nav item.
+- Lightweight l10n placeholder screens only — no M9 workflows (forms, tables,
+  pickers, allocation UI, return wizard, print).
+- Complete EN/AR finance keys; parity test
+  [`finance_l10n_parity_test.dart`](test/core/localization/finance_l10n_parity_test.dart).
+- Updated [`customer_permissions.dart`](lib/features/customers/domain/customer_permissions.dart)
+  `canViewInvoices` / `canViewVouchers` to granular finance helpers.
+- Existing `/product-units/:id` and `/settings/templates` routes unchanged.
+
+### Permissions added to Flutter guards
+
+- Granular invoice view: `invoices.view_sales`, `invoices.view_purchase`,
+  `invoices.view_returns` (+ legacy `invoices.view`).
+- Return/create/cancel: `invoices.create_sales_return`,
+  `invoices.create_purchase_return`, `invoices.cancel`.
+- Voucher/journal/cash/tax guards aligned with M5–M7.5 SQL permissions.
+
+### Verification
+
+- `dart run build_runner build --delete-conflicting-outputs` — OK
+- `flutter gen-l10n` — OK
+- `dart format` — OK
+- `flutter analyze` — no issues
+- `flutter test` — **572 tests** green
+- `git diff --check` — clean
+- SQL suites not rerun in M8 session (avoid local `db reset`); owner may run
+  `./scripts/test/run_sql_suites.sh` before push if desired.
+
+### Explicit non-goals (honored)
+
+- No M9 operational finance UI workflows.
+- No M4.5 inventory accounting SQL or live repository.
+- No `get_tax_settings()` SQL patch.
+- Repositories do not own business validation (controllers + validators do).
+
+**Next:** Phase 5 M9 — Finance UI and Cross-Module Integration. M4.5 remains
+deferred pending accountant review and required before Phase 5 M10 close.
 
 ---
 
@@ -49,6 +216,8 @@ Verification note:
 **Next:** Run full verification after the refund allocation correction, then
 continue to Phase 5 M8 Dart Finance Layer / Routes / Localization. M4.5 remains
 deferred pending accountant review and required before Phase 5 M10 close.
+
+*(Superseded — M8 closed same day; see M8 session above.)*
 
 ---
 
@@ -752,7 +921,8 @@ Other plan refinements incorporated:
 - Split M1 into **two migrations** (053 enum + 054 foundation); later Phase 5 planned migrations renumbered +1 (M2 asset = `055`, … views = `061`).
 - Exact FK drop names documented for composite FK migration.
 - SQL tests use existing **DO-block + SET ROLE** style (no pgTAP — not installed).
-- Legacy permissions (`invoices.view`, `vouchers.view`, etc.) **kept** until M8 Flutter guard split.
+- Legacy permissions (`invoices.view`, `vouchers.view`, etc.) **kept** for backward
+  compatibility after M8 granular Flutter guard split (2026-06-17).
 
 ### Files created
 
@@ -817,10 +987,25 @@ PowerShell note: pipe SQL tests with `Get-Content -Raw … | docker exec -i supa
 - **Phase 2 complete** - auth, routing, permissions, locale (M0-M8).
 - **Phase 3 complete** - products and inventory (M0-M8).
 - **Phase 4 M0-M8 complete** - customers, suppliers, CoA, service locations, coordinates, engineering closure through migration [`052`](supabase/migrations/052_phase_4_closure_hardening.sql).
-- **Phase 5 M1–M3 complete** — finance foundation, asset identity, document templates/PDF through migrations [`053`](supabase/migrations/053_phase_5_journal_source_enum.sql)–[`058`](supabase/migrations/058_grant_api_role_table_privileges.sql).
-- **Phase 5 M4 complete** — tax foundation and money math via [`059`](supabase/migrations/059_phase_5_tax_foundation.sql); adversarial review and closure blockers resolved 2026-06-15.
-- **Next:** Phase 5 M5 — `060_phase_5_purchase_invoice_rpc.sql`; M4.5 is
-  deferred pending accountant review and remains required before M10 close.
+- **Phase 5 M1–M4 complete** — finance foundation, asset identity, document templates/PDF, tax foundation through migrations [`053`](supabase/migrations/053_phase_5_journal_source_enum.sql)–[`059`](supabase/migrations/059_phase_5_tax_foundation.sql).
+- **Phase 5 M4.5 complete** — inventory accounting and opening stock through migrations [`065`](supabase/migrations/065_phase_5_inventory_journal_source_enum.sql)–[`070`](supabase/migrations/070_phase_5_inventory_confirm_timestamps.sql); 25-case SQL suite in Phase C.5.
+- **Phase 5 M5–M7.5 complete** — purchase/sales invoice RPCs, voucher allocation, returns/credits through migrations [`060`](supabase/migrations/060_phase_5_purchase_invoice_rpc.sql)–[`064`](supabase/migrations/064_phase_5_return_invoice_rpc.sql).
+- **Phase 5 M8 complete** — Dart finance application layer, guarded routes, localization, and tests in commit [`bd3c36f`](bd3c36f); 572 Flutter tests green.
+- **Next:** Phase 5 M9 — Finance UI and Cross-Module Integration; wire
+  `lib/features/inventory_accounting/` to M4.5 RPCs.
+
+---
+
+## Phase 5 M8 - Dart Finance Layer, Routes, and Localization (done)
+
+- **Commit:** [`bd3c36f`](bd3c36f) — application layer only; no new SQL migrations.
+- **Features:** `finance_shared`, `invoices`, `vouchers`, `journal`, `inventory_accounting` (stub domain), tax settings repository.
+- **Architecture:** validators in controllers (not repos); RPC mappers; `FinanceException`; `MoneyDisplay` + tenant currency provider; fake repos for tests.
+- **Routes:** `/invoices`, `/vouchers`, `/journal`, `/cash-bank`, `/inventory/documents/*`, `/settings/tax` — all permission-guarded; placeholder screens only.
+- **Permissions:** granular invoice view/create/return/cancel split in Flutter guards; legacy `invoices.view` retained for compatibility.
+- **Verification:** `flutter analyze` clean; **572** Flutter tests; l10n EN/AR parity test for finance keys.
+- **Deferred (M9):** finance UI workflows; `get_tax_settings()` read RPC. M4.5
+  backend is complete (`065`–`070`); inventory accounting repository/UI remains M9.
 
 ---
 

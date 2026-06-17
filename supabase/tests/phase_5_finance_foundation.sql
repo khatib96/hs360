@@ -496,7 +496,7 @@ begin
 end $$;
 rollback;
 
--- 17. New tenant gets all document sequences (including M7.5 SR/PR).
+-- 17. New tenant gets all document sequences (including M7.5 SR/PR and M4.5 OS/STI/STO/SC).
 begin;
 do $$
 declare
@@ -510,8 +510,8 @@ begin
   from document_sequences
   where tenant_id = v_new_tenant;
 
-  if v_count <> 8 then
-    raise exception 'case17 failed: expected 8 sequences, got %', v_count;
+  if v_count <> 12 then
+    raise exception 'case17 failed: expected 12 sequences, got %', v_count;
   end if;
 end $$;
 rollback;
@@ -526,9 +526,9 @@ begin
   select count(*) into v_count
   from document_sequences
   where tenant_id = v_tenant_a
-    and sequence_key in ('SI', 'PI', 'SR', 'PR', 'RV', 'PV', 'JE', 'SKU');
+    and sequence_key in ('SI', 'PI', 'SR', 'PR', 'RV', 'PV', 'JE', 'SKU', 'OS', 'STI', 'STO', 'SC');
 
-  if v_count <> 8 then
+  if v_count <> 12 then
     raise exception 'case18 failed: tenant A missing sequences (count=%)', v_count;
   end if;
 end $$;
