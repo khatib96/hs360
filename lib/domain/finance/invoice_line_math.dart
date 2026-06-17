@@ -46,15 +46,15 @@ class InvoiceLineSnapshot {
   final Decimal lineTotal;
 
   Map<String, String> toNormalizedMap({required int decimalPlaces}) => {
-        'gross_amount': _formatMoney(grossAmount, decimalPlaces),
-        'discount_amount': _formatMoney(discountAmount, decimalPlaces),
-        'before_tax_amount': _formatMoney(beforeTaxAmount, decimalPlaces),
-        'tax_rate': taxRate.toString(),
-        'taxable_amount': _formatMoney(taxableAmount, decimalPlaces),
-        'tax_amount': _formatMoney(taxAmount, decimalPlaces),
-        'after_tax_amount': _formatMoney(afterTaxAmount, decimalPlaces),
-        'line_total': _formatMoney(lineTotal, decimalPlaces),
-      };
+    'gross_amount': _formatMoney(grossAmount, decimalPlaces),
+    'discount_amount': _formatMoney(discountAmount, decimalPlaces),
+    'before_tax_amount': _formatMoney(beforeTaxAmount, decimalPlaces),
+    'tax_rate': taxRate.toString(),
+    'taxable_amount': _formatMoney(taxableAmount, decimalPlaces),
+    'tax_amount': _formatMoney(taxAmount, decimalPlaces),
+    'after_tax_amount': _formatMoney(afterTaxAmount, decimalPlaces),
+    'line_total': _formatMoney(lineTotal, decimalPlaces),
+  };
 }
 
 String _formatMoney(Decimal value, int decimalPlaces) {
@@ -64,7 +64,9 @@ String _formatMoney(Decimal value, int decimalPlaces) {
   final rounded = value.round(scale: decimalPlaces);
   final parts = rounded.toString().split('.');
   final fraction = parts.length > 1 ? parts[1] : '';
-  final padded = fraction.padRight(decimalPlaces, '0').substring(0, decimalPlaces);
+  final padded = fraction
+      .padRight(decimalPlaces, '0')
+      .substring(0, decimalPlaces);
   return '${parts.first}.$padded';
 }
 
@@ -94,7 +96,8 @@ InvoiceLineSnapshot calculateInvoiceLineSnapshot({
   if (input.unitPrice < Decimal.zero) {
     throw ArgumentError('unit_price must be non-negative');
   }
-  if (input.discountPct < Decimal.zero || input.discountPct > Decimal.fromInt(100)) {
+  if (input.discountPct < Decimal.zero ||
+      input.discountPct > Decimal.fromInt(100)) {
     throw ArgumentError('discount_pct must be between 0 and 100');
   }
 

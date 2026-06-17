@@ -19,7 +19,9 @@ class EffectiveTaxRate {
     return EffectiveTaxRate(
       rateId: json['tax_rate_id'] as String?,
       rate: rateRaw == null ? Decimal.zero : parseDecimal(rateRaw),
-      taxClass: ProductTaxClassDb.fromDb(json['tax_class'] as String? ?? 'non_taxable'),
+      taxClass: ProductTaxClassDb.fromDb(
+        json['tax_class'] as String? ?? 'non_taxable',
+      ),
     );
   }
 }

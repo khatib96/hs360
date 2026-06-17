@@ -1,4 +1,5 @@
 import '../../auth/domain/app_session.dart';
+import '../../finance_shared/domain/finance_permissions.dart' as finance;
 
 bool canViewCustomers(AppSession session) =>
     session.isManager || session.permissions.can('customers.view');
@@ -27,8 +28,6 @@ bool canViewCustomerLedger(AppSession session) =>
 bool canViewContracts(AppSession session) =>
     session.isManager || session.permissions.can('contracts.view');
 
-bool canViewInvoices(AppSession session) =>
-    session.isManager || session.permissions.can('invoices.view');
+bool canViewInvoices(AppSession session) => finance.canViewAnyInvoices(session);
 
-bool canViewVouchers(AppSession session) =>
-    session.isManager || session.permissions.can('vouchers.view');
+bool canViewVouchers(AppSession session) => finance.canViewVouchers(session);

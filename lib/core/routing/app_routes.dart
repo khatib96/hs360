@@ -1,3 +1,5 @@
+import '../../features/invoices/domain/invoice_type.dart';
+
 /// Phase 2 route paths and GoRoute names.
 abstract final class AppRoutes {
   static const login = '/login';
@@ -21,7 +23,28 @@ abstract final class AppRoutes {
   static const suppliersDetail = '/suppliers/:id';
   static const accounts = '/accounts';
   static const templateSettings = '/settings/templates';
+  static const taxSettings = '/settings/tax';
   static const documentPreview = '/documents/preview';
+  static const invoices = '/invoices';
+  static const invoicesNewSales = '/invoices/new/sales';
+  static const invoicesNewPurchase = '/invoices/new/purchase';
+  static const invoicesDetail = '/invoices/:id';
+  static const invoiceReturn = '/invoices/:id/return';
+  static const vouchers = '/vouchers';
+  static const vouchersNewReceipt = '/vouchers/new/receipt';
+  static const vouchersNewPayment = '/vouchers/new/payment';
+  static const vouchersDetail = '/vouchers/:id';
+  static const journal = '/journal';
+  static const journalDetail = '/journal/:id';
+  static const cashBank = '/cash-bank';
+  static const inventoryDocuments = '/inventory/documents';
+  static const inventoryDocumentsOpeningStock =
+      '/inventory/documents/opening-stock';
+  static const inventoryDocumentsStockIn = '/inventory/documents/stock-in';
+  static const inventoryDocumentsStockOut = '/inventory/documents/stock-out';
+  static const inventoryDocumentsStockCount =
+      '/inventory/documents/stock-count';
+  static const inventoryDocumentsDetail = '/inventory/documents/:id';
 
   static const loginName = 'login';
   static const forgotPasswordName = 'forgotPassword';
@@ -44,7 +67,28 @@ abstract final class AppRoutes {
   static const suppliersDetailName = 'suppliersDetail';
   static const accountsName = 'accounts';
   static const templateSettingsName = 'templateSettings';
+  static const taxSettingsName = 'taxSettings';
   static const documentPreviewName = 'documentPreview';
+  static const invoicesName = 'invoices';
+  static const invoicesNewSalesName = 'invoicesNewSales';
+  static const invoicesNewPurchaseName = 'invoicesNewPurchase';
+  static const invoicesDetailName = 'invoicesDetail';
+  static const invoiceReturnName = 'invoiceReturn';
+  static const vouchersName = 'vouchers';
+  static const vouchersNewReceiptName = 'vouchersNewReceipt';
+  static const vouchersNewPaymentName = 'vouchersNewPayment';
+  static const vouchersDetailName = 'vouchersDetail';
+  static const journalName = 'journal';
+  static const journalDetailName = 'journalDetail';
+  static const cashBankName = 'cashBank';
+  static const inventoryDocumentsName = 'inventoryDocuments';
+  static const inventoryDocumentsOpeningStockName =
+      'inventoryDocumentsOpeningStock';
+  static const inventoryDocumentsStockInName = 'inventoryDocumentsStockIn';
+  static const inventoryDocumentsStockOutName = 'inventoryDocumentsStockOut';
+  static const inventoryDocumentsStockCountName =
+      'inventoryDocumentsStockCount';
+  static const inventoryDocumentsDetailName = 'inventoryDocumentsDetail';
 
   static String customerDetailPath(String id) =>
       '/customers/${Uri.encodeComponent(id)}';
@@ -57,6 +101,26 @@ abstract final class AppRoutes {
 
   static String productUnitDetailPath(String id) =>
       '/product-units/${Uri.encodeComponent(id)}';
+
+  static String invoiceDetailPath(String id, {InvoiceType? type}) {
+    final params = type != null ? {'type': type.dbValue} : null;
+    return Uri(
+      path: '/invoices/${Uri.encodeComponent(id)}',
+      queryParameters: params,
+    ).toString();
+  }
+
+  static String invoiceReturnPath(String id) =>
+      '/invoices/${Uri.encodeComponent(id)}/return';
+
+  static String voucherDetailPath(String id) =>
+      '/vouchers/${Uri.encodeComponent(id)}';
+
+  static String journalDetailPath(String id) =>
+      '/journal/${Uri.encodeComponent(id)}';
+
+  static String inventoryDocumentDetailPath(String id) =>
+      '/inventory/documents/${Uri.encodeComponent(id)}';
 
   static String documentPreviewPath({
     required String kind,

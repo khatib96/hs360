@@ -24,6 +24,20 @@ import '../../core/documents/domain/document_kind.dart';
 import '../../core/documents/presentation/document_preview_screen.dart';
 import '../../core/documents/presentation/document_preview_state.dart';
 import '../../features/settings/presentation/template_settings_screen.dart';
+import '../../features/settings/presentation/tax_settings_placeholder_screen.dart';
+import '../../features/invoices/presentation/invoice_detail_placeholder_screen.dart';
+import '../../features/invoices/presentation/invoice_form_placeholder_screen.dart';
+import '../../features/invoices/presentation/invoice_list_placeholder_screen.dart';
+import '../../features/invoices/presentation/invoice_return_placeholder_screen.dart';
+import '../../features/vouchers/presentation/voucher_detail_placeholder_screen.dart';
+import '../../features/vouchers/presentation/voucher_form_placeholder_screen.dart';
+import '../../features/vouchers/presentation/voucher_list_placeholder_screen.dart';
+import '../../features/journal/presentation/cash_bank_placeholder_screen.dart';
+import '../../features/journal/presentation/journal_detail_placeholder_screen.dart';
+import '../../features/journal/presentation/journal_list_placeholder_screen.dart';
+import '../../features/inventory_accounting/presentation/inventory_document_detail_placeholder_screen.dart';
+import '../../features/inventory_accounting/presentation/inventory_document_form_placeholder_screen.dart';
+import '../../features/inventory_accounting/presentation/inventory_document_list_placeholder_screen.dart';
 import 'app_routes.dart';
 import 'route_guards.dart';
 import 'router_refresh_notifier.dart';
@@ -154,6 +168,123 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.templateSettings,
         name: AppRoutes.templateSettingsName,
         builder: (context, state) => const TemplateSettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.taxSettings,
+        name: AppRoutes.taxSettingsName,
+        builder: (context, state) => TaxSettingsPlaceholderScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.invoicesNewSales,
+        name: AppRoutes.invoicesNewSalesName,
+        builder: (context, state) =>
+            InvoiceFormPlaceholderScreen(mode: InvoiceFormMode.sales),
+      ),
+      GoRoute(
+        path: AppRoutes.invoicesNewPurchase,
+        name: AppRoutes.invoicesNewPurchaseName,
+        builder: (context, state) =>
+            InvoiceFormPlaceholderScreen(mode: InvoiceFormMode.purchase),
+      ),
+      GoRoute(
+        path: AppRoutes.invoiceReturn,
+        name: AppRoutes.invoiceReturnName,
+        builder: (context, state) => InvoiceReturnPlaceholderScreen(
+          invoiceId: state.pathParameters['id']!,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.invoicesDetail,
+        name: AppRoutes.invoicesDetailName,
+        builder: (context, state) => InvoiceDetailPlaceholderScreen(
+          invoiceId: state.pathParameters['id']!,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.invoices,
+        name: AppRoutes.invoicesName,
+        builder: (context, state) => InvoiceListPlaceholderScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.vouchersNewReceipt,
+        name: AppRoutes.vouchersNewReceiptName,
+        builder: (context, state) =>
+            VoucherFormPlaceholderScreen(mode: VoucherFormMode.receipt),
+      ),
+      GoRoute(
+        path: AppRoutes.vouchersNewPayment,
+        name: AppRoutes.vouchersNewPaymentName,
+        builder: (context, state) =>
+            VoucherFormPlaceholderScreen(mode: VoucherFormMode.payment),
+      ),
+      GoRoute(
+        path: AppRoutes.vouchersDetail,
+        name: AppRoutes.vouchersDetailName,
+        builder: (context, state) => VoucherDetailPlaceholderScreen(
+          voucherId: state.pathParameters['id']!,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.vouchers,
+        name: AppRoutes.vouchersName,
+        builder: (context, state) => VoucherListPlaceholderScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.journalDetail,
+        name: AppRoutes.journalDetailName,
+        builder: (context, state) => JournalDetailPlaceholderScreen(
+          entryId: state.pathParameters['id']!,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.journal,
+        name: AppRoutes.journalName,
+        builder: (context, state) => JournalListPlaceholderScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.cashBank,
+        name: AppRoutes.cashBankName,
+        builder: (context, state) => CashBankPlaceholderScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.inventoryDocumentsOpeningStock,
+        name: AppRoutes.inventoryDocumentsOpeningStockName,
+        builder: (context, state) => InventoryDocumentFormPlaceholderScreen(
+          mode: InventoryDocumentFormMode.openingStock,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.inventoryDocumentsStockIn,
+        name: AppRoutes.inventoryDocumentsStockInName,
+        builder: (context, state) => InventoryDocumentFormPlaceholderScreen(
+          mode: InventoryDocumentFormMode.stockIn,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.inventoryDocumentsStockOut,
+        name: AppRoutes.inventoryDocumentsStockOutName,
+        builder: (context, state) => InventoryDocumentFormPlaceholderScreen(
+          mode: InventoryDocumentFormMode.stockOut,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.inventoryDocumentsStockCount,
+        name: AppRoutes.inventoryDocumentsStockCountName,
+        builder: (context, state) => InventoryDocumentFormPlaceholderScreen(
+          mode: InventoryDocumentFormMode.stockCount,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.inventoryDocumentsDetail,
+        name: AppRoutes.inventoryDocumentsDetailName,
+        builder: (context, state) => InventoryDocumentDetailPlaceholderScreen(
+          documentId: state.pathParameters['id']!,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.inventoryDocuments,
+        name: AppRoutes.inventoryDocumentsName,
+        builder: (context, state) => InventoryDocumentListPlaceholderScreen(),
       ),
       GoRoute(
         path: AppRoutes.documentPreview,

@@ -9,7 +9,8 @@ import '../../core/theme/app_theme.dart';
 import '../../features/accounting/domain/accounting_permissions.dart';
 import '../../features/auth/domain/app_session.dart';
 import '../../features/auth/presentation/auth_controller.dart';
-import '../../features/customers/domain/customer_permissions.dart';
+import '../../features/customers/domain/customer_permissions.dart'
+    hide canViewVouchers;
 import '../../core/documents/domain/document_permissions.dart';
 
 class _NavItem {
@@ -95,6 +96,33 @@ class AppShell extends ConsumerWidget {
         route: AppRoutes.customers,
         isVisible: canViewCustomersArea,
         matchChildren: true,
+      ),
+      _NavItem(
+        titleGetter: (l) => l.navInvoices,
+        icon: Icons.receipt_long_outlined,
+        route: AppRoutes.invoices,
+        isVisible: canViewAnyInvoices,
+        matchChildren: true,
+      ),
+      _NavItem(
+        titleGetter: (l) => l.navVouchers,
+        icon: Icons.payments_outlined,
+        route: AppRoutes.vouchers,
+        isVisible: canViewVouchers,
+        matchChildren: true,
+      ),
+      _NavItem(
+        titleGetter: (l) => l.navJournal,
+        icon: Icons.menu_book_outlined,
+        route: AppRoutes.journal,
+        isVisible: canViewJournal,
+        matchChildren: true,
+      ),
+      _NavItem(
+        titleGetter: (l) => l.navCashBank,
+        icon: Icons.account_balance_wallet_outlined,
+        route: AppRoutes.cashBank,
+        isVisible: canViewCashBank,
       ),
       _NavItem(
         titleGetter: (l) => l.chartOfAccounts,

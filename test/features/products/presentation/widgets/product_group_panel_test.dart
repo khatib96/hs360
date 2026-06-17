@@ -31,36 +31,40 @@ void main() {
     ),
   ];
 
-  testWidgets('selecting group tiles does not trigger ListTile Material assertion',
-      (tester) async {
-    var selectedId = 'group-1';
+  testWidgets(
+    'selecting group tiles does not trigger ListTile Material assertion',
+    (tester) async {
+      var selectedId = 'group-1';
 
-    await tester.pumpWidget(
-      wrap(
-        ProductGroupPanel(
-          groups: groups,
-          selectedGroupId: selectedId,
-          languageCode: 'en',
-          canCreateGroup: false,
-          canEditGroup: false,
-          onGroupSelected: (id) => selectedId = id ?? '',
-          onAddGroup: () {},
-          onEditGroup: (_) {},
-          onDeactivateGroup: (_) {},
+      await tester.pumpWidget(
+        wrap(
+          ProductGroupPanel(
+            groups: groups,
+            selectedGroupId: selectedId,
+            languageCode: 'en',
+            canCreateGroup: false,
+            canEditGroup: false,
+            onGroupSelected: (id) => selectedId = id ?? '',
+            onAddGroup: () {},
+            onEditGroup: (_) {},
+            onDeactivateGroup: (_) {},
+          ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
+      );
+      await tester.pumpAndSettle();
 
-    expect(find.text('Devices'), findsOneWidget);
+      expect(find.text('Devices'), findsOneWidget);
 
-    await tester.tap(find.text('Oils'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Oils'));
+      await tester.pumpAndSettle();
 
-    expect(find.text('Oils'), findsOneWidget);
-  });
+      expect(find.text('Oils'), findsOneWidget);
+    },
+  );
 
-  testWidgets('compact panel selects all groups without assertion', (tester) async {
+  testWidgets('compact panel selects all groups without assertion', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       wrap(
         ProductGroupPanelCompact(

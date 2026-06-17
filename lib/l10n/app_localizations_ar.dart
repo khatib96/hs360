@@ -2127,4 +2127,273 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get templateSettingsSave => 'حفظ الإعدادات';
+
+  @override
+  String get navInvoices => 'الفواتير';
+
+  @override
+  String get navVouchers => 'السندات';
+
+  @override
+  String get navJournal => 'اليومية';
+
+  @override
+  String get navCashBank => 'النقد والبنوك';
+
+  @override
+  String get financePlaceholderM9Body =>
+      'شاشات العمل الكاملة ستتوفر في المرحلة التالية.';
+
+  @override
+  String get financeModuleAccessUnavailable =>
+      'لا تملك صلاحية عرض هذا القسم المالي.';
+
+  @override
+  String get financeErrorTenantNotFound => 'لم يتم العثور على سياق المستأجر.';
+
+  @override
+  String get financeErrorPermissionDenied =>
+      'لا تملك صلاحية لهذا الإجراء المالي.';
+
+  @override
+  String get financeErrorValidationFailed =>
+      'بيانات المالية غير صالحة. راجع النموذج وحاول مجددًا.';
+
+  @override
+  String get financeErrorIdempotencyPayloadMismatch =>
+      'يتعارض هذا الطلب مع إرسال سابق. ابدأ من جديد.';
+
+  @override
+  String get financeErrorBooksLocked => 'الدفاتر المحاسبية مقفلة لهذا التاريخ.';
+
+  @override
+  String get financeErrorDuplicateSerial => 'تم اكتشاف رقم تسلسلي مكرر.';
+
+  @override
+  String get financeErrorCrossTenantReference => 'مرجع عبر مستأجرين غير مسموح.';
+
+  @override
+  String get financeErrorTaxRateNotFound =>
+      'لم يتم العثور على نسبة الضريبة المحددة.';
+
+  @override
+  String get financeErrorTaxRateInUse =>
+      'نسبة الضريبة هذه مستخدمة ولا يمكن تغييرها.';
+
+  @override
+  String get financeErrorNotFound => 'لم يتم العثور على السجل المالي.';
+
+  @override
+  String get financeErrorNotAvailable => 'هذه الميزة المالية غير متاحة بعد.';
+
+  @override
+  String get financeErrorUnknown => 'حدث خطأ مالي. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get journalSourceSalesReturn => 'مرتجع مبيعات';
+
+  @override
+  String get journalSourcePurchaseReturn => 'مرتجع مشتريات';
+
+  @override
+  String get journalSourceSalesReturnReversal => 'عكس مرتجع مبيعات';
+
+  @override
+  String get journalSourcePurchaseReturnReversal => 'عكس مرتجع مششتريات';
+
+  @override
+  String get journalSourceCustomerRefundVoucher => 'سند استرداد عميل';
+
+  @override
+  String get journalSourceSupplierRefundReceipt => 'سند استرداد مورد';
+
+  @override
+  String get invoiceTitle => 'الفواتير';
+
+  @override
+  String get invoiceNewSales => 'فاتورة مبيعات جديدة';
+
+  @override
+  String get invoiceNewPurchase => 'فاتورة مشتريات جديدة';
+
+  @override
+  String get invoiceDetailTitle => 'تفاصيل الفاتورة';
+
+  @override
+  String get invoiceReturnTitle => 'فاتورة مرتجع';
+
+  @override
+  String get invoiceTypeSales => 'مبيعات';
+
+  @override
+  String get invoiceTypePurchase => 'مشتريات';
+
+  @override
+  String get invoiceTypeSalesReturn => 'مرتجع مبيعات';
+
+  @override
+  String get invoiceTypePurchaseReturn => 'مرتجع مشتريات';
+
+  @override
+  String get invoiceStatusDraft => 'مسودة';
+
+  @override
+  String get invoiceStatusConfirmed => 'مؤكدة';
+
+  @override
+  String get invoiceStatusPartiallyPaid => 'مدفوعة جزئيًا';
+
+  @override
+  String get invoiceStatusPaid => 'مدفوعة';
+
+  @override
+  String get invoiceStatusCancelled => 'ملغاة';
+
+  @override
+  String get voucherTitle => 'السندات';
+
+  @override
+  String get voucherNewReceipt => 'سند قبض جديد';
+
+  @override
+  String get voucherNewPayment => 'سند صرف جديد';
+
+  @override
+  String get voucherDetailTitle => 'تفاصيل السند';
+
+  @override
+  String get voucherTypeReceipt => 'قبض';
+
+  @override
+  String get voucherTypePayment => 'صرف';
+
+  @override
+  String get voucherStatusConfirmed => 'مؤكد';
+
+  @override
+  String get voucherStatusCancelled => 'ملغى';
+
+  @override
+  String get journalTitle => 'اليومية';
+
+  @override
+  String get journalDetailTitle => 'قيد يومية';
+
+  @override
+  String get cashBankTitle => 'النقد والبنوك';
+
+  @override
+  String get taxSettingsTitle => 'إعدادات الضريبة';
+
+  @override
+  String get inventoryDocumentsTitle => 'مستندات المخزون';
+
+  @override
+  String get inventoryDocumentOpeningStock => 'رصيد افتتاحي';
+
+  @override
+  String get inventoryDocumentStockIn => 'إدخال مخزون';
+
+  @override
+  String get inventoryDocumentStockOut => 'إخراج مخزون';
+
+  @override
+  String get inventoryDocumentStockCount => 'جرد مخزون';
+
+  @override
+  String get inventoryDocumentsDeferredBody =>
+      'مستندات محاسبة المخزون ستتوفر بعد مراجعة المحاسبة.';
+
+  @override
+  String get paymentMethodCash => 'نقد';
+
+  @override
+  String get paymentMethodKnet => 'كي نت';
+
+  @override
+  String get paymentMethodBankTransfer => 'تحويل بنكي';
+
+  @override
+  String get paymentMethodCheque => 'شيك';
+
+  @override
+  String get paymentMethodOther => 'أخرى';
+
+  @override
+  String get financeColumnParty => 'الطرف';
+
+  @override
+  String get financeColumnDate => 'التاريخ';
+
+  @override
+  String get financeColumnDueDate => 'تاريخ الاستحقاق';
+
+  @override
+  String get financeColumnTotal => 'الإجمالي';
+
+  @override
+  String get financeColumnPaid => 'المدفوع';
+
+  @override
+  String get financeColumnOutstanding => 'المتبقي';
+
+  @override
+  String get financeColumnStatus => 'الحالة';
+
+  @override
+  String get financeColumnReference => 'المرجع';
+
+  @override
+  String get financeColumnAmount => 'المبلغ';
+
+  @override
+  String get financeColumnDescription => 'الوصف';
+
+  @override
+  String get financeColumnDebit => 'مدين';
+
+  @override
+  String get financeColumnCredit => 'دائن';
+
+  @override
+  String get financeColumnBalance => 'الرصيد';
+
+  @override
+  String get financeTotalsSubtotal => 'المجموع الفرعي';
+
+  @override
+  String get financeTotalsDiscount => 'الخصم';
+
+  @override
+  String get financeTotalsTax => 'الضريبة';
+
+  @override
+  String get financeTotalsGrandTotal => 'الإجمالي الكلي';
+
+  @override
+  String get financeAllocationModeFifo => 'FIFO';
+
+  @override
+  String get financeAllocationModeManual => 'يدوي';
+
+  @override
+  String get financeAllocationModeUnallocated => 'غير مخصص';
+
+  @override
+  String get financeActionCancel => 'إلغاء';
+
+  @override
+  String get financeActionPrint => 'طباعة';
+
+  @override
+  String get financeActionScan => 'مسح';
+
+  @override
+  String get financeActionSelectSerial => 'اختيار تسلسل';
+
+  @override
+  String get financeCancellationReason => 'سبب الإلغاء';
+
+  @override
+  String get financeReversalLabel => 'عكس';
 }

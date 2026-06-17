@@ -9,7 +9,13 @@ enum JournalSource {
   contractClosure('contract_closure'),
   openingBalance('opening_balance'),
   inventoryAdjustment('inventory_adjustment'),
-  salaryPayment('salary_payment');
+  salaryPayment('salary_payment'),
+  salesReturn('sales_return'),
+  purchaseReturn('purchase_return'),
+  salesReturnReversal('sales_return_reversal'),
+  purchaseReturnReversal('purchase_return_reversal'),
+  customerRefundVoucher('customer_refund_voucher'),
+  supplierRefundReceipt('supplier_refund_receipt');
 
   const JournalSource(this.dbValue);
 

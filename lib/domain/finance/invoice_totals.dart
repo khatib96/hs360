@@ -18,11 +18,11 @@ class InvoiceTotals {
   final Decimal total;
 
   Map<String, String> toNormalizedMap({required int decimalPlaces}) => {
-        'subtotal': _formatInvoiceMoney(subtotal, decimalPlaces),
-        'discount_amount': _formatInvoiceMoney(discountAmount, decimalPlaces),
-        'tax_amount': _formatInvoiceMoney(taxAmount, decimalPlaces),
-        'total': _formatInvoiceMoney(total, decimalPlaces),
-      };
+    'subtotal': _formatInvoiceMoney(subtotal, decimalPlaces),
+    'discount_amount': _formatInvoiceMoney(discountAmount, decimalPlaces),
+    'tax_amount': _formatInvoiceMoney(taxAmount, decimalPlaces),
+    'total': _formatInvoiceMoney(total, decimalPlaces),
+  };
 }
 
 String _formatInvoiceMoney(Decimal value, int decimalPlaces) {
@@ -32,7 +32,9 @@ String _formatInvoiceMoney(Decimal value, int decimalPlaces) {
   final rounded = value.round(scale: decimalPlaces);
   final parts = rounded.toString().split('.');
   final fraction = parts.length > 1 ? parts[1] : '';
-  final padded = fraction.padRight(decimalPlaces, '0').substring(0, decimalPlaces);
+  final padded = fraction
+      .padRight(decimalPlaces, '0')
+      .substring(0, decimalPlaces);
   return '${parts.first}.$padded';
 }
 

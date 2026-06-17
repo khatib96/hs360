@@ -227,6 +227,89 @@ void main() {
     expect(find.text(l10n.customers), findsNothing);
     expect(find.text(l10n.chartOfAccounts), findsNothing);
   });
+
+  testWidgets('invoices.view_sales shows invoices navigation item', (
+    tester,
+  ) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+
+    await tester.pumpWidget(
+      buildTestApp(
+        appSession: session(permissions: {'invoices.view_sales'}),
+        child: const AppShell(title: 'Shell', body: SizedBox.shrink()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.navInvoices), findsOneWidget);
+    expect(find.text(l10n.navVouchers), findsNothing);
+  });
+
+  testWidgets('vouchers.view shows vouchers navigation item', (tester) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+
+    await tester.pumpWidget(
+      buildTestApp(
+        appSession: session(permissions: {'vouchers.view'}),
+        child: const AppShell(title: 'Shell', body: SizedBox.shrink()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.navVouchers), findsOneWidget);
+    expect(find.text(l10n.navInvoices), findsNothing);
+  });
+
+  testWidgets('journal.view shows journal navigation item', (tester) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+
+    await tester.pumpWidget(
+      buildTestApp(
+        appSession: session(permissions: {'journal.view'}),
+        child: const AppShell(title: 'Shell', body: SizedBox.shrink()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.navJournal), findsOneWidget);
+    expect(find.text(l10n.navCashBank), findsNothing);
+  });
+
+  testWidgets('cash_bank.view shows cash and bank navigation item', (
+    tester,
+  ) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+
+    await tester.pumpWidget(
+      buildTestApp(
+        appSession: session(permissions: {'cash_bank.view'}),
+        child: const AppShell(title: 'Shell', body: SizedBox.shrink()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.navCashBank), findsOneWidget);
+    expect(find.text(l10n.navJournal), findsNothing);
+  });
+
+  testWidgets('finance nav items stay hidden without finance permissions', (
+    tester,
+  ) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+
+    await tester.pumpWidget(
+      buildTestApp(
+        appSession: session(permissions: {'products.view'}),
+        child: const AppShell(title: 'Shell', body: SizedBox.shrink()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.navInvoices), findsNothing);
+    expect(find.text(l10n.navVouchers), findsNothing);
+    expect(find.text(l10n.navJournal), findsNothing);
+    expect(find.text(l10n.navCashBank), findsNothing);
+  });
 }
 
 class TestAuthController extends AuthController {

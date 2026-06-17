@@ -15,7 +15,9 @@ void main() {
 
         for (var i = 0; i < totals.lines.length; i++) {
           expect(
-            totals.lines[i].toNormalizedMap(decimalPlaces: fixture.decimalPlaces),
+            totals.lines[i].toNormalizedMap(
+              decimalPlaces: fixture.decimalPlaces,
+            ),
             fixture.expectedLineMaps[i],
             reason: '${fixture.name} line $i',
           );

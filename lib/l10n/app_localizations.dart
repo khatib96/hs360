@@ -4141,6 +4141,528 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save settings'**
   String get templateSettingsSave;
+
+  /// No description provided for @navInvoices.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoices'**
+  String get navInvoices;
+
+  /// No description provided for @navVouchers.
+  ///
+  /// In en, this message translates to:
+  /// **'Vouchers'**
+  String get navVouchers;
+
+  /// No description provided for @navJournal.
+  ///
+  /// In en, this message translates to:
+  /// **'Journal'**
+  String get navJournal;
+
+  /// No description provided for @navCashBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash & Bank'**
+  String get navCashBank;
+
+  /// No description provided for @financePlaceholderM9Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Full workflow screens arrive in the next milestone.'**
+  String get financePlaceholderM9Body;
+
+  /// No description provided for @financeModuleAccessUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have permission to view this finance section.'**
+  String get financeModuleAccessUnavailable;
+
+  /// No description provided for @financeErrorTenantNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Tenant context was not found.'**
+  String get financeErrorTenantNotFound;
+
+  /// No description provided for @financeErrorPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have permission for this finance action.'**
+  String get financeErrorPermissionDenied;
+
+  /// No description provided for @financeErrorValidationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The finance data is invalid. Review the form and try again.'**
+  String get financeErrorValidationFailed;
+
+  /// No description provided for @financeErrorIdempotencyPayloadMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'This request conflicts with a previous submission. Start again.'**
+  String get financeErrorIdempotencyPayloadMismatch;
+
+  /// No description provided for @financeErrorBooksLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Accounting books are locked for this date.'**
+  String get financeErrorBooksLocked;
+
+  /// No description provided for @financeErrorDuplicateSerial.
+  ///
+  /// In en, this message translates to:
+  /// **'A duplicate serial number was detected.'**
+  String get financeErrorDuplicateSerial;
+
+  /// No description provided for @financeErrorCrossTenantReference.
+  ///
+  /// In en, this message translates to:
+  /// **'A cross-tenant reference is not allowed.'**
+  String get financeErrorCrossTenantReference;
+
+  /// No description provided for @financeErrorTaxRateNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'The selected tax rate was not found.'**
+  String get financeErrorTaxRateNotFound;
+
+  /// No description provided for @financeErrorTaxRateInUse.
+  ///
+  /// In en, this message translates to:
+  /// **'This tax rate is in use and cannot be changed.'**
+  String get financeErrorTaxRateInUse;
+
+  /// No description provided for @financeErrorNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'The finance record was not found.'**
+  String get financeErrorNotFound;
+
+  /// No description provided for @financeErrorNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This finance feature is not available yet.'**
+  String get financeErrorNotAvailable;
+
+  /// No description provided for @financeErrorUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'A finance error occurred. Please try again.'**
+  String get financeErrorUnknown;
+
+  /// No description provided for @journalSourceSalesReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sales return'**
+  String get journalSourceSalesReturn;
+
+  /// No description provided for @journalSourcePurchaseReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase return'**
+  String get journalSourcePurchaseReturn;
+
+  /// No description provided for @journalSourceSalesReturnReversal.
+  ///
+  /// In en, this message translates to:
+  /// **'Sales return reversal'**
+  String get journalSourceSalesReturnReversal;
+
+  /// No description provided for @journalSourcePurchaseReturnReversal.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase return reversal'**
+  String get journalSourcePurchaseReturnReversal;
+
+  /// No description provided for @journalSourceCustomerRefundVoucher.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer refund voucher'**
+  String get journalSourceCustomerRefundVoucher;
+
+  /// No description provided for @journalSourceSupplierRefundReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplier refund receipt'**
+  String get journalSourceSupplierRefundReceipt;
+
+  /// No description provided for @invoiceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoices'**
+  String get invoiceTitle;
+
+  /// No description provided for @invoiceNewSales.
+  ///
+  /// In en, this message translates to:
+  /// **'New sales invoice'**
+  String get invoiceNewSales;
+
+  /// No description provided for @invoiceNewPurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'New purchase invoice'**
+  String get invoiceNewPurchase;
+
+  /// No description provided for @invoiceDetailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice detail'**
+  String get invoiceDetailTitle;
+
+  /// No description provided for @invoiceReturnTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Return invoice'**
+  String get invoiceReturnTitle;
+
+  /// No description provided for @invoiceTypeSales.
+  ///
+  /// In en, this message translates to:
+  /// **'Sales'**
+  String get invoiceTypeSales;
+
+  /// No description provided for @invoiceTypePurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase'**
+  String get invoiceTypePurchase;
+
+  /// No description provided for @invoiceTypeSalesReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sales return'**
+  String get invoiceTypeSalesReturn;
+
+  /// No description provided for @invoiceTypePurchaseReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase return'**
+  String get invoiceTypePurchaseReturn;
+
+  /// No description provided for @invoiceStatusDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get invoiceStatusDraft;
+
+  /// No description provided for @invoiceStatusConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get invoiceStatusConfirmed;
+
+  /// No description provided for @invoiceStatusPartiallyPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Partially paid'**
+  String get invoiceStatusPartiallyPaid;
+
+  /// No description provided for @invoiceStatusPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get invoiceStatusPaid;
+
+  /// No description provided for @invoiceStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get invoiceStatusCancelled;
+
+  /// No description provided for @voucherTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vouchers'**
+  String get voucherTitle;
+
+  /// No description provided for @voucherNewReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'New receipt voucher'**
+  String get voucherNewReceipt;
+
+  /// No description provided for @voucherNewPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'New payment voucher'**
+  String get voucherNewPayment;
+
+  /// No description provided for @voucherDetailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Voucher detail'**
+  String get voucherDetailTitle;
+
+  /// No description provided for @voucherTypeReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt'**
+  String get voucherTypeReceipt;
+
+  /// No description provided for @voucherTypePayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment'**
+  String get voucherTypePayment;
+
+  /// No description provided for @voucherStatusConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get voucherStatusConfirmed;
+
+  /// No description provided for @voucherStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get voucherStatusCancelled;
+
+  /// No description provided for @journalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Journal'**
+  String get journalTitle;
+
+  /// No description provided for @journalDetailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Journal entry'**
+  String get journalDetailTitle;
+
+  /// No description provided for @cashBankTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash & Bank'**
+  String get cashBankTitle;
+
+  /// No description provided for @taxSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tax settings'**
+  String get taxSettingsTitle;
+
+  /// No description provided for @inventoryDocumentsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Inventory documents'**
+  String get inventoryDocumentsTitle;
+
+  /// No description provided for @inventoryDocumentOpeningStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening stock'**
+  String get inventoryDocumentOpeningStock;
+
+  /// No description provided for @inventoryDocumentStockIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock in'**
+  String get inventoryDocumentStockIn;
+
+  /// No description provided for @inventoryDocumentStockOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock out'**
+  String get inventoryDocumentStockOut;
+
+  /// No description provided for @inventoryDocumentStockCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock count'**
+  String get inventoryDocumentStockCount;
+
+  /// No description provided for @inventoryDocumentsDeferredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Inventory accounting documents will be available after the accounting review milestone.'**
+  String get inventoryDocumentsDeferredBody;
+
+  /// No description provided for @paymentMethodCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash'**
+  String get paymentMethodCash;
+
+  /// No description provided for @paymentMethodKnet.
+  ///
+  /// In en, this message translates to:
+  /// **'KNET'**
+  String get paymentMethodKnet;
+
+  /// No description provided for @paymentMethodBankTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank transfer'**
+  String get paymentMethodBankTransfer;
+
+  /// No description provided for @paymentMethodCheque.
+  ///
+  /// In en, this message translates to:
+  /// **'Cheque'**
+  String get paymentMethodCheque;
+
+  /// No description provided for @paymentMethodOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get paymentMethodOther;
+
+  /// No description provided for @financeColumnParty.
+  ///
+  /// In en, this message translates to:
+  /// **'Party'**
+  String get financeColumnParty;
+
+  /// No description provided for @financeColumnDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get financeColumnDate;
+
+  /// No description provided for @financeColumnDueDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Due date'**
+  String get financeColumnDueDate;
+
+  /// No description provided for @financeColumnTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get financeColumnTotal;
+
+  /// No description provided for @financeColumnPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get financeColumnPaid;
+
+  /// No description provided for @financeColumnOutstanding.
+  ///
+  /// In en, this message translates to:
+  /// **'Outstanding'**
+  String get financeColumnOutstanding;
+
+  /// No description provided for @financeColumnStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get financeColumnStatus;
+
+  /// No description provided for @financeColumnReference.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference'**
+  String get financeColumnReference;
+
+  /// No description provided for @financeColumnAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get financeColumnAmount;
+
+  /// No description provided for @financeColumnDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get financeColumnDescription;
+
+  /// No description provided for @financeColumnDebit.
+  ///
+  /// In en, this message translates to:
+  /// **'Debit'**
+  String get financeColumnDebit;
+
+  /// No description provided for @financeColumnCredit.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit'**
+  String get financeColumnCredit;
+
+  /// No description provided for @financeColumnBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance'**
+  String get financeColumnBalance;
+
+  /// No description provided for @financeTotalsSubtotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Subtotal'**
+  String get financeTotalsSubtotal;
+
+  /// No description provided for @financeTotalsDiscount.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount'**
+  String get financeTotalsDiscount;
+
+  /// No description provided for @financeTotalsTax.
+  ///
+  /// In en, this message translates to:
+  /// **'Tax'**
+  String get financeTotalsTax;
+
+  /// No description provided for @financeTotalsGrandTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Grand total'**
+  String get financeTotalsGrandTotal;
+
+  /// No description provided for @financeAllocationModeFifo.
+  ///
+  /// In en, this message translates to:
+  /// **'FIFO'**
+  String get financeAllocationModeFifo;
+
+  /// No description provided for @financeAllocationModeManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual'**
+  String get financeAllocationModeManual;
+
+  /// No description provided for @financeAllocationModeUnallocated.
+  ///
+  /// In en, this message translates to:
+  /// **'Unallocated'**
+  String get financeAllocationModeUnallocated;
+
+  /// No description provided for @financeActionCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get financeActionCancel;
+
+  /// No description provided for @financeActionPrint.
+  ///
+  /// In en, this message translates to:
+  /// **'Print'**
+  String get financeActionPrint;
+
+  /// No description provided for @financeActionScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan'**
+  String get financeActionScan;
+
+  /// No description provided for @financeActionSelectSerial.
+  ///
+  /// In en, this message translates to:
+  /// **'Select serial'**
+  String get financeActionSelectSerial;
+
+  /// No description provided for @financeCancellationReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation reason'**
+  String get financeCancellationReason;
+
+  /// No description provided for @financeReversalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reversal'**
+  String get financeReversalLabel;
 }
 
 class _AppLocalizationsDelegate

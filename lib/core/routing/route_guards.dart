@@ -3,8 +3,12 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/auth/domain/app_session.dart';
 import '../../features/auth/presentation/auth_controller.dart';
+import '../../features/finance_shared/domain/finance_permissions.dart';
+import '../../features/invoices/domain/invoice_type.dart';
 import '../network/supabase_providers.dart';
 import 'app_routes.dart';
+
+export '../../features/finance_shared/domain/finance_permissions.dart';
 
 const _fieldPermissionIds = [
   'visits.view_assigned',
@@ -20,7 +24,12 @@ const _officePermissionIds = [
   'customers.view',
   'contracts.view',
   'invoices.view',
+  'invoices.view_sales',
+  'invoices.view_purchase',
+  'invoices.view_returns',
   'vouchers.view',
+  'journal.view',
+  'cash_bank.view',
   'inventory.view',
   'warehouses.view',
   'inventory_movements.view',
@@ -30,6 +39,8 @@ const _officePermissionIds = [
   'chart_of_accounts.view',
   'settings.templates.view',
   'settings.templates.edit',
+  'settings.tax.view',
+  'settings.tax.edit',
 ];
 
 bool isPublicRoute(String path) =>
@@ -88,6 +99,51 @@ bool isSupplierDetailPath(String path) {
   return match.group(1)! != 'new';
 }
 
+bool isInvoiceDetailPath(String path) {
+  final match = RegExp(r'^/invoices/([^/]+)$').firstMatch(_normalizePath(path));
+  if (match == null) return false;
+  final segment = match.group(1)!;
+  return segment != 'new';
+}
+
+bool isInvoiceReturnPath(String path) {
+  return RegExp(r'^/invoices/([^/]+)/return$').hasMatch(_normalizePath(path));
+}
+
+bool isInvoicesNewSalesPath(String path) =>
+    _normalizePath(path) == AppRoutes.invoicesNewSales;
+
+bool isInvoicesNewPurchasePath(String path) =>
+    _normalizePath(path) == AppRoutes.invoicesNewPurchase;
+
+bool isVoucherDetailPath(String path) {
+  final match = RegExp(r'^/vouchers/([^/]+)$').firstMatch(_normalizePath(path));
+  if (match == null) return false;
+  return match.group(1)! != 'new';
+}
+
+bool isVouchersNewReceiptPath(String path) =>
+    _normalizePath(path) == AppRoutes.vouchersNewReceipt;
+
+bool isVouchersNewPaymentPath(String path) =>
+    _normalizePath(path) == AppRoutes.vouchersNewPayment;
+
+bool isJournalDetailPath(String path) {
+  final match = RegExp(r'^/journal/([^/]+)$').firstMatch(_normalizePath(path));
+  return match != null;
+}
+
+bool isInventoryDocumentDetailPath(String path) {
+  final normalized = _normalizePath(path);
+  if (normalized == AppRoutes.inventoryDocumentsOpeningStock ||
+      normalized == AppRoutes.inventoryDocumentsStockIn ||
+      normalized == AppRoutes.inventoryDocumentsStockOut ||
+      normalized == AppRoutes.inventoryDocumentsStockCount) {
+    return false;
+  }
+  return RegExp(r'^/inventory/documents/([^/]+)$').hasMatch(normalized);
+}
+
 bool _canViewCustomersInline(AppSession session) =>
     session.permissions.can('customers.view');
 
@@ -95,8 +151,33 @@ bool _canAccessCustomerEditInline(AppSession session) =>
     _canViewCustomersInline(session) &&
     session.permissions.can('customers.edit');
 
+bool _canViewInvoiceDetail(
+  AppSession session, {
+  Map<String, String> queryParameters = const {},
+}) {
+  final typeRaw = queryParameters['type'];
+  if (typeRaw == null || typeRaw.isEmpty) {
+    return canViewAnyInvoices(session);
+  }
+  try {
+    final type = InvoiceType.fromDb(typeRaw);
+    return switch (type) {
+      InvoiceType.sales => canViewSalesInvoices(session),
+      InvoiceType.purchase => canViewPurchaseInvoices(session),
+      InvoiceType.salesReturn ||
+      InvoiceType.purchaseReturn => canViewReturnInvoices(session),
+    };
+  } on FormatException {
+    return canViewAnyInvoices(session);
+  }
+}
+
 /// Inner path permission validation helper.
-bool _isPathAllowed(String path, AppSession session) {
+bool _isPathAllowed(
+  String path,
+  AppSession session, {
+  Map<String, String> queryParameters = const {},
+}) {
   if (session.isManager) return true;
 
   if (path == AppRoutes.productsNew) {
@@ -148,8 +229,56 @@ bool _isPathAllowed(String path, AppSession session) {
     return session.permissions.can('settings.templates.view') ||
         session.permissions.can('settings.templates.edit');
   }
+  if (path == AppRoutes.taxSettings) {
+    return canViewTaxSettings(session);
+  }
   if (path == AppRoutes.documentPreview) {
     return true;
+  }
+
+  if (path == AppRoutes.invoices) {
+    return canViewAnyInvoices(session);
+  }
+  if (isInvoicesNewSalesPath(path)) {
+    return canCreateSalesInvoice(session);
+  }
+  if (isInvoicesNewPurchasePath(path)) {
+    return canCreatePurchaseInvoice(session);
+  }
+  if (isInvoiceReturnPath(path)) {
+    return canCreateAnyReturn(session);
+  }
+  if (isInvoiceDetailPath(path)) {
+    return _canViewInvoiceDetail(session, queryParameters: queryParameters);
+  }
+  if (path == AppRoutes.vouchers) {
+    return canViewVouchers(session);
+  }
+  if (isVouchersNewReceiptPath(path)) {
+    return canCreateReceiptVoucher(session);
+  }
+  if (isVouchersNewPaymentPath(path)) {
+    return canCreatePaymentVoucher(session);
+  }
+  if (isVoucherDetailPath(path)) {
+    return canViewVouchers(session);
+  }
+  if (path == AppRoutes.journal) {
+    return canViewJournal(session);
+  }
+  if (isJournalDetailPath(path)) {
+    return canViewJournal(session);
+  }
+  if (path == AppRoutes.cashBank) {
+    return canViewCashBank(session);
+  }
+  if (path == AppRoutes.inventoryDocuments ||
+      path == AppRoutes.inventoryDocumentsOpeningStock ||
+      path == AppRoutes.inventoryDocumentsStockIn ||
+      path == AppRoutes.inventoryDocumentsStockOut ||
+      path == AppRoutes.inventoryDocumentsStockCount ||
+      isInventoryDocumentDetailPath(path)) {
+    return canViewInventoryDocuments(session);
   }
 
   // Dashboard and Field specific permissions
@@ -166,6 +295,7 @@ bool _isPathAllowed(String path, AppSession session) {
 /// Pure redirect logic for unit tests. Returns a path or null (no redirect).
 String? guardRedirectForPath({
   required String path,
+  Map<String, String> queryParameters = const {},
   required bool hasSupabaseSession,
   required AsyncValue<AppSession?> authState,
 }) {
@@ -196,7 +326,7 @@ String? guardRedirectForPath({
     return home;
   }
 
-  if (!_isPathAllowed(normalized, session)) {
+  if (!_isPathAllowed(normalized, session, queryParameters: queryParameters)) {
     return normalized == home ? null : home;
   }
 
@@ -218,6 +348,7 @@ String _normalizePath(String path) {
 String? guardRedirect(Ref ref, GoRouterState state) {
   return guardRedirectForPath(
     path: state.uri.path,
+    queryParameters: state.uri.queryParameters,
     hasSupabaseSession: ref.read(supabaseSessionProvider) != null,
     authState: ref.read(authControllerProvider),
   );

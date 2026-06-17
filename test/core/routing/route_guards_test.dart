@@ -573,5 +573,240 @@ void main() {
         );
       }
     });
+
+    test('Phase 5 finance path matchers reject new and reserved segments', () {
+      expect(isInvoiceDetailPath('/invoices/inv-1'), isTrue);
+      expect(isInvoiceDetailPath('/invoices/new/sales'), isFalse);
+      expect(isInvoiceReturnPath('/invoices/inv-1/return'), isTrue);
+      expect(isInvoicesNewSalesPath('/invoices/new/sales'), isTrue);
+      expect(isInvoicesNewPurchasePath('/invoices/new/purchase'), isTrue);
+      expect(isVoucherDetailPath('/vouchers/v-1'), isTrue);
+      expect(isVoucherDetailPath('/vouchers/new/receipt'), isFalse);
+      expect(isVouchersNewReceiptPath('/vouchers/new/receipt'), isTrue);
+      expect(isJournalDetailPath('/journal/j-1'), isTrue);
+      expect(
+        isInventoryDocumentDetailPath('/inventory/documents/doc-1'),
+        isTrue,
+      );
+      expect(
+        isInventoryDocumentDetailPath('/inventory/documents/opening-stock'),
+        isFalse,
+      );
+    });
+
+    test('invoices.view_sales resolves home to dashboard', () {
+      expect(
+        resolveHomeRoute(
+          session(accountType: 'user', permissions: {'invoices.view_sales'}),
+        ),
+        AppRoutes.dashboard,
+      );
+    });
+
+    test('journal.view only can access journal routes', () {
+      final journalUser = session(
+        accountType: 'user',
+        permissions: {'journal.view'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.journal,
+          hasSupabaseSession: true,
+          authState: loaded(journalUser),
+        ),
+        isNull,
+      );
+      expect(
+        guardRedirectForPath(
+          path: '/journal/j-1',
+          hasSupabaseSession: true,
+          authState: loaded(journalUser),
+        ),
+        isNull,
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.invoices,
+          hasSupabaseSession: true,
+          authState: loaded(journalUser),
+        ),
+        AppRoutes.dashboard,
+      );
+    });
+
+    test('cash_bank.view only can access cash-bank route', () {
+      final cashUser = session(
+        accountType: 'user',
+        permissions: {'cash_bank.view'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.cashBank,
+          hasSupabaseSession: true,
+          authState: loaded(cashUser),
+        ),
+        isNull,
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.journal,
+          hasSupabaseSession: true,
+          authState: loaded(cashUser),
+        ),
+        AppRoutes.dashboard,
+      );
+    });
+
+    test('invoice detail respects type-specific view permissions', () {
+      final salesViewer = session(
+        accountType: 'user',
+        permissions: {'invoices.view_sales'},
+      );
+      final purchaseViewer = session(
+        accountType: 'user',
+        permissions: {'invoices.view_purchase'},
+      );
+
+      expect(
+        guardRedirectForPath(
+          path: '/invoices/inv-1',
+          queryParameters: const {'type': 'sales'},
+          hasSupabaseSession: true,
+          authState: loaded(salesViewer),
+        ),
+        isNull,
+      );
+      expect(
+        guardRedirectForPath(
+          path: '/invoices/inv-1',
+          queryParameters: const {'type': 'purchase'},
+          hasSupabaseSession: true,
+          authState: loaded(salesViewer),
+        ),
+        AppRoutes.dashboard,
+      );
+      expect(
+        guardRedirectForPath(
+          path: '/invoices/inv-1',
+          queryParameters: const {'type': 'purchase'},
+          hasSupabaseSession: true,
+          authState: loaded(purchaseViewer),
+        ),
+        isNull,
+      );
+    });
+
+    test('invoice create routes require create permissions', () {
+      final salesCreator = session(
+        accountType: 'user',
+        permissions: {'invoices.create_sales'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.invoicesNewSales,
+          hasSupabaseSession: true,
+          authState: loaded(salesCreator),
+        ),
+        isNull,
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.invoicesNewPurchase,
+          hasSupabaseSession: true,
+          authState: loaded(salesCreator),
+        ),
+        AppRoutes.blocked,
+      );
+    });
+
+    test('invoice return route requires create return permission', () {
+      final returnCreator = session(
+        accountType: 'user',
+        permissions: {'invoices.create_sales_return'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: '/invoices/inv-1/return',
+          hasSupabaseSession: true,
+          authState: loaded(returnCreator),
+        ),
+        isNull,
+      );
+    });
+
+    test('voucher create routes require create permissions', () {
+      final receiptCreator = session(
+        accountType: 'user',
+        permissions: {'vouchers.create_receipt'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.vouchersNewReceipt,
+          hasSupabaseSession: true,
+          authState: loaded(receiptCreator),
+        ),
+        isNull,
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.vouchersNewPayment,
+          hasSupabaseSession: true,
+          authState: loaded(receiptCreator),
+        ),
+        AppRoutes.blocked,
+      );
+    });
+
+    test('inventory.view can access inventory document routes', () {
+      final inventoryUser = session(
+        accountType: 'user',
+        permissions: {'inventory.view'},
+      );
+      for (final path in [
+        AppRoutes.inventoryDocuments,
+        AppRoutes.inventoryDocumentsOpeningStock,
+        '/inventory/documents/doc-1',
+      ]) {
+        expect(
+          guardRedirectForPath(
+            path: path,
+            hasSupabaseSession: true,
+            authState: loaded(inventoryUser),
+          ),
+          isNull,
+          reason: path,
+        );
+      }
+    });
+
+    test('settings.tax.view can access tax settings route', () {
+      final taxViewer = session(
+        accountType: 'user',
+        permissions: {'settings.tax.view'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.taxSettings,
+          hasSupabaseSession: true,
+          authState: loaded(taxViewer),
+        ),
+        isNull,
+      );
+    });
+
+    test('legacy invoices.view grants invoice list access', () {
+      final legacyViewer = session(
+        accountType: 'user',
+        permissions: {'invoices.view'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.invoices,
+          hasSupabaseSession: true,
+          authState: loaded(legacyViewer),
+        ),
+        isNull,
+      );
+    });
   });
 }

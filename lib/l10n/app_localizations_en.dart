@@ -2144,4 +2144,278 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get templateSettingsSave => 'Save settings';
+
+  @override
+  String get navInvoices => 'Invoices';
+
+  @override
+  String get navVouchers => 'Vouchers';
+
+  @override
+  String get navJournal => 'Journal';
+
+  @override
+  String get navCashBank => 'Cash & Bank';
+
+  @override
+  String get financePlaceholderM9Body =>
+      'Full workflow screens arrive in the next milestone.';
+
+  @override
+  String get financeModuleAccessUnavailable =>
+      'You do not have permission to view this finance section.';
+
+  @override
+  String get financeErrorTenantNotFound => 'Tenant context was not found.';
+
+  @override
+  String get financeErrorPermissionDenied =>
+      'You do not have permission for this finance action.';
+
+  @override
+  String get financeErrorValidationFailed =>
+      'The finance data is invalid. Review the form and try again.';
+
+  @override
+  String get financeErrorIdempotencyPayloadMismatch =>
+      'This request conflicts with a previous submission. Start again.';
+
+  @override
+  String get financeErrorBooksLocked =>
+      'Accounting books are locked for this date.';
+
+  @override
+  String get financeErrorDuplicateSerial =>
+      'A duplicate serial number was detected.';
+
+  @override
+  String get financeErrorCrossTenantReference =>
+      'A cross-tenant reference is not allowed.';
+
+  @override
+  String get financeErrorTaxRateNotFound =>
+      'The selected tax rate was not found.';
+
+  @override
+  String get financeErrorTaxRateInUse =>
+      'This tax rate is in use and cannot be changed.';
+
+  @override
+  String get financeErrorNotFound => 'The finance record was not found.';
+
+  @override
+  String get financeErrorNotAvailable =>
+      'This finance feature is not available yet.';
+
+  @override
+  String get financeErrorUnknown =>
+      'A finance error occurred. Please try again.';
+
+  @override
+  String get journalSourceSalesReturn => 'Sales return';
+
+  @override
+  String get journalSourcePurchaseReturn => 'Purchase return';
+
+  @override
+  String get journalSourceSalesReturnReversal => 'Sales return reversal';
+
+  @override
+  String get journalSourcePurchaseReturnReversal => 'Purchase return reversal';
+
+  @override
+  String get journalSourceCustomerRefundVoucher => 'Customer refund voucher';
+
+  @override
+  String get journalSourceSupplierRefundReceipt => 'Supplier refund receipt';
+
+  @override
+  String get invoiceTitle => 'Invoices';
+
+  @override
+  String get invoiceNewSales => 'New sales invoice';
+
+  @override
+  String get invoiceNewPurchase => 'New purchase invoice';
+
+  @override
+  String get invoiceDetailTitle => 'Invoice detail';
+
+  @override
+  String get invoiceReturnTitle => 'Return invoice';
+
+  @override
+  String get invoiceTypeSales => 'Sales';
+
+  @override
+  String get invoiceTypePurchase => 'Purchase';
+
+  @override
+  String get invoiceTypeSalesReturn => 'Sales return';
+
+  @override
+  String get invoiceTypePurchaseReturn => 'Purchase return';
+
+  @override
+  String get invoiceStatusDraft => 'Draft';
+
+  @override
+  String get invoiceStatusConfirmed => 'Confirmed';
+
+  @override
+  String get invoiceStatusPartiallyPaid => 'Partially paid';
+
+  @override
+  String get invoiceStatusPaid => 'Paid';
+
+  @override
+  String get invoiceStatusCancelled => 'Cancelled';
+
+  @override
+  String get voucherTitle => 'Vouchers';
+
+  @override
+  String get voucherNewReceipt => 'New receipt voucher';
+
+  @override
+  String get voucherNewPayment => 'New payment voucher';
+
+  @override
+  String get voucherDetailTitle => 'Voucher detail';
+
+  @override
+  String get voucherTypeReceipt => 'Receipt';
+
+  @override
+  String get voucherTypePayment => 'Payment';
+
+  @override
+  String get voucherStatusConfirmed => 'Confirmed';
+
+  @override
+  String get voucherStatusCancelled => 'Cancelled';
+
+  @override
+  String get journalTitle => 'Journal';
+
+  @override
+  String get journalDetailTitle => 'Journal entry';
+
+  @override
+  String get cashBankTitle => 'Cash & Bank';
+
+  @override
+  String get taxSettingsTitle => 'Tax settings';
+
+  @override
+  String get inventoryDocumentsTitle => 'Inventory documents';
+
+  @override
+  String get inventoryDocumentOpeningStock => 'Opening stock';
+
+  @override
+  String get inventoryDocumentStockIn => 'Stock in';
+
+  @override
+  String get inventoryDocumentStockOut => 'Stock out';
+
+  @override
+  String get inventoryDocumentStockCount => 'Stock count';
+
+  @override
+  String get inventoryDocumentsDeferredBody =>
+      'Inventory accounting documents will be available after the accounting review milestone.';
+
+  @override
+  String get paymentMethodCash => 'Cash';
+
+  @override
+  String get paymentMethodKnet => 'KNET';
+
+  @override
+  String get paymentMethodBankTransfer => 'Bank transfer';
+
+  @override
+  String get paymentMethodCheque => 'Cheque';
+
+  @override
+  String get paymentMethodOther => 'Other';
+
+  @override
+  String get financeColumnParty => 'Party';
+
+  @override
+  String get financeColumnDate => 'Date';
+
+  @override
+  String get financeColumnDueDate => 'Due date';
+
+  @override
+  String get financeColumnTotal => 'Total';
+
+  @override
+  String get financeColumnPaid => 'Paid';
+
+  @override
+  String get financeColumnOutstanding => 'Outstanding';
+
+  @override
+  String get financeColumnStatus => 'Status';
+
+  @override
+  String get financeColumnReference => 'Reference';
+
+  @override
+  String get financeColumnAmount => 'Amount';
+
+  @override
+  String get financeColumnDescription => 'Description';
+
+  @override
+  String get financeColumnDebit => 'Debit';
+
+  @override
+  String get financeColumnCredit => 'Credit';
+
+  @override
+  String get financeColumnBalance => 'Balance';
+
+  @override
+  String get financeTotalsSubtotal => 'Subtotal';
+
+  @override
+  String get financeTotalsDiscount => 'Discount';
+
+  @override
+  String get financeTotalsTax => 'Tax';
+
+  @override
+  String get financeTotalsGrandTotal => 'Grand total';
+
+  @override
+  String get financeAllocationModeFifo => 'FIFO';
+
+  @override
+  String get financeAllocationModeManual => 'Manual';
+
+  @override
+  String get financeAllocationModeUnallocated => 'Unallocated';
+
+  @override
+  String get financeActionCancel => 'Cancel';
+
+  @override
+  String get financeActionPrint => 'Print';
+
+  @override
+  String get financeActionScan => 'Scan';
+
+  @override
+  String get financeActionSelectSerial => 'Select serial';
+
+  @override
+  String get financeCancellationReason => 'Cancellation reason';
+
+  @override
+  String get financeReversalLabel => 'Reversal';
 }
