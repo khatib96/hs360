@@ -7,7 +7,7 @@ part of 'document_preview_controller.dart';
 // **************************************************************************
 
 String _$documentPreviewControllerHash() =>
-    r'8233c43801e67fe53f91128dc5db613c17480912';
+    r'7e3535fb60b408cbe3ca3cc4972ba59bfae9d45f';
 
 /// Copied from Dart SDK
 class _SystemHash {

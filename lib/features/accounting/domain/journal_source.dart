@@ -10,12 +10,21 @@ enum JournalSource {
   openingBalance('opening_balance'),
   inventoryAdjustment('inventory_adjustment'),
   salaryPayment('salary_payment'),
+  salesInvoiceReversal('sales_invoice_reversal'),
+  purchaseInvoiceReversal('purchase_invoice_reversal'),
+  receiptVoucherReversal('receipt_voucher_reversal'),
+  paymentVoucherReversal('payment_voucher_reversal'),
   salesReturn('sales_return'),
   purchaseReturn('purchase_return'),
   salesReturnReversal('sales_return_reversal'),
   purchaseReturnReversal('purchase_return_reversal'),
   customerRefundVoucher('customer_refund_voucher'),
-  supplierRefundReceipt('supplier_refund_receipt');
+  supplierRefundReceipt('supplier_refund_receipt'),
+  openingStock('opening_stock'),
+  inventoryStockIn('inventory_stock_in'),
+  inventoryStockOut('inventory_stock_out'),
+  stockCount('stock_count'),
+  inventoryDocumentReversal('inventory_document_reversal');
 
   const JournalSource(this.dbValue);
 

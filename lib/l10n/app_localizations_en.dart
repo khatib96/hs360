@@ -1119,7 +1119,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get customerInvoicesEmpty => 'No invoices yet.';
 
   @override
+  String get customerInvoicesNotLoaded => 'Open this tab to load invoices.';
+
+  @override
   String get customerVouchersEmpty => 'No vouchers yet.';
+
+  @override
+  String get customerVouchersNotLoaded =>
+      'Open this tab to load receipt vouchers.';
 
   @override
   String get customerTimelineEmpty => 'No timeline events yet.';
@@ -1190,6 +1197,36 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get supplierDetailsUnavailable =>
       'Supplier details are not available in this build.';
+
+  @override
+  String get supplierNotFound => 'Supplier not found.';
+
+  @override
+  String get supplierPurchaseInvoices => 'Purchase invoices';
+
+  @override
+  String get supplierPaymentVouchers => 'Payment vouchers';
+
+  @override
+  String get supplierStatement => 'Statement';
+
+  @override
+  String get supplierStatementUnavailable =>
+      'Supplier statement requires backend support (get_supplier_statement). This will be available in a future release.';
+
+  @override
+  String get supplierInvoicesEmpty => 'No purchase invoices yet.';
+
+  @override
+  String get supplierInvoicesNotLoaded =>
+      'Open this tab to load purchase invoices.';
+
+  @override
+  String get supplierVouchersEmpty => 'No payment vouchers yet.';
+
+  @override
+  String get supplierVouchersNotLoaded =>
+      'Open this tab to load payment vouchers.';
 
   @override
   String get chartOfAccountsUnavailable =>
@@ -2208,8 +2245,114 @@ class AppLocalizationsEn extends AppLocalizations {
       'This finance feature is not available yet.';
 
   @override
+  String get financeErrorCorrectionDocumentRequired =>
+      'Safe cancellation is not available. A correction document is required.';
+
+  @override
   String get financeErrorUnknown =>
       'A finance error occurred. Please try again.';
+
+  @override
+  String get financeValidationNotesRequired => 'Notes are required.';
+
+  @override
+  String get financeValidationGainReasonRequired => 'Gain reason is required.';
+
+  @override
+  String get financeValidationLossReasonRequired => 'Loss reason is required.';
+
+  @override
+  String get financeValidationSerializedQtyIntegerRequired =>
+      'Serialized quantity must be a positive whole number.';
+
+  @override
+  String get financeErrorReturnDocumentRequired =>
+      'A return document is required for this operation.';
+
+  @override
+  String get financeErrorSerializedAdjustmentNotSupported =>
+      'Serialized adjustments are not supported yet.';
+
+  @override
+  String get financeErrorBackendMigrationRequired =>
+      'This invoice workflow needs a database update before it can be confirmed.';
+
+  @override
+  String financeErrorUnknownWithCode(String code) {
+    return 'An unexpected finance error occurred. Please try again. (Ref: $code)';
+  }
+
+  @override
+  String get financeValidationCustomerRequired =>
+      'Select a customer for this invoice.';
+
+  @override
+  String get financeValidationSupplierRequired =>
+      'Select a supplier for this invoice.';
+
+  @override
+  String get financeValidationWarehouseRequired => 'Select a warehouse.';
+
+  @override
+  String get financeValidationPartyRequired => 'Select a customer or supplier.';
+
+  @override
+  String get financeValidationLinesRequired => 'Add at least one line item.';
+
+  @override
+  String get financeValidationProductRequired =>
+      'Select a product for every line.';
+
+  @override
+  String get financeValidationLineQtyInvalid =>
+      'Quantity must be greater than zero.';
+
+  @override
+  String get financeValidationLinePriceInvalid =>
+      'Unit price cannot be negative.';
+
+  @override
+  String get financeValidationDiscountOutOfRange =>
+      'Discount must be between 0 and 100 percent.';
+
+  @override
+  String get financeValidationDueDateBeforeInvoiceDate =>
+      'Due date cannot be before the invoice date.';
+
+  @override
+  String get financeValidationSerializedUnitRequired =>
+      'Select a serial/unit for serialized products.';
+
+  @override
+  String get financeValidationSerialCountMismatch =>
+      'Serial count must match the line quantity.';
+
+  @override
+  String get financeValidationOriginalInvoiceRequired =>
+      'Select the original invoice to return against.';
+
+  @override
+  String get financeValidationReturnReasonRequired =>
+      'Enter a reason for this return.';
+
+  @override
+  String get financeValidationReturnQtyExceedsReturnable =>
+      'Return quantity exceeds the returnable quantity.';
+
+  @override
+  String get financeValidationCashAccountRequired =>
+      'Select a cash or bank account.';
+
+  @override
+  String get financeValidationAccountRequired => 'Select a financial account.';
+
+  @override
+  String get financeValidationCancellationReasonRequired =>
+      'Enter a cancellation reason.';
+
+  @override
+  String get financeValidationCancellationReasonTooLong =>
+      'Cancellation reason is too long.';
 
   @override
   String get journalSourceSalesReturn => 'Sales return';
@@ -2228,6 +2371,43 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get journalSourceSupplierRefundReceipt => 'Supplier refund receipt';
+
+  @override
+  String get journalSourceSalesInvoiceReversal => 'Sales invoice reversal';
+
+  @override
+  String get journalSourcePurchaseInvoiceReversal =>
+      'Purchase invoice reversal';
+
+  @override
+  String get journalSourceReceiptVoucherReversal => 'Receipt voucher reversal';
+
+  @override
+  String get journalSourcePaymentVoucherReversal => 'Payment voucher reversal';
+
+  @override
+  String get journalSourceOpeningStock => 'Opening stock';
+
+  @override
+  String get journalSourceInventoryStockIn => 'Stock in';
+
+  @override
+  String get journalSourceInventoryStockOut => 'Stock out';
+
+  @override
+  String get journalSourceStockCount => 'Stock count';
+
+  @override
+  String get journalSourceInventoryDocumentReversal =>
+      'Inventory document reversal';
+
+  @override
+  String get cashBankChartViewRequiredTitle =>
+      'Chart of accounts access required';
+
+  @override
+  String get cashBankChartViewRequiredBody =>
+      'Select a cash or bank account from the chart of accounts. Ask your administrator for chart of accounts view permission.';
 
   @override
   String get invoiceTitle => 'Invoices';
@@ -2272,6 +2452,218 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invoiceStatusCancelled => 'Cancelled';
 
   @override
+  String get invoiceFilterType => 'Type';
+
+  @override
+  String get invoiceFilterSearch => 'Search';
+
+  @override
+  String get invoiceColumnNumber => 'Number';
+
+  @override
+  String get invoiceColumnParty => 'Party';
+
+  @override
+  String get invoiceColumnDate => 'Date';
+
+  @override
+  String get invoiceColumnDueDate => 'Due date';
+
+  @override
+  String get invoiceColumnTotal => 'Total';
+
+  @override
+  String get invoiceColumnPaid => 'Paid';
+
+  @override
+  String get invoiceColumnOutstanding => 'Outstanding';
+
+  @override
+  String get invoiceOverdueBadge => 'Overdue';
+
+  @override
+  String get invoiceListEmpty => 'No invoices yet.';
+
+  @override
+  String get invoiceListEmptyFiltered => 'No invoices match your filters.';
+
+  @override
+  String get invoiceDetailLines => 'Lines';
+
+  @override
+  String get invoicePaymentSummary => 'Payment summary';
+
+  @override
+  String get invoiceActionCancel => 'Cancel invoice';
+
+  @override
+  String get invoiceActionReturn => 'Create return';
+
+  @override
+  String get invoiceActionEditDraft => 'Edit draft';
+
+  @override
+  String get invoiceActionConfirmDraft => 'Confirm draft';
+
+  @override
+  String get invoiceCancelReason => 'Cancellation reason';
+
+  @override
+  String get invoiceConfirmCancel => 'Cancel this invoice?';
+
+  @override
+  String get invoiceJournalEntry => 'Journal entry';
+
+  @override
+  String get invoiceTotalsSubtotal => 'Subtotal';
+
+  @override
+  String get invoiceTotalsDiscount => 'Discount';
+
+  @override
+  String get invoiceTotalsTax => 'Tax';
+
+  @override
+  String get invoiceTotalsTotal => 'Total';
+
+  @override
+  String get invoiceCreditAllocations => 'Credit allocations';
+
+  @override
+  String get invoiceReturnNotEligible => 'This invoice cannot be returned.';
+
+  @override
+  String get invoiceCreateSales => 'New sales';
+
+  @override
+  String get invoiceCreatePurchase => 'New purchase';
+
+  @override
+  String get invoiceCreateNew => 'Add';
+
+  @override
+  String get invoiceCreateReturnHint => 'From an invoice';
+
+  @override
+  String get invoiceFormWarehouse => 'Warehouse';
+
+  @override
+  String get invoiceFormDate => 'Invoice date';
+
+  @override
+  String get invoiceFormDueDate => 'Due date';
+
+  @override
+  String get invoiceFormNotes => 'Notes';
+
+  @override
+  String get invoiceFormNumberAuto =>
+      'Invoice number: assigned after confirmation';
+
+  @override
+  String get invoicePaymentTermsTitle => 'Payment terms';
+
+  @override
+  String get invoicePaymentTermsCash => 'Cash / immediate';
+
+  @override
+  String get invoicePaymentTermsCredit => 'Credit';
+
+  @override
+  String get invoicePaymentTermsCashHelper =>
+      'Payment will be recorded later from vouchers.';
+
+  @override
+  String get invoicePaymentTermsCashHelperSales =>
+      'A receipt voucher will be created after the invoice is confirmed.';
+
+  @override
+  String get invoicePaymentTermsCashHelperPurchase =>
+      'A payment voucher will be created after the invoice is confirmed.';
+
+  @override
+  String get invoiceFormNewCustomer => '+ New customer';
+
+  @override
+  String get invoicePickOriginalInvoiceTitle => 'Select original invoice';
+
+  @override
+  String get invoicePickOriginalInvoiceSearch => 'Search by number or party';
+
+  @override
+  String get invoicePickOriginalInvoiceEmpty =>
+      'No confirmed invoices eligible for return.';
+
+  @override
+  String get invoiceFormCustomer => 'Customer';
+
+  @override
+  String get invoiceFormSupplier => 'Supplier';
+
+  @override
+  String get invoiceFormAddLine => 'Add line';
+
+  @override
+  String get invoiceFormSaveDraft => 'Save draft';
+
+  @override
+  String get invoiceFormConfirm => 'Confirm invoice';
+
+  @override
+  String get invoiceFormDiscardDraft => 'Discard draft';
+
+  @override
+  String get invoiceFormSelectProduct => 'Product';
+
+  @override
+  String get invoiceFormQty => 'Quantity';
+
+  @override
+  String get invoiceFormUnitPrice => 'Unit price';
+
+  @override
+  String get invoiceFormDiscount => 'Discount %';
+
+  @override
+  String get invoiceFormSerialNumber => 'Serial number';
+
+  @override
+  String get invoiceFormDiscard => 'Discard';
+
+  @override
+  String get invoiceColumnUnit => 'Unit';
+
+  @override
+  String get invoiceColumnDescription => 'Description';
+
+  @override
+  String get invoiceColumnLineTotal => 'Line total';
+
+  @override
+  String get invoiceColumnActions => 'Actions';
+
+  @override
+  String get invoiceFormConfirmMessage =>
+      'Confirm and post this invoice? Totals are calculated on the server.';
+
+  @override
+  String get invoiceEstimatedTotalsDisclaimer =>
+      'Estimated totals only. Final tax and total are set when the invoice is confirmed.';
+
+  @override
+  String get invoiceEstimatedCreditPreview => 'Estimated credit preview';
+
+  @override
+  String get invoiceFinalTotalsAfterConfirm =>
+      'Final totals are calculated after confirmation.';
+
+  @override
+  String get invoiceReturnReason => 'Return reason';
+
+  @override
+  String get invoiceReturnSubmit => 'Submit return';
+
+  @override
   String get voucherTitle => 'Vouchers';
 
   @override
@@ -2296,19 +2688,163 @@ class AppLocalizationsEn extends AppLocalizations {
   String get voucherStatusCancelled => 'Cancelled';
 
   @override
+  String get voucherAllocationFifo => 'Apply to oldest invoices first (FIFO)';
+
+  @override
+  String get voucherAllocationManual => 'Allocate manually';
+
+  @override
+  String get voucherPaymentDestinationSupplier => 'Pay supplier';
+
+  @override
+  String get voucherPaymentDestinationAccount => 'Pay to account';
+
+  @override
+  String get voucherOpenInvoices => 'Open invoices';
+
+  @override
+  String get voucherSelectCashAccount => 'Cash or bank account';
+
+  @override
+  String get voucherFormSubmit => 'Record voucher';
+
+  @override
+  String get voucherFormSubmitSuccess => 'Voucher recorded.';
+
+  @override
+  String get voucherFormPaymentMethod => 'Payment method';
+
+  @override
+  String get voucherListEmpty => 'No vouchers yet.';
+
+  @override
+  String get voucherListEmptyFiltered => 'No vouchers match your filters.';
+
+  @override
+  String get voucherFilterType => 'Type';
+
+  @override
+  String get voucherFilterSearch => 'Search';
+
+  @override
+  String get voucherCreateReceipt => 'New receipt';
+
+  @override
+  String get voucherCreatePayment => 'New payment';
+
+  @override
+  String get voucherColumnNumber => 'Number';
+
+  @override
+  String get voucherFormCustomer => 'Customer';
+
+  @override
+  String get voucherFormSupplier => 'Supplier';
+
+  @override
+  String get voucherFormCashAccount => 'Cash account';
+
+  @override
+  String get voucherFormReference => 'Reference';
+
+  @override
+  String get voucherFormNotes => 'Notes';
+
+  @override
+  String get voucherFormAmount => 'Amount';
+
+  @override
+  String get voucherFormDate => 'Date';
+
+  @override
+  String get voucherAllocationsTitle => 'Invoice allocations';
+
+  @override
+  String get voucherAllocatedAmount => 'Allocated';
+
+  @override
+  String get voucherUnallocatedAmount => 'Unallocated';
+
+  @override
+  String get voucherCancelAction => 'Cancel voucher';
+
+  @override
+  String get voucherCancelReason => 'Cancellation reason';
+
+  @override
+  String get voucherConfirmCancel => 'Cancel this voucher?';
+
+  @override
+  String get voucherJournalEntry => 'Journal entry';
+
+  @override
+  String get voucherReversalJournal => 'Reversal journal';
+
+  @override
   String get journalTitle => 'Journal';
 
   @override
   String get journalDetailTitle => 'Journal entry';
 
   @override
+  String get journalListEmpty => 'No journal entries yet.';
+
+  @override
+  String get journalListEmptyFiltered =>
+      'No journal entries match the current filters.';
+
+  @override
+  String get journalFilterSource => 'Source';
+
+  @override
+  String get journalFilterSearch => 'Search entries';
+
+  @override
+  String get journalPostedBadge => 'Posted';
+
+  @override
+  String get journalReversalBadge => 'Reversal';
+
+  @override
+  String get journalSourceDocument => 'Source document';
+
+  @override
+  String get journalReversalEntry => 'Reversal of';
+
+  @override
+  String get journalLineAccount => 'Account';
+
+  @override
   String get cashBankTitle => 'Cash & Bank';
+
+  @override
+  String get cashBankSelectAccount => 'Select cash or bank account';
+
+  @override
+  String get cashBankOpeningBalance => 'Opening balance';
+
+  @override
+  String get cashBankRunningBalance => 'Running balance';
+
+  @override
+  String get cashBankExportLoadedRows => 'Export loaded rows';
+
+  @override
+  String get cashBankExportLoadedRowsCopied =>
+      'Loaded rows copied to clipboard as CSV.';
+
+  @override
+  String get cashBankActivityEmpty =>
+      'No activity for this account in the selected period.';
 
   @override
   String get taxSettingsTitle => 'Tax settings';
 
   @override
-  String get inventoryDocumentsTitle => 'Inventory documents';
+  String get inventoryDocumentsTitle => 'Inventory financial documents';
+
+  @override
+  String get inventoryDocumentsLink => 'Financial documents';
 
   @override
   String get inventoryDocumentOpeningStock => 'Opening stock';
@@ -2325,6 +2861,131 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get inventoryDocumentsDeferredBody =>
       'Inventory accounting documents will be available after the accounting review milestone.';
+
+  @override
+  String get inventoryDocumentListEmpty =>
+      'No inventory financial documents yet.';
+
+  @override
+  String get inventoryDocumentListEmptyFiltered =>
+      'No documents match the current filters.';
+
+  @override
+  String get inventoryDocumentNumber => 'Document no.';
+
+  @override
+  String get inventoryDocumentKind => 'Type';
+
+  @override
+  String get inventoryDocumentWarehouse => 'Warehouse';
+
+  @override
+  String get inventoryDocumentDate => 'Date';
+
+  @override
+  String get inventoryDocumentNotes => 'Notes';
+
+  @override
+  String get inventoryDocumentReason => 'Reason';
+
+  @override
+  String get inventoryDocumentGainReason => 'Gain reason';
+
+  @override
+  String get inventoryDocumentLossReason => 'Loss reason';
+
+  @override
+  String get inventoryDocumentSystemQty => 'System qty';
+
+  @override
+  String get inventoryDocumentCountedQty => 'Counted qty';
+
+  @override
+  String get inventoryDocumentDeltaQty => 'Delta';
+
+  @override
+  String get inventoryDocumentUnitCost => 'Unit cost';
+
+  @override
+  String get inventoryDocumentWacHint =>
+      'Uses current average cost when unit cost is omitted.';
+
+  @override
+  String get inventoryDocumentAddLine => 'Add line';
+
+  @override
+  String get inventoryDocumentRemoveLine => 'Remove line';
+
+  @override
+  String get inventoryDocumentConfirmSubmit => 'Confirm document';
+
+  @override
+  String get inventoryDocumentConfirmSubmitMessage =>
+      'This will post the inventory financial document and cannot be edited afterward.';
+
+  @override
+  String get inventoryDocumentSubmit => 'Post document';
+
+  @override
+  String get inventoryDocumentCancelAction => 'Cancel document';
+
+  @override
+  String get inventoryDocumentCancelReason => 'Cancellation reason';
+
+  @override
+  String get inventoryDocumentCancelled => 'Cancelled';
+
+  @override
+  String get inventoryDocumentLines => 'Lines';
+
+  @override
+  String get inventoryDocumentMovements => 'Movements';
+
+  @override
+  String get inventoryDocumentJournalEntry => 'Journal entry';
+
+  @override
+  String get inventoryDocumentReversalJournal => 'Reversal journal';
+
+  @override
+  String get inventoryDocumentSerializedNotSupportedYet =>
+      'Serialized products are not supported for this document type yet.';
+
+  @override
+  String get inventoryDocumentStatusConfirmed => 'Confirmed';
+
+  @override
+  String get inventoryDocumentStatusCancelled => 'Cancelled';
+
+  @override
+  String get inventoryDocumentFilterKind => 'Document type';
+
+  @override
+  String get inventoryDocumentFilterWarehouse => 'Warehouse';
+
+  @override
+  String get inventoryDocumentCreateOpening => 'Opening stock';
+
+  @override
+  String get inventoryDocumentCreateStockIn => 'Stock in';
+
+  @override
+  String get inventoryDocumentCreateStockOut => 'Stock out';
+
+  @override
+  String get inventoryDocumentCreateStockCount => 'Stock count';
+
+  @override
+  String get inventoryDocumentSelectProduct => 'Select product';
+
+  @override
+  String get inventoryDocumentSelectReason => 'Select reason';
+
+  @override
+  String get inventoryDocumentSerialUnits => 'Serial numbers';
+
+  @override
+  String get inventoryDocumentSelectUnits => 'Select units';
 
   @override
   String get paymentMethodCash => 'Cash';

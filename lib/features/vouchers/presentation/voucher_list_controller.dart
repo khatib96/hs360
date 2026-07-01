@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../core/errors/finance_exception.dart';
 import '../../auth/domain/app_session.dart';
 import '../../auth/presentation/auth_controller.dart';
+import '../../finance_shared/domain/date_range.dart';
 import '../../finance_shared/domain/pagination_cursor.dart';
 import '../data/voucher_repository.dart';
 import '../domain/voucher_filters.dart';
@@ -145,12 +146,10 @@ class VoucherListController extends _$VoucherListController {
 
   void setType(VoucherType? type) {
     state = state.copyWith(
-      filters: VoucherFilters(
+      filters: _copyFilters(
         type: type,
-        status: state.filters.status,
-        partyId: state.filters.partyId,
-        dateRange: state.filters.dateRange,
-        search: state.filters.search,
+        clearType: type == null,
+        clearStatus: true,
       ),
     );
     refresh();
@@ -158,13 +157,7 @@ class VoucherListController extends _$VoucherListController {
 
   void setStatus(VoucherStatus? status) {
     state = state.copyWith(
-      filters: VoucherFilters(
-        type: state.filters.type,
-        status: status,
-        partyId: state.filters.partyId,
-        dateRange: state.filters.dateRange,
-        search: state.filters.search,
-      ),
+      filters: _copyFilters(status: status, clearStatus: status == null),
     );
     refresh();
   }
@@ -172,14 +165,65 @@ class VoucherListController extends _$VoucherListController {
   void setSearch(String? search) {
     final trimmed = search?.trim();
     state = state.copyWith(
-      filters: VoucherFilters(
-        type: state.filters.type,
-        status: state.filters.status,
-        partyId: state.filters.partyId,
-        dateRange: state.filters.dateRange,
+      filters: _copyFilters(
         search: trimmed == null || trimmed.isEmpty ? null : trimmed,
+        clearSearch: trimmed == null || trimmed.isEmpty,
       ),
     );
     refresh();
+  }
+
+  void setPartyId(String? partyId) {
+    final trimmed = partyId?.trim();
+    state = state.copyWith(
+      filters: _copyFilters(
+        partyId: trimmed == null || trimmed.isEmpty ? null : trimmed,
+        clearPartyId: trimmed == null || trimmed.isEmpty,
+      ),
+    );
+    refresh();
+  }
+
+  void setDateFrom(DateTime? from) {
+    state = state.copyWith(
+      filters: _copyFilters(
+        dateRange: state.filters.dateRange.copyWith(from: from),
+      ),
+    );
+    refresh();
+  }
+
+  void setDateTo(DateTime? to) {
+    state = state.copyWith(
+      filters: _copyFilters(
+        dateRange: state.filters.dateRange.copyWith(to: to),
+      ),
+    );
+    refresh();
+  }
+
+  VoucherFilters _copyFilters({
+    VoucherType? type,
+    VoucherStatus? status,
+    String? partyId,
+    String? search,
+    DateRange? dateRange,
+    bool clearType = false,
+    bool clearStatus = false,
+    bool clearPartyId = false,
+    bool clearSearch = false,
+  }) {
+    final current = state.filters;
+    return current.copyWith(
+      type: clearType ? null : (type ?? current.type),
+      status: clearStatus ? null : (status ?? current.status),
+      partyId: clearPartyId ? null : (partyId ?? current.partyId),
+      dateRange: dateRange ?? current.dateRange,
+      search: clearSearch ? null : (search ?? current.search),
+      clearType: clearType,
+      clearStatus: clearStatus,
+      clearPartyId: clearPartyId,
+      clearSearch: clearSearch,
+    );
   }
 }

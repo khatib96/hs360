@@ -9,7 +9,9 @@ import '../../../shared/widgets/message_banner.dart';
 import 'customer_detail_controller.dart';
 import 'customer_detail_state.dart';
 import 'customer_error_messages.dart';
+import 'customer_invoices_controller.dart';
 import 'customer_statement_controller.dart';
+import 'customer_vouchers_controller.dart';
 import 'widgets/customer_contracts_tab.dart';
 import 'widgets/customer_detail_header.dart';
 import 'widgets/customer_invoices_tab.dart';
@@ -25,6 +27,8 @@ class CustomerDetailScreen extends ConsumerStatefulWidget {
 
   final String customerId;
 
+  static const invoicesTabIndex = 3;
+  static const vouchersTabIndex = 4;
   static const statementTabIndex = 5;
 
   @override
@@ -35,6 +39,8 @@ class CustomerDetailScreen extends ConsumerStatefulWidget {
 class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
+  var _invoicesLoadTriggered = false;
+  var _vouchersLoadTriggered = false;
   var _statementLoadTriggered = false;
 
   @override
@@ -53,7 +59,32 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
 
   void _onTabChanged() {
     if (_tabController.indexIsChanging) return;
-    _maybeLoadStatement(_tabController.index);
+    final index = _tabController.index;
+    _maybeLoadInvoices(index);
+    _maybeLoadVouchers(index);
+    _maybeLoadStatement(index);
+  }
+
+  void _maybeLoadInvoices(int index) {
+    if (_invoicesLoadTriggered ||
+        index != CustomerDetailScreen.invoicesTabIndex) {
+      return;
+    }
+    _invoicesLoadTriggered = true;
+    ref
+        .read(customerInvoicesControllerProvider(widget.customerId).notifier)
+        .load();
+  }
+
+  void _maybeLoadVouchers(int index) {
+    if (_vouchersLoadTriggered ||
+        index != CustomerDetailScreen.vouchersTabIndex) {
+      return;
+    }
+    _vouchersLoadTriggered = true;
+    ref
+        .read(customerVouchersControllerProvider(widget.customerId).notifier)
+        .load();
   }
 
   void _maybeLoadStatement(int index) {
@@ -181,8 +212,8 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
               CustomerProfileTab(customer: customer),
               CustomerServiceLocationsSection(customerId: customer.id),
               const CustomerContractsTab(),
-              const CustomerInvoicesTab(),
-              const CustomerVouchersTab(),
+              CustomerInvoicesTab(customerId: customer.id),
+              CustomerVouchersTab(customerId: customer.id),
               CustomerStatementTab(customerId: customer.id),
               CustomerTimelineTab(customer: customer),
             ],

@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../core/errors/finance_exception.dart';
 import '../../auth/domain/app_session.dart';
 import '../../auth/presentation/auth_controller.dart';
+import '../../finance_shared/domain/date_range.dart';
 import '../../finance_shared/domain/pagination_cursor.dart';
 import '../data/invoice_repository.dart';
 import '../domain/invoice_filters.dart';
@@ -37,22 +38,10 @@ class InvoiceListController extends _$InvoiceListController {
     Future.microtask(() {
       if (!_hasStartedInitialLoad) refresh();
     });
-    return InvoiceListState(
-      isLoading: true,
-      filters: InvoiceFilters(type: _defaultType()),
-    );
+    return InvoiceListState(isLoading: true, filters: const InvoiceFilters());
   }
 
   AppSession? get _session => ref.read(authControllerProvider).valueOrNull;
-
-  InvoiceType? _defaultType() {
-    final session = _session;
-    if (session == null) return null;
-    if (canViewSalesInvoices(session)) return InvoiceType.sales;
-    if (canViewPurchaseInvoices(session)) return InvoiceType.purchase;
-    if (canViewReturnInvoices(session)) return InvoiceType.salesReturn;
-    return null;
-  }
 
   bool _shouldReloadForSession(AppSession? previous, AppSession next) {
     if (previous == null) return true;
@@ -65,8 +54,10 @@ class InvoiceListController extends _$InvoiceListController {
   Future<void> refresh() async {
     _hasStartedInitialLoad = true;
     final session = _session;
-    final type = state.filters.type ?? _defaultType();
-    if (session == null || type == null || !_canViewType(session, type)) {
+    final type = state.filters.type;
+    if (session == null ||
+        !canViewAnyInvoices(session) ||
+        (type != null && !_canViewType(session, type))) {
       state = const InvoiceListState();
       return;
     }
@@ -116,8 +107,12 @@ class InvoiceListController extends _$InvoiceListController {
     if (state.isLoading || state.isLoadingMore || !state.hasMore) return;
 
     final session = _session;
-    final type = state.filters.type ?? _defaultType();
-    if (session == null || type == null || !_canViewType(session, type)) return;
+    final type = state.filters.type;
+    if (session == null ||
+        !canViewAnyInvoices(session) ||
+        (type != null && !_canViewType(session, type))) {
+      return;
+    }
 
     final refreshId = ++_refreshSerial;
     state = state.copyWith(
@@ -154,12 +149,20 @@ class InvoiceListController extends _$InvoiceListController {
   }
 
   void setType(InvoiceType? type) {
-    state = state.copyWith(filters: _copyFilters(type: type));
+    state = state.copyWith(
+      filters: _copyFilters(
+        type: type,
+        clearType: type == null,
+        clearStatus: true,
+      ),
+    );
     refresh();
   }
 
   void setStatus(InvoiceStatus? status) {
-    state = state.copyWith(filters: _copyFilters(status: status));
+    state = state.copyWith(
+      filters: _copyFilters(status: status, clearStatus: status == null),
+    );
     refresh();
   }
 
@@ -185,6 +188,29 @@ class InvoiceListController extends _$InvoiceListController {
     refresh();
   }
 
+  void setDateRange(DateRange dateRange) {
+    state = state.copyWith(filters: _copyFilters(dateRange: dateRange));
+    refresh();
+  }
+
+  void setDateFrom(DateTime? from) {
+    state = state.copyWith(
+      filters: _copyFilters(
+        dateRange: state.filters.dateRange.copyWith(from: from),
+      ),
+    );
+    refresh();
+  }
+
+  void setDateTo(DateTime? to) {
+    state = state.copyWith(
+      filters: _copyFilters(
+        dateRange: state.filters.dateRange.copyWith(to: to),
+      ),
+    );
+    refresh();
+  }
+
   InvoiceFilters _copyFilters({
     InvoiceType? type,
     InvoiceStatus? status,
@@ -192,24 +218,34 @@ class InvoiceListController extends _$InvoiceListController {
     bool clearSearch = false,
     String? partyId,
     bool clearPartyId = false,
+    DateRange? dateRange,
+    bool clearType = false,
+    bool clearStatus = false,
   }) {
     final current = state.filters;
-    return InvoiceFilters(
-      type: type ?? current.type,
-      status: status ?? current.status,
+    return current.copyWith(
+      type: clearType ? null : (type ?? current.type),
+      status: clearStatus ? null : (status ?? current.status),
       partyId: clearPartyId ? null : (partyId ?? current.partyId),
-      dateRange: current.dateRange,
+      dateRange: dateRange ?? current.dateRange,
       search: clearSearch ? null : (search ?? current.search),
+      clearType: clearType,
+      clearStatus: clearStatus,
+      clearPartyId: clearPartyId,
+      clearSearch: clearSearch,
     );
   }
 
   Future<List<InvoiceSummary>> _fetchPage(
     AppSession session,
-    InvoiceType type,
+    InvoiceType? type,
     InvoiceFilters filters,
     PaginationCursor page,
   ) {
     final repo = ref.read(invoiceRepositoryProvider);
+    if (type == null) {
+      return _fetchAllTypesPage(session, filters, page);
+    }
     final returnFilters = type.isReturn
         ? InvoiceFilters(
             type: type,
@@ -233,6 +269,57 @@ class InvoiceListController extends _$InvoiceListController {
       InvoiceType.salesReturn || InvoiceType.purchaseReturn =>
         repo.listReturnInvoices(session, filters: returnFilters, page: page),
     };
+  }
+
+  Future<List<InvoiceSummary>> _fetchAllTypesPage(
+    AppSession session,
+    InvoiceFilters filters,
+    PaginationCursor page,
+  ) async {
+    final repo = ref.read(invoiceRepositoryProvider);
+    final fetchLimit = page.offset + page.limit;
+    final merged = <InvoiceSummary>[];
+    final basePage = PaginationCursor(limit: fetchLimit, offset: 0);
+
+    if (canViewSalesInvoices(session)) {
+      merged.addAll(
+        await repo.listSalesInvoices(session, filters: filters, page: basePage),
+      );
+    }
+    if (canViewPurchaseInvoices(session)) {
+      merged.addAll(
+        await repo.listPurchaseInvoices(
+          session,
+          filters: filters,
+          page: basePage,
+        ),
+      );
+    }
+    if (canViewReturnInvoices(session)) {
+      merged.addAll(
+        await repo.listReturnInvoices(
+          session,
+          filters: filters.copyWith(clearType: true),
+          page: basePage,
+        ),
+      );
+    }
+
+    merged.sort(_compareNewestFirst);
+    if (page.offset >= merged.length) return const [];
+    final end = page.offset + page.limit;
+    return merged.sublist(
+      page.offset,
+      end > merged.length ? merged.length : end,
+    );
+  }
+
+  int _compareNewestFirst(InvoiceSummary a, InvoiceSummary b) {
+    final byDate = b.date.compareTo(a.date);
+    if (byDate != 0) return byDate;
+    final byNumber = (b.invoiceNumber ?? '').compareTo(a.invoiceNumber ?? '');
+    if (byNumber != 0) return byNumber;
+    return b.id.compareTo(a.id);
   }
 
   bool _canViewType(AppSession session, InvoiceType type) {

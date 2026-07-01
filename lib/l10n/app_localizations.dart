@@ -2210,11 +2210,23 @@ abstract class AppLocalizations {
   /// **'No invoices yet.'**
   String get customerInvoicesEmpty;
 
+  /// Invoices tab before lazy load runs
+  ///
+  /// In en, this message translates to:
+  /// **'Open this tab to load invoices.'**
+  String get customerInvoicesNotLoaded;
+
   /// Vouchers tab empty state when user can view vouchers
   ///
   /// In en, this message translates to:
   /// **'No vouchers yet.'**
   String get customerVouchersEmpty;
+
+  /// Vouchers tab before lazy load runs
+  ///
+  /// In en, this message translates to:
+  /// **'Open this tab to load receipt vouchers.'**
+  String get customerVouchersNotLoaded;
 
   /// Timeline tab when no metadata events exist
   ///
@@ -2347,6 +2359,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Supplier details are not available in this build.'**
   String get supplierDetailsUnavailable;
+
+  /// Supplier detail when ID does not exist
+  ///
+  /// In en, this message translates to:
+  /// **'Supplier not found.'**
+  String get supplierNotFound;
+
+  /// Supplier detail tab for purchase invoices
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase invoices'**
+  String get supplierPurchaseInvoices;
+
+  /// Supplier detail tab for payment vouchers
+  ///
+  /// In en, this message translates to:
+  /// **'Payment vouchers'**
+  String get supplierPaymentVouchers;
+
+  /// Supplier detail statement tab label
+  ///
+  /// In en, this message translates to:
+  /// **'Statement'**
+  String get supplierStatement;
+
+  /// Supplier statement tab placeholder without disabled actions
+  ///
+  /// In en, this message translates to:
+  /// **'Supplier statement requires backend support (get_supplier_statement). This will be available in a future release.'**
+  String get supplierStatementUnavailable;
+
+  /// Supplier purchase invoices tab empty state
+  ///
+  /// In en, this message translates to:
+  /// **'No purchase invoices yet.'**
+  String get supplierInvoicesEmpty;
+
+  /// Supplier invoices tab before lazy load
+  ///
+  /// In en, this message translates to:
+  /// **'Open this tab to load purchase invoices.'**
+  String get supplierInvoicesNotLoaded;
+
+  /// Supplier payment vouchers tab empty state
+  ///
+  /// In en, this message translates to:
+  /// **'No payment vouchers yet.'**
+  String get supplierVouchersEmpty;
+
+  /// Supplier vouchers tab before lazy load
+  ///
+  /// In en, this message translates to:
+  /// **'Open this tab to load payment vouchers.'**
+  String get supplierVouchersNotLoaded;
 
   /// Placeholder when chart of accounts tree is not yet available
   ///
@@ -4244,11 +4310,179 @@ abstract class AppLocalizations {
   /// **'This finance feature is not available yet.'**
   String get financeErrorNotAvailable;
 
+  /// No description provided for @financeErrorCorrectionDocumentRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Safe cancellation is not available. A correction document is required.'**
+  String get financeErrorCorrectionDocumentRequired;
+
   /// No description provided for @financeErrorUnknown.
   ///
   /// In en, this message translates to:
   /// **'A finance error occurred. Please try again.'**
   String get financeErrorUnknown;
+
+  /// No description provided for @financeValidationNotesRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes are required.'**
+  String get financeValidationNotesRequired;
+
+  /// No description provided for @financeValidationGainReasonRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Gain reason is required.'**
+  String get financeValidationGainReasonRequired;
+
+  /// No description provided for @financeValidationLossReasonRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Loss reason is required.'**
+  String get financeValidationLossReasonRequired;
+
+  /// No description provided for @financeValidationSerializedQtyIntegerRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Serialized quantity must be a positive whole number.'**
+  String get financeValidationSerializedQtyIntegerRequired;
+
+  /// No description provided for @financeErrorReturnDocumentRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'A return document is required for this operation.'**
+  String get financeErrorReturnDocumentRequired;
+
+  /// No description provided for @financeErrorSerializedAdjustmentNotSupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Serialized adjustments are not supported yet.'**
+  String get financeErrorSerializedAdjustmentNotSupported;
+
+  /// No description provided for @financeErrorBackendMigrationRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'This invoice workflow needs a database update before it can be confirmed.'**
+  String get financeErrorBackendMigrationRequired;
+
+  /// No description provided for @financeErrorUnknownWithCode.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected finance error occurred. Please try again. (Ref: {code})'**
+  String financeErrorUnknownWithCode(String code);
+
+  /// No description provided for @financeValidationCustomerRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a customer for this invoice.'**
+  String get financeValidationCustomerRequired;
+
+  /// No description provided for @financeValidationSupplierRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a supplier for this invoice.'**
+  String get financeValidationSupplierRequired;
+
+  /// No description provided for @financeValidationWarehouseRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a warehouse.'**
+  String get financeValidationWarehouseRequired;
+
+  /// No description provided for @financeValidationPartyRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a customer or supplier.'**
+  String get financeValidationPartyRequired;
+
+  /// No description provided for @financeValidationLinesRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Add at least one line item.'**
+  String get financeValidationLinesRequired;
+
+  /// No description provided for @financeValidationProductRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a product for every line.'**
+  String get financeValidationProductRequired;
+
+  /// No description provided for @financeValidationLineQtyInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity must be greater than zero.'**
+  String get financeValidationLineQtyInvalid;
+
+  /// No description provided for @financeValidationLinePriceInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit price cannot be negative.'**
+  String get financeValidationLinePriceInvalid;
+
+  /// No description provided for @financeValidationDiscountOutOfRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount must be between 0 and 100 percent.'**
+  String get financeValidationDiscountOutOfRange;
+
+  /// No description provided for @financeValidationDueDateBeforeInvoiceDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Due date cannot be before the invoice date.'**
+  String get financeValidationDueDateBeforeInvoiceDate;
+
+  /// No description provided for @financeValidationSerializedUnitRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a serial/unit for serialized products.'**
+  String get financeValidationSerializedUnitRequired;
+
+  /// No description provided for @financeValidationSerialCountMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Serial count must match the line quantity.'**
+  String get financeValidationSerialCountMismatch;
+
+  /// No description provided for @financeValidationOriginalInvoiceRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the original invoice to return against.'**
+  String get financeValidationOriginalInvoiceRequired;
+
+  /// No description provided for @financeValidationReturnReasonRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a reason for this return.'**
+  String get financeValidationReturnReasonRequired;
+
+  /// No description provided for @financeValidationReturnQtyExceedsReturnable.
+  ///
+  /// In en, this message translates to:
+  /// **'Return quantity exceeds the returnable quantity.'**
+  String get financeValidationReturnQtyExceedsReturnable;
+
+  /// No description provided for @financeValidationCashAccountRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a cash or bank account.'**
+  String get financeValidationCashAccountRequired;
+
+  /// No description provided for @financeValidationAccountRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a financial account.'**
+  String get financeValidationAccountRequired;
+
+  /// No description provided for @financeValidationCancellationReasonRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a cancellation reason.'**
+  String get financeValidationCancellationReasonRequired;
+
+  /// No description provided for @financeValidationCancellationReasonTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation reason is too long.'**
+  String get financeValidationCancellationReasonTooLong;
 
   /// No description provided for @journalSourceSalesReturn.
   ///
@@ -4285,6 +4519,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Supplier refund receipt'**
   String get journalSourceSupplierRefundReceipt;
+
+  /// No description provided for @journalSourceSalesInvoiceReversal.
+  ///
+  /// In en, this message translates to:
+  /// **'Sales invoice reversal'**
+  String get journalSourceSalesInvoiceReversal;
+
+  /// No description provided for @journalSourcePurchaseInvoiceReversal.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase invoice reversal'**
+  String get journalSourcePurchaseInvoiceReversal;
+
+  /// No description provided for @journalSourceReceiptVoucherReversal.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt voucher reversal'**
+  String get journalSourceReceiptVoucherReversal;
+
+  /// No description provided for @journalSourcePaymentVoucherReversal.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment voucher reversal'**
+  String get journalSourcePaymentVoucherReversal;
+
+  /// No description provided for @journalSourceOpeningStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening stock'**
+  String get journalSourceOpeningStock;
+
+  /// No description provided for @journalSourceInventoryStockIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock in'**
+  String get journalSourceInventoryStockIn;
+
+  /// No description provided for @journalSourceInventoryStockOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock out'**
+  String get journalSourceInventoryStockOut;
+
+  /// No description provided for @journalSourceStockCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock count'**
+  String get journalSourceStockCount;
+
+  /// No description provided for @journalSourceInventoryDocumentReversal.
+  ///
+  /// In en, this message translates to:
+  /// **'Inventory document reversal'**
+  String get journalSourceInventoryDocumentReversal;
+
+  /// No description provided for @cashBankChartViewRequiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Chart of accounts access required'**
+  String get cashBankChartViewRequiredTitle;
+
+  /// No description provided for @cashBankChartViewRequiredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a cash or bank account from the chart of accounts. Ask your administrator for chart of accounts view permission.'**
+  String get cashBankChartViewRequiredBody;
 
   /// No description provided for @invoiceTitle.
   ///
@@ -4370,6 +4670,414 @@ abstract class AppLocalizations {
   /// **'Cancelled'**
   String get invoiceStatusCancelled;
 
+  /// No description provided for @invoiceFilterType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get invoiceFilterType;
+
+  /// No description provided for @invoiceFilterSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get invoiceFilterSearch;
+
+  /// No description provided for @invoiceColumnNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Number'**
+  String get invoiceColumnNumber;
+
+  /// No description provided for @invoiceColumnParty.
+  ///
+  /// In en, this message translates to:
+  /// **'Party'**
+  String get invoiceColumnParty;
+
+  /// No description provided for @invoiceColumnDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get invoiceColumnDate;
+
+  /// No description provided for @invoiceColumnDueDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Due date'**
+  String get invoiceColumnDueDate;
+
+  /// No description provided for @invoiceColumnTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get invoiceColumnTotal;
+
+  /// No description provided for @invoiceColumnPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get invoiceColumnPaid;
+
+  /// No description provided for @invoiceColumnOutstanding.
+  ///
+  /// In en, this message translates to:
+  /// **'Outstanding'**
+  String get invoiceColumnOutstanding;
+
+  /// No description provided for @invoiceOverdueBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get invoiceOverdueBadge;
+
+  /// No description provided for @invoiceListEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No invoices yet.'**
+  String get invoiceListEmpty;
+
+  /// No description provided for @invoiceListEmptyFiltered.
+  ///
+  /// In en, this message translates to:
+  /// **'No invoices match your filters.'**
+  String get invoiceListEmptyFiltered;
+
+  /// No description provided for @invoiceDetailLines.
+  ///
+  /// In en, this message translates to:
+  /// **'Lines'**
+  String get invoiceDetailLines;
+
+  /// No description provided for @invoicePaymentSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment summary'**
+  String get invoicePaymentSummary;
+
+  /// No description provided for @invoiceActionCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel invoice'**
+  String get invoiceActionCancel;
+
+  /// No description provided for @invoiceActionReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'Create return'**
+  String get invoiceActionReturn;
+
+  /// No description provided for @invoiceActionEditDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit draft'**
+  String get invoiceActionEditDraft;
+
+  /// No description provided for @invoiceActionConfirmDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm draft'**
+  String get invoiceActionConfirmDraft;
+
+  /// No description provided for @invoiceCancelReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation reason'**
+  String get invoiceCancelReason;
+
+  /// No description provided for @invoiceConfirmCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this invoice?'**
+  String get invoiceConfirmCancel;
+
+  /// No description provided for @invoiceJournalEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Journal entry'**
+  String get invoiceJournalEntry;
+
+  /// No description provided for @invoiceTotalsSubtotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Subtotal'**
+  String get invoiceTotalsSubtotal;
+
+  /// No description provided for @invoiceTotalsDiscount.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount'**
+  String get invoiceTotalsDiscount;
+
+  /// No description provided for @invoiceTotalsTax.
+  ///
+  /// In en, this message translates to:
+  /// **'Tax'**
+  String get invoiceTotalsTax;
+
+  /// No description provided for @invoiceTotalsTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get invoiceTotalsTotal;
+
+  /// No description provided for @invoiceCreditAllocations.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit allocations'**
+  String get invoiceCreditAllocations;
+
+  /// No description provided for @invoiceReturnNotEligible.
+  ///
+  /// In en, this message translates to:
+  /// **'This invoice cannot be returned.'**
+  String get invoiceReturnNotEligible;
+
+  /// No description provided for @invoiceCreateSales.
+  ///
+  /// In en, this message translates to:
+  /// **'New sales'**
+  String get invoiceCreateSales;
+
+  /// No description provided for @invoiceCreatePurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'New purchase'**
+  String get invoiceCreatePurchase;
+
+  /// No description provided for @invoiceCreateNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get invoiceCreateNew;
+
+  /// No description provided for @invoiceCreateReturnHint.
+  ///
+  /// In en, this message translates to:
+  /// **'From an invoice'**
+  String get invoiceCreateReturnHint;
+
+  /// No description provided for @invoiceFormWarehouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse'**
+  String get invoiceFormWarehouse;
+
+  /// No description provided for @invoiceFormDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice date'**
+  String get invoiceFormDate;
+
+  /// No description provided for @invoiceFormDueDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Due date'**
+  String get invoiceFormDueDate;
+
+  /// No description provided for @invoiceFormNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get invoiceFormNotes;
+
+  /// No description provided for @invoiceFormNumberAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice number: assigned after confirmation'**
+  String get invoiceFormNumberAuto;
+
+  /// No description provided for @invoicePaymentTermsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment terms'**
+  String get invoicePaymentTermsTitle;
+
+  /// No description provided for @invoicePaymentTermsCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash / immediate'**
+  String get invoicePaymentTermsCash;
+
+  /// No description provided for @invoicePaymentTermsCredit.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit'**
+  String get invoicePaymentTermsCredit;
+
+  /// No description provided for @invoicePaymentTermsCashHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment will be recorded later from vouchers.'**
+  String get invoicePaymentTermsCashHelper;
+
+  /// No description provided for @invoicePaymentTermsCashHelperSales.
+  ///
+  /// In en, this message translates to:
+  /// **'A receipt voucher will be created after the invoice is confirmed.'**
+  String get invoicePaymentTermsCashHelperSales;
+
+  /// No description provided for @invoicePaymentTermsCashHelperPurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'A payment voucher will be created after the invoice is confirmed.'**
+  String get invoicePaymentTermsCashHelperPurchase;
+
+  /// No description provided for @invoiceFormNewCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'+ New customer'**
+  String get invoiceFormNewCustomer;
+
+  /// No description provided for @invoicePickOriginalInvoiceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select original invoice'**
+  String get invoicePickOriginalInvoiceTitle;
+
+  /// No description provided for @invoicePickOriginalInvoiceSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by number or party'**
+  String get invoicePickOriginalInvoiceSearch;
+
+  /// No description provided for @invoicePickOriginalInvoiceEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No confirmed invoices eligible for return.'**
+  String get invoicePickOriginalInvoiceEmpty;
+
+  /// No description provided for @invoiceFormCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer'**
+  String get invoiceFormCustomer;
+
+  /// No description provided for @invoiceFormSupplier.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplier'**
+  String get invoiceFormSupplier;
+
+  /// No description provided for @invoiceFormAddLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Add line'**
+  String get invoiceFormAddLine;
+
+  /// No description provided for @invoiceFormSaveDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Save draft'**
+  String get invoiceFormSaveDraft;
+
+  /// No description provided for @invoiceFormConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm invoice'**
+  String get invoiceFormConfirm;
+
+  /// No description provided for @invoiceFormDiscardDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard draft'**
+  String get invoiceFormDiscardDraft;
+
+  /// No description provided for @invoiceFormSelectProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Product'**
+  String get invoiceFormSelectProduct;
+
+  /// No description provided for @invoiceFormQty.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get invoiceFormQty;
+
+  /// No description provided for @invoiceFormUnitPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit price'**
+  String get invoiceFormUnitPrice;
+
+  /// No description provided for @invoiceFormDiscount.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount %'**
+  String get invoiceFormDiscount;
+
+  /// No description provided for @invoiceFormSerialNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Serial number'**
+  String get invoiceFormSerialNumber;
+
+  /// No description provided for @invoiceFormDiscard.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get invoiceFormDiscard;
+
+  /// No description provided for @invoiceColumnUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit'**
+  String get invoiceColumnUnit;
+
+  /// No description provided for @invoiceColumnDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get invoiceColumnDescription;
+
+  /// No description provided for @invoiceColumnLineTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Line total'**
+  String get invoiceColumnLineTotal;
+
+  /// No description provided for @invoiceColumnActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Actions'**
+  String get invoiceColumnActions;
+
+  /// No description provided for @invoiceFormConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm and post this invoice? Totals are calculated on the server.'**
+  String get invoiceFormConfirmMessage;
+
+  /// No description provided for @invoiceEstimatedTotalsDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated totals only. Final tax and total are set when the invoice is confirmed.'**
+  String get invoiceEstimatedTotalsDisclaimer;
+
+  /// No description provided for @invoiceEstimatedCreditPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated credit preview'**
+  String get invoiceEstimatedCreditPreview;
+
+  /// No description provided for @invoiceFinalTotalsAfterConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Final totals are calculated after confirmation.'**
+  String get invoiceFinalTotalsAfterConfirm;
+
+  /// No description provided for @invoiceReturnReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Return reason'**
+  String get invoiceReturnReason;
+
+  /// No description provided for @invoiceReturnSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit return'**
+  String get invoiceReturnSubmit;
+
   /// No description provided for @voucherTitle.
   ///
   /// In en, this message translates to:
@@ -4418,6 +5126,192 @@ abstract class AppLocalizations {
   /// **'Cancelled'**
   String get voucherStatusCancelled;
 
+  /// No description provided for @voucherAllocationFifo.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply to oldest invoices first (FIFO)'**
+  String get voucherAllocationFifo;
+
+  /// No description provided for @voucherAllocationManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Allocate manually'**
+  String get voucherAllocationManual;
+
+  /// No description provided for @voucherPaymentDestinationSupplier.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay supplier'**
+  String get voucherPaymentDestinationSupplier;
+
+  /// No description provided for @voucherPaymentDestinationAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay to account'**
+  String get voucherPaymentDestinationAccount;
+
+  /// No description provided for @voucherOpenInvoices.
+  ///
+  /// In en, this message translates to:
+  /// **'Open invoices'**
+  String get voucherOpenInvoices;
+
+  /// No description provided for @voucherSelectCashAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash or bank account'**
+  String get voucherSelectCashAccount;
+
+  /// No description provided for @voucherFormSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Record voucher'**
+  String get voucherFormSubmit;
+
+  /// No description provided for @voucherFormSubmitSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Voucher recorded.'**
+  String get voucherFormSubmitSuccess;
+
+  /// No description provided for @voucherFormPaymentMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment method'**
+  String get voucherFormPaymentMethod;
+
+  /// No description provided for @voucherListEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No vouchers yet.'**
+  String get voucherListEmpty;
+
+  /// No description provided for @voucherListEmptyFiltered.
+  ///
+  /// In en, this message translates to:
+  /// **'No vouchers match your filters.'**
+  String get voucherListEmptyFiltered;
+
+  /// No description provided for @voucherFilterType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get voucherFilterType;
+
+  /// No description provided for @voucherFilterSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get voucherFilterSearch;
+
+  /// No description provided for @voucherCreateReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'New receipt'**
+  String get voucherCreateReceipt;
+
+  /// No description provided for @voucherCreatePayment.
+  ///
+  /// In en, this message translates to:
+  /// **'New payment'**
+  String get voucherCreatePayment;
+
+  /// No description provided for @voucherColumnNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Number'**
+  String get voucherColumnNumber;
+
+  /// No description provided for @voucherFormCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer'**
+  String get voucherFormCustomer;
+
+  /// No description provided for @voucherFormSupplier.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplier'**
+  String get voucherFormSupplier;
+
+  /// No description provided for @voucherFormCashAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash account'**
+  String get voucherFormCashAccount;
+
+  /// No description provided for @voucherFormReference.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference'**
+  String get voucherFormReference;
+
+  /// No description provided for @voucherFormNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get voucherFormNotes;
+
+  /// No description provided for @voucherFormAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get voucherFormAmount;
+
+  /// No description provided for @voucherFormDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get voucherFormDate;
+
+  /// No description provided for @voucherAllocationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice allocations'**
+  String get voucherAllocationsTitle;
+
+  /// No description provided for @voucherAllocatedAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Allocated'**
+  String get voucherAllocatedAmount;
+
+  /// No description provided for @voucherUnallocatedAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Unallocated'**
+  String get voucherUnallocatedAmount;
+
+  /// No description provided for @voucherCancelAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel voucher'**
+  String get voucherCancelAction;
+
+  /// No description provided for @voucherCancelReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation reason'**
+  String get voucherCancelReason;
+
+  /// No description provided for @voucherConfirmCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this voucher?'**
+  String get voucherConfirmCancel;
+
+  /// No description provided for @voucherJournalEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Journal entry'**
+  String get voucherJournalEntry;
+
+  /// No description provided for @voucherReversalJournal.
+  ///
+  /// In en, this message translates to:
+  /// **'Reversal journal'**
+  String get voucherReversalJournal;
+
   /// No description provided for @journalTitle.
   ///
   /// In en, this message translates to:
@@ -4430,11 +5324,101 @@ abstract class AppLocalizations {
   /// **'Journal entry'**
   String get journalDetailTitle;
 
+  /// No description provided for @journalListEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No journal entries yet.'**
+  String get journalListEmpty;
+
+  /// No description provided for @journalListEmptyFiltered.
+  ///
+  /// In en, this message translates to:
+  /// **'No journal entries match the current filters.'**
+  String get journalListEmptyFiltered;
+
+  /// No description provided for @journalFilterSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Source'**
+  String get journalFilterSource;
+
+  /// No description provided for @journalFilterSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search entries'**
+  String get journalFilterSearch;
+
+  /// No description provided for @journalPostedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Posted'**
+  String get journalPostedBadge;
+
+  /// No description provided for @journalReversalBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Reversal'**
+  String get journalReversalBadge;
+
+  /// No description provided for @journalSourceDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Source document'**
+  String get journalSourceDocument;
+
+  /// No description provided for @journalReversalEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Reversal of'**
+  String get journalReversalEntry;
+
+  /// No description provided for @journalLineAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get journalLineAccount;
+
   /// No description provided for @cashBankTitle.
   ///
   /// In en, this message translates to:
   /// **'Cash & Bank'**
   String get cashBankTitle;
+
+  /// No description provided for @cashBankSelectAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Select cash or bank account'**
+  String get cashBankSelectAccount;
+
+  /// No description provided for @cashBankOpeningBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening balance'**
+  String get cashBankOpeningBalance;
+
+  /// No description provided for @cashBankRunningBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Running balance'**
+  String get cashBankRunningBalance;
+
+  /// Export only the currently loaded cash-bank page to CSV (clipboard)
+  ///
+  /// In en, this message translates to:
+  /// **'Export loaded rows'**
+  String get cashBankExportLoadedRows;
+
+  /// Snackbar after cash-bank CSV export to clipboard
+  ///
+  /// In en, this message translates to:
+  /// **'Loaded rows copied to clipboard as CSV.'**
+  String get cashBankExportLoadedRowsCopied;
+
+  /// No description provided for @cashBankActivityEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No activity for this account in the selected period.'**
+  String get cashBankActivityEmpty;
 
   /// No description provided for @taxSettingsTitle.
   ///
@@ -4445,8 +5429,14 @@ abstract class AppLocalizations {
   /// No description provided for @inventoryDocumentsTitle.
   ///
   /// In en, this message translates to:
-  /// **'Inventory documents'**
+  /// **'Inventory financial documents'**
   String get inventoryDocumentsTitle;
+
+  /// No description provided for @inventoryDocumentsLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial documents'**
+  String get inventoryDocumentsLink;
 
   /// No description provided for @inventoryDocumentOpeningStock.
   ///
@@ -4477,6 +5467,246 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Inventory accounting documents will be available after the accounting review milestone.'**
   String get inventoryDocumentsDeferredBody;
+
+  /// No description provided for @inventoryDocumentListEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No inventory financial documents yet.'**
+  String get inventoryDocumentListEmpty;
+
+  /// No description provided for @inventoryDocumentListEmptyFiltered.
+  ///
+  /// In en, this message translates to:
+  /// **'No documents match the current filters.'**
+  String get inventoryDocumentListEmptyFiltered;
+
+  /// No description provided for @inventoryDocumentNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Document no.'**
+  String get inventoryDocumentNumber;
+
+  /// No description provided for @inventoryDocumentKind.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get inventoryDocumentKind;
+
+  /// No description provided for @inventoryDocumentWarehouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse'**
+  String get inventoryDocumentWarehouse;
+
+  /// No description provided for @inventoryDocumentDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get inventoryDocumentDate;
+
+  /// No description provided for @inventoryDocumentNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get inventoryDocumentNotes;
+
+  /// No description provided for @inventoryDocumentReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get inventoryDocumentReason;
+
+  /// No description provided for @inventoryDocumentGainReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Gain reason'**
+  String get inventoryDocumentGainReason;
+
+  /// No description provided for @inventoryDocumentLossReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Loss reason'**
+  String get inventoryDocumentLossReason;
+
+  /// No description provided for @inventoryDocumentSystemQty.
+  ///
+  /// In en, this message translates to:
+  /// **'System qty'**
+  String get inventoryDocumentSystemQty;
+
+  /// No description provided for @inventoryDocumentCountedQty.
+  ///
+  /// In en, this message translates to:
+  /// **'Counted qty'**
+  String get inventoryDocumentCountedQty;
+
+  /// No description provided for @inventoryDocumentDeltaQty.
+  ///
+  /// In en, this message translates to:
+  /// **'Delta'**
+  String get inventoryDocumentDeltaQty;
+
+  /// No description provided for @inventoryDocumentUnitCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit cost'**
+  String get inventoryDocumentUnitCost;
+
+  /// No description provided for @inventoryDocumentWacHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Uses current average cost when unit cost is omitted.'**
+  String get inventoryDocumentWacHint;
+
+  /// No description provided for @inventoryDocumentAddLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Add line'**
+  String get inventoryDocumentAddLine;
+
+  /// No description provided for @inventoryDocumentRemoveLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove line'**
+  String get inventoryDocumentRemoveLine;
+
+  /// No description provided for @inventoryDocumentConfirmSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm document'**
+  String get inventoryDocumentConfirmSubmit;
+
+  /// No description provided for @inventoryDocumentConfirmSubmitMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This will post the inventory financial document and cannot be edited afterward.'**
+  String get inventoryDocumentConfirmSubmitMessage;
+
+  /// No description provided for @inventoryDocumentSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Post document'**
+  String get inventoryDocumentSubmit;
+
+  /// No description provided for @inventoryDocumentCancelAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel document'**
+  String get inventoryDocumentCancelAction;
+
+  /// No description provided for @inventoryDocumentCancelReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation reason'**
+  String get inventoryDocumentCancelReason;
+
+  /// No description provided for @inventoryDocumentCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get inventoryDocumentCancelled;
+
+  /// No description provided for @inventoryDocumentLines.
+  ///
+  /// In en, this message translates to:
+  /// **'Lines'**
+  String get inventoryDocumentLines;
+
+  /// No description provided for @inventoryDocumentMovements.
+  ///
+  /// In en, this message translates to:
+  /// **'Movements'**
+  String get inventoryDocumentMovements;
+
+  /// No description provided for @inventoryDocumentJournalEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Journal entry'**
+  String get inventoryDocumentJournalEntry;
+
+  /// No description provided for @inventoryDocumentReversalJournal.
+  ///
+  /// In en, this message translates to:
+  /// **'Reversal journal'**
+  String get inventoryDocumentReversalJournal;
+
+  /// No description provided for @inventoryDocumentSerializedNotSupportedYet.
+  ///
+  /// In en, this message translates to:
+  /// **'Serialized products are not supported for this document type yet.'**
+  String get inventoryDocumentSerializedNotSupportedYet;
+
+  /// No description provided for @inventoryDocumentStatusConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get inventoryDocumentStatusConfirmed;
+
+  /// No description provided for @inventoryDocumentStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get inventoryDocumentStatusCancelled;
+
+  /// No description provided for @inventoryDocumentFilterKind.
+  ///
+  /// In en, this message translates to:
+  /// **'Document type'**
+  String get inventoryDocumentFilterKind;
+
+  /// No description provided for @inventoryDocumentFilterWarehouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse'**
+  String get inventoryDocumentFilterWarehouse;
+
+  /// No description provided for @inventoryDocumentCreateOpening.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening stock'**
+  String get inventoryDocumentCreateOpening;
+
+  /// No description provided for @inventoryDocumentCreateStockIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock in'**
+  String get inventoryDocumentCreateStockIn;
+
+  /// No description provided for @inventoryDocumentCreateStockOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock out'**
+  String get inventoryDocumentCreateStockOut;
+
+  /// No description provided for @inventoryDocumentCreateStockCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock count'**
+  String get inventoryDocumentCreateStockCount;
+
+  /// No description provided for @inventoryDocumentSelectProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Select product'**
+  String get inventoryDocumentSelectProduct;
+
+  /// No description provided for @inventoryDocumentSelectReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Select reason'**
+  String get inventoryDocumentSelectReason;
+
+  /// No description provided for @inventoryDocumentSerialUnits.
+  ///
+  /// In en, this message translates to:
+  /// **'Serial numbers'**
+  String get inventoryDocumentSerialUnits;
+
+  /// No description provided for @inventoryDocumentSelectUnits.
+  ///
+  /// In en, this message translates to:
+  /// **'Select units'**
+  String get inventoryDocumentSelectUnits;
 
   /// No description provided for @paymentMethodCash.
   ///

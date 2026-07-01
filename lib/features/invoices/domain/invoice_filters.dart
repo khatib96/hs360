@@ -24,4 +24,24 @@ class InvoiceFilters {
       partyId?.trim().isNotEmpty == true ||
       !dateRange.isEmpty ||
       search?.trim().isNotEmpty == true;
+
+  InvoiceFilters copyWith({
+    InvoiceType? type,
+    InvoiceStatus? status,
+    String? partyId,
+    DateRange? dateRange,
+    String? search,
+    bool clearType = false,
+    bool clearStatus = false,
+    bool clearPartyId = false,
+    bool clearSearch = false,
+  }) {
+    return InvoiceFilters(
+      type: clearType ? null : (type ?? this.type),
+      status: clearStatus ? null : (status ?? this.status),
+      partyId: clearPartyId ? null : (partyId ?? this.partyId),
+      dateRange: dateRange ?? this.dateRange,
+      search: clearSearch ? null : (search ?? this.search),
+    );
+  }
 }

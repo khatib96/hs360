@@ -7,7 +7,7 @@ part of 'voucher_list_controller.dart';
 // **************************************************************************
 
 String _$voucherListControllerHash() =>
-    r'150607a691ff2c1dceab484aea36242d6cb0a6d0';
+    r'd24b45e153eb7a818641bc5e73ea32f3540f3249';
 
 /// See also [VoucherListController].
 @ProviderFor(VoucherListController)

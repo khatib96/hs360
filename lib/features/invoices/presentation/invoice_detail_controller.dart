@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/errors/finance_exception.dart';
+import '../../../core/routing/app_routes.dart';
 import '../../../domain/validators/cancellation_reason_validator.dart';
 import '../../auth/domain/app_session.dart';
 import '../../auth/presentation/auth_controller.dart';
@@ -9,6 +10,7 @@ import '../data/invoice_repository.dart';
 import '../domain/invoice_permissions.dart';
 import '../domain/invoice_type.dart';
 import 'invoice_detail_state.dart';
+import 'invoice_display_helpers.dart';
 
 part 'invoice_detail_controller.g.dart';
 
@@ -20,6 +22,47 @@ class InvoiceDetailController extends _$InvoiceDetailController {
   InvoiceDetailState build(String invoiceId, {InvoiceType? type}) {
     Future.microtask(load);
     return const InvoiceDetailState(isLoading: true);
+  }
+
+  bool canShowCancel(AppSession session) {
+    final detail = state.detail;
+    if (detail == null) return false;
+    if (!canCancelInvoice(session)) return false;
+    if (detail.status.isCancelled) return false;
+    if (detail.status.isDraft) return false;
+    return true;
+  }
+
+  bool canEditDraft(AppSession session) {
+    final detail = state.detail;
+    if (detail == null) return false;
+    if (detail.type != InvoiceType.purchase) return false;
+    if (!detail.status.isDraft) return false;
+    return canEditInvoiceDraft(session);
+  }
+
+  bool canConfirmDraft(AppSession session) {
+    final detail = state.detail;
+    if (detail == null) return false;
+    if (detail.type != InvoiceType.purchase) return false;
+    if (!detail.status.isDraft) return false;
+    return canCreatePurchaseInvoice(session) && canEditInvoiceDraft(session);
+  }
+
+  bool canCreateReturn(AppSession session) {
+    final detail = state.detail;
+    if (detail == null || !isReturnEligibleOriginal(detail)) return false;
+    return switch (detail.type) {
+      InvoiceType.sales => canCreateSalesReturn(session),
+      InvoiceType.purchase => canCreatePurchaseReturn(session),
+      _ => false,
+    };
+  }
+
+  String? confirmDraftRoute() {
+    final detail = state.detail;
+    if (detail == null || !detail.status.isDraft) return null;
+    return '${AppRoutes.invoicesNewPurchase}?draftId=${Uri.encodeComponent(detail.id)}';
   }
 
   Future<void> load() async {

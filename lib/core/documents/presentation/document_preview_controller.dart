@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../core/localization/locale_controller.dart';
 import '../../errors/document_exception.dart';
 import '../data/document_template_repository.dart';
+import '../../../features/finance_shared/documents/finance_document_payload_loader.dart';
 import '../domain/document_kind.dart';
 import '../domain/document_permissions.dart';
 import '../domain/document_render_result.dart';
@@ -87,6 +88,14 @@ class DocumentPreviewController extends _$DocumentPreviewController {
       ),
       DocumentKind.assetTagLabel => repo.fetchProductUnitLabelPayload(
         unitId: args.entityId,
+      ),
+      DocumentKind.salesInvoice ||
+      DocumentKind.purchaseInvoice ||
+      DocumentKind.receiptVoucher => loadFinanceDocumentPayload(
+        ref: ref,
+        kind: args.kind,
+        entityId: args.entityId,
+        invoiceType: args.invoiceType,
       ),
       _ => throw DocumentException(
         code: DocumentException.unsupportedDocumentType,

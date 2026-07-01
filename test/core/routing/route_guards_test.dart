@@ -719,6 +719,85 @@ void main() {
       );
     });
 
+    test('purchase form route distinguishes create vs draft edit', () {
+      final createOnly = session(
+        accountType: 'user',
+        permissions: {
+          'invoices.view_purchase',
+          'invoices.create_purchase',
+        },
+      );
+      final editOnly = session(
+        accountType: 'user',
+        permissions: {
+          'invoices.view_purchase',
+          'invoices.edit_draft',
+        },
+      );
+      final both = session(
+        accountType: 'user',
+        permissions: {
+          'invoices.view_purchase',
+          'invoices.create_purchase',
+          'invoices.edit_draft',
+        },
+      );
+
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.invoicesNewPurchase,
+          hasSupabaseSession: true,
+          authState: loaded(createOnly),
+        ),
+        isNull,
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.invoicesNewPurchase,
+          queryParameters: const {'draftId': 'draft-1'},
+          hasSupabaseSession: true,
+          authState: loaded(createOnly),
+        ),
+        AppRoutes.dashboard,
+      );
+
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.invoicesNewPurchase,
+          hasSupabaseSession: true,
+          authState: loaded(editOnly),
+        ),
+        AppRoutes.dashboard,
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.invoicesNewPurchase,
+          queryParameters: const {'draftId': 'draft-1'},
+          hasSupabaseSession: true,
+          authState: loaded(editOnly),
+        ),
+        isNull,
+      );
+
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.invoicesNewPurchase,
+          hasSupabaseSession: true,
+          authState: loaded(both),
+        ),
+        isNull,
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.invoicesNewPurchase,
+          queryParameters: const {'draftId': 'draft-1'},
+          hasSupabaseSession: true,
+          authState: loaded(both),
+        ),
+        isNull,
+      );
+    });
+
     test('invoice return route requires create return permission', () {
       final returnCreator = session(
         accountType: 'user',
@@ -757,26 +836,53 @@ void main() {
       );
     });
 
-    test('inventory.view can access inventory document routes', () {
-      final inventoryUser = session(
+    test('inventory_documents.view can access list and detail routes', () {
+      final viewer = session(
         accountType: 'user',
-        permissions: {'inventory.view'},
+        permissions: {'inventory_documents.view'},
       );
       for (final path in [
         AppRoutes.inventoryDocuments,
-        AppRoutes.inventoryDocumentsOpeningStock,
         '/inventory/documents/doc-1',
       ]) {
         expect(
           guardRedirectForPath(
             path: path,
             hasSupabaseSession: true,
-            authState: loaded(inventoryUser),
+            authState: loaded(viewer),
           ),
           isNull,
           reason: path,
         );
       }
+    });
+
+    test('inventory_documents.create_opening required for opening stock form', () {
+      final viewerOnly = session(
+        accountType: 'user',
+        permissions: {'inventory_documents.view'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.inventoryDocumentsOpeningStock,
+          hasSupabaseSession: true,
+          authState: loaded(viewerOnly),
+        ),
+        AppRoutes.blocked,
+      );
+
+      final creator = session(
+        accountType: 'user',
+        permissions: {'inventory_documents.create_opening'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.inventoryDocumentsOpeningStock,
+          hasSupabaseSession: true,
+          authState: loaded(creator),
+        ),
+        isNull,
+      );
     });
 
     test('settings.tax.view can access tax settings route', () {
@@ -806,6 +912,104 @@ void main() {
           authState: loaded(legacyViewer),
         ),
         isNull,
+      );
+    });
+
+    test('document preview blocks missing or invalid kind', () {
+      final viewer = session(
+        accountType: 'user',
+        permissions: {'invoices.view_sales', 'invoices.print'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.documentPreview,
+          hasSupabaseSession: true,
+          authState: loaded(viewer),
+        ),
+        AppRoutes.dashboard,
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.documentPreview,
+          queryParameters: const {'kind': 'unknown', 'entityId': 'x'},
+          hasSupabaseSession: true,
+          authState: loaded(viewer),
+        ),
+        AppRoutes.dashboard,
+      );
+    });
+
+    test('document preview sales invoice requires print permission', () {
+      final viewOnly = session(
+        accountType: 'user',
+        permissions: {'invoices.view_sales'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.documentPreview,
+          queryParameters: const {
+            'kind': 'sales_invoice',
+            'entityId': 'inv-1',
+          },
+          hasSupabaseSession: true,
+          authState: loaded(viewOnly),
+        ),
+        AppRoutes.dashboard,
+      );
+
+      final withPrint = session(
+        accountType: 'user',
+        permissions: {'invoices.view_sales', 'invoices.print'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.documentPreview,
+          queryParameters: const {
+            'kind': 'sales_invoice',
+            'entityId': 'inv-1',
+          },
+          hasSupabaseSession: true,
+          authState: loaded(withPrint),
+        ),
+        isNull,
+      );
+    });
+
+    test('document preview allows customer statement with ledger permission', () {
+      final ledgerViewer = session(
+        accountType: 'user',
+        permissions: {'customers.view_ledger'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.documentPreview,
+          queryParameters: const {
+            'kind': 'customer_statement',
+            'entityId': 'cust-1',
+          },
+          hasSupabaseSession: true,
+          authState: loaded(ledgerViewer),
+        ),
+        isNull,
+      );
+    });
+
+    test('document preview payment voucher always blocked', () {
+      final withPrint = session(
+        accountType: 'user',
+        permissions: {'vouchers.view', 'vouchers.print'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.documentPreview,
+          queryParameters: const {
+            'kind': 'payment_voucher',
+            'entityId': 'v-1',
+          },
+          hasSupabaseSession: true,
+          authState: loaded(withPrint),
+        ),
+        AppRoutes.dashboard,
       );
     });
   });

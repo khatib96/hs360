@@ -15,7 +15,7 @@ import '../../features/accounting/presentation/chart_of_accounts_screen.dart';
 import '../../features/customers/presentation/customer_detail_screen.dart';
 import '../../features/customers/presentation/customer_edit_screen.dart';
 import '../../features/customers/presentation/customers_hub_screen.dart';
-import '../../features/suppliers/presentation/supplier_detail_placeholder_screen.dart';
+import '../../features/suppliers/presentation/supplier_detail_screen.dart';
 import '../../features/inventory/presentation/inventory_movements_screen.dart';
 import '../../features/inventory/presentation/inventory_transfers_screen.dart';
 import '../../features/inventory/presentation/inventory_screen.dart';
@@ -25,19 +25,22 @@ import '../../core/documents/presentation/document_preview_screen.dart';
 import '../../core/documents/presentation/document_preview_state.dart';
 import '../../features/settings/presentation/template_settings_screen.dart';
 import '../../features/settings/presentation/tax_settings_placeholder_screen.dart';
-import '../../features/invoices/presentation/invoice_detail_placeholder_screen.dart';
-import '../../features/invoices/presentation/invoice_form_placeholder_screen.dart';
-import '../../features/invoices/presentation/invoice_list_placeholder_screen.dart';
-import '../../features/invoices/presentation/invoice_return_placeholder_screen.dart';
-import '../../features/vouchers/presentation/voucher_detail_placeholder_screen.dart';
-import '../../features/vouchers/presentation/voucher_form_placeholder_screen.dart';
-import '../../features/vouchers/presentation/voucher_list_placeholder_screen.dart';
-import '../../features/journal/presentation/cash_bank_placeholder_screen.dart';
-import '../../features/journal/presentation/journal_detail_placeholder_screen.dart';
-import '../../features/journal/presentation/journal_list_placeholder_screen.dart';
-import '../../features/inventory_accounting/presentation/inventory_document_detail_placeholder_screen.dart';
-import '../../features/inventory_accounting/presentation/inventory_document_form_placeholder_screen.dart';
-import '../../features/inventory_accounting/presentation/inventory_document_list_placeholder_screen.dart';
+import '../../features/invoices/domain/invoice_type.dart';
+import '../../features/invoices/presentation/invoice_detail_screen.dart';
+import '../../features/invoices/presentation/invoice_list_screen.dart';
+import '../../features/invoices/presentation/invoice_form_screen.dart';
+import '../../features/invoices/presentation/invoice_return_screen.dart';
+import '../../features/vouchers/presentation/voucher_detail_screen.dart';
+import '../../features/vouchers/presentation/voucher_form_screen.dart';
+import '../../features/vouchers/domain/voucher_type.dart';
+import '../../features/vouchers/presentation/voucher_list_screen.dart';
+import '../../features/inventory_accounting/presentation/inventory_document_detail_screen.dart';
+import '../../features/inventory_accounting/presentation/inventory_document_form_mode.dart';
+import '../../features/inventory_accounting/presentation/inventory_document_form_screen.dart';
+import '../../features/inventory_accounting/presentation/inventory_document_list_screen.dart';
+import '../../features/journal/presentation/cash_bank_activity_screen.dart';
+import '../../features/journal/presentation/journal_detail_screen.dart';
+import '../../features/journal/presentation/journal_list_screen.dart';
 import 'app_routes.dart';
 import 'route_guards.dart';
 import 'router_refresh_notifier.dart';
@@ -139,9 +142,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.suppliersDetail,
         name: AppRoutes.suppliersDetailName,
-        builder: (context, state) => SupplierDetailPlaceholderScreen(
-          supplierId: state.pathParameters['id']!,
-        ),
+        builder: (context, state) =>
+            SupplierDetailScreen(supplierId: state.pathParameters['id']!),
       ),
       GoRoute(
         path: AppRoutes.suppliers,
@@ -178,113 +180,129 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.invoicesNewSales,
         name: AppRoutes.invoicesNewSalesName,
         builder: (context, state) =>
-            InvoiceFormPlaceholderScreen(mode: InvoiceFormMode.sales),
+            const InvoiceFormScreen(invoiceType: InvoiceType.sales),
       ),
       GoRoute(
         path: AppRoutes.invoicesNewPurchase,
         name: AppRoutes.invoicesNewPurchaseName,
+        builder: (context, state) => InvoiceFormScreen(
+          invoiceType: InvoiceType.purchase,
+          draftId: state.uri.queryParameters['draftId'],
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.invoicesNewSalesReturn,
+        name: AppRoutes.invoicesNewSalesReturnName,
         builder: (context, state) =>
-            InvoiceFormPlaceholderScreen(mode: InvoiceFormMode.purchase),
+            const InvoiceFormScreen(invoiceType: InvoiceType.salesReturn),
+      ),
+      GoRoute(
+        path: AppRoutes.invoicesNewPurchaseReturn,
+        name: AppRoutes.invoicesNewPurchaseReturnName,
+        builder: (context, state) =>
+            const InvoiceFormScreen(invoiceType: InvoiceType.purchaseReturn),
       ),
       GoRoute(
         path: AppRoutes.invoiceReturn,
         name: AppRoutes.invoiceReturnName,
-        builder: (context, state) => InvoiceReturnPlaceholderScreen(
-          invoiceId: state.pathParameters['id']!,
-        ),
+        builder: (context, state) =>
+            InvoiceReturnScreen(invoiceId: state.pathParameters['id']!),
       ),
       GoRoute(
         path: AppRoutes.invoicesDetail,
         name: AppRoutes.invoicesDetailName,
-        builder: (context, state) => InvoiceDetailPlaceholderScreen(
-          invoiceId: state.pathParameters['id']!,
-        ),
+        builder: (context, state) {
+          final typeRaw = state.uri.queryParameters['type'];
+          final type = typeRaw == null ? null : InvoiceType.fromDb(typeRaw);
+          return InvoiceDetailScreen(
+            invoiceId: state.pathParameters['id']!,
+            invoiceType: type,
+          );
+        },
       ),
       GoRoute(
         path: AppRoutes.invoices,
         name: AppRoutes.invoicesName,
-        builder: (context, state) => InvoiceListPlaceholderScreen(),
+        builder: (context, state) => const InvoiceListScreen(),
       ),
       GoRoute(
         path: AppRoutes.vouchersNewReceipt,
         name: AppRoutes.vouchersNewReceiptName,
         builder: (context, state) =>
-            VoucherFormPlaceholderScreen(mode: VoucherFormMode.receipt),
+            const VoucherFormScreen(voucherType: VoucherType.receipt),
       ),
       GoRoute(
         path: AppRoutes.vouchersNewPayment,
         name: AppRoutes.vouchersNewPaymentName,
         builder: (context, state) =>
-            VoucherFormPlaceholderScreen(mode: VoucherFormMode.payment),
+            const VoucherFormScreen(voucherType: VoucherType.payment),
       ),
       GoRoute(
         path: AppRoutes.vouchersDetail,
         name: AppRoutes.vouchersDetailName,
-        builder: (context, state) => VoucherDetailPlaceholderScreen(
-          voucherId: state.pathParameters['id']!,
-        ),
+        builder: (context, state) =>
+            VoucherDetailScreen(voucherId: state.pathParameters['id']!),
       ),
       GoRoute(
         path: AppRoutes.vouchers,
         name: AppRoutes.vouchersName,
-        builder: (context, state) => VoucherListPlaceholderScreen(),
+        builder: (context, state) => const VoucherListScreen(),
       ),
       GoRoute(
         path: AppRoutes.journalDetail,
         name: AppRoutes.journalDetailName,
-        builder: (context, state) => JournalDetailPlaceholderScreen(
-          entryId: state.pathParameters['id']!,
-        ),
+        builder: (context, state) =>
+            JournalDetailScreen(entryId: state.pathParameters['id']!),
       ),
       GoRoute(
         path: AppRoutes.journal,
         name: AppRoutes.journalName,
-        builder: (context, state) => JournalListPlaceholderScreen(),
+        builder: (context, state) => const JournalListScreen(),
       ),
       GoRoute(
         path: AppRoutes.cashBank,
         name: AppRoutes.cashBankName,
-        builder: (context, state) => CashBankPlaceholderScreen(),
+        builder: (context, state) => const CashBankActivityScreen(),
       ),
       GoRoute(
         path: AppRoutes.inventoryDocumentsOpeningStock,
         name: AppRoutes.inventoryDocumentsOpeningStockName,
-        builder: (context, state) => InventoryDocumentFormPlaceholderScreen(
+        builder: (context, state) => InventoryDocumentFormScreen(
           mode: InventoryDocumentFormMode.openingStock,
         ),
       ),
       GoRoute(
         path: AppRoutes.inventoryDocumentsStockIn,
         name: AppRoutes.inventoryDocumentsStockInName,
-        builder: (context, state) => InventoryDocumentFormPlaceholderScreen(
+        builder: (context, state) => InventoryDocumentFormScreen(
           mode: InventoryDocumentFormMode.stockIn,
         ),
       ),
       GoRoute(
         path: AppRoutes.inventoryDocumentsStockOut,
         name: AppRoutes.inventoryDocumentsStockOutName,
-        builder: (context, state) => InventoryDocumentFormPlaceholderScreen(
+        builder: (context, state) => InventoryDocumentFormScreen(
           mode: InventoryDocumentFormMode.stockOut,
         ),
       ),
       GoRoute(
         path: AppRoutes.inventoryDocumentsStockCount,
         name: AppRoutes.inventoryDocumentsStockCountName,
-        builder: (context, state) => InventoryDocumentFormPlaceholderScreen(
+        builder: (context, state) => InventoryDocumentFormScreen(
           mode: InventoryDocumentFormMode.stockCount,
         ),
       ),
       GoRoute(
         path: AppRoutes.inventoryDocumentsDetail,
         name: AppRoutes.inventoryDocumentsDetailName,
-        builder: (context, state) => InventoryDocumentDetailPlaceholderScreen(
+        builder: (context, state) => InventoryDocumentDetailScreen(
           documentId: state.pathParameters['id']!,
         ),
       ),
       GoRoute(
         path: AppRoutes.inventoryDocuments,
         name: AppRoutes.inventoryDocumentsName,
-        builder: (context, state) => InventoryDocumentListPlaceholderScreen(),
+        builder: (context, state) => const InventoryDocumentListScreen(),
       ),
       GoRoute(
         path: AppRoutes.documentPreview,
@@ -300,12 +318,22 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           }
           DateTime? parseDate(String? raw) =>
               raw == null || raw.isEmpty ? null : DateTime.tryParse(raw);
+          InvoiceType? parseInvoiceType(String? raw) {
+            if (raw == null || raw.isEmpty) return null;
+            try {
+              return InvoiceType.fromDb(raw);
+            } on FormatException {
+              return null;
+            }
+          }
+
           return DocumentPreviewScreen(
             args: DocumentPreviewArgs(
               kind: kind,
               entityId: entityId,
               fromDate: parseDate(query['from']),
               toDate: parseDate(query['to']),
+              invoiceType: parseInvoiceType(query['invoiceType']),
             ),
           );
         },

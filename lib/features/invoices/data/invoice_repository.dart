@@ -222,11 +222,10 @@ class InvoiceRepository {
     if (!canCreateSalesInvoice(session)) {
       throw const FinanceException(code: FinanceException.permissionDenied);
     }
-    return _recordInvoice(
-      'record_sales_invoice',
-      form.toRecordPayload(),
-      idempotencyKey,
-    );
+    final rpcName = form.draft.cashAccountId?.trim().isNotEmpty == true
+        ? 'record_cash_sales_invoice'
+        : 'record_sales_invoice';
+    return _recordInvoice(rpcName, form.toRecordPayload(), idempotencyKey);
   }
 
   Future<String> recordPurchaseInvoice(
@@ -270,6 +269,36 @@ class InvoiceRepository {
     return _recordInvoice(
       'record_purchase_return',
       draft.toRecordPayload(),
+      idempotencyKey,
+    );
+  }
+
+  Future<String> recordDirectSalesReturn(
+    AppSession session,
+    InvoiceFormState form,
+    String idempotencyKey,
+  ) async {
+    if (!canCreateSalesReturn(session)) {
+      throw const FinanceException(code: FinanceException.permissionDenied);
+    }
+    return _recordInvoice(
+      'record_direct_sales_return',
+      form.toDirectReturnPayload(),
+      idempotencyKey,
+    );
+  }
+
+  Future<String> recordDirectPurchaseReturn(
+    AppSession session,
+    InvoiceFormState form,
+    String idempotencyKey,
+  ) async {
+    if (!canCreatePurchaseReturn(session)) {
+      throw const FinanceException(code: FinanceException.permissionDenied);
+    }
+    return _recordInvoice(
+      'record_direct_purchase_return',
+      form.toDirectReturnPayload(),
       idempotencyKey,
     );
   }

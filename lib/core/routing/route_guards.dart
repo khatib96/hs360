@@ -6,6 +6,8 @@ import '../../features/auth/presentation/auth_controller.dart';
 import '../../features/finance_shared/domain/finance_permissions.dart';
 import '../../features/invoices/domain/invoice_type.dart';
 import '../network/supabase_providers.dart';
+import '../documents/domain/document_kind.dart';
+import '../documents/domain/document_permissions.dart';
 import 'app_routes.dart';
 
 export '../../features/finance_shared/domain/finance_permissions.dart';
@@ -115,6 +117,12 @@ bool isInvoicesNewSalesPath(String path) =>
 
 bool isInvoicesNewPurchasePath(String path) =>
     _normalizePath(path) == AppRoutes.invoicesNewPurchase;
+
+bool isInvoicesNewSalesReturnPath(String path) =>
+    _normalizePath(path) == AppRoutes.invoicesNewSalesReturn;
+
+bool isInvoicesNewPurchaseReturnPath(String path) =>
+    _normalizePath(path) == AppRoutes.invoicesNewPurchaseReturn;
 
 bool isVoucherDetailPath(String path) {
   final match = RegExp(r'^/vouchers/([^/]+)$').firstMatch(_normalizePath(path));
@@ -233,7 +241,9 @@ bool _isPathAllowed(
     return canViewTaxSettings(session);
   }
   if (path == AppRoutes.documentPreview) {
-    return true;
+    final kind = DocumentKind.fromDocumentType(queryParameters['kind']);
+    if (kind == null) return false;
+    return canPreviewDocument(session, kind);
   }
 
   if (path == AppRoutes.invoices) {
@@ -243,7 +253,17 @@ bool _isPathAllowed(
     return canCreateSalesInvoice(session);
   }
   if (isInvoicesNewPurchasePath(path)) {
+    final draftId = queryParameters['draftId']?.trim();
+    if (draftId != null && draftId.isNotEmpty) {
+      return canEditInvoiceDraft(session);
+    }
     return canCreatePurchaseInvoice(session);
+  }
+  if (isInvoicesNewSalesReturnPath(path)) {
+    return canCreateSalesReturn(session);
+  }
+  if (isInvoicesNewPurchaseReturnPath(path)) {
+    return canCreatePurchaseReturn(session);
   }
   if (isInvoiceReturnPath(path)) {
     return canCreateAnyReturn(session);
@@ -273,12 +293,18 @@ bool _isPathAllowed(
     return canViewCashBank(session);
   }
   if (path == AppRoutes.inventoryDocuments ||
-      path == AppRoutes.inventoryDocumentsOpeningStock ||
-      path == AppRoutes.inventoryDocumentsStockIn ||
-      path == AppRoutes.inventoryDocumentsStockOut ||
-      path == AppRoutes.inventoryDocumentsStockCount ||
       isInventoryDocumentDetailPath(path)) {
     return canViewInventoryDocuments(session);
+  }
+  if (path == AppRoutes.inventoryDocumentsOpeningStock) {
+    return canCreateOpeningStock(session);
+  }
+  if (path == AppRoutes.inventoryDocumentsStockIn ||
+      path == AppRoutes.inventoryDocumentsStockOut) {
+    return canCreateInventoryAdjustment(session);
+  }
+  if (path == AppRoutes.inventoryDocumentsStockCount) {
+    return canCreateStockCount(session);
   }
 
   // Dashboard and Field specific permissions

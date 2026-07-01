@@ -39,14 +39,21 @@ class VoucherValidator {
 
   ValidationResult _validateParty(VoucherFormState form) {
     return switch (form.type) {
-      VoucherType.receipt =>
-        form.customerId == null || form.customerId!.trim().isEmpty
-            ? const ValidationResult(
-                codes: [FinanceException.validationCustomerRequired],
-              )
-            : const ValidationResult.valid(),
+      VoucherType.receipt => _validateReceiptParty(form),
       VoucherType.payment => _validatePaymentParty(form),
     };
+  }
+
+  ValidationResult _validateReceiptParty(VoucherFormState form) {
+    if (form.customerId != null && form.customerId!.trim().isNotEmpty) {
+      return const ValidationResult.valid();
+    }
+    if (form.accountId != null && form.accountId!.trim().isNotEmpty) {
+      return const ValidationResult.valid();
+    }
+    return const ValidationResult(
+      codes: [FinanceException.validationAccountRequired],
+    );
   }
 
   ValidationResult _validatePaymentParty(VoucherFormState form) {

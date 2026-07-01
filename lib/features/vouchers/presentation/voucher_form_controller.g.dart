@@ -7,7 +7,7 @@ part of 'voucher_form_controller.dart';
 // **************************************************************************
 
 String _$voucherFormControllerHash() =>
-    r'b2b8d58f61a7d3f411e2fb81410a4cb2f2c47409';
+    r'24e9aec72a17ee005720437afe580c07c70c9cb2';
 
 /// Copied from Dart SDK
 class _SystemHash {

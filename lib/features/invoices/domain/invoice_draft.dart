@@ -56,6 +56,7 @@ class InvoiceDraftLine {
       'qty': qty.toString(),
       'unit_price': unitPrice.toString(),
       'discount_pct': discountPct.toString(),
+      if (productUnitId != null) 'product_unit_id': productUnitId,
       if (units.isNotEmpty) 'units': units.map((u) => u.toPayload()).toList(),
     };
   }
@@ -68,6 +69,7 @@ class InvoiceDraft {
     this.invoiceId,
     this.customerId,
     this.supplierId,
+    this.cashAccountId,
     required this.warehouseId,
     required this.date,
     this.dueDate,
@@ -79,6 +81,7 @@ class InvoiceDraft {
   final String? invoiceId;
   final String? customerId;
   final String? supplierId;
+  final String? cashAccountId;
   final String warehouseId;
   final DateTime date;
   final DateTime? dueDate;

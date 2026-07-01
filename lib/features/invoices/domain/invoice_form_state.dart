@@ -12,7 +12,10 @@ class InvoiceFormState {
   Map<String, dynamic> toRecordPayload() {
     return switch (draft.type) {
       InvoiceType.sales => {
-        'customer_id': draft.customerId,
+        if (draft.customerId?.trim().isNotEmpty == true)
+          'customer_id': draft.customerId!.trim(),
+        if (draft.cashAccountId?.trim().isNotEmpty == true)
+          'cash_account_id': draft.cashAccountId!.trim(),
         'date': _isoDate(draft.date),
         if (draft.dueDate != null) 'due_date': _isoDate(draft.dueDate!),
         'warehouse_id': draft.warehouseId,
@@ -31,8 +34,35 @@ class InvoiceFormState {
         'lines': draft.lines.map((l) => l.toPurchasePayload()).toList(),
       },
       InvoiceType.salesReturn || InvoiceType.purchaseReturn => throw StateError(
-        'Use ReturnInvoiceDraft for return invoices',
+        'Use toDirectReturnPayload for direct returns or ReturnInvoiceDraft for linked returns',
       ),
+    };
+  }
+
+  Map<String, dynamic> toDirectReturnPayload() {
+    if (!draft.type.isReturn) {
+      throw StateError('Direct return payload supports return invoices only');
+    }
+    final reason = draft.notes?.trim();
+    final isSalesReturn = draft.type == InvoiceType.salesReturn;
+    return {
+      if (draft.customerId?.trim().isNotEmpty == true)
+        'customer_id': draft.customerId!.trim(),
+      if (draft.supplierId?.trim().isNotEmpty == true)
+        'supplier_id': draft.supplierId!.trim(),
+      if (draft.cashAccountId?.trim().isNotEmpty == true)
+        'cash_account_id': draft.cashAccountId!.trim(),
+      'date': _isoDate(draft.date),
+      'warehouse_id': draft.warehouseId,
+      'reason': reason?.isNotEmpty == true ? reason : 'direct_return',
+      if (reason?.isNotEmpty == true) 'notes': reason,
+      'lines': draft.lines
+          .map(
+            (line) => isSalesReturn
+                ? line.toSalesPayload()
+                : line.toPurchasePayload(),
+          )
+          .toList(),
     };
   }
 

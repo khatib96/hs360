@@ -11,6 +11,7 @@ import '../../../shared/widgets/app_shell.dart';
 import '../../../shared/widgets/message_banner.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../domain/inventory_balance_row.dart';
+import '../../inventory_accounting/domain/inventory_document_permissions.dart';
 import '../domain/inventory_permissions.dart';
 import 'inventory_balances_controller.dart';
 import 'inventory_error_messages.dart';
@@ -36,6 +37,8 @@ class InventoryScreen extends ConsumerWidget {
         session != null && canViewInventoryMovements(session);
     final canCreateMovements =
         session != null && canCreateInventoryMovements(session);
+    final canViewFinancialDocuments =
+        session != null && canViewInventoryDocuments(session);
 
     final filtered = state.filteredRows;
     final initialFilter = initialWarehouseId;
@@ -107,13 +110,19 @@ class InventoryScreen extends ConsumerWidget {
               ),
             ),
           ],
-          if (canCreateMovements || canViewMovements) ...[
+          if (canCreateMovements || canViewMovements || canViewFinancialDocuments) ...[
             const SizedBox(height: 16),
             Wrap(
               spacing: 12,
               runSpacing: 12,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
+                if (canViewFinancialDocuments)
+                  OutlinedButton.icon(
+                    onPressed: () => context.go(AppRoutes.inventoryDocuments),
+                    icon: const Icon(Icons.receipt_long_outlined),
+                    label: Text(l10n.inventoryDocumentsLink),
+                  ),
                 if (canCreateMovements)
                   FilledButton.icon(
                     onPressed: () => _openManualAdjustment(

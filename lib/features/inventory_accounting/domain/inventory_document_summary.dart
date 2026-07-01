@@ -54,6 +54,7 @@ class InventoryDocumentSummary {
     required this.warehouseId,
     this.warehouseNameAr,
     this.warehouseNameEn,
+    this.journalEntryId,
   });
 
   final String id;
@@ -64,4 +65,5 @@ class InventoryDocumentSummary {
   final String warehouseId;
   final String? warehouseNameAr;
   final String? warehouseNameEn;
+  final String? journalEntryId;
 }

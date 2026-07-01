@@ -55,38 +55,99 @@ class VoucherFormState {
   final String? paymentDestination;
   final String? cancellationReason;
 
+  VoucherFormState copyWith({
+    VoucherType? type,
+    String? customerId,
+    bool clearCustomerId = false,
+    String? supplierId,
+    bool clearSupplierId = false,
+    String? accountId,
+    bool clearAccountId = false,
+    DateTime? date,
+    Decimal? amount,
+    PaymentMethod? paymentMethod,
+    String? cashAccountId,
+    String? referenceNo,
+    bool clearReferenceNo = false,
+    String? notes,
+    bool clearNotes = false,
+    String? allocationMode,
+    bool clearAllocationMode = false,
+    List<VoucherAllocationInput>? allocations,
+    String? paymentDestination,
+    bool clearPaymentDestination = false,
+    String? cancellationReason,
+  }) {
+    return VoucherFormState(
+      type: type ?? this.type,
+      customerId: clearCustomerId ? null : (customerId ?? this.customerId),
+      supplierId: clearSupplierId ? null : (supplierId ?? this.supplierId),
+      accountId: clearAccountId ? null : (accountId ?? this.accountId),
+      date: date ?? this.date,
+      amount: amount ?? this.amount,
+      paymentMethod: paymentMethod ?? this.paymentMethod,
+      cashAccountId: cashAccountId ?? this.cashAccountId,
+      referenceNo: clearReferenceNo ? null : (referenceNo ?? this.referenceNo),
+      notes: clearNotes ? null : (notes ?? this.notes),
+      allocationMode: clearAllocationMode
+          ? null
+          : (allocationMode ?? this.allocationMode),
+      allocations: allocations ?? this.allocations,
+      paymentDestination: clearPaymentDestination
+          ? null
+          : (paymentDestination ?? this.paymentDestination),
+      cancellationReason: cancellationReason ?? this.cancellationReason,
+    );
+  }
+
   Map<String, dynamic> toRecordPayload() {
     return switch (type) {
-      VoucherType.receipt => {
+      VoucherType.receipt => _receiptPayload(),
+      VoucherType.payment => _paymentPayload(),
+    };
+  }
+
+  Map<String, dynamic> _receiptPayload() {
+    final isDirectAccount = accountId != null && accountId!.trim().isNotEmpty;
+    return {
+      'date': _isoDate(date),
+      'amount': amount.toString(),
+      'payment_method': paymentMethod.toDb(),
+      'cash_account_id': cashAccountId,
+      if (isDirectAccount) ...{
+        'receipt_source': 'account',
+        'account_id': accountId,
+      } else ...{
+        'receipt_source': 'customer',
         'customer_id': customerId,
-        'date': _isoDate(date),
-        'amount': amount.toString(),
-        'payment_method': paymentMethod.toDb(),
-        'cash_account_id': cashAccountId,
         'allocation_mode': allocationMode ?? 'fifo',
-        if (referenceNo?.trim().isNotEmpty == true)
-          'reference_no': referenceNo!.trim(),
-        if (notes?.trim().isNotEmpty == true) 'notes': notes!.trim(),
         if (allocationMode == 'manual')
           'allocations': allocations.map((a) => a.toPayload()).toList(),
       },
-      VoucherType.payment => {
-        'payment_destination': paymentDestination ?? 'supplier',
-        'date': _isoDate(date),
-        'amount': amount.toString(),
-        'payment_method': paymentMethod.toDb(),
-        'cash_account_id': cashAccountId,
-        if (paymentDestination == 'supplier') ...{
-          'supplier_id': supplierId,
-          'allocation_mode': allocationMode ?? 'fifo',
-          if (allocationMode == 'manual')
-            'allocations': allocations.map((a) => a.toPayload()).toList(),
-        },
-        if (paymentDestination == 'account') 'account_id': accountId,
-        if (referenceNo?.trim().isNotEmpty == true)
-          'reference_no': referenceNo!.trim(),
-        if (notes?.trim().isNotEmpty == true) 'notes': notes!.trim(),
+      if (referenceNo?.trim().isNotEmpty == true)
+        'reference_no': referenceNo!.trim(),
+      if (notes?.trim().isNotEmpty == true) 'notes': notes!.trim(),
+    };
+  }
+
+  Map<String, dynamic> _paymentPayload() {
+    final destination = paymentDestination ?? 'account';
+    return {
+      'payment_destination': destination,
+      'date': _isoDate(date),
+      'amount': amount.toString(),
+      'payment_method': paymentMethod.toDb(),
+      'cash_account_id': cashAccountId,
+      if (destination == 'supplier') ...{
+        'supplier_id': supplierId,
+        'allocation_mode': allocationMode ?? 'fifo',
+        if (allocationMode == 'manual')
+          'allocations': allocations.map((a) => a.toPayload()).toList(),
       },
+      if (destination == 'account') 'account_id': accountId,
+      if (referenceNo?.trim().isNotEmpty == true)
+        'reference_no': referenceNo!.trim(),
+      if (notes?.trim().isNotEmpty == true) 'notes': notes!.trim(),
     };
   }
 

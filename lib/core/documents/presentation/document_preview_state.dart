@@ -1,6 +1,7 @@
 import 'package:hs360/core/documents/domain/document_kind.dart';
 import 'package:hs360/core/documents/domain/document_payload.dart';
 import 'package:hs360/core/documents/domain/document_render_result.dart';
+import 'package:hs360/features/invoices/domain/invoice_type.dart';
 
 /// Arguments for navigating to document preview.
 class DocumentPreviewArgs {
@@ -9,6 +10,7 @@ class DocumentPreviewArgs {
     required this.entityId,
     this.fromDate,
     this.toDate,
+    this.invoiceType,
     this.fixturePayload,
   });
 
@@ -16,6 +18,7 @@ class DocumentPreviewArgs {
   final String entityId;
   final DateTime? fromDate;
   final DateTime? toDate;
+  final InvoiceType? invoiceType;
   final DocumentPayload? fixturePayload;
 
   @override
@@ -25,12 +28,19 @@ class DocumentPreviewArgs {
         other.entityId == entityId &&
         other.fromDate == fromDate &&
         other.toDate == toDate &&
+        other.invoiceType == invoiceType &&
         other.fixturePayload == fixturePayload;
   }
 
   @override
-  int get hashCode =>
-      Object.hash(kind, entityId, fromDate, toDate, fixturePayload);
+  int get hashCode => Object.hash(
+    kind,
+    entityId,
+    fromDate,
+    toDate,
+    invoiceType,
+    fixturePayload,
+  );
 }
 
 class DocumentPreviewState {

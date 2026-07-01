@@ -7,6 +7,8 @@ import 'package:hs360/features/auth/domain/app_permissions.dart';
 import 'package:hs360/features/auth/domain/app_session.dart';
 import 'package:hs360/features/auth/presentation/auth_controller.dart';
 import 'package:hs360/features/invoices/data/invoice_repository.dart';
+import 'package:hs360/features/invoices/domain/invoice_detail.dart';
+import 'package:hs360/features/invoices/domain/invoice_status.dart';
 import 'package:hs360/features/invoices/domain/invoice_type.dart';
 import 'package:hs360/features/invoices/presentation/invoice_detail_controller.dart';
 
@@ -164,5 +166,131 @@ void main() {
       expect(code, FinanceException.validationCancellationReasonRequired);
       expect(repo.lastCancelledId, isNull);
     });
+
+    test('canCreateReturn for confirmed sales invoice with permission', () async {
+      final repo = FakeInvoiceRepository(
+        detailById: {'inv-1': sampleInvoiceDetail()},
+      );
+      final container = ProviderContainer(
+        overrides: [
+          authControllerProvider.overrideWith(
+            () => TestAuthController(
+              _session(permissions: {
+                'invoices.view_sales',
+                'invoices.create_sales_return',
+              }),
+            ),
+          ),
+          invoiceRepositoryProvider.overrideWith((ref) => repo),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await _waitForDetail(container, 'inv-1');
+
+      final controller =
+          container.read(invoiceDetailControllerProvider('inv-1').notifier);
+      final session = container.read(authControllerProvider).valueOrNull!;
+      expect(controller.canCreateReturn(session), isTrue);
+    });
+
+    test('canCreateReturn false for draft purchase', () async {
+      final repo = FakeInvoiceRepository(
+        detailById: {
+          'pi-1': sampleInvoiceDetail(
+            id: 'pi-1',
+            type: InvoiceType.purchase,
+          ).copyWithStatus(InvoiceStatus.draft),
+        },
+      );
+      final container = ProviderContainer(
+        overrides: [
+          authControllerProvider.overrideWith(
+            () => TestAuthController(
+              _session(permissions: {
+                'invoices.view_purchase',
+                'invoices.create_purchase_return',
+              }),
+            ),
+          ),
+          invoiceRepositoryProvider.overrideWith((ref) => repo),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await container
+          .read(invoiceDetailControllerProvider('pi-1', type: InvoiceType.purchase).notifier)
+          .load();
+
+      final controller = container.read(
+        invoiceDetailControllerProvider('pi-1', type: InvoiceType.purchase).notifier,
+      );
+      final session = container.read(authControllerProvider).valueOrNull!;
+      expect(controller.canCreateReturn(session), isFalse);
+    });
+
+    test('canConfirmDraft requires create and edit permissions', () async {
+      final repo = FakeInvoiceRepository(
+        detailById: {
+          'pi-draft': sampleInvoiceDetail(
+            id: 'pi-draft',
+            type: InvoiceType.purchase,
+          ).copyWithStatus(InvoiceStatus.draft),
+        },
+      );
+      final container = ProviderContainer(
+        overrides: [
+          authControllerProvider.overrideWith(
+            () => TestAuthController(
+              _session(permissions: {
+                'invoices.view_purchase',
+                'invoices.create_purchase',
+              }),
+            ),
+          ),
+          invoiceRepositoryProvider.overrideWith((ref) => repo),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await container
+          .read(
+            invoiceDetailControllerProvider('pi-draft', type: InvoiceType.purchase)
+                .notifier,
+          )
+          .load();
+
+      final controller = container.read(
+        invoiceDetailControllerProvider('pi-draft', type: InvoiceType.purchase)
+            .notifier,
+      );
+      final session = container.read(authControllerProvider).valueOrNull!;
+      expect(controller.canConfirmDraft(session), isFalse);
+      expect(controller.canEditDraft(session), isFalse);
+    });
   });
+}
+
+extension on InvoiceDetail {
+  InvoiceDetail copyWithStatus(InvoiceStatus status) {
+    return InvoiceDetail(
+      id: id,
+      invoiceNumber: invoiceNumber,
+      type: type,
+      status: status,
+      date: date,
+      dueDate: dueDate,
+      customer: customer,
+      supplier: supplier,
+      warehouse: warehouse,
+      notes: notes,
+      subtotal: subtotal,
+      discountAmount: discountAmount,
+      taxAmount: taxAmount,
+      total: total,
+      paidAmount: paidAmount,
+      outstanding: outstanding,
+      lines: lines,
+    );
+  }
 }

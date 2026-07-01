@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
+import '../../../../core/routing/app_routes.dart';
 import '../../../../core/utils/money_formatter.dart';
 import '../../domain/product_unit.dart';
 import '../../domain/product_unit_edit_policy.dart';
@@ -75,6 +77,8 @@ class _ProductUnitTableState extends State<ProductUnitTable> {
   DataRow _row(BuildContext context, ProductUnit unit) {
     final editable = widget.canEdit && isUnitSafeEditable(unit.status);
     return DataRow(
+      onSelectChanged: (_) =>
+          context.go(AppRoutes.productUnitDetailPath(unit.id)),
       cells: [
         DataCell(Text(unit.serialNumber)),
         DataCell(Text(unit.barcode ?? '-')),

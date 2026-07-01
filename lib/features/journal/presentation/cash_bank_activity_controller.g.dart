@@ -7,7 +7,7 @@ part of 'cash_bank_activity_controller.dart';
 // **************************************************************************
 
 String _$cashBankActivityControllerHash() =>
-    r'9d6148a11e203297ee6eb24751e9c41b85861d45';
+    r'1d00af54ef1804930796ca496ce0c1c9cd174d94';
 
 /// See also [CashBankActivityController].
 @ProviderFor(CashBankActivityController)

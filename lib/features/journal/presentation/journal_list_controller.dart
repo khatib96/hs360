@@ -164,4 +164,26 @@ class JournalListController extends _$JournalListController {
     );
     refresh();
   }
+
+  void setDateFrom(DateTime? from) {
+    state = state.copyWith(
+      filters: JournalFilters(
+        dateRange: state.filters.dateRange.copyWith(from: from),
+        source: state.filters.source,
+        search: state.filters.search,
+      ),
+    );
+    refresh();
+  }
+
+  void setDateTo(DateTime? to) {
+    state = state.copyWith(
+      filters: JournalFilters(
+        dateRange: state.filters.dateRange.copyWith(to: to),
+        source: state.filters.source,
+        search: state.filters.search,
+      ),
+    );
+    refresh();
+  }
 }

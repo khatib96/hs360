@@ -13,8 +13,12 @@ import 'package:hs360/features/customers/domain/customer_service_location.dart';
 import 'package:hs360/features/customers/domain/service_location_coordinates.dart';
 import 'package:hs360/features/customers/domain/service_location_type.dart';
 import 'package:hs360/features/customers/presentation/customer_detail_screen.dart';
+import 'package:hs360/features/invoices/data/invoice_repository.dart';
+import 'package:hs360/features/vouchers/data/voucher_repository.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
+import '../../invoices/fake_invoice_repository.dart';
+import '../../vouchers/fake_voucher_repository.dart';
 import '../fake_customer_repository.dart';
 import '../fake_customer_service_location_repository.dart';
 
@@ -42,6 +46,8 @@ void main() {
     required AppSession appSession,
     required FakeCustomerRepository customerRepo,
     FakeCustomerServiceLocationRepository? locationRepo,
+    FakeInvoiceRepository? invoiceRepo,
+    FakeVoucherRepository? voucherRepo,
     Locale locale = const Locale('en'),
     Size size = const Size(1600, 900),
   }) {
@@ -54,6 +60,10 @@ void main() {
         customerServiceLocationRepositoryProvider.overrideWith(
           (ref) => locationRepo ?? FakeCustomerServiceLocationRepository(),
         ),
+        if (invoiceRepo != null)
+          invoiceRepositoryProvider.overrideWith((ref) => invoiceRepo),
+        if (voucherRepo != null)
+          voucherRepositoryProvider.overrideWith((ref) => voucherRepo),
       ],
       child: MaterialApp(
         locale: locale,
@@ -288,12 +298,14 @@ void main() {
 
     await tester.pumpWidget(
       buildDetail(
-        appSession: session(permissions: {'customers.view', 'invoices.view'}),
+        appSession: session(permissions: {'customers.view', 'invoices.view_sales'}),
         customerRepo: repo,
+        invoiceRepo: FakeInvoiceRepository(),
       ),
     );
     await tester.pumpAndSettle();
     await selectCustomerTab(tester, 3);
+    await tester.pumpAndSettle();
     expect(find.text(l10n.customerInvoicesEmpty), findsOneWidget);
   });
 
@@ -317,10 +329,12 @@ void main() {
       buildDetail(
         appSession: session(permissions: {'customers.view', 'vouchers.view'}),
         customerRepo: repo,
+        voucherRepo: FakeVoucherRepository(),
       ),
     );
     await tester.pumpAndSettle();
     await selectCustomerTab(tester, 4);
+    await tester.pumpAndSettle();
     expect(find.text(l10n.customerVouchersEmpty), findsOneWidget);
   });
 

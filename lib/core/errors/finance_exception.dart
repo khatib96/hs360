@@ -17,6 +17,12 @@ class FinanceException extends AppException {
   static const taxRateInUse = 'tax_rate_in_use';
   static const notFound = 'not_found';
   static const notAvailable = 'not_available';
+  static const insufficientStock = 'insufficient_stock';
+  static const correctionDocumentRequired = 'correction_document_required';
+  static const returnDocumentRequired = 'return_document_required';
+  static const serializedAdjustmentNotSupported =
+      'serialized_adjustment_not_supported';
+  static const backendMigrationRequired = 'backend_migration_required';
   static const supabaseNotConfigured = 'supabaseNotConfigured';
   static const unknown = 'unknown';
 
@@ -70,6 +76,15 @@ class FinanceException extends AppException {
       'finance_validation_payment_destination_required';
   static const validationReferenceTooLong =
       'finance_validation_reference_too_long';
+  static const validationNotesRequired = 'finance_validation_notes_required';
+  static const validationGainReasonRequired =
+      'finance_validation_gain_reason_required';
+  static const validationLossReasonRequired =
+      'finance_validation_loss_reason_required';
+  static const validationSerializedNotSupported =
+      'finance_validation_serialized_not_supported';
+  static const validationSerializedQtyIntegerRequired =
+      'finance_validation_serialized_qty_integer_required';
 
   factory FinanceException.fromSupabase(
     Object error, [
@@ -108,6 +123,54 @@ class FinanceException extends AppException {
     }
     if (message.contains('tax_rate_in_use')) {
       return FinanceException(code: taxRateInUse, technicalDetail: message);
+    }
+    if (message.contains('insufficient_stock')) {
+      return FinanceException(
+        code: insufficientStock,
+        technicalDetail: message,
+      );
+    }
+    if (message.contains('correction_document_required')) {
+      return FinanceException(
+        code: correctionDocumentRequired,
+        technicalDetail: message,
+      );
+    }
+    if (message.contains('return_document_required')) {
+      return FinanceException(
+        code: returnDocumentRequired,
+        technicalDetail: message,
+      );
+    }
+    if (message.contains('serialized_adjustment_not_supported')) {
+      return FinanceException(
+        code: serializedAdjustmentNotSupported,
+        technicalDetail: message,
+      );
+    }
+    if (message.contains(validationCancellationReasonRequired)) {
+      return FinanceException(
+        code: validationCancellationReasonRequired,
+        technicalDetail: message,
+      );
+    }
+    if (message.contains(validationCancellationReasonTooLong)) {
+      return FinanceException(
+        code: validationCancellationReasonTooLong,
+        technicalDetail: message,
+      );
+    }
+    if (message.contains('record_cash_sales_invoice') ||
+        message.contains('record_direct_sales_return') ||
+        message.contains('record_direct_purchase_return') ||
+        message.contains(
+          'no unique or exclusion constraint matching the on conflict specification',
+        ) ||
+        message.contains('schema cache')) {
+      return FinanceException(
+        code: backendMigrationRequired,
+        technicalDetail: message,
+      );
     }
     if (message.contains('validation_failed')) {
       return FinanceException(code: validationFailed, technicalDetail: message);

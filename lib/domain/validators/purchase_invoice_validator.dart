@@ -25,12 +25,19 @@ class PurchaseInvoiceValidator {
   ValidationResult validate(
     InvoiceFormState form, {
     Map<String, bool> serializedByProductId = const {},
+    bool supplierRequired = true,
+    bool cashAccountRequired = false,
   }) {
     final draft = form.draft;
     final codes = <String>[];
 
-    if (draft.supplierId == null || draft.supplierId!.trim().isEmpty) {
+    if (supplierRequired &&
+        (draft.supplierId == null || draft.supplierId!.trim().isEmpty)) {
       codes.add(FinanceException.validationSupplierRequired);
+    }
+    if (cashAccountRequired &&
+        (draft.cashAccountId == null || draft.cashAccountId!.trim().isEmpty)) {
+      codes.add(FinanceException.validationCashAccountRequired);
     }
     if (draft.warehouseId.trim().isEmpty) {
       codes.add(FinanceException.validationWarehouseRequired);

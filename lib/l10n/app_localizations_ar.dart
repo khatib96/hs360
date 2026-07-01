@@ -1112,7 +1112,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get customerInvoicesEmpty => 'لا توجد فواتير بعد.';
 
   @override
+  String get customerInvoicesNotLoaded => 'افتح هذا التبويب لتحميل الفواتير.';
+
+  @override
   String get customerVouchersEmpty => 'لا توجد سندات بعد.';
+
+  @override
+  String get customerVouchersNotLoaded =>
+      'افتح هذا التبويب لتحميل سندات القبض.';
 
   @override
   String get customerTimelineEmpty => 'لا توجد أحداث في السجل بعد.';
@@ -1182,6 +1189,36 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get supplierDetailsUnavailable =>
       'تفاصيل المورد غير متاحة في هذا الإصدار.';
+
+  @override
+  String get supplierNotFound => 'المورد غير موجود.';
+
+  @override
+  String get supplierPurchaseInvoices => 'فواتير الشراء';
+
+  @override
+  String get supplierPaymentVouchers => 'سندات الدفع';
+
+  @override
+  String get supplierStatement => 'كشف الحساب';
+
+  @override
+  String get supplierStatementUnavailable =>
+      'كشف حساب المورد يتطلب دعمًا من الخادم (get_supplier_statement). سيتوفر في إصدار لاحق.';
+
+  @override
+  String get supplierInvoicesEmpty => 'لا توجد فواتير شراء بعد.';
+
+  @override
+  String get supplierInvoicesNotLoaded =>
+      'افتح هذا التبويب لتحميل فواتير الشراء.';
+
+  @override
+  String get supplierVouchersEmpty => 'لا توجد سندات دفع بعد.';
+
+  @override
+  String get supplierVouchersNotLoaded =>
+      'افتح هذا التبويب لتحميل سندات الدفع.';
 
   @override
   String get chartOfAccountsUnavailable =>
@@ -2187,7 +2224,107 @@ class AppLocalizationsAr extends AppLocalizations {
   String get financeErrorNotAvailable => 'هذه الميزة المالية غير متاحة بعد.';
 
   @override
+  String get financeErrorCorrectionDocumentRequired =>
+      'الإلغاء الآمن غير متاح. يلزم مستند تصحيح.';
+
+  @override
   String get financeErrorUnknown => 'حدث خطأ مالي. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get financeValidationNotesRequired => 'الملاحظات مطلوبة.';
+
+  @override
+  String get financeValidationGainReasonRequired => 'سبب الزيادة مطلوب.';
+
+  @override
+  String get financeValidationLossReasonRequired => 'سبب النقص مطلوب.';
+
+  @override
+  String get financeValidationSerializedQtyIntegerRequired =>
+      'كمية المنتج المُسلسل يجب أن تكون عدداً صحيحاً موجباً.';
+
+  @override
+  String get financeErrorReturnDocumentRequired =>
+      'تتطلب هذه العملية مستند مرتجع.';
+
+  @override
+  String get financeErrorSerializedAdjustmentNotSupported =>
+      'تسويات المنتجات المُسلسلة غير مدعومة بعد.';
+
+  @override
+  String get financeErrorBackendMigrationRequired =>
+      'تحتاج هذه الفاتورة إلى تحديث قاعدة البيانات قبل التأكيد.';
+
+  @override
+  String financeErrorUnknownWithCode(String code) {
+    return 'حدث خطأ مالي غير متوقع. يرجى المحاولة مرة أخرى. (الرمز: $code)';
+  }
+
+  @override
+  String get financeValidationCustomerRequired => 'اختر عميلاً لهذه الفاتورة.';
+
+  @override
+  String get financeValidationSupplierRequired => 'اختر مورّداً لهذه الفاتورة.';
+
+  @override
+  String get financeValidationWarehouseRequired => 'اختر المخزن.';
+
+  @override
+  String get financeValidationPartyRequired => 'اختر عميلاً أو مورّداً.';
+
+  @override
+  String get financeValidationLinesRequired => 'أضف بنداً واحداً على الأقل.';
+
+  @override
+  String get financeValidationProductRequired => 'اختر منتجاً لكل بند.';
+
+  @override
+  String get financeValidationLineQtyInvalid =>
+      'يجب أن تكون الكمية أكبر من صفر.';
+
+  @override
+  String get financeValidationLinePriceInvalid =>
+      'لا يمكن أن يكون سعر الوحدة سالباً.';
+
+  @override
+  String get financeValidationDiscountOutOfRange =>
+      'يجب أن يكون الخصم بين 0 و100 بالمئة.';
+
+  @override
+  String get financeValidationDueDateBeforeInvoiceDate =>
+      'لا يمكن أن يكون تاريخ الاستحقاق قبل تاريخ الفاتورة.';
+
+  @override
+  String get financeValidationSerializedUnitRequired =>
+      'اختر الرقم التسلسلي/الوحدة للمنتجات المُسلسلة.';
+
+  @override
+  String get financeValidationSerialCountMismatch =>
+      'يجب أن يطابق عدد الأرقام التسلسلية كمية البند.';
+
+  @override
+  String get financeValidationOriginalInvoiceRequired =>
+      'اختر الفاتورة الأصلية المراد الإرجاع منها.';
+
+  @override
+  String get financeValidationReturnReasonRequired => 'أدخل سبب الإرجاع.';
+
+  @override
+  String get financeValidationReturnQtyExceedsReturnable =>
+      'كمية الإرجاع تتجاوز الكمية القابلة للإرجاع.';
+
+  @override
+  String get financeValidationCashAccountRequired => 'اختر حساب نقدية أو بنك.';
+
+  @override
+  String get financeValidationAccountRequired => 'اختر حساباً مالياً.';
+
+  @override
+  String get financeValidationCancellationReasonRequired => 'أدخل سبب الإلغاء.';
+
+  @override
+  String get financeValidationCancellationReasonTooLong =>
+      'سبب الإلغاء طويل جداً.';
 
   @override
   String get journalSourceSalesReturn => 'مرتجع مبيعات';
@@ -2206,6 +2343,40 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get journalSourceSupplierRefundReceipt => 'سند استرداد مورد';
+
+  @override
+  String get journalSourceSalesInvoiceReversal => 'عكس فاتورة مبيعات';
+
+  @override
+  String get journalSourcePurchaseInvoiceReversal => 'عكس فاتورة مشتريات';
+
+  @override
+  String get journalSourceReceiptVoucherReversal => 'عكس سند قبض';
+
+  @override
+  String get journalSourcePaymentVoucherReversal => 'عكس سند صرف';
+
+  @override
+  String get journalSourceOpeningStock => 'رصيد افتتاحي مخزون';
+
+  @override
+  String get journalSourceInventoryStockIn => 'إدخال مخزون';
+
+  @override
+  String get journalSourceInventoryStockOut => 'إخراج مخزون';
+
+  @override
+  String get journalSourceStockCount => 'جرد مخزون';
+
+  @override
+  String get journalSourceInventoryDocumentReversal => 'عكس مستند مخزون';
+
+  @override
+  String get cashBankChartViewRequiredTitle => 'صلاحية شجرة الحسابات مطلوبة';
+
+  @override
+  String get cashBankChartViewRequiredBody =>
+      'لاختيار حساب نقدي أو بنكي تحتاج صلاحية عرض شجرة الحسابات. اطلبها من المسؤول.';
 
   @override
   String get invoiceTitle => 'الفواتير';
@@ -2250,6 +2421,217 @@ class AppLocalizationsAr extends AppLocalizations {
   String get invoiceStatusCancelled => 'ملغاة';
 
   @override
+  String get invoiceFilterType => 'النوع';
+
+  @override
+  String get invoiceFilterSearch => 'بحث';
+
+  @override
+  String get invoiceColumnNumber => 'الرقم';
+
+  @override
+  String get invoiceColumnParty => 'الطرف';
+
+  @override
+  String get invoiceColumnDate => 'التاريخ';
+
+  @override
+  String get invoiceColumnDueDate => 'تاريخ الاستحقاق';
+
+  @override
+  String get invoiceColumnTotal => 'الإجمالي';
+
+  @override
+  String get invoiceColumnPaid => 'المدفوع';
+
+  @override
+  String get invoiceColumnOutstanding => 'المتبقي';
+
+  @override
+  String get invoiceOverdueBadge => 'متأخر';
+
+  @override
+  String get invoiceListEmpty => 'لا توجد فواتير بعد.';
+
+  @override
+  String get invoiceListEmptyFiltered => 'لا توجد فواتير تطابق الفلاتر.';
+
+  @override
+  String get invoiceDetailLines => 'البنود';
+
+  @override
+  String get invoicePaymentSummary => 'ملخص الدفع';
+
+  @override
+  String get invoiceActionCancel => 'إلغاء الفاتورة';
+
+  @override
+  String get invoiceActionReturn => 'إنشاء مرتجع';
+
+  @override
+  String get invoiceActionEditDraft => 'تعديل المسودة';
+
+  @override
+  String get invoiceActionConfirmDraft => 'تأكيد المسودة';
+
+  @override
+  String get invoiceCancelReason => 'سبب الإلغاء';
+
+  @override
+  String get invoiceConfirmCancel => 'إلغاء هذه الفاتورة؟';
+
+  @override
+  String get invoiceJournalEntry => 'قيد اليومية';
+
+  @override
+  String get invoiceTotalsSubtotal => 'المجموع الفرعي';
+
+  @override
+  String get invoiceTotalsDiscount => 'الخصم';
+
+  @override
+  String get invoiceTotalsTax => 'الضريبة';
+
+  @override
+  String get invoiceTotalsTotal => 'الإجمالي';
+
+  @override
+  String get invoiceCreditAllocations => 'تخصيصات الرصيد';
+
+  @override
+  String get invoiceReturnNotEligible => 'لا يمكن إرجاع هذه الفاتورة.';
+
+  @override
+  String get invoiceCreateSales => 'مبيعات جديدة';
+
+  @override
+  String get invoiceCreatePurchase => 'شراء جديد';
+
+  @override
+  String get invoiceCreateNew => 'إضافة';
+
+  @override
+  String get invoiceCreateReturnHint => 'من فاتورة';
+
+  @override
+  String get invoiceFormWarehouse => 'المستودع';
+
+  @override
+  String get invoiceFormDate => 'تاريخ الفاتورة';
+
+  @override
+  String get invoiceFormDueDate => 'تاريخ الاستحقاق';
+
+  @override
+  String get invoiceFormNotes => 'ملاحظات';
+
+  @override
+  String get invoiceFormNumberAuto => 'رقم الفاتورة: تلقائي بعد التأكيد';
+
+  @override
+  String get invoicePaymentTermsTitle => 'طريقة السداد';
+
+  @override
+  String get invoicePaymentTermsCash => 'نقدي / فوري';
+
+  @override
+  String get invoicePaymentTermsCredit => 'آجل';
+
+  @override
+  String get invoicePaymentTermsCashHelper =>
+      'سيتم تسجيل الدفع لاحقًا من السندات.';
+
+  @override
+  String get invoicePaymentTermsCashHelperSales =>
+      'سيتم إنشاء/تسجيل سند قبض بعد تأكيد الفاتورة.';
+
+  @override
+  String get invoicePaymentTermsCashHelperPurchase =>
+      'سيتم إنشاء/تسجيل سند صرف بعد تأكيد الفاتورة.';
+
+  @override
+  String get invoiceFormNewCustomer => '+ عميل جديد';
+
+  @override
+  String get invoicePickOriginalInvoiceTitle => 'اختيار الفاتورة الأصلية';
+
+  @override
+  String get invoicePickOriginalInvoiceSearch => 'بحث برقم الفاتورة أو الطرف';
+
+  @override
+  String get invoicePickOriginalInvoiceEmpty =>
+      'لا توجد فواتير مؤكدة قابلة للإرجاع.';
+
+  @override
+  String get invoiceFormCustomer => 'العميل';
+
+  @override
+  String get invoiceFormSupplier => 'المورد';
+
+  @override
+  String get invoiceFormAddLine => 'إضافة سطر';
+
+  @override
+  String get invoiceFormSaveDraft => 'حفظ المسودة';
+
+  @override
+  String get invoiceFormConfirm => 'تأكيد الفاتورة';
+
+  @override
+  String get invoiceFormDiscardDraft => 'حذف المسودة';
+
+  @override
+  String get invoiceFormSelectProduct => 'المنتج';
+
+  @override
+  String get invoiceFormQty => 'الكمية';
+
+  @override
+  String get invoiceFormUnitPrice => 'سعر الوحدة';
+
+  @override
+  String get invoiceFormDiscount => 'نسبة الخصم';
+
+  @override
+  String get invoiceFormSerialNumber => 'الرقم التسلسلي';
+
+  @override
+  String get invoiceFormDiscard => 'إلغاء';
+
+  @override
+  String get invoiceColumnUnit => 'الوحدة';
+
+  @override
+  String get invoiceColumnDescription => 'الوصف';
+
+  @override
+  String get invoiceColumnLineTotal => 'إجمالي السطر';
+
+  @override
+  String get invoiceColumnActions => 'إجراءات';
+
+  @override
+  String get invoiceFormConfirmMessage =>
+      'تأكيد وترحيل هذه الفاتورة؟ يتم احتساب الإجماليات على الخادم.';
+
+  @override
+  String get invoiceEstimatedTotalsDisclaimer =>
+      'إجماليات تقديرية فقط. الضريبة والإجمالي النهائيان يُحسبان عند التأكيد.';
+
+  @override
+  String get invoiceEstimatedCreditPreview => 'معاينة الرصيد التقديري';
+
+  @override
+  String get invoiceFinalTotalsAfterConfirm =>
+      'يتم احتساب الإجماليات النهائية بعد التأكيد.';
+
+  @override
+  String get invoiceReturnReason => 'سبب المرتجع';
+
+  @override
+  String get invoiceReturnSubmit => 'إرسال المرتجع';
+
+  @override
   String get voucherTitle => 'السندات';
 
   @override
@@ -2274,19 +2656,162 @@ class AppLocalizationsAr extends AppLocalizations {
   String get voucherStatusCancelled => 'ملغى';
 
   @override
+  String get voucherAllocationFifo => 'تطبيق على أقدم الفواتير أولاً';
+
+  @override
+  String get voucherAllocationManual => 'توزيع يدوي';
+
+  @override
+  String get voucherPaymentDestinationSupplier => 'دفع للمورد';
+
+  @override
+  String get voucherPaymentDestinationAccount => 'دفع لحساب';
+
+  @override
+  String get voucherOpenInvoices => 'الفواتير المفتوحة';
+
+  @override
+  String get voucherSelectCashAccount => 'حساب نقدي أو بنكي';
+
+  @override
+  String get voucherFormSubmit => 'تسجيل السند';
+
+  @override
+  String get voucherFormSubmitSuccess => 'تم تسجيل السند.';
+
+  @override
+  String get voucherFormPaymentMethod => 'طريقة الدفع';
+
+  @override
+  String get voucherListEmpty => 'لا توجد سندات بعد.';
+
+  @override
+  String get voucherListEmptyFiltered => 'لا توجد سندات مطابقة للفلاتر.';
+
+  @override
+  String get voucherFilterType => 'النوع';
+
+  @override
+  String get voucherFilterSearch => 'بحث';
+
+  @override
+  String get voucherCreateReceipt => 'سند قبض جديد';
+
+  @override
+  String get voucherCreatePayment => 'سند صرف جديد';
+
+  @override
+  String get voucherColumnNumber => 'الرقم';
+
+  @override
+  String get voucherFormCustomer => 'العميل';
+
+  @override
+  String get voucherFormSupplier => 'المورد';
+
+  @override
+  String get voucherFormCashAccount => 'حساب النقد';
+
+  @override
+  String get voucherFormReference => 'المرجع';
+
+  @override
+  String get voucherFormNotes => 'ملاحظات';
+
+  @override
+  String get voucherFormAmount => 'المبلغ';
+
+  @override
+  String get voucherFormDate => 'التاريخ';
+
+  @override
+  String get voucherAllocationsTitle => 'تخصيصات الفواتير';
+
+  @override
+  String get voucherAllocatedAmount => 'المخصص';
+
+  @override
+  String get voucherUnallocatedAmount => 'غير المخصص';
+
+  @override
+  String get voucherCancelAction => 'إلغاء السند';
+
+  @override
+  String get voucherCancelReason => 'سبب الإلغاء';
+
+  @override
+  String get voucherConfirmCancel => 'إلغاء هذا السند؟';
+
+  @override
+  String get voucherJournalEntry => 'قيد اليومية';
+
+  @override
+  String get voucherReversalJournal => 'قيد عكسي';
+
+  @override
   String get journalTitle => 'اليومية';
 
   @override
   String get journalDetailTitle => 'قيد يومية';
 
   @override
+  String get journalListEmpty => 'لا توجد قيود يومية بعد.';
+
+  @override
+  String get journalListEmptyFiltered => 'لا توجد قيود مطابقة للفلاتر الحالية.';
+
+  @override
+  String get journalFilterSource => 'المصدر';
+
+  @override
+  String get journalFilterSearch => 'بحث في القيود';
+
+  @override
+  String get journalPostedBadge => 'مرحّل';
+
+  @override
+  String get journalReversalBadge => 'عكسي';
+
+  @override
+  String get journalSourceDocument => 'المستند المصدر';
+
+  @override
+  String get journalReversalEntry => 'عكس قيد';
+
+  @override
+  String get journalLineAccount => 'الحساب';
+
+  @override
   String get cashBankTitle => 'النقد والبنوك';
+
+  @override
+  String get cashBankSelectAccount => 'اختر حساب نقد أو بنك';
+
+  @override
+  String get cashBankOpeningBalance => 'الرصيد الافتتاحي';
+
+  @override
+  String get cashBankRunningBalance => 'الرصيد الجاري';
+
+  @override
+  String get cashBankExportLoadedRows => 'تصدير الصفوف المحمّلة';
+
+  @override
+  String get cashBankExportLoadedRowsCopied =>
+      'تم نسخ الصفوف المحمّلة إلى الحافظة كملف CSV.';
+
+  @override
+  String get cashBankActivityEmpty =>
+      'لا يوجد نشاط لهذا الحساب في الفترة المحددة.';
 
   @override
   String get taxSettingsTitle => 'إعدادات الضريبة';
 
   @override
-  String get inventoryDocumentsTitle => 'مستندات المخزون';
+  String get inventoryDocumentsTitle => 'مستندات المخزون المالية';
+
+  @override
+  String get inventoryDocumentsLink => 'المستندات المالية';
 
   @override
   String get inventoryDocumentOpeningStock => 'رصيد افتتاحي';
@@ -2303,6 +2828,130 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get inventoryDocumentsDeferredBody =>
       'مستندات محاسبة المخزون ستتوفر بعد مراجعة المحاسبة.';
+
+  @override
+  String get inventoryDocumentListEmpty => 'لا توجد مستندات مخزون مالية بعد.';
+
+  @override
+  String get inventoryDocumentListEmptyFiltered =>
+      'لا توجد مستندات مطابقة للفلاتر الحالية.';
+
+  @override
+  String get inventoryDocumentNumber => 'رقم المستند';
+
+  @override
+  String get inventoryDocumentKind => 'النوع';
+
+  @override
+  String get inventoryDocumentWarehouse => 'المخزن';
+
+  @override
+  String get inventoryDocumentDate => 'التاريخ';
+
+  @override
+  String get inventoryDocumentNotes => 'ملاحظات';
+
+  @override
+  String get inventoryDocumentReason => 'السبب';
+
+  @override
+  String get inventoryDocumentGainReason => 'سبب الزيادة';
+
+  @override
+  String get inventoryDocumentLossReason => 'سبب النقص';
+
+  @override
+  String get inventoryDocumentSystemQty => 'كمية النظام';
+
+  @override
+  String get inventoryDocumentCountedQty => 'الكمية المعدودة';
+
+  @override
+  String get inventoryDocumentDeltaQty => 'الفرق';
+
+  @override
+  String get inventoryDocumentUnitCost => 'تكلفة الوحدة';
+
+  @override
+  String get inventoryDocumentWacHint =>
+      'يُستخدم متوسط التكلفة الحالي عند ترك تكلفة الوحدة فارغة.';
+
+  @override
+  String get inventoryDocumentAddLine => 'إضافة سطر';
+
+  @override
+  String get inventoryDocumentRemoveLine => 'حذف سطر';
+
+  @override
+  String get inventoryDocumentConfirmSubmit => 'تأكيد المستند';
+
+  @override
+  String get inventoryDocumentConfirmSubmitMessage =>
+      'سيتم ترحيل مستند المخزون المالي ولن يمكن تعديله لاحقًا.';
+
+  @override
+  String get inventoryDocumentSubmit => 'ترحيل المستند';
+
+  @override
+  String get inventoryDocumentCancelAction => 'إلغاء المستند';
+
+  @override
+  String get inventoryDocumentCancelReason => 'سبب الإلغاء';
+
+  @override
+  String get inventoryDocumentCancelled => 'ملغى';
+
+  @override
+  String get inventoryDocumentLines => 'البنود';
+
+  @override
+  String get inventoryDocumentMovements => 'الحركات';
+
+  @override
+  String get inventoryDocumentJournalEntry => 'قيد اليومية';
+
+  @override
+  String get inventoryDocumentReversalJournal => 'قيد عكسي';
+
+  @override
+  String get inventoryDocumentSerializedNotSupportedYet =>
+      'المنتجات المسلسلة غير مدعومة لهذا النوع من المستندات حاليًا.';
+
+  @override
+  String get inventoryDocumentStatusConfirmed => 'مؤكد';
+
+  @override
+  String get inventoryDocumentStatusCancelled => 'ملغى';
+
+  @override
+  String get inventoryDocumentFilterKind => 'نوع المستند';
+
+  @override
+  String get inventoryDocumentFilterWarehouse => 'المخزن';
+
+  @override
+  String get inventoryDocumentCreateOpening => 'رصيد افتتاحي';
+
+  @override
+  String get inventoryDocumentCreateStockIn => 'إدخال مخزون';
+
+  @override
+  String get inventoryDocumentCreateStockOut => 'إخراج مخزون';
+
+  @override
+  String get inventoryDocumentCreateStockCount => 'جرد مخزون';
+
+  @override
+  String get inventoryDocumentSelectProduct => 'اختر منتجًا';
+
+  @override
+  String get inventoryDocumentSelectReason => 'اختر سببًا';
+
+  @override
+  String get inventoryDocumentSerialUnits => 'الأرقام التسلسلية';
+
+  @override
+  String get inventoryDocumentSelectUnits => 'اختر الوحدات';
 
   @override
   String get paymentMethodCash => 'نقد';

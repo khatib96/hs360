@@ -1,6 +1,232 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-06-17 (Session: Phase 5 M4.5 closed — migrations `065`–`070`; M9 not started).
+> Updated 2026-07-01 (Session: Phase 5 M9 Closure Audit — **M9 desktop finance UI/workflow scope closed; advanced edit/delete, mobile redesign, and report/PDF polish deferred**).
+
+---
+
+## Session 2026-07-01 - Phase 5 M9 Closure Audit
+
+**Decision:** Phase 5 M9 is closed for the agreed **desktop operational finance UI/workflow** scope. The remaining items are intentionally deferred and must not be treated as blockers for M9: mobile redesign, voucher/report/PDF visual polish, advanced edit/delete/delete-permission flows for confirmed invoices/vouchers/journal entries, payment-voucher print, supplier statement RPC, cash-bank PDF, and serialized opening/count.
+
+### Final M9 closure scope
+
+- Inventory financial documents UI, invoice UI, voucher UI, journal UI, cash/bank UI, print/preview wiring, Customer 360 tabs, supplier detail, product/unit links, and cash-bank CSV are delivered.
+- Invoice UX was reopened and corrected after live visual review: Odoo-style desktop structure, cash-sale workflow, direct returns, blank-line-safe confirm, negative-stock-friendly sales path, clearer errors, and searchable payment/counter account handling where supported by the current backend.
+- Voucher UX was simplified after live review: receipt/payment forms now use the accounting-sheet pattern with source account + amount + destination/counter account + description, searchable account fields by code/name, direct account receipts/payments, default source account preference (`1101` then `1102`), decimal entry tolerance, and cancellation reason validation.
+- Database support added for the M9 closure fixes via migrations `071`-`075` and `scripts/apply_m9_invoice_db_update.sh`.
+
+### Verification performed in Codex
+
+- `dart analyze .` passed with **no issues found** after replacing deprecated `DropdownButtonFormField.value` usages and the redundant separator placeholder.
+- `dart format --set-exit-if-changed` on the recently touched files reported **0 changed**.
+- `git diff --check` passed clean.
+- `bash -n scripts/apply_m9_invoice_db_update.sh` passed.
+- Full `flutter test` could not run inside Codex because Flutter tried to write to `/opt/homebrew/share/flutter/bin/cache/*`, which is outside the writable workspace. Run it from a normal Terminal before pushing.
+- Applying the DB script from Codex was previously blocked by local database socket/network permissions; run `bash scripts/apply_m9_invoice_db_update.sh` from a normal Terminal if the DB was not already updated.
+
+### Post-M9 backlog
+
+- Advanced edit/delete/cancel-policy UX with permissions for confirmed invoices, vouchers, and journal entries.
+- Mobile-first redesign after the desktop finance workflows are accepted.
+- Voucher/report/PDF visual polish and payment-voucher print template support.
+- Supplier statement RPC/UI, cash-bank PDF, serialized opening/count when backend tests exist.
+- Broader app navigation/information architecture cleanup before mobile design.
+
+**Next:** move to post-M9 hardening/backlog or M10, not another M9 scope expansion.
+
+---
+
+## Session 2026-06-18 - Phase 5 M9 Invoice Workflow Fix Round
+
+**Historical status at that time:** M9 was still open for visual/workflow acceptance. Superseded by the 2026-07-01 closure audit.
+
+### Delivered now
+
+- **Cash-sale customer workflow:** `+ عميل جديد` quick-create beside sales invoice customer picker (`CustomerQuickCreateDialog` — Arabic name + primary phone only, uses existing `create_customer` RPC). Created customer is selected in-form without leaving the invoice. Backend still requires a customer on confirm — not faked optional.
+- **Payment terms (cash):** No cash/bank selector — `record_sales_invoice` / `record_purchase_invoice` payloads have no payment/account field, so immediate posting is **not** supported. UI shows type-specific helper: sales → receipt voucher after confirm; purchase → payment voucher after confirm. Does not pretend money was posted.
+- **Keyboard workflow:** Enter on last-line discount (or product cell when product selected) calls `addLineAndFocusProduct`; focus moves to new line product cell (`invoice-line-product-{index}` keys). Regression tests in `invoice_line_keyboard_test.dart`.
+- **Return invoices UX:** `+ إضافة` menu enables sales/purchase return when permitted; opens `InvoiceOriginalInvoicePickerDialog` to search/select confirmed/partially-paid/paid originals, then navigates to existing `/invoices/:id/return`. Purchase return uses same route (screen infers type from original). No standalone return creation.
+
+### Documented future (not implemented — needs backend/settings)
+
+- **Default walk-in / cash customer** (`عميل نقدي`) auto-selected for cash sales (tenant setting + backend default customer).
+- **Immediate invoice payment posting** on confirm: cash/bank account selector wired to RPC payload + receipt/payment voucher creation atomically with invoice.
+- **Invoice grid customization:** barcode scan/search, show/hide optional columns, tax amount column, Al-Manara-style extra accounting columns, configurable field layout.
+
+### Tests
+
+- `invoice_line_keyboard_test.dart` (controller + widget). Run `flutter analyze`, `flutter test`, `git diff --check`.
+
+---
+
+## Session 2026-06-18 - Phase 5 M9 Invoice UX Fix Round (errors, number, payment terms)
+
+**Historical status at that time:** M9 was still open for visual acceptance. Superseded by the 2026-07-01 closure audit.
+
+### Delivered
+
+- **Actionable confirm errors.** Root cause: `financeErrorMessage` mapped only a handful of codes, so every invoice **validation** code (`finance_validation_*`) and a few backend tokens fell through to the generic `financeErrorUnknown` ("حدث خطأ مالي. يرجى المحاولة مرة أخرى."). Now every known `FinanceException` code (party/warehouse/account/qty/price/discount/due-date/lines/serial/cash-account/return codes + `return_document_required`, `serialized_adjustment_not_supported`) maps to a specific translated reason. `FinanceException.fromSupabase` now also recognizes `return_document_required` and `serialized_adjustment_not_supported`. Truly unknown errors now render `financeErrorUnknownWithCode` with a sanitized, length-capped, whitespace-collapsed diagnostic reference from `technicalDetail` (`financeDiagnosticReference`). Invoice form/return submit catches store `errorDetail` (= `e.technicalDetail` or `e.toString()`).
+- **Invoice number visible.** Form command bar subtitle = `invoiceFormNumberAuto` ("رقم الفاتورة: تلقائي بعد التأكيد"). Detail command bar already shows real `detail.invoiceNumber` as the title.
+- **Payment terms (UI-only).** `InvoicePaymentTerms { cash, credit }` (domain enum, NOT in any payload). `InvoicePaymentTermsSection` segmented control: cash → helper "سيتم تسجيل الدفع لاحقًا من السندات." (no faked posting — record RPC payload has no payment field); credit → existing due-date field labeled "تاريخ الاستحقاق". `setPaymentTerms` clears due date on cash so an optional due date is never silently posted for an immediate sale. Due-date field moved out of `InvoiceFormHeader` into this section.
+
+### Future scope (NOT implemented — needs backend/model work)
+
+- **Payments on invoice:** cash/bank payment method recorded at confirm time; one or multiple installments; per-installment due dates; notifications/reminders for business and customer. Requires RPC/schema work — must NOT be faked in UI.
+- **Configurable invoice fields/columns:** show/hide optional fields; tax amount/value column display; barcode field + barcode search when product has a barcode; additional accounting columns inspired by Al-Manara-style grids (barcode/code, product, description, unit, qty, unit price, discount, tax, line total). Build only when scoped; do not ship a generic field-customization engine prematurely.
+
+### Tests
+
+- New `test/features/finance_shared/finance_error_messages_test.dart` (known codes ≠ generic; unknown+detail uses ref code). Run `flutter analyze`, `flutter test`, `git diff --check`.
+
+---
+
+## Session 2026-06-17 - Phase 5 M9 Final Closure
+
+**M9 UI scope complete. Backend/template gaps moved to M10.**
+
+### Delivered
+
+- **Customer 360:** invoice tab (`canViewSalesInvoices`, `partyId`, lazy load index 3); voucher tab (receipt only, `voucher_party_scope`, index 4); statement unchanged (index 5).
+- **Supplier detail:** `SupplierDetailScreen` — profile, purchase invoices (`canViewPurchaseInvoices`), payment vouchers (scoped via `voucher_party_scope`); statement placeholder (no `get_supplier_statement`).
+- **Product/unit integration:** unit table → detail; timeline invoice links when `metadata.invoice_type`; invoice line serial + unit link only when `productUnitId` set.
+- **Cash-bank CSV:** export **loaded rows** to clipboard (labeled EN/AR); no PDF/DocumentPreview.
+- **Serialized opening/count:** blocked safely + single message; stock-in/out serialized regression green.
+
+### Blocked safely + documented (not implemented)
+
+- Payment voucher print/preview (M3 template gap).
+- Serialized opening/count UI (M10 when SQL/tests exist).
+- Supplier statement (no `get_supplier_statement` RPC).
+- Cash-bank PDF (M10 template gap).
+- Inventory movement timeline deep links without `reference_id`.
+
+### Tests
+
+- **672** Flutter tests green; `flutter analyze` clean (info deprecations only); `git diff --check` clean.
+
+**Next:** M10 — backend/template gaps (payment voucher print, supplier statement RPC, cash-bank PDF, serialized opening/count).
+
+---
+
+## Session 2026-06-17 - Phase 5 M9 Batch 3 Print & Preview Complete
+
+Invoice and receipt-voucher PDF preview/print from detail screens via existing
+`DocumentPreviewScreen` (no new SQL, no payment-voucher renderer).
+
+### Delivery
+
+- Payload mappers from `InvoiceDetail` / `VoucherDetail` (`invoice_document_payload_mapper`, `voucher_document_payload_mapper`).
+- `finance_document_payload_loader.dart` — sole bridge from document preview to invoice/voucher repos.
+- Preview buttons on invoice/voucher detail (`invoices.print` / `vouchers.print`; posted/confirmed only).
+- `canPreviewDocument` requires print for sales/purchase/receipt (manager superuser bypasses print; customer statement/asset label unchanged).
+- Invoice preview **requires** `invoiceType` query param — loader rejects missing/mismatched type (`unsupported_document_type`); no multi-type probe.
+- `documentPreview` route guard kind-aware; query param `invoiceType` only (not `type`).
+- Payment voucher: no preview button; `paymentVoucher` remains unsupported in M3 SQL/renderer.
+
+### Tests
+
+- **665** Flutter tests green. **M9 not declared complete** — Customer 360 tabs, supplier detail, product integration, serialized opening/count, cash-bank export, payment-voucher print remain deferred.
+
+**Next:** M9 deferred items per `PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md` or M10 when scoped.
+
+---
+
+## Session 2026-06-17 - Phase 5 M9 Batch 2 Remainder Complete
+
+Operational vouchers, journal (read-only), and cash/bank activity UI in M9 Batch 2 remainder.
+
+### Prereq
+
+- `JournalSource` enum aligned with SQL (M4.5 inventory + M1 reversals); labels + mapper tests.
+- `journal_source_navigation.dart` — source links with SQL `source_id` semantics.
+- `cash_bank_posting_accounts.dart` — cash/bank list only via `chart_of_accounts.view`; else placeholder (no dedicated RPC).
+- CashBank `limit+1` pagination.
+
+### Flutter delivery (2D + 2E + 2F)
+
+- **Vouchers:** list/detail; receipt/payment forms with FIFO/manual allocations, party search, cash account picker.
+- **Journal:** read-only list/detail; source + reversal entry links.
+- **Cash/Bank:** account picker, date range, opening/running balance from RPC, activity links.
+- Placeholders removed for vouchers, journal, cash-bank routes.
+
+### Tests
+
+- Journal mapper/navigation, cash bank controller, cash posting accounts; voucher controllers unchanged green.
+- **641** Flutter tests green. **M9 not declared complete** — Batch 3 print/preview pending.
+
+**Next:** M9 Batch 3 — invoice/voucher print/preview.
+
+---
+
+## Session 2026-06-17 - Phase 5 M9 Batch 2 Invoices UI Complete
+
+Operational invoices UI in `lib/features/invoices/presentation/` wired to M8 RPCs
+(no new SQL). Voucher/journal/cash-bank UI remains deferred.
+
+### Flutter delivery (2A + 2B + 2C)
+
+- **List + detail:** type-aware server status chips, date range, overdue badge,
+  party/journal links, cancel/return CTAs; purchase draft edit/confirm via
+  `/invoices/new/purchase?draftId=`; no print (Batch 3).
+- **Forms:** sales/purchase create, line editor, party/product search, safe draft
+  build, estimate totals with disclaimer when tax rates unavailable.
+- **Return:** posted-original eligibility, returnable lines, estimated credit preview.
+- **l10n:** invoice form/filter/detail keys EN+AR; parity test passes.
+- **Placeholders removed** for all five invoice routes.
+
+### Tests
+
+- Display helpers, list/detail/form controllers, form mapper; fake repo extended.
+- **611** Flutter tests green (Batch 1 inventory tests unchanged).
+
+### Verification
+
+- `flutter analyze` — info only.
+- `git diff --check` — clean.
+
+**Next:** M9 Batch 3 — invoice/voucher print/preview (invoices + vouchers/journal/cash-bank slices closed within Batch 2).
+
+**Batch 2 fix (post-review):** purchase form route/guard split (`create_purchase` vs `?draftId=` + `edit_draft`); confirm gated on create (+ edit when editing draft); invoice list keeps filters visible on empty filtered results.
+
+---
+
+## Session 2026-06-17 - Phase 5 M9 Batch 1 Inventory Accounting UI Complete
+
+Delivered the first M9 slice: operational inventory financial documents UI wired
+to M4.5 RPCs (`065`–`070`). Invoices, vouchers, journal, cash/bank, and party
+financial tabs remain deferred (M9 Batch 2).
+
+### Flutter delivery
+
+- **Data:** `inventory_document_repository.dart`, `inventory_document_rpc_mapper.dart` — all 7 RPCs; pagination via limit+1 (no total).
+- **Domain:** filters, movements, detail/lines/reasons extended; `StockCountDraft` with required gain/loss reason codes.
+- **Controllers:** list (refresh/loadMore), form (4 modes + idempotency), detail (cancel rules).
+- **UI:** list (responsive table/cards, filters, permission-gated create), unified form (opening/stock-in/out/count), immutable detail with journal links and cancel.
+- **Permissions:** `inventory_documents.view/create_opening/create_adjustment/create_stock_count/cancel` in guards and `finance_permissions.dart`.
+- **Validators:** required `notes`; opening stock without reason; stock count gain+loss always; serialized blocked in opening/count; stock-in WAC fallback when `avg_cost <= 0`.
+- **l10n:** «مستندات المخزون المالية»; finance validation/error keys; link from inventory screen.
+- **Placeholders removed** for inventory accounting screens.
+
+### Key UI decisions (Batch 1)
+
+- Opening stock: no reason picker or `reason_code` in payload.
+- Serialized: full stock-in/out; explicit block + message for opening stock and stock count.
+- Cancel: hidden when cancelled or serialized; banner on `correction_document_required`.
+- Product `isSerialized` / `avgCost` via repository/controller only.
+
+### Tests
+
+- Mapper, list/detail controllers, list screen (360×800 AR overflow), route guards.
+- Validators: notes, stock count reasons, WAC fallback, serialized block.
+- `finance_exception` maps `insufficient_stock` and `correction_document_required`.
+
+### Verification
+
+- `flutter analyze` — info only (deprecated `DropdownButtonFormField.value`).
+- `flutter test` — **590** tests green.
+- `git diff --check` — clean.
+
+**Next:** M9 Batch 2 — invoice/voucher/journal/cash-bank UI; serialized opening/count when scope allows.
 
 ---
 
@@ -991,8 +1217,13 @@ PowerShell note: pipe SQL tests with `Get-Content -Raw … | docker exec -i supa
 - **Phase 5 M4.5 complete** — inventory accounting and opening stock through migrations [`065`](supabase/migrations/065_phase_5_inventory_journal_source_enum.sql)–[`070`](supabase/migrations/070_phase_5_inventory_confirm_timestamps.sql); 25-case SQL suite in Phase C.5.
 - **Phase 5 M5–M7.5 complete** — purchase/sales invoice RPCs, voucher allocation, returns/credits through migrations [`060`](supabase/migrations/060_phase_5_purchase_invoice_rpc.sql)–[`064`](supabase/migrations/064_phase_5_return_invoice_rpc.sql).
 - **Phase 5 M8 complete** — Dart finance application layer, guarded routes, localization, and tests in commit [`bd3c36f`](bd3c36f); 572 Flutter tests green.
-- **Next:** Phase 5 M9 — Finance UI and Cross-Module Integration; wire
-  `lib/features/inventory_accounting/` to M4.5 RPCs.
+- **Phase 5 M9 Batch 1 complete** — inventory financial documents UI (`lib/features/inventory_accounting/`) wired to M4.5 RPCs; list/form/detail screens; **590** Flutter tests green.
+- **Phase 5 M9 Batch 2 (invoices) complete** — list/form/detail/return screens in `lib/features/invoices/presentation/`; **611** Flutter tests green.
+- **Phase 5 M9 Batch 3 complete** — invoice/receipt voucher print/preview from detail screens; **665** Flutter tests green.
+- **Phase 5 M9 Final Closure delivered** — Customer 360 tabs, supplier detail, product/unit links, cash-bank CSV (loaded rows); **672** Flutter tests green.
+- **Phase 5 M9 desktop finance UI/workflow closure accepted** — invoice/voucher workflow fixes and DB migrations `071`-`075`; Codex verification: `dart analyze .` no errors, `git diff --check` clean, DB script syntax clean.
+- **M9 desktop UI/workflow scope complete. Backend/template/mobile/report/edit-delete gaps moved to post-M9/M10.**
+- **Blocked/deferred safely + documented:** advanced edit/delete permissions, mobile redesign, voucher/report/PDF polish, payment voucher print, serialized opening/count, supplier statement, cash-bank PDF.
 
 ---
 

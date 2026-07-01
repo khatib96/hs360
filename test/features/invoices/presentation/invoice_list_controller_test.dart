@@ -64,6 +64,39 @@ void main() {
       expect(repo.lastSalesFilters, isNotNull);
     });
 
+    test('default list aggregates all permitted invoice types', () async {
+      final repo = FakeInvoiceRepository(
+        salesInvoices: [sampleInvoiceSummary(id: 'si-1')],
+        purchaseInvoices: [
+          sampleInvoiceSummary(id: 'pi-1', type: InvoiceType.purchase),
+        ],
+        returnInvoices: [
+          sampleInvoiceSummary(id: 'sr-1', type: InvoiceType.salesReturn),
+        ],
+      );
+      final container = _container(
+        repo,
+        permissions: {
+          'invoices.view_sales',
+          'invoices.view_purchase',
+          'invoices.view_returns',
+        },
+      );
+      addTearDown(container.dispose);
+
+      await container.read(invoiceListControllerProvider.notifier).refresh();
+
+      final state = container.read(invoiceListControllerProvider);
+      expect(state.filters.type, isNull);
+      expect(
+        state.invoices.map((i) => i.id),
+        containsAll(['si-1', 'pi-1', 'sr-1']),
+      );
+      expect(repo.lastSalesFilters, isNotNull);
+      expect(repo.lastPurchaseFilters, isNotNull);
+      expect(repo.lastReturnFilters, isNotNull);
+    });
+
     test('fetch error sets error code', () async {
       final repo = FakeInvoiceRepository(
         fetchError: const FinanceException(code: FinanceException.unknown),
@@ -113,6 +146,21 @@ void main() {
         container.read(invoiceListControllerProvider).invoices.first.type,
         InvoiceType.purchase,
       );
+    });
+
+    test('setDateFrom updates filters and refreshes', () async {
+      final repo = FakeInvoiceRepository(
+        salesInvoices: [sampleInvoiceSummary()],
+      );
+      final container = _container(repo);
+      addTearDown(container.dispose);
+
+      final controller = container.read(invoiceListControllerProvider.notifier);
+      await controller.refresh();
+      controller.setDateFrom(DateTime(2026, 1, 1));
+      await Future<void>.value();
+
+      expect(repo.lastSalesFilters?.dateRange.from, DateTime(2026, 1, 1));
     });
   });
 }

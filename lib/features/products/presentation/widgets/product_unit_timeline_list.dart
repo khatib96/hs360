@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
 import '../../domain/unit_timeline_event.dart';
+import '../unit_timeline_navigation.dart';
 
 class ProductUnitTimelineList extends StatelessWidget {
   const ProductUnitTimelineList({
@@ -48,6 +50,9 @@ class ProductUnitTimelineList extends StatelessWidget {
             ),
             isThreeLine:
                 events[i].notes != null && events[i].notes!.trim().isNotEmpty,
+            onTap: routeForUnitTimelineEvent(events[i]) == null
+                ? null
+                : () => context.go(routeForUnitTimelineEvent(events[i])!),
           ),
         ],
       ],

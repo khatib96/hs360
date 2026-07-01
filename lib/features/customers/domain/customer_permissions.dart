@@ -28,6 +28,7 @@ bool canViewCustomerLedger(AppSession session) =>
 bool canViewContracts(AppSession session) =>
     session.isManager || session.permissions.can('contracts.view');
 
-bool canViewInvoices(AppSession session) => finance.canViewAnyInvoices(session);
+bool canViewCustomerSalesInvoices(AppSession session) =>
+    finance.canViewSalesInvoices(session);
 
 bool canViewVouchers(AppSession session) => finance.canViewVouchers(session);

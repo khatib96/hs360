@@ -7,7 +7,7 @@ part of 'journal_list_controller.dart';
 // **************************************************************************
 
 String _$journalListControllerHash() =>
-    r'298b523853e5cd965d6dba277d3178245fb40c74';
+    r'1c3c8174074d0941cb7e78c65ebeb715076b2179';
 
 /// See also [JournalListController].
 @ProviderFor(JournalListController)

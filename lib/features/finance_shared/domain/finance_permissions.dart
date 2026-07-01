@@ -72,4 +72,16 @@ bool canEditTaxSettings(AppSession session) =>
     _can(session, 'settings.tax.edit');
 
 bool canViewInventoryDocuments(AppSession session) =>
-    _can(session, 'inventory.view');
+    _can(session, 'inventory_documents.view');
+
+bool canCreateOpeningStock(AppSession session) =>
+    _can(session, 'inventory_documents.create_opening');
+
+bool canCreateInventoryAdjustment(AppSession session) =>
+    _can(session, 'inventory_documents.create_adjustment');
+
+bool canCreateStockCount(AppSession session) =>
+    _can(session, 'inventory_documents.create_stock_count');
+
+bool canCancelInventoryDocument(AppSession session) =>
+    _can(session, 'inventory_documents.cancel');

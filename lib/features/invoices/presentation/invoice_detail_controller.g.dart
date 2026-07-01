@@ -7,7 +7,7 @@ part of 'invoice_detail_controller.dart';
 // **************************************************************************
 
 String _$invoiceDetailControllerHash() =>
-    r'284f68ce7768b2890a20e39e9129b179b70eebc5';
+    r'e80812e74742d2c8cc336ccc334b34509f035339';
 
 /// Copied from Dart SDK
 class _SystemHash {

@@ -29,6 +29,19 @@ void main() {
       );
     });
 
+    test('maps inventory accounting errors', () {
+      expect(
+        FinanceException.fromSupabase(Exception('insufficient_stock')).code,
+        FinanceException.insufficientStock,
+      );
+      expect(
+        FinanceException.fromSupabase(
+          Exception('correction_document_required'),
+        ).code,
+        FinanceException.correctionDocumentRequired,
+      );
+    });
+
     test('maps tax errors and validation_failed', () {
       expect(
         FinanceException.fromSupabase(Exception('tax_rate_not_found')).code,
@@ -43,6 +56,29 @@ void main() {
         FinanceException.validationFailed,
       );
     });
+
+    test('maps missing cash invoice RPC to backend migration required', () {
+      final error = FinanceException.fromSupabase(
+        const PostgrestException(
+          message:
+              'could not find the function public.record_cash_sales_invoice(p_data, p_idempotency_key) in the schema cache',
+        ),
+      );
+      expect(error.code, FinanceException.backendMigrationRequired);
+    });
+
+    test(
+      'maps stale cash invoice conflict target to backend migration required',
+      () {
+        final error = FinanceException.fromSupabase(
+          const PostgrestException(
+            message:
+                'there is no unique or exclusion constraint matching the on conflict specification',
+          ),
+        );
+        expect(error.code, FinanceException.backendMigrationRequired);
+      },
+    );
 
     test('returns same instance when already FinanceException', () {
       const original = FinanceException(code: FinanceException.tenantNotFound);

@@ -11,6 +11,7 @@ import 'package:hs360/features/invoices/domain/invoice_status.dart';
 import 'package:hs360/features/invoices/domain/invoice_summary.dart';
 import 'package:hs360/features/invoices/domain/invoice_type.dart';
 import 'package:hs360/features/invoices/domain/return_invoice_draft.dart';
+import 'package:hs360/features/invoices/domain/returnable_invoice_line.dart';
 
 class FakeInvoiceRepository extends InvoiceRepository {
   FakeInvoiceRepository({
@@ -39,6 +40,10 @@ class FakeInvoiceRepository extends InvoiceRepository {
   ReturnInvoiceDraft? lastReturnDraft;
   String? lastCancelledId;
   String? lastCancelReason;
+  String? lastSavedDraftId;
+  InvoiceFormState? lastSavedDraftForm;
+  String? lastDiscardedDraftId;
+  List<ReturnableInvoiceLine> returnableLines = const [];
 
   @override
   Future<List<InvoiceSummary>> listSalesInvoices(
@@ -102,6 +107,67 @@ class FakeInvoiceRepository extends InvoiceRepository {
   }
 
   @override
+  Future<String> saveInvoiceDraft(
+    AppSession session,
+    InvoiceFormState form,
+  ) async {
+    lastSavedDraftForm = form;
+    lastSavedDraftId = form.draft.invoiceId ?? 'draft-new';
+    return lastSavedDraftId!;
+  }
+
+  @override
+  Future<String> discardInvoiceDraft(
+    AppSession session,
+    String invoiceId,
+  ) async {
+    lastDiscardedDraftId = invoiceId;
+    return invoiceId;
+  }
+
+  @override
+  Future<String> recordPurchaseInvoice(
+    AppSession session,
+    InvoiceFormState form,
+    String idempotencyKey,
+  ) async {
+    lastRecordForm = form;
+    lastRecordedIdempotencyKey = idempotencyKey;
+    return form.draft.invoiceId ?? 'pi-new';
+  }
+
+  @override
+  Future<List<ReturnableInvoiceLine>> listReturnableInvoiceLines(
+    AppSession session,
+    String originalInvoiceId,
+  ) async {
+    _throwIfFetchError();
+    return returnableLines;
+  }
+
+  @override
+  Future<String> recordSalesReturn(
+    AppSession session,
+    ReturnInvoiceDraft draft,
+    String idempotencyKey,
+  ) async {
+    lastReturnDraft = draft;
+    lastRecordedIdempotencyKey = idempotencyKey;
+    return 'sr-new';
+  }
+
+  @override
+  Future<String> recordPurchaseReturn(
+    AppSession session,
+    ReturnInvoiceDraft draft,
+    String idempotencyKey,
+  ) async {
+    lastReturnDraft = draft;
+    lastRecordedIdempotencyKey = idempotencyKey;
+    return 'pr-new';
+  }
+
+  @override
   Future<String> cancelInvoice(
     AppSession session,
     String invoiceId,
@@ -156,12 +222,13 @@ InvoiceSummary sampleInvoiceSummary({
 InvoiceDetail sampleInvoiceDetail({
   String id = 'inv-1',
   InvoiceType type = InvoiceType.sales,
+  InvoiceStatus status = InvoiceStatus.confirmed,
 }) {
   return InvoiceDetail(
     id: id,
     invoiceNumber: 'SI-001',
     type: type,
-    status: InvoiceStatus.confirmed,
+    status: status,
     date: DateTime(2026, 6, 1),
     subtotal: Decimal.parse('100.000'),
     discountAmount: Decimal.zero,

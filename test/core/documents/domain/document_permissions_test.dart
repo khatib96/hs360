@@ -22,6 +22,20 @@ void main() {
   }
 
   group('canPreviewDocument', () {
+    test('manager previews finance documents without print permission', () {
+      final mgr = session(manager: true);
+      for (final kind in [
+        DocumentKind.salesInvoice,
+        DocumentKind.purchaseInvoice,
+        DocumentKind.receiptVoucher,
+      ]) {
+        expect(canPreviewDocument(mgr, kind), isTrue, reason: kind.name);
+        expect(canExportDocument(mgr, kind), isTrue, reason: kind.name);
+      }
+      expect(canPreviewDocument(mgr, DocumentKind.paymentVoucher), isFalse);
+      expect(canExportDocument(mgr, DocumentKind.paymentVoucher), isFalse);
+    });
+
     test('manager can preview all except payment_voucher', () {
       final s = session(manager: true);
       for (final kind in DocumentKind.values) {
@@ -43,42 +57,58 @@ void main() {
       );
     });
 
-    test('sales requires view_sales or legacy view', () {
+    test('sales requires view and print', () {
       expect(canPreviewDocument(session(), DocumentKind.salesInvoice), isFalse);
       expect(
         canPreviewDocument(
           session(permissions: {'invoices.view_sales'}),
           DocumentKind.salesInvoice,
         ),
+        isFalse,
+      );
+      expect(
+        canPreviewDocument(
+          session(
+            permissions: {'invoices.view_sales', 'invoices.print'},
+          ),
+          DocumentKind.salesInvoice,
+        ),
         isTrue,
       );
       expect(
         canPreviewDocument(
-          session(permissions: {'invoices.view'}),
+          session(permissions: {'invoices.view', 'invoices.print'}),
           DocumentKind.salesInvoice,
         ),
         isTrue,
       );
     });
 
-    test('purchase requires view_purchase or legacy view', () {
+    test('purchase requires view and print', () {
       expect(
         canPreviewDocument(session(), DocumentKind.purchaseInvoice),
         isFalse,
       );
       expect(
         canPreviewDocument(
-          session(permissions: {'invoices.view_purchase'}),
+          session(permissions: {'invoices.view_purchase', 'invoices.print'}),
           DocumentKind.purchaseInvoice,
         ),
         isTrue,
       );
     });
 
-    test('receipt requires vouchers.view', () {
+    test('receipt requires vouchers.view and vouchers.print', () {
       expect(
         canPreviewDocument(
           session(permissions: {'vouchers.view'}),
+          DocumentKind.receiptVoucher,
+        ),
+        isFalse,
+      );
+      expect(
+        canPreviewDocument(
+          session(permissions: {'vouchers.view', 'vouchers.print'}),
           DocumentKind.receiptVoucher,
         ),
         isTrue,

@@ -8,28 +8,29 @@ class OpeningStockLineInput {
     required this.productId,
     required this.qty,
     this.unitCost,
+    this.isSerialized = false,
   });
 
   final String productId;
   final Decimal qty;
   final Decimal? unitCost;
+  final bool isSerialized;
 }
 
 class OpeningStockInput {
   const OpeningStockInput({
     required this.warehouseId,
     required this.date,
+    required this.notes,
     required this.lines,
-    this.reasonCode,
   });
 
   final String warehouseId;
   final DateTime date;
-  final String? reasonCode;
+  final String notes;
   final List<OpeningStockLineInput> lines;
 }
 
-/// Pre-M4.5 client check for opening stock documents.
 class OpeningStockValidator {
   const OpeningStockValidator();
 
@@ -39,6 +40,9 @@ class OpeningStockValidator {
     if (input.warehouseId.trim().isEmpty) {
       codes.add(FinanceException.validationWarehouseRequired);
     }
+    if (input.notes.trim().isEmpty) {
+      codes.add(FinanceException.validationNotesRequired);
+    }
     if (input.lines.isEmpty) {
       codes.add(FinanceException.validationLinesRequired);
     }
@@ -46,6 +50,9 @@ class OpeningStockValidator {
     for (final line in input.lines) {
       if (line.productId.trim().isEmpty) {
         codes.add(FinanceException.validationProductRequired);
+      }
+      if (line.isSerialized) {
+        codes.add(FinanceException.validationSerializedNotSupported);
       }
       if (line.qty <= Decimal.zero) {
         codes.add(FinanceException.validationLineQtyInvalid);

@@ -15,6 +15,13 @@ String journalSourceLabel(AppLocalizations l10n, JournalSource source) {
     JournalSource.openingBalance => l10n.journalSourceOpeningBalance,
     JournalSource.inventoryAdjustment => l10n.journalSourceInventoryAdjustment,
     JournalSource.salaryPayment => l10n.journalSourceSalaryPayment,
+    JournalSource.salesInvoiceReversal => l10n.journalSourceSalesInvoiceReversal,
+    JournalSource.purchaseInvoiceReversal =>
+      l10n.journalSourcePurchaseInvoiceReversal,
+    JournalSource.receiptVoucherReversal =>
+      l10n.journalSourceReceiptVoucherReversal,
+    JournalSource.paymentVoucherReversal =>
+      l10n.journalSourcePaymentVoucherReversal,
     JournalSource.salesReturn => l10n.journalSourceSalesReturn,
     JournalSource.purchaseReturn => l10n.journalSourcePurchaseReturn,
     JournalSource.salesReturnReversal => l10n.journalSourceSalesReturnReversal,
@@ -24,5 +31,11 @@ String journalSourceLabel(AppLocalizations l10n, JournalSource source) {
       l10n.journalSourceCustomerRefundVoucher,
     JournalSource.supplierRefundReceipt =>
       l10n.journalSourceSupplierRefundReceipt,
+    JournalSource.openingStock => l10n.journalSourceOpeningStock,
+    JournalSource.inventoryStockIn => l10n.journalSourceInventoryStockIn,
+    JournalSource.inventoryStockOut => l10n.journalSourceInventoryStockOut,
+    JournalSource.stockCount => l10n.journalSourceStockCount,
+    JournalSource.inventoryDocumentReversal =>
+      l10n.journalSourceInventoryDocumentReversal,
   };
 }

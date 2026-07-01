@@ -81,6 +81,24 @@ void main() {
     expect(find.byKey(const Key('document-preview-denied')), findsOneWidget);
   });
 
+  testWidgets('sales invoice without print shows permission denied', (
+    tester,
+  ) async {
+    const salesArgs = DocumentPreviewArgs(
+      kind: DocumentKind.salesInvoice,
+      entityId: 'inv-1',
+    );
+    await tester.pumpWidget(
+      buildApp(
+        session: _session(permissions: {'invoices.view_sales'}),
+        previewState: const DocumentPreviewState(permissionDenied: true),
+        args: salesArgs,
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('document-preview-denied')), findsOneWidget);
+  });
+
   testWidgets('renders pdf preview when data is ready', (tester) async {
     await tester.pumpWidget(
       buildApp(

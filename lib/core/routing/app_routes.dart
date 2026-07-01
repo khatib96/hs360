@@ -28,6 +28,8 @@ abstract final class AppRoutes {
   static const invoices = '/invoices';
   static const invoicesNewSales = '/invoices/new/sales';
   static const invoicesNewPurchase = '/invoices/new/purchase';
+  static const invoicesNewSalesReturn = '/invoices/new/sales-return';
+  static const invoicesNewPurchaseReturn = '/invoices/new/purchase-return';
   static const invoicesDetail = '/invoices/:id';
   static const invoiceReturn = '/invoices/:id/return';
   static const vouchers = '/vouchers';
@@ -72,6 +74,8 @@ abstract final class AppRoutes {
   static const invoicesName = 'invoices';
   static const invoicesNewSalesName = 'invoicesNewSales';
   static const invoicesNewPurchaseName = 'invoicesNewPurchase';
+  static const invoicesNewSalesReturnName = 'invoicesNewSalesReturn';
+  static const invoicesNewPurchaseReturnName = 'invoicesNewPurchaseReturn';
   static const invoicesDetailName = 'invoicesDetail';
   static const invoiceReturnName = 'invoiceReturn';
   static const vouchersName = 'vouchers';
@@ -127,10 +131,12 @@ abstract final class AppRoutes {
     required String entityId,
     DateTime? from,
     DateTime? to,
+    InvoiceType? invoiceType,
   }) {
     final params = <String, String>{'kind': kind, 'entityId': entityId};
     if (from != null) params['from'] = _dateOnly(from);
     if (to != null) params['to'] = _dateOnly(to);
+    if (invoiceType != null) params['invoiceType'] = invoiceType.toDb();
     return Uri(path: documentPreview, queryParameters: params).toString();
   }
 

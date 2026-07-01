@@ -6,12 +6,16 @@ bool canPreviewDocument(AppSession session, DocumentKind kind) {
   if (session.isManager) return true;
   return switch (kind) {
     DocumentKind.salesInvoice =>
-      session.permissions.can('invoices.view_sales') ||
-          session.permissions.can('invoices.view'),
+      (session.permissions.can('invoices.view_sales') ||
+              session.permissions.can('invoices.view')) &&
+          session.permissions.can('invoices.print'),
     DocumentKind.purchaseInvoice =>
-      session.permissions.can('invoices.view_purchase') ||
-          session.permissions.can('invoices.view'),
-    DocumentKind.receiptVoucher => session.permissions.can('vouchers.view'),
+      (session.permissions.can('invoices.view_purchase') ||
+              session.permissions.can('invoices.view')) &&
+          session.permissions.can('invoices.print'),
+    DocumentKind.receiptVoucher =>
+      session.permissions.can('vouchers.view') &&
+      session.permissions.can('vouchers.print'),
     DocumentKind.customerStatement => session.permissions.can(
       'customers.view_ledger',
     ),
@@ -22,12 +26,12 @@ bool canPreviewDocument(AppSession session, DocumentKind kind) {
 
 bool canExportDocument(AppSession session, DocumentKind kind) {
   if (kind == DocumentKind.paymentVoucher) return false;
-  if (!canPreviewDocument(session, kind)) return false;
   if (session.isManager) return true;
+  if (!canPreviewDocument(session, kind)) return false;
   return switch (kind) {
     DocumentKind.salesInvoice ||
-    DocumentKind.purchaseInvoice => session.permissions.can('invoices.print'),
-    DocumentKind.receiptVoucher => session.permissions.can('vouchers.print'),
+    DocumentKind.purchaseInvoice ||
+    DocumentKind.receiptVoucher => true,
     DocumentKind.customerStatement => true,
     DocumentKind.assetTagLabel => session.permissions.can(
       'product_units.print_label',
