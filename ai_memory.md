@@ -1,6 +1,43 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-01 (Session: Phase 5 M9 Closure Audit — **M9 desktop finance UI/workflow scope closed; advanced edit/delete, mobile redesign, and report/PDF polish deferred**).
+> Updated 2026-07-05 (Session: Phase 5 M10 Closure — **Phase 5 core verification closed; move to Phase 6 next**).
+
+---
+
+## Session 2026-07-05 - Phase 5 M10 Closure
+
+**Decision:** Phase 5 is closed for the production-safe accounting-cycle baseline. M10 verification passed for SQL regression, Dart analysis, Flutter unit tests, and the local Supabase seeded-template integration gate. Remaining integration exceptions are platform/runner constraints, not Phase 5 finance defects.
+
+### Delivered
+
+- Added migration `076_phase_5_voucher_protected_account_guard.sql`.
+- The migration preserves the M9 voucher source-account generalization while rejecting direct voucher postings against protected accounts: cash/bank as direct payment destinations, AR/AP control accounts, inventory, tax-reserved accounts, inactive/entity-linked accounts, and same source/counter-account postings.
+- This closes the M7 voucher regression discovered during M10: direct payment to the inventory control account was accepted after migration `075`.
+
+### Verification
+
+- `dart analyze .` passed with **No issues found**.
+- `flutter test` passed with **702 tests**.
+- `bash scripts/test/run_sql_suites.sh` passed with **All SQL suite phases passed** after Docker was started and migration `076` was applied.
+- `integration_test/documents/supabase_seeded_templates_test.dart -d macos` passed after providing `SUPABASE_URL` and `SUPABASE_ANON_KEY`.
+- `git diff --check` passed clean.
+
+### Documented integration exceptions
+
+- `integration_test/documents/pdf_golden_test.dart` is intentionally Windows/Android-scoped in code (`golden tests: windows or android only`), so macOS failure is not a Phase 5 blocker.
+- `integration_test/documents/statement_perf_test.dart` is a benchmark handshake test. It must be driven through `test_driver/benchmark_driver.dart` / the Windows/Android benchmark wrapper, not directly through `flutter test` on macOS.
+- macOS `Failed to foreground app; open returned 1` warnings did not block the seeded-template integration test after configuration.
+
+### Post-Phase 5 backlog
+
+- Payment-voucher print template support.
+- Cash-bank PDF/report polish.
+- Supplier statement RPC/UI.
+- Serialized opening/count enablement beyond the current safe backend/UI guard.
+- Mobile finance redesign.
+- Advanced edit/delete/cancel-policy UX for posted finance documents.
+
+**Next:** Start Phase 6 contracts on top of the closed Phase 5 accounting baseline.
 
 ---
 

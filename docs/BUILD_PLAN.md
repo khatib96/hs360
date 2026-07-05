@@ -17,7 +17,7 @@
 | **2 - Authentication & Routing** | Done | not recorded |
 | **3 - Products & Inventory** | Done | 2026-05-30 |
 | **4 - Customers, Suppliers & CoA** | Engineering complete | 2026-06-06 |
-| **5 - Invoices, Vouchers & Journal** | In progress | M1–M8 complete; M4.5 backend complete; M9 next |
+| **5 - Invoices, Vouchers & Journal** | Done | M1–M10 closed through migration `076`; Phase 6 next |
 | **6 - Contracts** | Not started | - |
 | **7 - Calendar** | Not started | - |
 | **8 - Mobile Field Ops** | Not started | - |
@@ -391,8 +391,9 @@ Acceptance:
 
 ## Phase 5 — Invoices, Vouchers & Journal (≈ 10-14 weeks)
 
-**Status:** [~] In progress. M1–M8 and M4.5 backend are complete; M9 Finance UI
-is next.
+**Status:** [x] Complete. M1–M10 are closed for the core Phase 5 accounting
+baseline through migration `076` (2026-07-05). Post-Phase 5 polish remains
+tracked separately and is not a Phase 5 closure blocker.
 The detailed M0-M10 execution plan with inserted M4.5/M7.5 milestones in
 `PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md` supersedes the older task ordering
 below where they conflict. In particular, quotations and manual journal
@@ -501,8 +502,8 @@ Acceptance:
 
 **5.0B Inventory Accounting & Opening Stock Foundation**
 
-**Status:** Complete (migrations `065`–`070`, 2026-06-17). Required before Phase 5
-M10 close; backend done — Flutter repository/UI remains M9.
+**Status:** Complete (migrations `065`–`070`, 2026-06-17). Backend and Flutter
+repository/UI were verified before Phase 5 close.
 
 Delivered:
 - Financial inventory documents: opening stock, stock-in, stock-out, stock count.

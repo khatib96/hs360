@@ -1569,8 +1569,8 @@ Full implementations in `BUILD_PLAN.md`. Names and signatures:
 052_phase_4_closure_hardening.sql -- M8 RPC ACLs and tenant-safe CoA/customer/supplier FKs
 053-059_phase_5_*.sql -- implemented Phase 5 M1-M4 foundation
 060_phase_5_purchase_invoice_rpc.sql -- M5 purchase draft/confirm, units, stock, WAC, A/P journal
-061_phase_5_sales_invoice_rpc.sql -- planned M6 sales/cancellation engine
-062_phase_5_voucher_allocation_rpc.sql -- planned M7 vouchers/allocations
+061_phase_5_sales_invoice_rpc.sql -- M6 sales/cancellation engine
+062_phase_5_voucher_allocation_rpc.sql -- M7 vouchers/allocations
 063_phase_5_return_journal_source_enum.sql -- M7.5 return journal sources
 064_phase_5_return_invoice_rpc.sql -- M7.5 returns/credits
 065_phase_5_inventory_journal_source_enum.sql -- M4.5 inventory journal sources
@@ -1579,6 +1579,12 @@ Full implementations in `BUILD_PLAN.md`. Names and signatures:
 068_phase_5_inventory_accounting_rpc.sql -- M4.5 public RPCs and adjustment wrapper
 069_phase_5_inventory_cancel_idempotency.sql -- M4.5 cancel idempotency and serialized cancel guard
 070_phase_5_inventory_confirm_timestamps.sql -- M4.5 monotonic confirm timestamps for safe cancel
+071_phase_5_cash_sales_direct_returns.sql -- M9 cash sales and direct sales/purchase returns
+072_phase_5_cash_sales_conflict_target_fix.sql -- M9 cash-sales idempotency conflict-target compatibility
+073_phase_5_invoice_functional_closure.sql -- M9 invoice workflow closure helpers and guards
+074_phase_5_direct_account_receipt_vouchers.sql -- M9 direct-account receipt vouchers
+075_phase_5_voucher_source_account_generalization.sql -- M9 generalized voucher source accounts
+076_phase_5_voucher_protected_account_guard.sql -- M10 protected-account guard for direct vouchers
 ```
 
 Add FKs that were forward-references (e.g. `product_units.current_contract_id -> contracts.id`, `product_units.current_service_location_id -> customer_service_locations.id`) at the end of each table's migration once both exist, or in the later feature migration that introduces the referenced table.

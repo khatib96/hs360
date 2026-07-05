@@ -99,9 +99,10 @@ Each tenant can override branding via build config — see `DEPLOYMENT.md` secti
 
 ## Status
 
-**Phase 5 is in progress.** M1–M8 and M4.5 backend are complete through migration
-`070` (2026-06-17). Next: Phase 5 M9 Finance UI and Cross-Module Integration
-(wire `lib/features/inventory_accounting/` to M4.5 RPCs).
+**Phase 5 is closed for the core accounting baseline.** M1–M10 are complete
+through migration `076` (2026-07-05). SQL regression, Dart analysis, Flutter
+unit tests, and the local Supabase seeded-template integration gate passed.
+Next: Phase 6 Contracts.
 
 ---
 

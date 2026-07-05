@@ -10,6 +10,11 @@
 > **M9 Batch 1 (inventory financial documents UI) is complete** (2026-06-17).
 > **M9 Batch 2 remainder (vouchers/journal/cash-bank UI) is complete** (2026-06-17).
 > **M9 desktop finance UI/workflow scope complete. Backend/template/mobile/report/edit-delete gaps moved to post-M9/M10.** (audited 2026-07-01).
+> **M10 core verification and Phase 5 close complete** through migration `076`
+> (2026-07-05). SQL regression, Dart analysis, Flutter unit tests, and the
+> configured local Supabase seeded-template integration gate passed. macOS
+> PDF-golden and statement benchmark gaps are documented platform/runner
+> exceptions, not Phase 5 accounting blockers.
 >
 > Canonical sources: `CANONICAL_DECISIONS.md`, `PAYMENT_SYSTEM.md`,
 > `DATABASE_SCHEMA.md`, `MVP_SCOPE.md`, and
@@ -579,7 +584,7 @@ zeroed at year end.
 | M7.5 | Sales/Purchase Return and Credit Engine | Partial linked returns, credits, refunds, and snapshot reversals |
 | M8 | Dart Finance Layer, Routes, and Localization | Testable application layer and guarded navigation |
 | M9 | Finance UI and Cross-Module Integration | **M9 desktop finance UI/workflow scope complete. Backend/template/mobile/report/edit-delete gaps moved to post-M9/M10.** — Batches 1–3 + Final Closure + live UX corrections (inventory docs, invoices/vouchers/journal/cash-bank UI, print/preview, Customer 360, supplier detail, product/unit links, cash-bank CSV, invoice/voucher workflow fixes); deferred safely: advanced edit/delete, mobile redesign, voucher/report/PDF polish, payment voucher print, serialized opening/count, supplier statement, cash-bank PDF |
-| M10 | Hardening, Verification, and Phase Close | Proven accounting cycle and documented closure |
+| M10 | Hardening, Verification, and Phase Close | **Complete (2026-07-05).** Migration `076` protected direct voucher postings against control/inventory/tax accounts; SQL suites passed, `dart analyze .` passed, `flutter test` passed with 702 tests, local Supabase seeded-template integration passed; macOS-only PDF golden/benchmark exceptions documented |
 
 ---
 
@@ -2821,6 +2826,27 @@ screen.
 
 ## M10 - Hardening, Verification, and Phase Close
 
+**Status:** Complete for Phase 5 core closure (2026-07-05).
+
+### Closure Result
+
+- Added `076_phase_5_voucher_protected_account_guard.sql` after M10 regression
+  found that migration `075` allowed direct payment vouchers to post against
+  the inventory control account.
+- `bash scripts/test/run_sql_suites.sh` passed with all SQL phases green after
+  Docker was started and migration `076` was applied locally.
+- `dart analyze .` passed with no issues.
+- `flutter test` passed with 702 tests.
+- `integration_test/documents/supabase_seeded_templates_test.dart -d macos`
+  passed when run with local Supabase `SUPABASE_URL` and `SUPABASE_ANON_KEY`.
+- `integration_test/documents/pdf_golden_test.dart` remains Windows/Android
+  scoped by design.
+- `integration_test/documents/statement_perf_test.dart` is a benchmark
+  handshake and must be run through `test_driver/benchmark_driver.dart` /
+  the Windows/Android benchmark wrapper, not directly through `flutter test`
+  on macOS.
+- `git diff --check` passed clean.
+
 ### Goal
 
 Prove that Phase 5 is financially correct, secure, performant, and ready for
@@ -3014,9 +3040,16 @@ Update:
 | `068_phase_5_inventory_accounting_rpc.sql` | M4.5 public RPCs and legacy adjustment wrapper |
 | `069_phase_5_inventory_cancel_idempotency.sql` | M4.5 cancel idempotency replay and serialized cancel guard |
 | `070_phase_5_inventory_confirm_timestamps.sql` | M4.5 monotonic document timestamps for safe-cancel ordering |
+| `071_phase_5_cash_sales_direct_returns.sql` | M9 cash sales and direct sales/purchase return support |
+| `072_phase_5_cash_sales_conflict_target_fix.sql` | M9 cash-sales idempotency conflict-target compatibility |
+| `073_phase_5_invoice_functional_closure.sql` | M9 invoice workflow closure helpers and guards |
+| `074_phase_5_direct_account_receipt_vouchers.sql` | M9 direct-account receipt vouchers |
+| `075_phase_5_voucher_source_account_generalization.sql` | M9 generalized voucher source accounts |
+| `076_phase_5_voucher_protected_account_guard.sql` | M10 protected-account guard for direct vouchers |
 
-Migration names are planned, not reserved. If implementation uncovers a reason
-to split a migration, preserve dependency order and document the change.
+Migration names are historical through `076`. If future implementation uncovers
+a reason to split a migration, preserve dependency order and document the
+change in the next phase plan.
 
 ---
 
@@ -3239,11 +3272,11 @@ be removed to meet the older three-week estimate.
 
 ## Starting Point for the Next Coding Session
 
-**M9 UI scope complete. Backend/template gaps moved to M10.**
+**Phase 5 is closed for the core accounting baseline.**
 
-Start with **M10 — Hardening, Verification, and Phase Close** (or scoped M10 backend items):
-
-1. preserve the passing M1–M7.5 + M4.5 + M9 UI baseline through migration `070`;
-2. prioritize backend/template gaps: `get_supplier_statement`, payment voucher print template, cash-bank PDF, serialized opening/count SQL/tests;
-3. rerun `./scripts/test/run_sql_suites.sh` twice without reset;
-4. run Flutter analysis/tests and document the M10 baseline.
+Start **Phase 6 — Contracts** on top of the verified Phase 5 finance, inventory,
+voucher, return, document-template, and journal baseline. Keep the following as
+post-Phase 5 backlog unless Phase 6 explicitly needs them: payment-voucher print
+template support, cash-bank PDF/report polish, supplier statement RPC/UI,
+serialized opening/count enablement beyond the current safe guard, mobile
+finance redesign, and advanced edit/delete/cancel-policy UX.

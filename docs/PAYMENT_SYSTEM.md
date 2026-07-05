@@ -219,6 +219,11 @@ journal_entry:
   Cr  Bank — Main                    100.000
 ```
 
+M10 hardening keeps direct vouchers flexible for ordinary posting-leaf accounts,
+but rejects protected accounts as direct voucher targets: cash/bank as payment
+destinations, A/R and A/P control accounts, inventory, tax-reserved accounts,
+inactive/entity-linked accounts, and the same source/counter account.
+
 ### 3.5 Voucher PDF (Receipt)
 
 Same JSON template engine as invoice PDF. Path for archived PDFs: `{tenant_id}/vouchers/{voucher_number}.pdf`.

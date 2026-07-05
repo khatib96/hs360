@@ -7,7 +7,7 @@ part of 'invoice_list_controller.dart';
 // **************************************************************************
 
 String _$invoiceListControllerHash() =>
-    r'113f09fc6f83125f029ee3dbad910fd724f57b9e';
+    r'd02f892703aeb026e8af3c89ebb1c4892ee23c10';
 
 /// See also [InvoiceListController].
 @ProviderFor(InvoiceListController)

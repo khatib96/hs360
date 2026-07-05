@@ -158,6 +158,11 @@ The full catalog includes permissions for:
 - `messaging` (whatsapp, email)
 - `settings` (company, users, currencies, templates, etc.)
 
+Phase 5 M10 note: voucher create permissions allow the workflow, but the
+posting RPCs still reject protected direct-voucher accounts such as cash/bank
+as payment destinations, A/R, A/P, inventory, tax-reserved accounts,
+inactive/entity-linked accounts, and same source/counter-account postings.
+
 Each module has its own set of actions and (where relevant) field-level permissions.
 
 ---
