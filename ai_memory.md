@@ -1,6 +1,46 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-05 (Session: Phase 5 M10 Closure — **Phase 5 core verification closed; move to Phase 6 next**).
+> Updated 2026-07-05 (Session: Phase 6 M0/M0.5 — **contract decisions and rollback baseline recorded**).
+
+---
+
+## Session 2026-07-05 - Phase 6 M0/M0.5 Contracts Baseline
+
+**Decision:** Phase 6 starts from the closed Phase 5 baseline at migration
+`076_phase_5_voucher_protected_account_guard.sql`; the first Phase 6 migration
+is expected to be `077_phase_6_contract_settings_permissions.sql`.
+
+### Locked contract decisions
+
+- Contract types are exactly two: `عقد تجريبي` and `عقد إيجار`.
+- `عقد` is only the generic module/document word, not a third type.
+- A 12-month term is a rental-contract duration, not a separate database type.
+- Trial contracts are in Phase 6/v1 scope.
+- Rental asset cost basis is configurable; default owner preference is selected
+  unit purchase cost when available.
+- Rental consumable basis is configurable; default owner preference is product
+  sale price.
+- Accounting depreciation and deep asset-consumption adjustments are deferred
+  beyond Phase 6. Device usage must come from real activity when implemented,
+  not elapsed idle time.
+- Phase 6 prepares schedule/visit handoff data; consumable replacement
+  confirmation, stock-out, payment collection, GPS/photo proof, and receipt
+  creation stay in Phase 8 unless scope changes.
+
+### M0.5 safety notes
+
+- Migration list captured locally in ignored file
+  `supabase/.temp/phase_6_m0_5_migrations.txt` (76 migrations).
+- Rollback notes captured locally in ignored file
+  `supabase/.temp/phase_6_m0_5_rollback_notes.txt`.
+- Schema dump was not captured from this Codex session because Docker API
+  access was denied. Before the first Phase 6 migration is applied in a running
+  local environment, create the schema-only dump under `supabase/.temp/`.
+- Rollback before applying `077`: no DB rollback needed.
+- Rollback after a failed `077` before real data: fix migration and run local
+  reset.
+- Rollback after real data exists: do not edit old migrations; add a
+  forward-fix migration or restore a local/dev backup only.
 
 ---
 

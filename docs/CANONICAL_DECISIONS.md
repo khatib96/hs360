@@ -249,7 +249,7 @@ Service-role access is only allowed in Edge Functions, scheduled jobs, and provi
 v1 is intentionally narrow:
 
 - Auth + Manager/User permissions
-- Products, customers, trial periods, rental contracts
+- Products, customers, trial contracts, rental contracts
 - Basic invoices and vouchers
 - Mobile refill flow with GPS and live photo
 - Calendar view only

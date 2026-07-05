@@ -35,7 +35,7 @@
 
 ### Contracts
 
-- Trial periods and rental contracts.
+- Trial contracts and rental contracts.
 - One monthly rental value.
 - Cost snapshot at creation.
 - Customer + service location selection.

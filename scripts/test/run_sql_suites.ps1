@@ -1,4 +1,5 @@
-# M3 SQL pollution gate: Phase A (baseline) -> Phase B (M3) -> Phase C (baseline).
+# SQL pollution gate:
+# Phase A (baseline) -> Phase B (M3) -> Phase H (Phase 6 M1) -> Phase C (baseline).
 # Run after: npx --yes supabase db reset
 param(
   [string]$ContainerName = "supabase_db_hs360"
@@ -86,6 +87,9 @@ Write-Host "Phase B: M3 document template suites"
 foreach ($suite in $phaseBSuites) {
   Invoke-SqlSuite -SuitePath $suite -AllowDenylisted
 }
+
+Write-Host "Phase H: Phase 6 M1 contract settings and permissions"
+Invoke-SqlSuite -SuitePath "supabase/tests/phase_6_contract_settings_permissions.sql"
 
 Write-Host "Phase C: baseline regression (pollution gate)"
 foreach ($suite in $phaseAAllowlist) {

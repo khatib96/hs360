@@ -97,7 +97,7 @@ Rules:
 - Serialized rental assets require concrete `product_unit_id`.
 - A contract may include multiple rental assets and multiple rental consumables.
 - Rental asset and rental consumable cost basis comes from tenant contract settings and is snapshotted.
-- Trial periods do not create customer invoices by default.
+- Trial contracts do not create customer invoices by default.
 - Receipt vouchers are created only when payment is actually confirmed.
 
 Returns: `contracts.id`

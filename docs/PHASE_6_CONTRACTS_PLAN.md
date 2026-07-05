@@ -1,11 +1,11 @@
 # Phase 6 - Contracts Plan
 
 > Purpose: build the professional contract engine that HS360 was created for:
-> trial periods, rental contracts, serialized rental assets, rental
+> trial contracts, rental contracts, serialized rental assets, rental
 > consumables, profitability snapshots, contract billing, and lifecycle control.
 >
-> Status: M0 decision reconciliation applied (2026-07-05). Implementation has
-> not started.
+> Status: M0/M0.5 complete (2026-07-05). **M1 implemented** in migration
+> `077_phase_6_contract_settings_permissions.sql` (2026-07-05).
 >
 > Owner directive: contracts are the core business workflow, not an auxiliary
 > module. Phase 6 must be treated with the same accounting and operational
@@ -26,7 +26,7 @@ Phase 6 is the reason the system exists.
 It must not be implemented as a basic contracts CRUD screen. A safe Phase 6
 implementation creates a full contract operating model:
 
-1. Trial periods can be issued, tracked, converted, extended, or returned.
+1. Trial contracts can be issued, tracked, converted, extended, or returned.
 2. Rental contracts can be fixed-term, 12-month by default, or open-ended.
 3. A contract can include multiple serialized rental assets and multiple rental
    consumables.
@@ -39,7 +39,7 @@ implementation creates a full contract operating model:
 6. Contract creation, conversion, return, closure, billing, and oil/consumable
    changes must be RPC-controlled, tenant-safe, permission-gated, idempotent
    where needed, and auditable.
-7. Trial periods are free to the customer, but they are not invisible to the
+7. Trial contracts are free to the customer, but they are not invisible to the
    business: assets leave stock, real usage/consumable events can be recorded
    when confirmed, and the outcome must be recorded.
 8. Visits, refill confirmation, GPS/photo proof, mobile field flow, and payment
@@ -57,7 +57,7 @@ locked.
 
 At the end of Phase 6:
 
-- A user can create a trial period for a customer and service location.
+- A user can create a trial contract for a customer and service location.
 - A user can create a rental contract with one or more devices and one
   or more rental consumables.
 - Serialized assets are selected as concrete `product_unit_id` values, not only
@@ -69,9 +69,9 @@ At the end of Phase 6:
   settings.
 - Low-profit contracts are rejected unless an authorized override is provided
   with a reason.
-- A trial period can be converted to a rental contract without re-entering the
+- A trial contract can be converted to a rental contract without re-entering the
   whole contract.
-- A trial period can be returned or extended with a reason.
+- A trial contract can be returned or extended with a reason.
 - A rental contract can be closed and assets return to the correct inventory
   state.
 - A rental contract can schedule or record a future consumable/oil change
@@ -133,7 +133,7 @@ At the end of Phase 6:
 
 M0 reconciled these before implementation:
 
-1. `MVP_SCOPE.md` now includes trial periods and basic trial lifecycle in v1.
+1. `MVP_SCOPE.md` now includes trial contracts and basic trial lifecycle in v1.
 2. Contract pricing docs now state that rental asset and rental consumable basis
    are tenant settings; default owner preference is unit purchase cost for
    rental assets and sale price for rental consumables.
@@ -153,31 +153,31 @@ be treated as the current product direction.
 
 1. Contracts are the core system workflow. The implementation must be practical,
    fast for office users, and professional enough for daily contract operations.
-2. The system supports **trial periods** and **rental contracts**.
-3. The Arabic business labels are locked:
-   - `فترة تجريبية` for trial.
-   - `عقد` as the generic contract label.
-   - `عقد إيجار` for rental contract.
-   - A 12-month term is a contract duration, not a separate database contract
-     type and not the primary Phase 6 label.
-4. A trial period is free to the customer, but internally it still moves the
+2. The system has exactly two contract types:
+   - `عقد تجريبي` for `type = trial`.
+   - `عقد إيجار` for `type = rental`.
+3. `عقد` is only the generic module/document word. It is not a third contract
+   type.
+4. A 12-month term is a contract duration, not a separate database contract
+   type and not the primary Phase 6 label.
+5. A trial contract is free to the customer, but internally it still moves the
    asset and may later need internal cost/consumption reporting.
-5. A trial can be converted to a rental contract by one explicit action.
+6. A trial contract can be converted to a rental contract by one explicit action.
    The user should not have to recreate all lines from scratch.
-6. A contract can include more than one rental asset and more than one rental
+7. A contract can include more than one rental asset and more than one rental
    consumable.
-7. Rental asset pricing/cost basis is configurable in contract settings.
-8. Rental consumable pricing/cost basis is configurable in contract settings.
-9. The pricing-setting UI may be built when the settings area is expanded, but
+8. Rental asset pricing/cost basis is configurable in contract settings.
+9. Rental consumable pricing/cost basis is configurable in contract settings.
+10. The pricing-setting UI may be built when the settings area is expanded, but
    the database and engine must support the settings from Phase 6.
-10. Consumable replacement/refill does not reduce stock until the replacement is
+11. Consumable replacement/refill does not reduce stock until the replacement is
     actually confirmed.
-11. A receipt voucher does not exist until payment is actually confirmed.
-12. Contract creation UI should feel like the existing invoice/document
+12. A receipt voucher does not exist until payment is actually confirmed.
+13. Contract creation UI should feel like the existing invoice/document
     workflow: strong header, customer area, line editor, summary, command bar,
     and professional desktop density. It should not feel like an unrelated
     module.
-13. Accounting depreciation and deep asset-consumption adjustments are deferred
+14. Accounting depreciation and deep asset-consumption adjustments are deferred
     beyond Phase 6. Device consumption should be based on real usage activity
     when implemented later, not merely on elapsed time while the device is idle.
 
@@ -243,21 +243,24 @@ rental
 
 Keep this enum unless implementation finds a hard blocker.
 
-Use UI labels and term fields to express:
+Use UI labels and term fields to express exactly two contract types:
 
-- trial period.
-- contract.
-- rental contract.
-- 12-month/fixed-term rental.
+- `عقد تجريبي` / `trial`.
+- `عقد إيجار` / `rental`.
+
+Use term fields, not type values, to express:
+
+- 12-month rental.
 - fixed-term rental.
+- open-ended rental.
 
 Do not add a separate 12-month/annual enum value unless there is a unique
 lifecycle or accounting rule that cannot be represented by `type = rental`,
 `start_date`, and `end_date`.
 
-### Trial Periods
+### Trial Contracts
 
-A trial period:
+A trial contract:
 
 - has `type = trial`;
 - has no customer invoice by default;
@@ -644,9 +647,9 @@ of truth.
    - `CONTRACTS_LOGIC.md` pricing basis.
    - `RPC_SPEC.md` Phase 6 RPC signatures.
 4. Confirm the accepted Phase 6 vocabulary:
-   - trial period.
+   - trial contract.
    - rental contract.
-   - generic contract label.
+   - exactly two contract types.
    - 12-month term as duration, not a separate contract type.
 5. Record that Phase 6 prepares schedule/visit handoff data, while actual
    consumable replacement confirmation, stock-out, and payment collection remain
@@ -658,7 +661,7 @@ of truth.
 ### Acceptance
 
 - Phase 6 decisions are no longer ambiguous.
-- Trial periods are explicitly accepted for Phase 6.
+- Trial contracts are explicitly accepted for Phase 6.
 - Pricing-basis defaults are accepted.
 - Depreciation accounting is explicitly deferred.
 - Visit/refill/payment confirmation is left to Phase 8; Phase 6 only prepares
@@ -668,6 +671,13 @@ of truth.
 ---
 
 ## M0.5 - Safety Snapshot and Rollback
+
+> Status 2026-07-05: baseline recorded. Last pre-Phase-6 migration is `076`;
+> first Phase 6 migration is expected to be `077`. The migration list and
+> rollback notes were captured locally under ignored `supabase/.temp/` files.
+> A live schema dump was not captured from this Codex session because Docker API
+> access was denied; run the schema dump command locally before applying the
+> first Phase 6 migration in a live local database.
 
 ### Goal
 
@@ -681,26 +691,82 @@ Create a safe rollback point before changing contract schema or RPC behavior.
 4. Record rollback notes in `ai_memory.md` or the implementation log if the
    session pauses.
 
+### Local Snapshot Commands
+
+Run these from the repo root when local Supabase/Docker is available:
+
+```bash
+npx --yes supabase db dump --local \
+  --file supabase/.temp/phase_6_m0_5_pre_077_backup.sql
+
+npx --yes supabase db dump --local --schema public \
+  --file supabase/.temp/phase_6_m0_5_pre_077_schema.sql
+```
+
+Do not commit files from `supabase/.temp/`.
+
 ### Acceptance
 
-- The last pre-Phase-6 migration is known.
-- The first Phase 6 migration number is known.
+- The last pre-Phase-6 migration is known:
+  `076_phase_5_voucher_protected_account_guard.sql`.
+- The first Phase 6 migration number is known:
+  `077_phase_6_contract_settings_permissions.sql`.
 - Rollback path is clear before schema changes.
+- Schema dump is either captured locally or explicitly documented as blocked by
+  unavailable local Docker/Supabase access.
 
 ---
 
 ## M1 - Contract Settings, Permissions, and Schema Hardening
+
+**Status: complete** (migration `077_phase_6_contract_settings_permissions.sql`).
 
 ### Goal
 
 Make the database capable of representing the accepted contract rules before
 building the engine or UI.
 
-### Suggested Migrations
+### Delivered migration
+
+Single migration `077` (consolidates the originally suggested `077` + `078`):
 
 ```text
 077_phase_6_contract_settings_permissions.sql
-078_phase_6_contract_schema_hardening.sql
+```
+
+### Implementation choices (M1)
+
+1. **Contract types:** exactly two — `trial` (عقد تجريبي) and `rental` (عقد إيجار).
+   `عقد` is the generic module label only.
+2. **Settings:** eight columns on `tenant_settings` (not a separate settings table).
+3. **Permissions:** seven new catalog rows with `sort_order` `140–146`:
+   `contracts.close`, `contracts.approve_override`, `contracts.convert_trial`,
+   `contracts.extend_trial`, `contracts.return_trial`, `contracts.print`,
+   `contracts.field.snapshot_total_cost`.
+4. **Line basis enum:** `contract_line_cost_basis` has four unique labels;
+   line-type check enforces asset vs consumable allowed values.
+5. **Billing duplicate prevention:** `invoices.billing_period_start/end` plus
+   partial unique index `ux_invoices_rental_contract_period` (no
+   `contract_billing_runs` table).
+6. **`return_condition`:** contract-level summary only; per-unit return state
+   deferred to M4 (`contract_line` / `product_unit`).
+7. **SQL tests:** `supabase/tests/phase_6_contract_settings_permissions.sql`
+   (Phase H in `scripts/test/run_sql_suites.sh`).
+
+### Deferred from original M1 work list
+
+- Snapshot immutability triggers after activation.
+- RLS/ACL write hardening beyond existing policies.
+- `contracts_safe` view / detail RPC field masking.
+
+**M3 shipping gate:** contract creation RPCs must not ship until direct unsafe
+writes are closed or RPC guards land in the M3/M4 hardening milestone.
+
+### Suggested Migrations (superseded)
+
+```text
+077_phase_6_contract_settings_permissions.sql   ← delivered (includes schema hardening)
+078_phase_6_contract_schema_hardening.sql         ← merged into 077
 ```
 
 ### Work
@@ -1298,8 +1364,8 @@ Cover:
 Run one full business story:
 
 1. Create customer and service location.
-2. Create trial period with one device and one consumable.
-3. Convert trial to rental contract with a 12-month term.
+2. Create trial contract with one device and one consumable.
+3. Convert trial contract to rental contract with a 12-month term.
 4. Generate first rental invoice.
 5. Record receipt voucher from the invoice detail/customer flow.
 6. Print contract PDF.

@@ -7,17 +7,18 @@
 
 ## 1. Contract Names And Types
 
-Phase 6 uses these business labels:
+Phase 6 has exactly two contract types:
 
-- `فترة تجريبية` — trial period.
-- `عقد` — generic contract label in shared UI.
-- `عقد إيجار` — paid rental contract.
+- `عقد تجريبي` — `type = trial`.
+- `عقد إيجار` — `type = rental`.
+
+`عقد` is only the generic module/document word. It is not a third contract type.
 
 A 12-month contract is not a separate database type in Phase 6. It is a rental
 contract with a 12-month term.
 
 ### 1.1 Trial Contract (`type = 'trial'`)
-- **Free for the customer** during the trial period (default 30 days, tenant-configurable)
+- **Free for the customer** during the trial contract term (default 30 days, tenant-configurable)
 - Device is shipped to the customer; tracked as `unit_status = 'trial'`
 - No invoices generated during trial
 - System raises a calendar event 7 days before trial end
