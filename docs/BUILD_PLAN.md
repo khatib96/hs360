@@ -29,6 +29,7 @@
 > Phase 0 details: `docs/PHASE_0_SETUP.md`
 > Capability placement: `docs/CAPABILITIES_DECISION_REPORT.md`.
 > Phase 5 execution plan: `docs/PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md`.
+> Phase 6 execution plan: `docs/PHASE_6_CONTRACTS_PLAN.md`.
 
 ---
 
@@ -582,6 +583,11 @@ Implement all RPCs per `DATABASE_SCHEMA.md` section 19:
 
 ## Phase 6 — Contracts (the Big One) (≈ 4 weeks)
 
+> Detailed execution plan: `docs/PHASE_6_CONTRACTS_PLAN.md`.
+> The detailed Phase 6 plan supersedes the short task list below if there is a
+> conflict, especially around trial periods, configurable pricing basis,
+> multi-asset/multi-consumable contracts, and Phase 8 visit boundaries.
+
 ### Goal
 The core of the system: contracts can be created, billed, refilled, and closed.
 
@@ -626,7 +632,7 @@ The core of the system: contracts can be created, billed, refilled, and closed.
 ### Deliverables
 - Contracts can be created, viewed, modified, closed
 - Monthly invoices generate on schedule
-- Trial contracts handled properly
+- Trial periods handled properly
 
 ### Acceptance
 - Create a contract with profit just above min → saves

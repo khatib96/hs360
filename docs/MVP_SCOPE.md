@@ -35,12 +35,13 @@
 
 ### Contracts
 
-- Rental contracts only.
+- Trial periods and rental contracts.
 - One monthly rental value.
 - Cost snapshot at creation.
 - Customer + service location selection.
 - Minimum-profit validation.
-- Asset assignment and consumable line setup.
+- Asset assignment and rental-consumable line setup.
+- Basic trial lifecycle: convert to rental, return, or extend with reason.
 - Contract list and contract detail.
 
 ### Invoices
@@ -103,7 +104,6 @@
 - WhatsApp campaigns and two-way conversation inbox.
 - Maintenance module.
 - Quotations.
-- Trial contracts.
 - Offline mobile sync.
 - Visual document template editor.
 - Internal operations map with clustering.

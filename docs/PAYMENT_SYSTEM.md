@@ -256,9 +256,10 @@ Unallocated credit is shown on customer detail as: "Credit balance: KWD 25.000."
 ## 5. Weighted Average Cost (WAC)
 
 Each product has `avg_cost`. This is the cost basis for:
-- Profit calculations
 - Inventory valuation
-- Contract snapshots at creation time
+- Sales COGS snapshots
+- Contract snapshots only when the tenant's contract settings choose average
+  cost as the basis
 
 ### 5.1 WAC Formula
 
@@ -272,9 +273,16 @@ On each purchase:
 
 The WAC is per-tenant per-product (a global product wouldn't share WAC across tenants).
 
-For serialized assets (devices), each `product_unit` records its own `purchase_cost`. The product's WAC is the average across all units. But for accuracy in contract snapshots, the system uses the **specific unit's purchase_cost** when an asset_rental contract is created, not the product-level average.
+For serialized assets (devices), each `product_unit` records its own
+`purchase_cost`. The product's WAC is the average across all units.
 
-For consumables (oils), there are no per-unit records — only the product-level WAC matters.
+For Phase 6 contract profitability, the default owner preference is to use the
+selected unit's actual `purchase_cost` for rental assets when available. Tenant
+contract settings may later choose product WAC or product sale price instead.
+
+For rental consumables, the default owner preference is to use product
+`sale_price` for the internal contract basis. Tenant contract settings may later
+choose product WAC or last purchase cost instead.
 
 ### 5.3 When WAC Recalculates
 
@@ -438,14 +446,19 @@ JOURNAL:
 (Both are asset accounts; the device hasn't been sold.)
 ```
 
-Optionally, monthly depreciation can be recognized:
+Accounting depreciation is deferred beyond Phase 6.
+
+If implemented in a later accounting phase, monthly depreciation could be
+recognized as:
 ```
 Each month, while contract is active:
   Dr  Depreciation — Rental Assets    2.500
   Cr  Accumulated Depreciation        2.500
 ```
 
-This is optional for v1 — many small businesses don't bother. Tenant setting `track_rental_depreciation = false` skips it.
+Phase 6 should not post this entry. Device life/consumption should be based on
+real usage activity when the business decides to implement that accounting
+detail, not merely on time passing while the device is idle.
 
 ---
 

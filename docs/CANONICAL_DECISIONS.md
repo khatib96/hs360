@@ -142,11 +142,18 @@ Do not describe this as view-level RLS. RLS belongs on the base tables; `securit
 
 Contract cost snapshots are frozen forever.
 
-- Contract creation stores device monthly cost, oil monthly cost, total monthly cost, and expected monthly profit.
+- Contract creation stores device monthly cost, rental-consumable monthly cost,
+  total monthly cost, expected monthly profit, and the pricing basis used.
+- Phase 6 pricing basis is tenant-configurable. Default owner preference:
+  selected unit purchase cost for rental assets, product sale price for rental
+  consumables.
 - Contract creation also snapshots selected service-location contact/address/map fields.
 - Profit reports use snapshots, not current product cost.
 - Later WAC changes do not rewrite historical contract economics.
 - Later service-location edits do not rewrite historical contract location data.
+- Accounting depreciation and deep asset-consumption adjustments are deferred
+  beyond Phase 6; device usage must be based on real activity when implemented,
+  not on idle elapsed time.
 
 This is a business rule, not an implementation detail.
 
@@ -242,7 +249,7 @@ Service-role access is only allowed in Edge Functions, scheduled jobs, and provi
 v1 is intentionally narrow:
 
 - Auth + Manager/User permissions
-- Products, customers, rental contracts
+- Products, customers, trial periods, rental contracts
 - Basic invoices and vouchers
 - Mobile refill flow with GPS and live photo
 - Calendar view only
@@ -255,6 +262,5 @@ Phase 2+:
 - WhatsApp campaigns
 - Maintenance module
 - Quotations
-- Trial contracts
 - Offline sync
 - Full P&L reporting

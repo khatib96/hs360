@@ -5,7 +5,16 @@
 
 ---
 
-## 1. Two Contract Types
+## 1. Contract Names And Types
+
+Phase 6 uses these business labels:
+
+- `فترة تجريبية` — trial period.
+- `عقد` — generic contract label in shared UI.
+- `عقد إيجار` — paid rental contract.
+
+A 12-month contract is not a separate database type in Phase 6. It is a rental
+contract with a 12-month term.
 
 ### 1.1 Trial Contract (`type = 'trial'`)
 - **Free for the customer** during the trial period (default 30 days, tenant-configurable)
@@ -37,7 +46,20 @@ Product records store sale/cost data only:
 - Purchase cost / WAC comes from purchase and stock flows; it is not the rental contract price.
 - `expected_lifespan_months` exists only for asset-rental products and can differ per product.
 
-Rental pricing is decided on the **contract**, not on the product. Product sale values only help the system calculate the internal minimum and suggested monthly contract value.
+Rental pricing is decided on the **contract**, not on the product.
+
+Phase 6 introduces tenant contract settings for the internal basis used by
+profit checks:
+
+- Rental asset basis can be actual unit purchase cost, product average cost, or
+  product sale price.
+- Rental consumable basis can be product sale price, product average cost, or
+  product last purchase cost.
+
+The default owner preference for Phase 6 is:
+
+- rental assets use the selected unit's actual cost where available;
+- rental consumables use sale price unless settings later choose otherwise.
 
 ### 2.1 What the Agent Enters
 **Only one number:** the monthly rental value.
@@ -50,21 +72,21 @@ When the contract is saved, the system reads the current product data and freeze
 
 ```
 Inputs available to the system:
-  • Selected device product (asset_rental)
-      product.sale_price         = current sale value of that device
-      product.expected_lifespan_months  = e.g. 24
-  • Selected oil product (consumable_rental)
-      product.sale_price         = current sale value per primary unit
+  • Selected device unit/product (asset_rental)
+      product_unit.purchase_cost or configured basis
+      product.expected_lifespan_months  = e.g. 24 as pricing basis
+  • Selected rental consumable product (consumable_rental)
+      product.sale_price or configured basis per primary unit
       product.unit_primary / unit_secondary / conversion_factor
-  • Oil qty per refill (entered by agent)  = e.g. 500 ml
+  • Consumable qty per refill/replacement (entered by agent) = e.g. 500 ml
   • Tenant's min_monthly_profit setting
   • Optional tenant default pricing multiplier for suggestions
 
 Computations:
 
-  device_monthly_basis = device.sale_price / device.expected_lifespan_months
-  oil_monthly_basis    = converted_oil_qty × oil.sale_price_per_primary_unit
-  total_monthly_basis  = device_monthly_basis + oil_monthly_basis
+  asset_monthly_basis      = configured_asset_basis / expected_lifespan_months
+  consumable_monthly_basis = converted_consumable_qty × configured_consumable_basis
+  total_monthly_basis      = asset_monthly_basis + consumable_monthly_basis
   minimum_allowed_monthly_value =
       total_monthly_basis + tenant.min_monthly_profit
   suggested_monthly_value =
@@ -88,15 +110,15 @@ Owner sets in Settings:
 
 Agent creates contract:
   Customer: "Cafe Bloom"
-  Device: Diffuser Model X (sale_price = 60.000, lifespan = 24 months)
-  Oil: "Hilton" (sale_price = 15.000 per liter)
-  Oil qty per refill: 500 ml
+  Device: Diffuser Model X (unit cost = 60.000, lifespan basis = 24 months)
+  Rental consumable: "Hilton" (sale_price = 15.000 per liter)
+  Consumable qty per refill: 500 ml
   Monthly rental value entered by agent: 20.000 KWD
 
 System computes:
-  device_monthly_basis = 60.000 / 24 = 2.500
-  oil_monthly_basis    = 0.5 liter × 15.000 = 7.500
-  total_monthly_basis  = 10.000
+  asset_monthly_basis      = 60.000 / 24 = 2.500
+  consumable_monthly_basis = 0.5 liter × 15.000 = 7.500
+  total_monthly_basis      = 10.000
   minimum_allowed_monthly_value = 10.000 + 5.000 = 15.000
   expected_monthly_profit = 20.000 − 10.000 = 10.000
 
@@ -122,6 +144,20 @@ If, six months later, the price of "Hilton" oil rises from 10 to 15 KWD/liter, t
 - Trends would be impossible to detect
 
 The snapshot is sacred. It never updates after contract creation.
+
+### 2.5 Depreciation And Usage Boundary
+
+Phase 6 does **not** implement accounting depreciation or deep asset-consumption
+adjustments.
+
+`expected_lifespan_months` is a pricing/profit basis only. A device may be
+configured as 24 months but operate for 30 months or more. Actual depreciation
+or usage-based asset consumption should be handled in a later accounting phase
+if the business needs it.
+
+The important Phase 6 rule is: device usage can only be inferred from real
+contract/trial/visit activity, not from time passing while the device is not in
+use.
 
 ---
 

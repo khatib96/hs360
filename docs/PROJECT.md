@@ -115,7 +115,7 @@ The system must:
 - Damaged / lost asset accounting
 
 **Reporting**
-- P&L with rental depreciation factored in
+- P&L with rental depreciation factored in later if the accounting scope is accepted
 - Per-contract profitability (uses snapshot, not current prices)
 - Debt aging
 - Field agent performance (visits, collections, contracts)
@@ -165,8 +165,8 @@ The system must:
 | Type | Stock Behavior | Pricing | Examples |
 |------|----------------|---------|----------|
 | `sale_only` | Decremented permanently on sale | Sale price only | Perfumes, gift sets |
-| `asset_rental` | Tracked per-unit by S/N when available; returns on contract end | Sale price; contract basis = sale price / lifespan | Diffuser devices |
-| `consumable_rental` | Decremented on refill; never returns | Sale price converted by unit/quantity | Oils |
+| `asset_rental` | Tracked per-unit by S/N when available; returns on contract end | Contract basis comes from tenant settings; default is selected unit cost / lifespan basis | Diffuser devices |
+| `consumable_rental` | Decremented on confirmed refill/replacement; never returns | Contract basis comes from tenant settings; default is sale price converted by unit/quantity | Oils |
 
 ### 4.2 Contract Pricing Rule
 
@@ -183,11 +183,15 @@ This gives the owner one knob to turn — the minimum profit per contract per mo
 ### 4.3 Snapshot Principle
 
 When a contract is saved, the system stores a **frozen snapshot** of:
-- Device monthly depreciation (cost ÷ lifespan)
-- Oil cost per refill (qty × unit cost at that moment)
+- Device monthly basis for pricing/profit, not accounting depreciation
+- Rental-consumable cost per refill/replacement (qty × configured basis at that moment)
 - Total monthly cost
 
 These snapshots are what profitability reports use. They do **not** change when prices change later. This is correct accounting behavior.
+
+Accounting depreciation and deep asset-consumption adjustments are deferred
+beyond Phase 6. Device usage should be based on real activity when implemented,
+not merely on elapsed idle time.
 
 ### 4.4 Oil-Type Tracking
 

@@ -354,7 +354,7 @@ Tap a day → opens that day's schedule.
 |------------|--------|-----------------|
 | Refill due | Active rental contracts | Yes — based on `refill_day` |
 | Contract end | Fixed-term contracts | Yes |
-| Trial ending | Trial contracts | Yes — 7 days before `trial_end_date` |
+| Trial ending | Trial periods | Yes — 7 days before `trial_end_date` |
 | Maintenance due | High-use devices | Yes — triggered by maintenance rules |
 | Payment due | Overdue invoices | Yes — generated when invoice goes overdue |
 | Follow-up | Manual | No — sales agent sets |

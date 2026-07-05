@@ -32,48 +32,73 @@ Standard errors:
 
 ---
 
-## `create_rental_contract`
+## Phase 6 Contract RPCs
 
-Creates contract, lines, snapshots, asset movement, first rental invoice, journal entry, and calendar events in one transaction.
+> Phase 6 update: the older positional `create_rental_contract(...)` signature
+> is superseded by `docs/PHASE_6_CONTRACTS_PLAN.md`. Contracts now include trial
+> periods, rental contracts, multiple rental assets, multiple rental
+> consumables, conversion, return/extension, configurable pricing basis, and
+> idempotent mutation style aligned with Phase 5 finance.
+
+Creates trial/rental contracts, lines, snapshots, asset movement, conversion,
+closure, billing, and schedule handoff through RPC-controlled operations.
 
 ```sql
-create or replace function create_rental_contract(
-  p_client_id text,
-  p_customer_id uuid,
-  p_service_location_id uuid,
-  p_start_date date,
-  p_end_date date,
-  p_billing_day int,
-  p_refill_day int,
-  p_monthly_rental_value numeric,
-  p_lines jsonb,
-  p_location_lat numeric,
-  p_location_lng numeric,
-  p_location_address text,
-  p_signature_url text,
-  p_override_reason text default null
-) returns uuid;
+preview_contract_profit(p_data jsonb) returns jsonb
+create_trial_contract(p_data jsonb, p_idempotency_key uuid) returns uuid
+create_rental_contract(p_data jsonb, p_idempotency_key uuid) returns uuid
+convert_trial_to_rental(p_data jsonb, p_idempotency_key uuid) returns uuid
+extend_trial_contract(p_data jsonb, p_idempotency_key uuid) returns uuid
+return_trial_contract(p_data jsonb, p_idempotency_key uuid) returns uuid
+close_contract(p_data jsonb, p_idempotency_key uuid) returns uuid
+schedule_contract_consumable_change(p_data jsonb, p_idempotency_key uuid) returns uuid
+generate_rental_invoice(p_data jsonb, p_idempotency_key uuid) returns uuid
 ```
 
-`p_lines` shape:
+Contract creation payload shape:
 
 ```json
-[
-  {"line_type":"asset","product_id":"uuid","product_unit_id":"uuid"},
-  {"line_type":"consumable","product_id":"uuid","qty_per_refill":"500.000","refill_frequency_months":1}
-]
+{
+  "customer_id": "uuid",
+  "service_location_id": "uuid",
+  "type": "trial|rental",
+  "start_date": "2026-07-05",
+  "end_date": "2027-07-04",
+  "billing_day": 5,
+  "refill_day": 5,
+  "monthly_rental_value": "20.000",
+  "asset_lines": [
+    {"product_id": "uuid", "product_unit_id": "uuid"}
+  ],
+  "consumable_lines": [
+    {
+      "product_id": "uuid",
+      "qty_per_refill": "500.000",
+      "refill_frequency_months": 1
+    }
+  ],
+  "override_reason": "Required only for authorized below-min-profit override"
+}
 ```
 
 Requires:
 
 - `contracts.create`
+- `contracts.convert_trial` for trial conversion
+- `contracts.extend_trial` for trial extension
+- `contracts.return_trial` for trial return
+- `contracts.close` for rental closure
 - `contracts.approve_override` if profit is below threshold and override is requested
 
 Rules:
 
 - `p_service_location_id` must belong to `p_customer_id` in the current tenant.
 - The RPC copies service-location address/contact/map fields into the contract snapshot fields.
-- `p_location_*` values are optional overrides to the snapshot, not the source of truth for customer site identity.
+- Serialized rental assets require concrete `product_unit_id`.
+- A contract may include multiple rental assets and multiple rental consumables.
+- Rental asset and rental consumable cost basis comes from tenant contract settings and is snapshotted.
+- Trial periods do not create customer invoices by default.
+- Receipt vouchers are created only when payment is actually confirmed.
 
 Returns: `contracts.id`
 
