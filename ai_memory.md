@@ -1,6 +1,68 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-05 (Session: Phase 6 M0/M0.5 — **contract decisions and rollback baseline recorded**).
+> Updated 2026-07-08 (Session: Phase 6 M3 — **trial/rental creation RPCs verified and closed**).
+
+---
+
+## Session 2026-07-08 - Phase 6 M3 Trial/Rental Creation RPC Closure
+
+**Decision:** Phase 6 M3 is closed for the backend SQL/RPC scope. Contract
+creation is now RPC-owned, atomic, inventory-safe, idempotent, audited, and
+verified through the full SQL regression suite.
+
+### Delivered
+
+- Added migration `079_phase_6_contract_creation_rpc.sql`.
+- Added `create_trial_contract(p_data jsonb, p_idempotency_key uuid)` and
+  `create_rental_contract(p_data jsonb, p_idempotency_key uuid)`.
+- Added contract idempotency columns and resolver support for `contracts`.
+- Added direct-write hardening for `contracts`, `contract_lines`, and
+  `contract_oil_changes`; trusted writes must go through the contract RPC gate.
+- Added `trial_out` inventory movement type.
+- Added `CON` document numbering for contract identity while preserving all
+  existing document sequence keys for new tenants:
+  `SI`, `PI`, `SR`, `PR`, `RV`, `PV`, `JE`, `SKU`, `OS`, `STI`, `STO`, `SC`,
+  `CON`.
+- Added audit coverage for `contract_oil_changes`.
+- Contract creation now inserts contract rows, asset lines, consumable lines,
+  initial oil/current records, inventory movements, unit events, and updates
+  product unit status/pointers and inventory buckets atomically.
+
+### Locked M3 rules
+
+- M3 does not create rental invoices or journal entries; billing remains M5.
+- Trial contracts force `monthly_rental_value = 0`, capture cost snapshots only,
+  and do not enforce the profit gate or record overrides.
+- Rental contracts require `monthly_rental_value > 0` and enforce M2
+  minimum-profit rules, with authorized override support.
+- Every asset line must include `product_unit_id`; non-serialized
+  quantity-based rental asset movement is deferred until explicitly designed and
+  tested.
+- Contract numbers use the same professional document identity pattern as
+  invoices/vouchers: `CON-000001`.
+
+### Verification
+
+- `npx supabase db reset` passed.
+- `./scripts/test/run_sql_suites.sh` passed with all SQL suite phases green.
+- Phase 6 gates passed:
+  - Phase H: `phase_6_contract_settings_permissions.sql`.
+  - Phase I: `phase_6_contract_pricing_profit_engine.sql`.
+  - Phase J: `phase_6_contract_creation_rpc.sql`.
+- `git diff --check` passed clean.
+
+### Test updates
+
+- Added `supabase/tests/phase_6_contract_creation_rpc.sql` with 16 creation,
+  validation, idempotency, inventory, permission, and trial profit-gate bypass
+  cases.
+- Updated SQL suite runners to include Phase J.
+- Updated contract M1 tests to set the contract write gate as `postgres` before
+  direct authenticated inserts.
+- Updated Phase 5 finance sequence expectations from 12 to 13 to include `CON`.
+
+**Next:** Start Phase 6 M4 lifecycle RPCs: trial conversion, extension, return,
+and rental closure.
 
 ---
 

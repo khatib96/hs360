@@ -510,8 +510,8 @@ begin
   from document_sequences
   where tenant_id = v_new_tenant;
 
-  if v_count <> 12 then
-    raise exception 'case17 failed: expected 12 sequences, got %', v_count;
+  if v_count <> 13 then
+    raise exception 'case17 failed: expected 13 sequences, got %', v_count;
   end if;
 end $$;
 rollback;
@@ -526,9 +526,9 @@ begin
   select count(*) into v_count
   from document_sequences
   where tenant_id = v_tenant_a
-    and sequence_key in ('SI', 'PI', 'SR', 'PR', 'RV', 'PV', 'JE', 'SKU', 'OS', 'STI', 'STO', 'SC');
+    and sequence_key in ('SI', 'PI', 'SR', 'PR', 'RV', 'PV', 'JE', 'SKU', 'OS', 'STI', 'STO', 'SC', 'CON');
 
-  if v_count <> 12 then
+  if v_count <> 13 then
     raise exception 'case18 failed: tenant A missing sequences (count=%)', v_count;
   end if;
 end $$;

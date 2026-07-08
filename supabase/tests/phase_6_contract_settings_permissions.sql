@@ -105,6 +105,8 @@ rollback;
 
 -- 3d. snapshot_asset_lifespan_months check on contracts.
 begin;
+set local role postgres;
+do $$ begin perform public.allow_contract_write(); end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
@@ -237,6 +239,8 @@ rollback;
 
 -- 7. contract_lines.snapshot_cost_basis with line-type enforcement.
 begin;
+set local role postgres;
+do $$ begin perform public.allow_contract_write(); end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
@@ -316,6 +320,8 @@ rollback;
 
 -- 8. Rental invoice billing period columns and duplicate prevention.
 begin;
+set local role postgres;
+do $$ begin perform public.allow_contract_write(); end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
@@ -453,6 +459,8 @@ rollback;
 
 -- 10. Cross-tenant converted_from_contract_id rejected by composite FK.
 begin;
+set local role postgres;
+do $$ begin perform public.allow_contract_write(); end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000204';
 do $$
