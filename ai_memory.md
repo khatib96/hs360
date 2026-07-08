@@ -1,6 +1,85 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-08 (Session: Phase 6 M3 — **trial/rental creation RPCs verified and closed**).
+> Updated 2026-07-08 (Session: Phase 6 M4 — **contract lifecycle RPCs verified and closed**).
+
+---
+
+## Session 2026-07-08 - Phase 6 M4 Contract Lifecycle RPC Closure
+
+**Decision:** Phase 6 M4 is closed for the backend SQL/RPC scope. Contract
+lifecycle operations are now handled through dedicated public RPCs with
+idempotency, inventory movement, unit pointer updates, contract status updates,
+and regression coverage.
+
+### Delivered
+
+- Added migration `080_phase_6_contract_lifecycle_rpc.sql`.
+- Added lifecycle movement types `trial_return` and `trial_to_rental`; rental
+  closure uses the existing `rental_return` movement type.
+- Added internal `contract_lifecycle_operations` for lifecycle idempotency and
+  retry audit, separate from creation idempotency on `contracts`.
+- Added normalized payload/hash helpers and lifecycle idempotency
+  resolver/recorder helpers.
+- Added public authenticated RPCs:
+  - `convert_trial_to_rental(p_data jsonb, p_idempotency_key uuid)`.
+  - `extend_trial_contract(p_data jsonb, p_idempotency_key uuid)`.
+  - `return_trial_contract(p_data jsonb, p_idempotency_key uuid)`.
+  - `close_contract(p_data jsonb, p_idempotency_key uuid)`.
+- Added shared lifecycle helpers for releasing assets and copying trial lines
+  into rental contracts.
+- Updated SQL suite runners to include Phase K.
+
+### Locked M4 rules
+
+- M4 does not create invoices, journal entries, or settle debt; billing remains
+  M5.
+- Trial-to-rental creates a new rental contract from the trial, recomputes
+  rental pricing snapshots, moves asset units from trial to rental, and records
+  explicit lifecycle inventory events.
+- Trial extension updates the trial end date only through the RPC path.
+- Trial return and rental close release assets according to return condition:
+  `available_used`, `maintenance`, `damaged`, or `lost`.
+- `lost` decrements only the source bucket (`qty_trial` or `qty_rented`), does
+  not increment any destination bucket, and sets the unit status to `lost`.
+- `close_date` is the operational date, defaults to `current_date`, must not be
+  before contract start, and is used for future calendar cleanup; `closed_at`
+  remains the actual timestamp.
+- Lifecycle idempotency is scoped by tenant, operation type, and
+  idempotency key.
+
+### Static review fixes before closure
+
+- `convert_trial_to_rental` now validates each trial asset unit is still
+  attached to the source trial through `current_contract_id = trial.id`, not
+  merely `status = trial`.
+- `convert_trial_to_rental` now rejects a provided rental `end_date` before the
+  computed rental start date/current date.
+
+### Verification
+
+- Cursor reported `npx supabase db reset` passed with migration `080` applied.
+- Cursor reported `./scripts/test/run_sql_suites.sh` passed with all SQL suite
+  phases green.
+- Phase 6 gates passed:
+  - Phase H: `phase_6_contract_settings_permissions.sql`.
+  - Phase I: `phase_6_contract_pricing_profit_engine.sql`.
+  - Phase J: `phase_6_contract_creation_rpc.sql`.
+  - Phase K: `phase_6_contract_lifecycle_rpc.sql`.
+- `git diff --check` passed clean.
+- Codex static review confirmed the two final M4 hardening fixes are present in
+  migration `080` and the negative tests are present in Phase K.
+
+### Test updates
+
+- Added `supabase/tests/phase_6_contract_lifecycle_rpc.sql` with 26 lifecycle,
+  validation, idempotency, inventory, permission, debt-untouched, and direct
+  write-gate cases.
+- Added negative cases for wrong `current_contract_id` during trial conversion
+  and past rental `end_date`.
+- Kept product-unit direct-update baseline as a non-blocking observational case.
+
+**Next:** Start Phase 6 M5 billing engine for rental invoicing/journals using
+the closed M3/M4 contract and lifecycle foundation.
 
 ---
 

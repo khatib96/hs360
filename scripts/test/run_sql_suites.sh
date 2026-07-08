@@ -119,6 +119,9 @@ run_suite "supabase/tests/phase_6_contract_pricing_profit_engine.sql"
 printf 'Phase J: Phase 6 M3 contract creation RPCs\n'
 run_suite "supabase/tests/phase_6_contract_creation_rpc.sql"
 
+printf 'Phase K: Phase 6 M4 contract lifecycle RPCs\n'
+run_suite "supabase/tests/phase_6_contract_lifecycle_rpc.sql"
+
 printf 'Phase C: baseline pollution gate\n'
 for suite in "${phase_a_suites[@]}"; do
   run_suite "$suite"
