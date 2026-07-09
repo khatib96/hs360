@@ -5,10 +5,14 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/errors/finance_exception.dart';
 import '../../../core/network/supabase_providers.dart';
 import '../../auth/domain/app_session.dart';
+import '../../finance_shared/domain/pagination_cursor.dart';
 import '../domain/closure_draft.dart';
+import '../domain/contract_detail.dart';
 import '../domain/contract_draft.dart';
+import '../domain/contract_filters.dart';
 import '../domain/contract_permissions.dart';
 import '../domain/contract_pricing_preview.dart';
+import '../domain/contract_summary.dart';
 import '../domain/rental_collection_draft.dart';
 import '../domain/trial_conversion_draft.dart';
 import '../domain/trial_extension_draft.dart';
@@ -26,12 +30,37 @@ ContractRepository contractRepository(Ref ref) {
 class ContractRepository {
   ContractRepository(this._client);
 
+  static const defaultPageSize = 50;
+
   final SupabaseClient? _client;
 
   SupabaseClient get _requireClient {
     final client = _client;
     if (client == null) throw FinanceException.notConfigured();
     return client;
+  }
+
+  // M7 temporary client stub — no RPC until M8
+  Future<List<ContractSummary>> listContracts(
+    AppSession session, {
+    ContractFilters filters = const ContractFilters(),
+    PaginationCursor page = const PaginationCursor(),
+  }) async {
+    if (!canViewContracts(session)) {
+      throw const FinanceException(code: FinanceException.permissionDenied);
+    }
+    throw const FinanceException(code: FinanceException.notAvailable);
+  }
+
+  // M7 temporary client stub — no RPC until M8
+  Future<ContractDetail> fetchContractDetail(
+    AppSession session,
+    String contractId,
+  ) async {
+    if (!canViewContracts(session)) {
+      throw const FinanceException(code: FinanceException.permissionDenied);
+    }
+    throw const FinanceException(code: FinanceException.notAvailable);
   }
 
   Future<ContractPricingPreview> previewContractProfit(

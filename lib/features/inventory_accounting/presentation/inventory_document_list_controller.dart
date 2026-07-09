@@ -12,7 +12,8 @@ import 'inventory_document_list_state.dart';
 part 'inventory_document_list_controller.g.dart';
 
 @Riverpod(keepAlive: true)
-class InventoryDocumentListController extends _$InventoryDocumentListController {
+class InventoryDocumentListController
+    extends _$InventoryDocumentListController {
   static const pageSize = InventoryDocumentRepository.defaultPageSize;
 
   int _refreshSerial = 0;
@@ -104,10 +105,7 @@ class InventoryDocumentListController extends _$InventoryDocumentListController 
     if (session == null || !canViewInventoryDocuments(session)) return;
 
     final refreshId = ++_refreshSerial;
-    state = state.copyWith(
-      isLoadingMore: true,
-      clearLoadMoreError: true,
-    );
+    state = state.copyWith(isLoadingMore: true, clearLoadMoreError: true);
 
     try {
       final rows = await ref
@@ -130,10 +128,7 @@ class InventoryDocumentListController extends _$InventoryDocumentListController 
       );
     } on FinanceException catch (e) {
       if (refreshId != _refreshSerial) return;
-      state = state.copyWith(
-        isLoadingMore: false,
-        loadMoreErrorCode: e.code,
-      );
+      state = state.copyWith(isLoadingMore: false, loadMoreErrorCode: e.code);
     } catch (_) {
       if (refreshId != _refreshSerial) return;
       state = state.copyWith(

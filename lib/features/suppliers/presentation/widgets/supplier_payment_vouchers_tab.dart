@@ -116,10 +116,7 @@ class SupplierPaymentVouchersTab extends ConsumerWidget {
                 padding: const EdgeInsets.only(top: 8),
                 child: MessageBanner(
                   variant: MessageBannerVariant.error,
-                  message: voucherErrorMessage(
-                    l10n,
-                    state.loadMoreErrorCode!,
-                  ),
+                  message: voucherErrorMessage(l10n, state.loadMoreErrorCode!),
                 ),
               ),
           ],
@@ -132,11 +129,7 @@ class SupplierPaymentVouchersTab extends ConsumerWidget {
       padding: const EdgeInsetsDirectional.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          filtersBar,
-          const SizedBox(height: 16),
-          listContent,
-        ],
+        children: [filtersBar, const SizedBox(height: 16), listContent],
       ),
     );
   }

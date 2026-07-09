@@ -27,9 +27,7 @@ class InventoryDocumentDetail {
   final String? journalEntryId;
   final String? reversalJournalEntryId;
 
-  bool get isSerialized =>
-      lines.any((line) => line.productUnitIds.isNotEmpty);
+  bool get isSerialized => lines.any((line) => line.productUnitIds.isNotEmpty);
 
-  bool get isCancelled =>
-      summary.status == InventoryDocumentStatus.cancelled;
+  bool get isCancelled => summary.status == InventoryDocumentStatus.cancelled;
 }

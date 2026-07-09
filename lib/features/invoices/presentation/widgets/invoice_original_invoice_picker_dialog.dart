@@ -27,7 +27,8 @@ Future<void> showInvoiceOriginalPicker(
 }) async {
   final selectedId = await showDialog<String>(
     context: context,
-    builder: (_) => InvoiceOriginalInvoicePickerDialog(originalType: originalType),
+    builder: (_) =>
+        InvoiceOriginalInvoicePickerDialog(originalType: originalType),
   );
   if (selectedId == null || !context.mounted) return;
   context.go(AppRoutes.invoiceReturnPath(selectedId));

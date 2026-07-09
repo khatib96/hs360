@@ -20,7 +20,9 @@ abstract final class InvoiceDesign {
   static const EdgeInsetsGeometry pagePadding = EdgeInsetsDirectional.all(16);
 
   /// Inner padding for sheet sections.
-  static const EdgeInsetsGeometry sectionPadding = EdgeInsetsDirectional.all(16);
+  static const EdgeInsetsGeometry sectionPadding = EdgeInsetsDirectional.all(
+    16,
+  );
 
   /// Dense padding for table cells / compact rows.
   static const EdgeInsetsGeometry cellPadding = EdgeInsetsDirectional.symmetric(
@@ -45,17 +47,11 @@ abstract final class InvoiceDesign {
 
   static Border get box => Border.fromBorderSide(hairline);
 
-  static BoxDecoration get panel => BoxDecoration(
-    color: sheetFill,
-    border: box,
-    borderRadius: radius,
-  );
+  static BoxDecoration get panel =>
+      BoxDecoration(color: sheetFill, border: box, borderRadius: radius);
 
-  static BoxDecoration get headerStrip => BoxDecoration(
-    color: headerFill,
-    border: box,
-    borderRadius: radius,
-  );
+  static BoxDecoration get headerStrip =>
+      BoxDecoration(color: headerFill, border: box, borderRadius: radius);
 
   static bool isDesktop(BuildContext context) =>
       MediaQuery.sizeOf(context).width > desktopBreakpoint;

@@ -42,7 +42,9 @@ List<JournalEntrySummary> _manyEntries(int count) {
 void main() {
   group('JournalListController', () {
     test('setSource and setSearch update filters', () async {
-      final repo = FakeJournalRepository(entries: [sampleJournalEntrySummary()]);
+      final repo = FakeJournalRepository(
+        entries: [sampleJournalEntrySummary()],
+      );
       final container = ProviderContainer(
         overrides: [
           authControllerProvider.overrideWith(
@@ -66,7 +68,9 @@ void main() {
     });
 
     test('setDateFrom and setDateTo update date range', () async {
-      final repo = FakeJournalRepository(entries: [sampleJournalEntrySummary()]);
+      final repo = FakeJournalRepository(
+        entries: [sampleJournalEntrySummary()],
+      );
       final container = ProviderContainer(
         overrides: [
           authControllerProvider.overrideWith(

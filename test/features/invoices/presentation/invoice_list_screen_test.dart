@@ -69,7 +69,9 @@ void main() {
     final container = ProviderScope.containerOf(
       tester.element(find.byType(InvoiceListScreen)),
     );
-    container.read(invoiceListControllerProvider.notifier).setSearch('no-match');
+    container
+        .read(invoiceListControllerProvider.notifier)
+        .setSearch('no-match');
     await tester.pumpAndSettle();
 
     expect(find.byKey(const Key('invoice-filters-bar')), findsOneWidget);

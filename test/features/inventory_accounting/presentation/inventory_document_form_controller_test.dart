@@ -69,10 +69,7 @@ Product _serializedProduct() {
   );
 }
 
-ProductUnit _unit({
-  required String id,
-  required UnitStatus status,
-}) {
+ProductUnit _unit({required String id, required UnitStatus status}) {
   return ProductUnit(
     id: id,
     tenantId: 't-1',
@@ -95,44 +92,51 @@ Future<void> _waitForMeta(ProviderContainer container, dynamic provider) async {
 
 void main() {
   group('InventoryDocumentFormController', () {
-    test('submit with missing product returns validation error without crash', () async {
-      final container = ProviderContainer(
-        overrides: [
-          authControllerProvider.overrideWith(() => TestAuthController(_session())),
-          inventoryDocumentRepositoryProvider.overrideWith(
-            (ref) => FakeInventoryDocumentRepository(),
-          ),
-          warehouseRepositoryProvider.overrideWith(
-            (ref) => FakeWarehouseRepository(warehouses: const []),
-          ),
-        ],
-      );
-      addTearDown(container.dispose);
+    test(
+      'submit with missing product returns validation error without crash',
+      () async {
+        final container = ProviderContainer(
+          overrides: [
+            authControllerProvider.overrideWith(
+              () => TestAuthController(_session()),
+            ),
+            inventoryDocumentRepositoryProvider.overrideWith(
+              (ref) => FakeInventoryDocumentRepository(),
+            ),
+            warehouseRepositoryProvider.overrideWith(
+              (ref) => FakeWarehouseRepository(warehouses: const []),
+            ),
+          ],
+        );
+        addTearDown(container.dispose);
 
-      final provider = inventoryDocumentFormControllerProvider(
-        InventoryDocumentFormMode.openingStock,
-      );
-      await _waitForMeta(container, provider);
+        final provider = inventoryDocumentFormControllerProvider(
+          InventoryDocumentFormMode.openingStock,
+        );
+        await _waitForMeta(container, provider);
 
-      final notifier = container.read(provider.notifier);
-      notifier.setWarehouseId('wh-1');
-      notifier.setNotes('Opening notes');
+        final notifier = container.read(provider.notifier);
+        notifier.setWarehouseId('wh-1');
+        notifier.setNotes('Opening notes');
 
-      final result = await notifier.submit();
+        final result = await notifier.submit();
 
-      expect(result, FinanceException.validationProductRequired);
-      final state = container.read(provider);
-      expect(
-        state.validationCodes,
-        contains(FinanceException.validationProductRequired),
-      );
-      expect(state.isSubmitting, isFalse);
-    });
+        expect(result, FinanceException.validationProductRequired);
+        final state = container.read(provider);
+        expect(
+          state.validationCodes,
+          contains(FinanceException.validationProductRequired),
+        );
+        expect(state.isSubmitting, isFalse);
+      },
+    );
 
     test('serialized opening stock submit stays blocked', () async {
       final container = ProviderContainer(
         overrides: [
-          authControllerProvider.overrideWith(() => TestAuthController(_session())),
+          authControllerProvider.overrideWith(
+            () => TestAuthController(_session()),
+          ),
           inventoryDocumentRepositoryProvider.overrideWith(
             (ref) => FakeInventoryDocumentRepository(),
           ),
@@ -175,7 +179,9 @@ void main() {
 
       final container = ProviderContainer(
         overrides: [
-          authControllerProvider.overrideWith(() => TestAuthController(_session())),
+          authControllerProvider.overrideWith(
+            () => TestAuthController(_session()),
+          ),
           inventoryDocumentRepositoryProvider.overrideWith(
             (ref) => FakeInventoryDocumentRepository(),
           ),

@@ -15,7 +15,7 @@ bool canPreviewDocument(AppSession session, DocumentKind kind) {
           session.permissions.can('invoices.print'),
     DocumentKind.receiptVoucher =>
       session.permissions.can('vouchers.view') &&
-      session.permissions.can('vouchers.print'),
+          session.permissions.can('vouchers.print'),
     DocumentKind.customerStatement => session.permissions.can(
       'customers.view_ledger',
     ),

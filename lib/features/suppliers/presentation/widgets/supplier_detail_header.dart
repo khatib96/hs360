@@ -26,7 +26,9 @@ class SupplierDetailHeader extends ConsumerWidget {
     if (area != null && area.isNotEmpty) {
       locationParts.add(areaLabel(gov, area, languageCode));
     }
-    final locationText = locationParts.isEmpty ? '—' : locationParts.join(' · ');
+    final locationText = locationParts.isEmpty
+        ? '—'
+        : locationParts.join(' · ');
 
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 8),

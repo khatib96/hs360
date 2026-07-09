@@ -139,62 +139,65 @@ void main() {
     });
   });
 
-  testWidgets('Enter on last line discount adds a line and focuses product cell', (
-    tester,
-  ) async {
-    await tester.binding.setSurfaceSize(const Size(1440, 900));
-    addTearDown(() => tester.binding.setSurfaceSize(null));
+  testWidgets(
+    'Enter on last line discount adds a line and focuses product cell',
+    (tester) async {
+      await tester.binding.setSurfaceSize(const Size(1440, 900));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
 
-    final container = _container();
-    addTearDown(container.dispose);
+      final container = _container();
+      addTearDown(container.dispose);
 
-    final controller = container.read(
-      invoiceFormControllerProvider(InvoiceType.sales).notifier,
-    );
-    await controller.loadMeta();
-    controller.selectProduct(0, _product());
-    controller.setLineQty(0, Decimal.fromInt(2));
+      final controller = container.read(
+        invoiceFormControllerProvider(InvoiceType.sales).notifier,
+      );
+      await controller.loadMeta();
+      controller.selectProduct(0, _product());
+      controller.setLineQty(0, Decimal.fromInt(2));
 
-    await tester.pumpWidget(
-      UncontrolledProviderScope(
-        container: container,
-        child: MaterialApp(
-          locale: const Locale('en'),
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: Scaffold(
-            body: Consumer(
-              builder: (context, ref, _) {
-                final state = ref.watch(
-                  invoiceFormControllerProvider(InvoiceType.sales),
-                );
-                return InvoiceLineTable(
-                  invoiceType: InvoiceType.sales,
-                  lines: state.lines,
-                  languageCode: 'en',
-                  decimalPlaces: 3,
-                );
-              },
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp(
+            locale: const Locale('en'),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: Scaffold(
+              body: Consumer(
+                builder: (context, ref, _) {
+                  final state = ref.watch(
+                    invoiceFormControllerProvider(InvoiceType.sales),
+                  );
+                  return InvoiceLineTable(
+                    invoiceType: InvoiceType.sales,
+                    lines: state.lines,
+                    languageCode: 'en',
+                    decimalPlaces: 3,
+                  );
+                },
+              ),
             ),
           ),
         ),
-      ),
-    );
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
 
-    final discountField = find.byType(TextField).last;
-    await tester.tap(discountField);
-    await tester.pump();
-    await tester.testTextInput.receiveAction(TextInputAction.done);
-    await tester.pump();
-    await tester.pump();
+      final discountField = find.byType(TextField).last;
+      await tester.tap(discountField);
+      await tester.pump();
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pump();
+      await tester.pump();
 
-    final state = container.read(invoiceFormControllerProvider(InvoiceType.sales));
-    expect(state.lines.length, 2);
-    expect(state.lines.first.qty, Decimal.fromInt(2));
-    expect(state.lines.first.unitPrice, Decimal.parse('10'));
+      final state = container.read(
+        invoiceFormControllerProvider(InvoiceType.sales),
+      );
+      expect(state.lines.length, 2);
+      expect(state.lines.first.qty, Decimal.fromInt(2));
+      expect(state.lines.first.unitPrice, Decimal.parse('10'));
 
-    expect(find.byKey(const Key('invoice-line-product-1')), findsOneWidget);
-  });
+      expect(find.byKey(const Key('invoice-line-product-1')), findsOneWidget);
+    },
+  );
 }

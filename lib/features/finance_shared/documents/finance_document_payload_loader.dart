@@ -56,7 +56,10 @@ Future<DocumentPayload> loadFinanceDocumentPayloadForSession({
       return mapInvoiceDetailToPayload(detail);
     }(),
     DocumentKind.receiptVoucher => () async {
-      final detail = await voucherRepository.getVoucherDetail(session, entityId);
+      final detail = await voucherRepository.getVoucherDetail(
+        session,
+        entityId,
+      );
       return mapVoucherDetailToPayload(detail);
     }(),
     _ => throw const DocumentException(

@@ -92,7 +92,8 @@ class InventoryAdjustmentDocumentValidator {
         } else if (reason.allowsWacFallback) {
           final avg = line.avgCost ?? Decimal.zero;
           final hasWac = avg > Decimal.zero;
-          final hasCost = line.unitCost != null && line.unitCost! >= Decimal.zero;
+          final hasCost =
+              line.unitCost != null && line.unitCost! >= Decimal.zero;
           if (!hasWac && !hasCost) {
             codes.add(FinanceException.validationCostRequired);
           }

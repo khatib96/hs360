@@ -93,7 +93,9 @@ class InvoiceDetailSummary extends StatelessWidget {
   Widget _grid(List<Widget> children, {required int columns}) {
     final rows = <Widget>[];
     for (var i = 0; i < children.length; i += columns) {
-      final end = (i + columns) > children.length ? children.length : i + columns;
+      final end = (i + columns) > children.length
+          ? children.length
+          : i + columns;
       final slice = children.sublist(i, end);
       rows.add(
         Padding(
@@ -114,7 +116,10 @@ class InvoiceDetailSummary extends StatelessWidget {
         ),
       );
     }
-    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: rows);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: rows,
+    );
   }
 
   Widget _cell(
@@ -130,10 +135,7 @@ class InvoiceDetailSummary extends StatelessWidget {
         Text(label, style: InvoiceDesign.fieldLabelStyle(context)),
         const SizedBox(height: 2),
         child ??
-            Text(
-              value ?? '—',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+            Text(value ?? '—', style: Theme.of(context).textTheme.bodyMedium),
       ],
     );
   }
@@ -336,7 +338,11 @@ class InvoiceDetailTotals extends StatelessWidget {
         InvoiceTotalsRow(l10n.invoiceTotalsSubtotal, detail.subtotal),
         InvoiceTotalsRow(l10n.invoiceTotalsDiscount, detail.discountAmount),
         InvoiceTotalsRow(l10n.invoiceTotalsTax, detail.taxAmount),
-        InvoiceTotalsRow(l10n.invoiceTotalsTotal, detail.total, emphasized: true),
+        InvoiceTotalsRow(
+          l10n.invoiceTotalsTotal,
+          detail.total,
+          emphasized: true,
+        ),
         InvoiceTotalsRow(l10n.invoiceColumnPaid, detail.paidAmount),
         InvoiceTotalsRow(l10n.invoiceColumnOutstanding, detail.outstanding),
       ],
@@ -462,8 +468,9 @@ class InvoiceJournalLinks extends StatelessWidget {
         children: [
           if (detail.journalEntryId != null)
             OutlinedButton.icon(
-              onPressed: () =>
-                  context.go(AppRoutes.journalDetailPath(detail.journalEntryId!)),
+              onPressed: () => context.go(
+                AppRoutes.journalDetailPath(detail.journalEntryId!),
+              ),
               icon: const Icon(Icons.menu_book_outlined, size: 18),
               label: Text(l10n.invoiceJournalEntry),
             ),

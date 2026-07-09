@@ -16,7 +16,8 @@ import 'inventory_document_detail_state.dart';
 part 'inventory_document_detail_controller.g.dart';
 
 @riverpod
-class InventoryDocumentDetailController extends _$InventoryDocumentDetailController {
+class InventoryDocumentDetailController
+    extends _$InventoryDocumentDetailController {
   FinanceIdempotencySession? _idempotency;
 
   @override
@@ -83,10 +84,9 @@ class InventoryDocumentDetailController extends _$InventoryDocumentDetailControl
     if (productIds.isEmpty) return const {};
 
     try {
-      final products = await ref.read(productRepositoryProvider).fetchProducts(
-            const ProductFilters(isActive: null),
-            session,
-          );
+      final products = await ref
+          .read(productRepositoryProvider)
+          .fetchProducts(const ProductFilters(isActive: null), session);
       final labels = <String, String>{};
       for (final product in products) {
         if (productIds.contains(product.id)) {
@@ -122,12 +122,9 @@ class InventoryDocumentDetailController extends _$InventoryDocumentDetailControl
     );
 
     try {
-      await ref.read(inventoryDocumentRepositoryProvider).cancelDocument(
-            session,
-            documentId,
-            reason,
-            _idempotency!.key,
-          );
+      await ref
+          .read(inventoryDocumentRepositoryProvider)
+          .cancelDocument(session, documentId, reason, _idempotency!.key);
       _idempotency!.clear();
       await load();
       state = state.copyWith(isSubmitting: false);

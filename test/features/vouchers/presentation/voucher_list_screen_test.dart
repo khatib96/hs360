@@ -70,7 +70,9 @@ void main() {
     final container = ProviderScope.containerOf(
       tester.element(find.byType(VoucherListScreen)),
     );
-    container.read(voucherListControllerProvider.notifier).setSearch('no-match');
+    container
+        .read(voucherListControllerProvider.notifier)
+        .setSearch('no-match');
     await tester.pumpAndSettle();
 
     expect(find.byKey(const Key('voucher-filters-bar')), findsOneWidget);

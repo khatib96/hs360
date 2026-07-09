@@ -19,11 +19,7 @@ class InvoiceTotalsRow {
 
 /// Reusable, right-aligned, thin-bordered totals block (form + detail).
 class InvoiceTotalsBlock extends StatelessWidget {
-  const InvoiceTotalsBlock({
-    required this.rows,
-    this.note,
-    super.key,
-  });
+  const InvoiceTotalsBlock({required this.rows, this.note, super.key});
 
   final List<InvoiceTotalsRow> rows;
   final String? note;

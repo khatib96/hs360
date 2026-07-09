@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hs360/core/errors/customer_exception.dart';
+import 'package:hs360/core/errors/finance_exception.dart';
 import 'package:hs360/features/auth/domain/app_permissions.dart';
 import 'package:hs360/features/auth/domain/app_session.dart';
 import 'package:hs360/features/auth/presentation/auth_controller.dart';
@@ -12,11 +13,13 @@ import 'package:hs360/features/customers/data/customer_service_location_reposito
 import 'package:hs360/features/customers/domain/customer_service_location.dart';
 import 'package:hs360/features/customers/domain/service_location_coordinates.dart';
 import 'package:hs360/features/customers/domain/service_location_type.dart';
+import 'package:hs360/features/contracts/data/contract_repository.dart';
 import 'package:hs360/features/customers/presentation/customer_detail_screen.dart';
 import 'package:hs360/features/invoices/data/invoice_repository.dart';
 import 'package:hs360/features/vouchers/data/voucher_repository.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
+import '../../contracts/fake_contract_repository.dart';
 import '../../invoices/fake_invoice_repository.dart';
 import '../../vouchers/fake_voucher_repository.dart';
 import '../fake_customer_repository.dart';
@@ -48,6 +51,7 @@ void main() {
     FakeCustomerServiceLocationRepository? locationRepo,
     FakeInvoiceRepository? invoiceRepo,
     FakeVoucherRepository? voucherRepo,
+    FakeContractRepository? contractRepo,
     Locale locale = const Locale('en'),
     Size size = const Size(1600, 900),
   }) {
@@ -64,6 +68,8 @@ void main() {
           invoiceRepositoryProvider.overrideWith((ref) => invoiceRepo),
         if (voucherRepo != null)
           voucherRepositoryProvider.overrideWith((ref) => voucherRepo),
+        if (contractRepo != null)
+          contractRepositoryProvider.overrideWith((ref) => contractRepo),
       ],
       child: MaterialApp(
         locale: locale,
@@ -253,6 +259,72 @@ void main() {
     expect(find.byKey(const Key('customer-statement-loaded')), findsOneWidget);
   });
 
+  testWidgets('contracts tab prepared with view permission', (tester) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+    final repo = FakeCustomerRepository(customers: [sampleCustomer()]);
+    final contractRepo = FakeContractRepository(
+      fetchError: const FinanceException(code: FinanceException.notAvailable),
+    );
+
+    await tester.pumpWidget(
+      buildDetail(
+        appSession: session(permissions: {'customers.view', 'contracts.view'}),
+        customerRepo: repo,
+        contractRepo: contractRepo,
+      ),
+    );
+    await tester.pumpAndSettle();
+    await selectCustomerTab(tester, CustomerDetailScreen.contractsTabIndex);
+    await tester.pumpAndSettle();
+    expect(find.text(l10n.customerContractsPrepared), findsOneWidget);
+  });
+
+  testWidgets('contracts tab shows rows from fake repository', (tester) async {
+    final repo = FakeCustomerRepository(customers: [sampleCustomer()]);
+    final contractRepo = FakeContractRepository(
+      summaries: [sampleContractSummary(id: 'contract-1')],
+    );
+
+    await tester.pumpWidget(
+      buildDetail(
+        appSession: session(permissions: {'customers.view', 'contracts.view'}),
+        customerRepo: repo,
+        contractRepo: contractRepo,
+      ),
+    );
+    await tester.pumpAndSettle();
+    await selectCustomerTab(tester, CustomerDetailScreen.contractsTabIndex);
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('contract-compact-table')), findsOneWidget);
+    expect(find.text('CON-001'), findsOneWidget);
+  });
+
+  testWidgets('contracts tab lazy load waits until tab selected', (
+    tester,
+  ) async {
+    final repo = FakeCustomerRepository(customers: [sampleCustomer()]);
+    final contractRepo = FakeContractRepository(
+      summaries: [sampleContractSummary()],
+    );
+
+    await tester.pumpWidget(
+      buildDetail(
+        appSession: session(permissions: {'customers.view', 'contracts.view'}),
+        customerRepo: repo,
+        contractRepo: contractRepo,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(contractRepo.listCallCount, 0);
+
+    await selectCustomerTab(tester, CustomerDetailScreen.contractsTabIndex);
+    await tester.pumpAndSettle();
+
+    expect(contractRepo.listCallCount, 1);
+  });
+
   testWidgets('contracts tab denied without permission', (tester) async {
     final l10n = lookupAppLocalizations(const Locale('en'));
     final repo = FakeCustomerRepository(customers: [sampleCustomer()]);
@@ -265,19 +337,27 @@ void main() {
     expect(find.text(l10n.moduleAccessUnavailable), findsOneWidget);
   });
 
-  testWidgets('contracts tab empty with permission', (tester) async {
-    final l10n = lookupAppLocalizations(const Locale('en'));
+  testWidgets('contracts tab does not load with create permission only', (
+    tester,
+  ) async {
     final repo = FakeCustomerRepository(customers: [sampleCustomer()]);
+    final contractRepo = FakeContractRepository();
 
     await tester.pumpWidget(
       buildDetail(
-        appSession: session(permissions: {'customers.view', 'contracts.view'}),
+        appSession: session(
+          permissions: {'customers.view', 'contracts.create'},
+        ),
         customerRepo: repo,
+        contractRepo: contractRepo,
       ),
     );
     await tester.pumpAndSettle();
-    await selectCustomerTab(tester, 2);
-    expect(find.text(l10n.customerContractsEmpty), findsOneWidget);
+    await selectCustomerTab(tester, CustomerDetailScreen.contractsTabIndex);
+    await tester.pumpAndSettle();
+
+    expect(contractRepo.listCallCount, 0);
+    expect(find.byKey(const Key('customer-contracts-denied')), findsOneWidget);
   });
 
   testWidgets('invoices tab denied without permission', (tester) async {
@@ -298,7 +378,9 @@ void main() {
 
     await tester.pumpWidget(
       buildDetail(
-        appSession: session(permissions: {'customers.view', 'invoices.view_sales'}),
+        appSession: session(
+          permissions: {'customers.view', 'invoices.view_sales'},
+        ),
         customerRepo: repo,
         invoiceRepo: FakeInvoiceRepository(),
       ),

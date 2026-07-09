@@ -65,7 +65,9 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen>
     _invoicesLoadTriggered = true;
     ref
         .read(
-          supplierPurchaseInvoicesControllerProvider(widget.supplierId).notifier,
+          supplierPurchaseInvoicesControllerProvider(
+            widget.supplierId,
+          ).notifier,
         )
         .load();
   }

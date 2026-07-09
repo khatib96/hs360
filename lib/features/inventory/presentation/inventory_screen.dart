@@ -110,7 +110,9 @@ class InventoryScreen extends ConsumerWidget {
               ),
             ),
           ],
-          if (canCreateMovements || canViewMovements || canViewFinancialDocuments) ...[
+          if (canCreateMovements ||
+              canViewMovements ||
+              canViewFinancialDocuments) ...[
             const SizedBox(height: 16),
             Wrap(
               spacing: 12,

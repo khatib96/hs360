@@ -112,10 +112,7 @@ class JournalListScreen extends ConsumerWidget {
       currentRoute: AppRoutes.journal,
       body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsetsDirectional.all(24),
-            child: body,
-          ),
+          Padding(padding: const EdgeInsetsDirectional.all(24), child: body),
           if (state.isLoading && state.entries.isNotEmpty)
             const Positioned(
               top: 0,

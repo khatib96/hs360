@@ -26,7 +26,8 @@ import 'inventory_document_form_state.dart';
 part 'inventory_document_form_controller.g.dart';
 
 @riverpod
-class InventoryDocumentFormController extends _$InventoryDocumentFormController {
+class InventoryDocumentFormController
+    extends _$InventoryDocumentFormController {
   FinanceIdempotencySession? _idempotency;
 
   @override
@@ -255,7 +256,8 @@ class InventoryDocumentFormController extends _$InventoryDocumentFormController 
   void setLineUnitCost(int lineIndex, Decimal? unitCost) {
     _updateLine(
       lineIndex,
-      (line) => line.copyWith(unitCost: unitCost, clearUnitCost: unitCost == null),
+      (line) =>
+          line.copyWith(unitCost: unitCost, clearUnitCost: unitCost == null),
     );
   }
 
@@ -267,12 +269,17 @@ class InventoryDocumentFormController extends _$InventoryDocumentFormController 
     _updateLine(lineIndex, (line) => line.copyWith(unitIds: unitIds));
   }
 
-  void setLineSerialUnits(int lineIndex, List<SerializedUnitInput> serialUnits) {
+  void setLineSerialUnits(
+    int lineIndex,
+    List<SerializedUnitInput> serialUnits,
+  ) {
     _updateLine(lineIndex, (line) => line.copyWith(serialUnits: serialUnits));
   }
 
   void addLine() {
-    state = state.copyWith(lines: [...state.lines, InventoryDocumentFormLineState()]);
+    state = state.copyWith(
+      lines: [...state.lines, InventoryDocumentFormLineState()],
+    );
   }
 
   void removeLine(int lineIndex) {
@@ -283,7 +290,8 @@ class InventoryDocumentFormController extends _$InventoryDocumentFormController 
 
   void _updateLine(
     int lineIndex,
-    InventoryDocumentFormLineState Function(InventoryDocumentFormLineState) update,
+    InventoryDocumentFormLineState Function(InventoryDocumentFormLineState)
+    update,
   ) {
     if (lineIndex < 0 || lineIndex >= state.lines.length) return;
     final lines = [...state.lines];

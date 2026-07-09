@@ -68,9 +68,7 @@ void main() {
       );
       expect(
         canPreviewDocument(
-          session(
-            permissions: {'invoices.view_sales', 'invoices.print'},
-          ),
+          session(permissions: {'invoices.view_sales', 'invoices.print'}),
           DocumentKind.salesInvoice,
         ),
         isTrue,

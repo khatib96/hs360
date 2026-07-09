@@ -93,7 +93,9 @@ class InvoiceSectionCard extends StatelessWidget {
                   topLeft: Radius.circular(10),
                   topRight: Radius.circular(10),
                 ),
-                border: Border(bottom: BorderSide(color: InvoiceDesign.borderColor)),
+                border: Border(
+                  bottom: BorderSide(color: InvoiceDesign.borderColor),
+                ),
               ),
               padding: const EdgeInsetsDirectional.symmetric(
                 horizontal: 14,

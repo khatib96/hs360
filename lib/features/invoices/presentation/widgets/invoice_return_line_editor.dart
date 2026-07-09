@@ -52,7 +52,9 @@ class InvoiceReturnLineEditor extends ConsumerWidget {
             TextFormField(
               initialValue: qty > Decimal.zero ? qty.toString() : '',
               decoration: InputDecoration(labelText: l10n.invoiceFormQty),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               onChanged: (value) {
                 final parsed = tryParseDecimal(value) ?? Decimal.zero;
                 onQtyChanged(parsed);

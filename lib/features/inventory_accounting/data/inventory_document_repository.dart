@@ -105,10 +105,7 @@ class InventoryDocumentRepository {
     try {
       final rows = await _requireClient.rpc(
         'list_inventory_adjustment_reasons',
-        params: {
-          'p_direction': direction,
-          'p_document_type': documentType,
-        },
+        params: {'p_direction': direction, 'p_document_type': documentType},
       );
       final list = _asJsonList(rows);
       return list

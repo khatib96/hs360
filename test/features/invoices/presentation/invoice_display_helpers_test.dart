@@ -17,7 +17,10 @@ void main() {
     });
 
     test('returns only confirmed and cancelled', () {
-      for (final type in [InvoiceType.salesReturn, InvoiceType.purchaseReturn]) {
+      for (final type in [
+        InvoiceType.salesReturn,
+        InvoiceType.purchaseReturn,
+      ]) {
         final options = statusFilterOptionsForType(type);
         expect(options, [InvoiceStatus.confirmed, InvoiceStatus.cancelled]);
       }

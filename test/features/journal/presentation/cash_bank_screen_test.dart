@@ -24,10 +24,7 @@ class TestAuthController extends AuthController {
 }
 
 AppSession _session({
-  Set<String> permissions = const {
-    'cash_bank.view',
-    'chart_of_accounts.view',
-  },
+  Set<String> permissions = const {'cash_bank.view', 'chart_of_accounts.view'},
 }) {
   return AppSession(
     userId: 'u',
@@ -68,7 +65,9 @@ Widget _wrap({
 }
 
 void main() {
-  testWidgets('prompts to select account before activity loads', (tester) async {
+  testWidgets('prompts to select account before activity loads', (
+    tester,
+  ) async {
     await tester.binding.setSurfaceSize(const Size(360, 800));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 

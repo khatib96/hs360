@@ -13,6 +13,7 @@ void main() {
     const prefixes = [
       'finance',
       'navInvoices',
+      'navContracts',
       'navVouchers',
       'navJournal',
       'navCashBank',
@@ -25,6 +26,9 @@ void main() {
       'paymentMethod',
       'journalSourceSalesReturn',
       'journalSourcePurchaseReturn',
+      'contract',
+      'customerContractsPrepared',
+      'customerContractsNotLoaded',
     ];
 
     final financeKeys = enKeys.where((key) {

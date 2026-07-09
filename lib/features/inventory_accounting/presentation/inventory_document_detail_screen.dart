@@ -25,7 +25,9 @@ class InventoryDocumentDetailScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final session = ref.watch(authControllerProvider).valueOrNull;
-    final state = ref.watch(inventoryDocumentDetailControllerProvider(documentId));
+    final state = ref.watch(
+      inventoryDocumentDetailControllerProvider(documentId),
+    );
     final controller = ref.read(
       inventoryDocumentDetailControllerProvider(documentId).notifier,
     );
@@ -71,10 +73,7 @@ class InventoryDocumentDetailScreen extends ConsumerWidget {
               padding: const EdgeInsets.only(bottom: 12),
               child: MessageBanner(
                 variant: MessageBannerVariant.error,
-                message: inventoryDocumentErrorMessage(
-                  l10n,
-                  state.errorCode!,
-                ),
+                message: inventoryDocumentErrorMessage(l10n, state.errorCode!),
               ),
             ),
           Wrap(
@@ -97,9 +96,7 @@ class InventoryDocumentDetailScreen extends ConsumerWidget {
           Text(inventoryDocumentKindLabel(l10n, summary.kind)),
           const SizedBox(height: 4),
           Text(
-            MaterialLocalizations.of(
-              context,
-            ).formatMediumDate(summary.date),
+            MaterialLocalizations.of(context).formatMediumDate(summary.date),
           ),
           if (detail.notes != null && detail.notes!.trim().isNotEmpty) ...[
             const SizedBox(height: 12),
@@ -169,10 +166,7 @@ class InventoryDocumentDetailScreen extends ConsumerWidget {
     return AppShell(
       title: l10n.inventoryDocumentsTitle,
       currentRoute: AppRoutes.inventoryDocumentDetailPath(documentId),
-      body: Padding(
-        padding: const EdgeInsetsDirectional.all(24),
-        child: body,
-      ),
+      body: Padding(padding: const EdgeInsetsDirectional.all(24), child: body),
     );
   }
 

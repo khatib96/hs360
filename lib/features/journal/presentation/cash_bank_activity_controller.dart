@@ -98,10 +98,7 @@ class CashBankActivityController extends _$CashBankActivityController {
     }
 
     final canLoad = canLoadCashBankPostingAccounts(session);
-    state = state.copyWith(
-      isLoadingMeta: true,
-      canLoadCashAccounts: canLoad,
-    );
+    state = state.copyWith(isLoadingMeta: true, canLoadCashAccounts: canLoad);
 
     try {
       var accounts = const <ChartAccount>[];
@@ -111,10 +108,7 @@ class CashBankActivityController extends _$CashBankActivityController {
             .fetchChartAccounts(session, isActive: true);
         accounts = filterCashBankPostingAccounts(all);
       }
-      state = state.copyWith(
-        isLoadingMeta: false,
-        cashBankAccounts: accounts,
-      );
+      state = state.copyWith(isLoadingMeta: false, cashBankAccounts: accounts);
     } on FinanceException catch (e) {
       state = state.copyWith(isLoadingMeta: false, errorCode: e.code);
     } catch (_) {
@@ -214,10 +208,7 @@ class CashBankActivityController extends _$CashBankActivityController {
           );
       if (refreshId != _refreshSerial) return;
 
-      final mergedRows = [
-        ...current.rows,
-        ...nextPage.rows.take(pageSize),
-      ];
+      final mergedRows = [...current.rows, ...nextPage.rows.take(pageSize)];
 
       state = state.copyWith(
         isLoadingMore: false,

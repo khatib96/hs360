@@ -25,7 +25,10 @@ void main() {
       assetLines:
           assetLines ??
           const [
-            ContractAssetLineDraft(productId: 'prod-1', productUnitId: 'unit-1'),
+            ContractAssetLineDraft(
+              productId: 'prod-1',
+              productUnitId: 'unit-1',
+            ),
           ],
     );
   }

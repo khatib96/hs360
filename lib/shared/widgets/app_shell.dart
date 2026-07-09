@@ -98,6 +98,13 @@ class AppShell extends ConsumerWidget {
         matchChildren: true,
       ),
       _NavItem(
+        titleGetter: (l) => l.navContracts,
+        icon: Icons.assignment_outlined,
+        route: AppRoutes.contracts,
+        isVisible: canViewContracts,
+        matchChildren: true,
+      ),
+      _NavItem(
         titleGetter: (l) => l.navInvoices,
         icon: Icons.receipt_long_outlined,
         route: AppRoutes.invoices,

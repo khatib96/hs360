@@ -7,20 +7,13 @@ import '../fake_voucher_repository.dart';
 
 void main() {
   test('isVoucherPrintable allows confirmed receipt only', () {
+    expect(isVoucherPrintable(sampleVoucherDetail()), isTrue);
     expect(
-      isVoucherPrintable(sampleVoucherDetail()),
-      isTrue,
-    );
-    expect(
-      isVoucherPrintable(
-        sampleVoucherDetail(status: VoucherStatus.cancelled),
-      ),
+      isVoucherPrintable(sampleVoucherDetail(status: VoucherStatus.cancelled)),
       isFalse,
     );
     expect(
-      isVoucherPrintable(
-        sampleVoucherDetail(type: VoucherType.payment),
-      ),
+      isVoucherPrintable(sampleVoucherDetail(type: VoucherType.payment)),
       isFalse,
     );
   });

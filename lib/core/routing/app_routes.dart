@@ -36,6 +36,10 @@ abstract final class AppRoutes {
   static const vouchersNewReceipt = '/vouchers/new/receipt';
   static const vouchersNewPayment = '/vouchers/new/payment';
   static const vouchersDetail = '/vouchers/:id';
+  static const contracts = '/contracts';
+  static const contractsNew = '/contracts/new';
+  static const contractsDetail = '/contracts/:id';
+  static const contractsConvert = '/contracts/:id/convert';
   static const journal = '/journal';
   static const journalDetail = '/journal/:id';
   static const cashBank = '/cash-bank';
@@ -82,6 +86,10 @@ abstract final class AppRoutes {
   static const vouchersNewReceiptName = 'vouchersNewReceipt';
   static const vouchersNewPaymentName = 'vouchersNewPayment';
   static const vouchersDetailName = 'vouchersDetail';
+  static const contractsName = 'contracts';
+  static const contractsNewName = 'contractsNew';
+  static const contractsDetailName = 'contractsDetail';
+  static const contractsConvertName = 'contractsConvert';
   static const journalName = 'journal';
   static const journalDetailName = 'journalDetail';
   static const cashBankName = 'cashBank';
@@ -119,6 +127,12 @@ abstract final class AppRoutes {
 
   static String voucherDetailPath(String id) =>
       '/vouchers/${Uri.encodeComponent(id)}';
+
+  static String contractDetailPath(String id) =>
+      '/contracts/${Uri.encodeComponent(id)}';
+
+  static String contractConvertPath(String id) =>
+      '/contracts/${Uri.encodeComponent(id)}/convert';
 
   static String journalDetailPath(String id) =>
       '/journal/${Uri.encodeComponent(id)}';

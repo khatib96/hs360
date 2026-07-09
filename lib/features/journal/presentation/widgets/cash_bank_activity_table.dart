@@ -8,10 +8,7 @@ import '../journal_display_helpers.dart';
 import '../journal_source_navigation.dart';
 
 class CashBankActivityTable extends StatelessWidget {
-  const CashBankActivityTable({
-    required this.rows,
-    super.key,
-  });
+  const CashBankActivityTable({required this.rows, super.key});
 
   final List<CashBankActivityRow> rows;
 

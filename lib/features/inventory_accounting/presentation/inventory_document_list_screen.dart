@@ -24,7 +24,9 @@ class InventoryDocumentListScreen extends ConsumerWidget {
     final locale = ref.watch(localeProvider);
     final session = ref.watch(authControllerProvider).valueOrNull;
     final state = ref.watch(inventoryDocumentListControllerProvider);
-    final controller = ref.read(inventoryDocumentListControllerProvider.notifier);
+    final controller = ref.read(
+      inventoryDocumentListControllerProvider.notifier,
+    );
 
     if (session != null && !canViewInventoryDocuments(session)) {
       return FinancePlaceholderScreen(
@@ -162,10 +164,7 @@ class InventoryDocumentListScreen extends ConsumerWidget {
               onSelected: context.go,
               itemBuilder: (context) => [
                 for (final action in createActions)
-                  PopupMenuItem(
-                    value: action.route,
-                    child: Text(action.label),
-                  ),
+                  PopupMenuItem(value: action.route, child: Text(action.label)),
               ],
             ),
           );
@@ -179,10 +178,7 @@ class InventoryDocumentListScreen extends ConsumerWidget {
       actions: actions.isEmpty ? null : actions,
       body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsetsDirectional.all(24),
-            child: body,
-          ),
+          Padding(padding: const EdgeInsetsDirectional.all(24), child: body),
           if (state.isLoading && state.documents.isNotEmpty)
             const Positioned(
               top: 0,
@@ -197,5 +193,7 @@ class InventoryDocumentListScreen extends ConsumerWidget {
 }
 
 final _warehousesProvider = FutureProvider((ref) async {
-  return ref.read(warehouseRepositoryProvider).fetchWarehouses(activeOnly: true);
+  return ref
+      .read(warehouseRepositoryProvider)
+      .fetchWarehouses(activeOnly: true);
 });

@@ -10,9 +10,14 @@ String? routeForUnitTimelineEvent(UnitTimelineEvent event) {
   if (sourceId == null || sourceId.isEmpty) return null;
 
   return switch (event.titleKey) {
-    'unit_timeline.purchase_invoice' => _invoicePath(sourceId, event.metadataJson),
-    _ when event.sourceTable == 'invoices' =>
-      _invoicePath(sourceId, event.metadataJson),
+    'unit_timeline.purchase_invoice' => _invoicePath(
+      sourceId,
+      event.metadataJson,
+    ),
+    _ when event.sourceTable == 'invoices' => _invoicePath(
+      sourceId,
+      event.metadataJson,
+    ),
     _ => null,
   };
 }

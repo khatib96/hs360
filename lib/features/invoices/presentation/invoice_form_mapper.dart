@@ -42,8 +42,9 @@ domain.InvoiceFormState purchaseDetailToInvoiceFormState(InvoiceDetail detail) {
 /// Client-side estimate for return credit from frozen returnable line fields.
 Decimal estimateReturnLineCredit(ReturnableLineEstimateInput input) {
   final gross = input.unitPrice * input.qty;
-  final discount = (gross * input.discountPct / Decimal.fromInt(100))
-      .toDecimal(scaleOnInfinitePrecision: 10);
+  final discount = (gross * input.discountPct / Decimal.fromInt(100)).toDecimal(
+    scaleOnInfinitePrecision: 10,
+  );
   return gross - discount;
 }
 

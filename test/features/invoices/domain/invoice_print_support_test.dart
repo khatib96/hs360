@@ -20,9 +20,7 @@ void main() {
 
   test('isInvoicePrintable excludes draft and cancelled', () {
     expect(
-      isInvoicePrintable(
-        sampleInvoiceDetail(status: InvoiceStatus.confirmed),
-      ),
+      isInvoicePrintable(sampleInvoiceDetail(status: InvoiceStatus.confirmed)),
       isTrue,
     );
     expect(

@@ -1,6 +1,60 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-09 (Session: Phase 6 M6 — **Domain Models, Validators, and Repositories verified and closed**).
+> Updated 2026-07-09 (Session: Phase 6 M7 — **Routes, Navigation, and Customer 360 Integration verified and closed**).
+
+---
+
+## Session 2026-07-09 - Phase 6 M7 Routes, Navigation, and Customer 360 Closure
+
+**Decision:** Phase 6 M7 is closed. Contracts are reachable through guarded routes,
+AppShell navigation, and Customer 360 without backend read RPCs or widget-level
+Supabase access.
+
+### Delivered
+
+- Added contract routes in `app_routes.dart` / `app_router.dart`:
+  `/contracts`, `/contracts/new`, `/contracts/:id`, `/contracts/:id/convert`.
+- Added route guards and path matchers in `route_guards.dart` for
+  `contracts.view`, `contracts.create`, and `contracts.convert_trial`; exported
+  `contract_permissions.dart`.
+- Added AppShell nav item `navContracts` gated by `canViewContracts` only.
+- Added minimal contract presentation shells under
+  `lib/features/contracts/presentation/` (list/create/detail/convert) plus
+  `ContractCompactTable` for Customer 360.
+- Added temporary client-side read stubs on `ContractRepository`:
+  `listContracts` / `fetchContractDetail` throw `FinanceException.notAvailable`
+  (no RPC calls until M8).
+- Extended `FakeContractRepository` with list/detail overrides for tests.
+- Wired Customer 360 contracts tab: lazy load, `CustomerContractsController`,
+  prepared entry state, fake-backed rows in tests.
+- Added AR/EN l10n keys for nav, shells, statuses, columns, and customer tab
+  copy; extended finance l10n parity test.
+
+### Locked M7 rules
+
+- No `list_contracts` / `get_contract_detail` backend work in M7.
+- Create-only users may open `/contracts/new` directly but do not see AppShell
+  contracts nav or Customer 360 contract data without `contracts.view`.
+- Customer 360 contracts tab loads only with `contracts.view`; never with
+  `contracts.create` alone.
+- User-facing copy uses prepared/ready language — no backend/RPC/stub jargon.
+
+### Verification
+
+- `dart analyze .` passed.
+- `flutter test` on route guards, app shell nav, localization parity, customers,
+  and contracts passed (195 targeted tests in M7 verification run).
+- `git diff --check` passed.
+- Codex follow-up review confirmed the same M7 gates locally after Cursor
+  delivery: guarded contract routes, AppShell visibility, Customer 360 lazy
+  loading, temporary read stubs with no `list_contracts` /
+  `get_contract_detail` RPC calls, and no Supabase imports in contracts
+  presentation/customer contract UI. The worktree includes broad Dart-formatting
+  churn outside contracts; this is not an M7 blocker, but should be reviewed
+  intentionally during commit.
+
+**Next:** Phase 6 M8 — contract list/detail UI wired to real read RPCs when
+available.
 
 ---
 
@@ -50,8 +104,6 @@ helpers, and fake repository fixtures — with no widget-level Supabase access.
   `dart run build_runner build --delete-conflicting-outputs`, removing the
   temporary placeholder hash risk. `dart analyze .`, the 33 focused M6 tests,
   and `git diff --check` passed again after regeneration.
-
-**Next:** Phase 6 M7 — routes, navigation, and Customer 360 contracts integration.
 
 ---
 

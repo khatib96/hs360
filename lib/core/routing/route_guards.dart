@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/auth/domain/app_session.dart';
 import '../../features/auth/presentation/auth_controller.dart';
+import '../../features/contracts/domain/contract_permissions.dart';
 import '../../features/finance_shared/domain/finance_permissions.dart';
 import '../../features/invoices/domain/invoice_type.dart';
 import '../network/supabase_providers.dart';
@@ -10,6 +11,7 @@ import '../documents/domain/document_kind.dart';
 import '../documents/domain/document_permissions.dart';
 import 'app_routes.dart';
 
+export '../../features/contracts/domain/contract_permissions.dart';
 export '../../features/finance_shared/domain/finance_permissions.dart';
 
 const _fieldPermissionIds = [
@@ -135,6 +137,21 @@ bool isVouchersNewReceiptPath(String path) =>
 
 bool isVouchersNewPaymentPath(String path) =>
     _normalizePath(path) == AppRoutes.vouchersNewPayment;
+
+bool isContractsNewPath(String path) =>
+    _normalizePath(path) == AppRoutes.contractsNew;
+
+bool isContractConvertPath(String path) {
+  return RegExp(r'^/contracts/([^/]+)/convert$').hasMatch(_normalizePath(path));
+}
+
+bool isContractDetailPath(String path) {
+  final match = RegExp(
+    r'^/contracts/([^/]+)$',
+  ).firstMatch(_normalizePath(path));
+  if (match == null) return false;
+  return match.group(1)! != 'new';
+}
 
 bool isJournalDetailPath(String path) {
   final match = RegExp(r'^/journal/([^/]+)$').firstMatch(_normalizePath(path));
@@ -282,6 +299,18 @@ bool _isPathAllowed(
   }
   if (isVoucherDetailPath(path)) {
     return canViewVouchers(session);
+  }
+  if (path == AppRoutes.contracts) {
+    return canViewContracts(session);
+  }
+  if (isContractsNewPath(path)) {
+    return canCreateContract(session);
+  }
+  if (isContractConvertPath(path)) {
+    return canConvertTrial(session);
+  }
+  if (isContractDetailPath(path)) {
+    return canViewContracts(session);
   }
   if (path == AppRoutes.journal) {
     return canViewJournal(session);

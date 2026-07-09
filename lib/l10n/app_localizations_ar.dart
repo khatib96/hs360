@@ -1109,6 +1109,83 @@ class AppLocalizationsAr extends AppLocalizations {
   String get customerContractsEmpty => 'لا توجد عقود بعد.';
 
   @override
+  String get customerContractsPrepared =>
+      'ستظهر عقود هذا العميل هنا عند توفرها.';
+
+  @override
+  String get customerContractsNotLoaded => 'افتح هذا التبويب لتحميل العقود.';
+
+  @override
+  String get contractTitle => 'العقود';
+
+  @override
+  String get contractDetailTitle => 'العقد';
+
+  @override
+  String get contractCreateTitle => 'عقد جديد';
+
+  @override
+  String get contractConvertTitle => 'تحويل العقد التجريبي';
+
+  @override
+  String get contractListPrepared => 'ستظهر قائمة العقود هنا عند توفرها.';
+
+  @override
+  String get contractCreatePrepared => 'سيفتح إنشاء العقد هنا عند الجاهزية.';
+
+  @override
+  String get contractDetailPrepared => 'ستظهر تفاصيل العقد هنا عند توفرها.';
+
+  @override
+  String get contractConvertPrepared =>
+      'سيفتح تحويل العقد التجريبي هنا عند الجاهزية.';
+
+  @override
+  String get contractCreateNew => 'عقد جديد';
+
+  @override
+  String get contractViewAll => 'كل العقود';
+
+  @override
+  String get contractTypeTrial => 'تجريبي';
+
+  @override
+  String get contractTypeRental => 'إيجار';
+
+  @override
+  String get contractStatusDraft => 'مسودة';
+
+  @override
+  String get contractStatusActive => 'نشط';
+
+  @override
+  String get contractStatusSuspended => 'موقوف';
+
+  @override
+  String get contractStatusCompleted => 'مكتمل';
+
+  @override
+  String get contractStatusTerminatedEarly => 'منتهٍ مبكرًا';
+
+  @override
+  String get contractStatusExpired => 'منتهٍ';
+
+  @override
+  String get contractColumnNumber => 'رقم العقد';
+
+  @override
+  String get contractColumnType => 'النوع';
+
+  @override
+  String get contractColumnStatus => 'الحالة';
+
+  @override
+  String get contractColumnStartDate => 'تاريخ البدء';
+
+  @override
+  String get contractColumnMonthlyValue => 'القيمة الشهرية';
+
+  @override
   String get customerInvoicesEmpty => 'لا توجد فواتير بعد.';
 
   @override
@@ -2167,6 +2244,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get navInvoices => 'الفواتير';
+
+  @override
+  String get navContracts => 'العقود';
 
   @override
   String get navVouchers => 'السندات';

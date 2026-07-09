@@ -46,9 +46,7 @@ class JournalDetailHeader extends StatelessWidget {
         const SizedBox(height: 8),
         Text(journalSourceLabel(l10n, summary.source)),
         const SizedBox(height: 4),
-        Text(
-          MaterialLocalizations.of(context).formatMediumDate(summary.date),
-        ),
+        Text(MaterialLocalizations.of(context).formatMediumDate(summary.date)),
         const SizedBox(height: 4),
         Text(
           journalEntryDescription(
@@ -176,8 +174,7 @@ class JournalDetailLinesTable extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                if (line.debit > Decimal.zero)
-                  MoneyDisplay(amount: line.debit),
+                if (line.debit > Decimal.zero) MoneyDisplay(amount: line.debit),
                 if (line.credit > Decimal.zero)
                   MoneyDisplay(amount: line.credit),
               ],

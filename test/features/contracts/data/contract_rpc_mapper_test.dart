@@ -48,7 +48,10 @@ void main() {
 
       expect(preview.assetMonthlyCost, Decimal.parse('40.000'));
       expect(preview.expectedMonthlyProfit, Decimal.parse('80.000'));
-      expect(preview.assetLines.single.sourceUnitCost, Decimal.parse('800.000'));
+      expect(
+        preview.assetLines.single.sourceUnitCost,
+        Decimal.parse('800.000'),
+      );
     });
 
     test('mapRentalCollectionResult parses collect payload', () {

@@ -64,8 +64,9 @@ class _InvoiceLineTableState extends ConsumerState<InvoiceLineTable> {
     );
 
     ref.listen<int?>(
-      invoiceFormControllerProvider(widget.invoiceType)
-          .select((s) => s.productFocusRequestIndex),
+      invoiceFormControllerProvider(
+        widget.invoiceType,
+      ).select((s) => s.productFocusRequestIndex),
       (previous, next) {
         if (next == null) return;
         _ensureFocusNodes(widget.lines.length);

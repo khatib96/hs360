@@ -1,9 +1,4 @@
-enum InventoryDocumentFormMode {
-  openingStock,
-  stockIn,
-  stockOut,
-  stockCount,
-}
+enum InventoryDocumentFormMode { openingStock, stockIn, stockOut, stockCount }
 
 extension InventoryDocumentFormModeX on InventoryDocumentFormMode {
   bool get blocksSerialized =>

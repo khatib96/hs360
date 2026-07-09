@@ -36,9 +36,7 @@ AppSession _session({Set<String> permissions = const {'journal.view'}}) {
 Widget _wrap({required FakeJournalRepository repo}) {
   return ProviderScope(
     overrides: [
-      authControllerProvider.overrideWith(
-        () => TestAuthController(_session()),
-      ),
+      authControllerProvider.overrideWith(() => TestAuthController(_session())),
       journalRepositoryProvider.overrideWith((ref) => repo),
     ],
     child: MaterialApp(
@@ -67,7 +65,9 @@ void main() {
     final container = ProviderScope.containerOf(
       tester.element(find.byType(JournalListScreen)),
     );
-    container.read(journalListControllerProvider.notifier).setSearch('no-match');
+    container
+        .read(journalListControllerProvider.notifier)
+        .setSearch('no-match');
     await tester.pumpAndSettle();
 
     expect(find.byKey(const Key('journal-filters-bar')), findsOneWidget);

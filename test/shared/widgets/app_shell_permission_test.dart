@@ -260,6 +260,51 @@ void main() {
     expect(find.text(l10n.navInvoices), findsNothing);
   });
 
+  testWidgets('contracts.view shows contracts navigation item', (tester) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+
+    await tester.pumpWidget(
+      buildTestApp(
+        appSession: session(permissions: {'contracts.view'}),
+        child: const AppShell(title: 'Shell', body: SizedBox.shrink()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.navContracts), findsOneWidget);
+    expect(find.text(l10n.navInvoices), findsNothing);
+  });
+
+  testWidgets('contracts.create only hides contracts navigation item', (
+    tester,
+  ) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+
+    await tester.pumpWidget(
+      buildTestApp(
+        appSession: session(permissions: {'contracts.create'}),
+        child: const AppShell(title: 'Shell', body: SizedBox.shrink()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.navContracts), findsNothing);
+  });
+
+  testWidgets('manager sees contracts navigation item', (tester) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+
+    await tester.pumpWidget(
+      buildTestApp(
+        appSession: session(accountType: 'manager'),
+        child: const AppShell(title: 'Shell', body: SizedBox.shrink()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.navContracts), findsOneWidget);
+  });
+
   testWidgets('journal.view shows journal navigation item', (tester) async {
     final l10n = lookupAppLocalizations(const Locale('en'));
 
@@ -306,6 +351,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text(l10n.navInvoices), findsNothing);
+    expect(find.text(l10n.navContracts), findsNothing);
     expect(find.text(l10n.navVouchers), findsNothing);
     expect(find.text(l10n.navJournal), findsNothing);
     expect(find.text(l10n.navCashBank), findsNothing);

@@ -47,8 +47,7 @@ bool journalEntryIsReversal(JournalSource source) {
     JournalSource.paymentVoucherReversal ||
     JournalSource.salesReturnReversal ||
     JournalSource.purchaseReturnReversal ||
-    JournalSource.inventoryDocumentReversal =>
-      true,
+    JournalSource.inventoryDocumentReversal => true,
     _ => false,
   };
 }

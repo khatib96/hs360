@@ -60,9 +60,7 @@ void main() {
   }
 
   test('load uses sales invoices scoped to customer', () async {
-    final repo = FakeInvoiceRepository(
-      salesInvoices: [sampleInvoice()],
-    );
+    final repo = FakeInvoiceRepository(salesInvoices: [sampleInvoice()]);
     final c = container(
       repo: repo,
       appSession: session(permissions: {'invoices.view_sales'}),
@@ -75,8 +73,10 @@ void main() {
     await notifier.load();
 
     expect(repo.lastSalesFilters?.partyId, 'cust-1');
-    expect(c.read(customerInvoicesControllerProvider('cust-1')).invoices,
-        hasLength(1));
+    expect(
+      c.read(customerInvoicesControllerProvider('cust-1')).invoices,
+      hasLength(1),
+    );
   });
 
   test('permission denied without sales invoice permission', () async {

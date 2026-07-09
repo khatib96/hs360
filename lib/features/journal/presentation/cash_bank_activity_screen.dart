@@ -125,10 +125,7 @@ class CashBankActivityScreen extends ConsumerWidget {
       currentRoute: AppRoutes.cashBank,
       body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsetsDirectional.all(24),
-            child: body,
-          ),
+          Padding(padding: const EdgeInsetsDirectional.all(24), child: body),
           if (state.isLoading && state.page != null)
             const Positioned(
               top: 0,
@@ -208,13 +205,7 @@ class _CashBankDateFilters extends StatelessWidget {
       );
     }
 
-    return Column(
-      children: [
-        fromField,
-        const SizedBox(height: 12),
-        toField,
-      ],
-    );
+    return Column(children: [fromField, const SizedBox(height: 12), toField]);
   }
 }
 

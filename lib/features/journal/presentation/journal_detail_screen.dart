@@ -91,10 +91,7 @@ class JournalDetailScreen extends ConsumerWidget {
     return AppShell(
       title: l10n.journalDetailTitle,
       currentRoute: AppRoutes.journal,
-      body: Padding(
-        padding: const EdgeInsetsDirectional.all(24),
-        child: body,
-      ),
+      body: Padding(padding: const EdgeInsetsDirectional.all(24), child: body),
     );
   }
 }

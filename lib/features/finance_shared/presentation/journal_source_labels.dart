@@ -15,7 +15,8 @@ String journalSourceLabel(AppLocalizations l10n, JournalSource source) {
     JournalSource.openingBalance => l10n.journalSourceOpeningBalance,
     JournalSource.inventoryAdjustment => l10n.journalSourceInventoryAdjustment,
     JournalSource.salaryPayment => l10n.journalSourceSalaryPayment,
-    JournalSource.salesInvoiceReversal => l10n.journalSourceSalesInvoiceReversal,
+    JournalSource.salesInvoiceReversal =>
+      l10n.journalSourceSalesInvoiceReversal,
     JournalSource.purchaseInvoiceReversal =>
       l10n.journalSourcePurchaseInvoiceReversal,
     JournalSource.receiptVoucherReversal =>

@@ -68,7 +68,9 @@ class _CustomerQuickCreateDialogState
       if (!mounted) return;
       setState(() => _isSubmitting = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(customerErrorMessage(l10n, CustomerException.unknown))),
+        SnackBar(
+          content: Text(customerErrorMessage(l10n, CustomerException.unknown)),
+        ),
       );
     }
   }
@@ -97,7 +99,9 @@ class _CustomerQuickCreateDialogState
               controller: _phoneController,
               keyboardType: TextInputType.phone,
               textInputAction: TextInputAction.done,
-              decoration: InputDecoration(labelText: l10n.customerFieldPhonePrimary),
+              decoration: InputDecoration(
+                labelText: l10n.customerFieldPhonePrimary,
+              ),
               onSubmitted: (_) => _submit(),
             ),
           ],

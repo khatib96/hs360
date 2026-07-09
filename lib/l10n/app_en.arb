@@ -584,6 +584,37 @@
   "@customerContractsEmpty": {
     "description": "Contracts tab empty state when user can view contracts"
   },
+  "customerContractsPrepared": "Contract list for this customer will appear here once available.",
+  "@customerContractsPrepared": {
+    "description": "Contracts tab prepared state before list is available"
+  },
+  "customerContractsNotLoaded": "Open this tab to load contracts.",
+  "@customerContractsNotLoaded": {
+    "description": "Contracts tab before lazy load"
+  },
+  "contractTitle": "Contracts",
+  "contractDetailTitle": "Contract",
+  "contractCreateTitle": "New contract",
+  "contractConvertTitle": "Convert trial",
+  "contractListPrepared": "Contract list will appear here once available.",
+  "contractCreatePrepared": "Contract creation will open here once ready.",
+  "contractDetailPrepared": "Contract details will appear here once available.",
+  "contractConvertPrepared": "Trial conversion will open here once ready.",
+  "contractCreateNew": "New contract",
+  "contractViewAll": "All contracts",
+  "contractTypeTrial": "Trial",
+  "contractTypeRental": "Rental",
+  "contractStatusDraft": "Draft",
+  "contractStatusActive": "Active",
+  "contractStatusSuspended": "Suspended",
+  "contractStatusCompleted": "Completed",
+  "contractStatusTerminatedEarly": "Terminated early",
+  "contractStatusExpired": "Expired",
+  "contractColumnNumber": "Contract #",
+  "contractColumnType": "Type",
+  "contractColumnStatus": "Status",
+  "contractColumnStartDate": "Start date",
+  "contractColumnMonthlyValue": "Monthly value",
   "customerInvoicesEmpty": "No invoices yet.",
   "@customerInvoicesEmpty": {
     "description": "Invoices tab empty state when user can view invoices"
@@ -1026,6 +1057,7 @@
   "templateSettingsSaved": "Document settings saved.",
   "templateSettingsSave": "Save settings",
   "navInvoices": "Invoices",
+  "navContracts": "Contracts",
   "navVouchers": "Vouchers",
   "navJournal": "Journal",
   "navCashBank": "Cash & Bank",

@@ -2204,6 +2204,156 @@ abstract class AppLocalizations {
   /// **'No contracts yet.'**
   String get customerContractsEmpty;
 
+  /// Contracts tab prepared state before list is available
+  ///
+  /// In en, this message translates to:
+  /// **'Contract list for this customer will appear here once available.'**
+  String get customerContractsPrepared;
+
+  /// Contracts tab before lazy load
+  ///
+  /// In en, this message translates to:
+  /// **'Open this tab to load contracts.'**
+  String get customerContractsNotLoaded;
+
+  /// No description provided for @contractTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contracts'**
+  String get contractTitle;
+
+  /// No description provided for @contractDetailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contract'**
+  String get contractDetailTitle;
+
+  /// No description provided for @contractCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New contract'**
+  String get contractCreateTitle;
+
+  /// No description provided for @contractConvertTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Convert trial'**
+  String get contractConvertTitle;
+
+  /// No description provided for @contractListPrepared.
+  ///
+  /// In en, this message translates to:
+  /// **'Contract list will appear here once available.'**
+  String get contractListPrepared;
+
+  /// No description provided for @contractCreatePrepared.
+  ///
+  /// In en, this message translates to:
+  /// **'Contract creation will open here once ready.'**
+  String get contractCreatePrepared;
+
+  /// No description provided for @contractDetailPrepared.
+  ///
+  /// In en, this message translates to:
+  /// **'Contract details will appear here once available.'**
+  String get contractDetailPrepared;
+
+  /// No description provided for @contractConvertPrepared.
+  ///
+  /// In en, this message translates to:
+  /// **'Trial conversion will open here once ready.'**
+  String get contractConvertPrepared;
+
+  /// No description provided for @contractCreateNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New contract'**
+  String get contractCreateNew;
+
+  /// No description provided for @contractViewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All contracts'**
+  String get contractViewAll;
+
+  /// No description provided for @contractTypeTrial.
+  ///
+  /// In en, this message translates to:
+  /// **'Trial'**
+  String get contractTypeTrial;
+
+  /// No description provided for @contractTypeRental.
+  ///
+  /// In en, this message translates to:
+  /// **'Rental'**
+  String get contractTypeRental;
+
+  /// No description provided for @contractStatusDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get contractStatusDraft;
+
+  /// No description provided for @contractStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get contractStatusActive;
+
+  /// No description provided for @contractStatusSuspended.
+  ///
+  /// In en, this message translates to:
+  /// **'Suspended'**
+  String get contractStatusSuspended;
+
+  /// No description provided for @contractStatusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get contractStatusCompleted;
+
+  /// No description provided for @contractStatusTerminatedEarly.
+  ///
+  /// In en, this message translates to:
+  /// **'Terminated early'**
+  String get contractStatusTerminatedEarly;
+
+  /// No description provided for @contractStatusExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get contractStatusExpired;
+
+  /// No description provided for @contractColumnNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Contract #'**
+  String get contractColumnNumber;
+
+  /// No description provided for @contractColumnType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get contractColumnType;
+
+  /// No description provided for @contractColumnStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get contractColumnStatus;
+
+  /// No description provided for @contractColumnStartDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Start date'**
+  String get contractColumnStartDate;
+
+  /// No description provided for @contractColumnMonthlyValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly value'**
+  String get contractColumnMonthlyValue;
+
   /// Invoices tab empty state when user can view invoices
   ///
   /// In en, this message translates to:
@@ -4213,6 +4363,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Invoices'**
   String get navInvoices;
+
+  /// No description provided for @navContracts.
+  ///
+  /// In en, this message translates to:
+  /// **'Contracts'**
+  String get navContracts;
 
   /// No description provided for @navVouchers.
   ///

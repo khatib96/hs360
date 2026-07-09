@@ -41,29 +41,37 @@ Future<void> _waitForIdle(ProviderContainer container) async {
 
 void main() {
   group('CashBankActivityController', () {
-    test('uses limit+1 and trims rows; hasMore when extra row returned', () async {
-      final repo = FakeCashBankRepository(
-        pages: [sampleCashBankPage(rowCount: 51)],
-      );
-      final container = ProviderContainer(
-        overrides: [
-          authControllerProvider.overrideWith(
-            () => TestAuthController(_session()),
-          ),
-          cashBankRepositoryProvider.overrideWith((ref) => repo),
-        ],
-      );
-      addTearDown(container.dispose);
+    test(
+      'uses limit+1 and trims rows; hasMore when extra row returned',
+      () async {
+        final repo = FakeCashBankRepository(
+          pages: [sampleCashBankPage(rowCount: 51)],
+        );
+        final container = ProviderContainer(
+          overrides: [
+            authControllerProvider.overrideWith(
+              () => TestAuthController(_session()),
+            ),
+            cashBankRepositoryProvider.overrideWith((ref) => repo),
+          ],
+        );
+        addTearDown(container.dispose);
 
-      final notifier = container.read(cashBankActivityControllerProvider.notifier);
-      notifier.setAccountId('acct-1');
-      await _waitForIdle(container);
+        final notifier = container.read(
+          cashBankActivityControllerProvider.notifier,
+        );
+        notifier.setAccountId('acct-1');
+        await _waitForIdle(container);
 
-      final state = container.read(cashBankActivityControllerProvider);
-      expect(repo.lastPage?.limit, CashBankActivityController.pageSize + 1);
-      expect(state.page?.rows, hasLength(CashBankActivityController.pageSize));
-      expect(state.hasMore, isTrue);
-    });
+        final state = container.read(cashBankActivityControllerProvider);
+        expect(repo.lastPage?.limit, CashBankActivityController.pageSize + 1);
+        expect(
+          state.page?.rows,
+          hasLength(CashBankActivityController.pageSize),
+        );
+        expect(state.hasMore, isTrue);
+      },
+    );
 
     test('hasMore false when page fits within pageSize', () async {
       final repo = FakeCashBankRepository(
@@ -79,7 +87,9 @@ void main() {
       );
       addTearDown(container.dispose);
 
-      final notifier = container.read(cashBankActivityControllerProvider.notifier);
+      final notifier = container.read(
+        cashBankActivityControllerProvider.notifier,
+      );
       notifier.setAccountId('acct-1');
       await _waitForIdle(container);
 

@@ -22,10 +22,7 @@ class SupplierPaymentVouchersController
   @override
   SupplierPaymentVouchersState build(String supplierId) {
     return SupplierPaymentVouchersState(
-      filters: VoucherFilters(
-        partyId: supplierId,
-        type: VoucherType.payment,
-      ),
+      filters: VoucherFilters(partyId: supplierId, type: VoucherType.payment),
     );
   }
 
@@ -62,7 +59,9 @@ class SupplierPaymentVouchersController
     );
 
     try {
-      final raw = await ref.read(voucherRepositoryProvider).listVouchers(
+      final raw = await ref
+          .read(voucherRepositoryProvider)
+          .listVouchers(
             session,
             filters: state.filters,
             page: const PaginationCursor(limit: pageSize + 1),
@@ -94,13 +93,12 @@ class SupplierPaymentVouchersController
 
     state = state.copyWith(isLoadingMore: true, clearLoadMoreError: true);
     try {
-      final raw = await ref.read(voucherRepositoryProvider).listVouchers(
+      final raw = await ref
+          .read(voucherRepositoryProvider)
+          .listVouchers(
             session,
             filters: state.filters,
-            page: PaginationCursor(
-              offset: _rpcOffset,
-              limit: pageSize + 1,
-            ),
+            page: PaginationCursor(offset: _rpcOffset, limit: pageSize + 1),
           );
       _rpcOffset += raw.length;
       final rows = scopeSupplierPaymentVouchers(raw, supplierId);

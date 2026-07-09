@@ -167,32 +167,38 @@ void main() {
       expect(repo.lastCancelledId, isNull);
     });
 
-    test('canCreateReturn for confirmed sales invoice with permission', () async {
-      final repo = FakeInvoiceRepository(
-        detailById: {'inv-1': sampleInvoiceDetail()},
-      );
-      final container = ProviderContainer(
-        overrides: [
-          authControllerProvider.overrideWith(
-            () => TestAuthController(
-              _session(permissions: {
-                'invoices.view_sales',
-                'invoices.create_sales_return',
-              }),
+    test(
+      'canCreateReturn for confirmed sales invoice with permission',
+      () async {
+        final repo = FakeInvoiceRepository(
+          detailById: {'inv-1': sampleInvoiceDetail()},
+        );
+        final container = ProviderContainer(
+          overrides: [
+            authControllerProvider.overrideWith(
+              () => TestAuthController(
+                _session(
+                  permissions: {
+                    'invoices.view_sales',
+                    'invoices.create_sales_return',
+                  },
+                ),
+              ),
             ),
-          ),
-          invoiceRepositoryProvider.overrideWith((ref) => repo),
-        ],
-      );
-      addTearDown(container.dispose);
+            invoiceRepositoryProvider.overrideWith((ref) => repo),
+          ],
+        );
+        addTearDown(container.dispose);
 
-      await _waitForDetail(container, 'inv-1');
+        await _waitForDetail(container, 'inv-1');
 
-      final controller =
-          container.read(invoiceDetailControllerProvider('inv-1').notifier);
-      final session = container.read(authControllerProvider).valueOrNull!;
-      expect(controller.canCreateReturn(session), isTrue);
-    });
+        final controller = container.read(
+          invoiceDetailControllerProvider('inv-1').notifier,
+        );
+        final session = container.read(authControllerProvider).valueOrNull!;
+        expect(controller.canCreateReturn(session), isTrue);
+      },
+    );
 
     test('canCreateReturn false for draft purchase', () async {
       final repo = FakeInvoiceRepository(
@@ -207,10 +213,12 @@ void main() {
         overrides: [
           authControllerProvider.overrideWith(
             () => TestAuthController(
-              _session(permissions: {
-                'invoices.view_purchase',
-                'invoices.create_purchase_return',
-              }),
+              _session(
+                permissions: {
+                  'invoices.view_purchase',
+                  'invoices.create_purchase_return',
+                },
+              ),
             ),
           ),
           invoiceRepositoryProvider.overrideWith((ref) => repo),
@@ -219,11 +227,19 @@ void main() {
       addTearDown(container.dispose);
 
       await container
-          .read(invoiceDetailControllerProvider('pi-1', type: InvoiceType.purchase).notifier)
+          .read(
+            invoiceDetailControllerProvider(
+              'pi-1',
+              type: InvoiceType.purchase,
+            ).notifier,
+          )
           .load();
 
       final controller = container.read(
-        invoiceDetailControllerProvider('pi-1', type: InvoiceType.purchase).notifier,
+        invoiceDetailControllerProvider(
+          'pi-1',
+          type: InvoiceType.purchase,
+        ).notifier,
       );
       final session = container.read(authControllerProvider).valueOrNull!;
       expect(controller.canCreateReturn(session), isFalse);
@@ -242,10 +258,12 @@ void main() {
         overrides: [
           authControllerProvider.overrideWith(
             () => TestAuthController(
-              _session(permissions: {
-                'invoices.view_purchase',
-                'invoices.create_purchase',
-              }),
+              _session(
+                permissions: {
+                  'invoices.view_purchase',
+                  'invoices.create_purchase',
+                },
+              ),
             ),
           ),
           invoiceRepositoryProvider.overrideWith((ref) => repo),
@@ -255,14 +273,18 @@ void main() {
 
       await container
           .read(
-            invoiceDetailControllerProvider('pi-draft', type: InvoiceType.purchase)
-                .notifier,
+            invoiceDetailControllerProvider(
+              'pi-draft',
+              type: InvoiceType.purchase,
+            ).notifier,
           )
           .load();
 
       final controller = container.read(
-        invoiceDetailControllerProvider('pi-draft', type: InvoiceType.purchase)
-            .notifier,
+        invoiceDetailControllerProvider(
+          'pi-draft',
+          type: InvoiceType.purchase,
+        ).notifier,
       );
       final session = container.read(authControllerProvider).valueOrNull!;
       expect(controller.canConfirmDraft(session), isFalse);

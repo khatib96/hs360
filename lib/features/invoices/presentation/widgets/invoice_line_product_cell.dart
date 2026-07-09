@@ -38,7 +38,8 @@ class InvoiceLineProductCell extends ConsumerStatefulWidget {
       _InvoiceLineProductCellState();
 }
 
-class _InvoiceLineProductCellState extends ConsumerState<InvoiceLineProductCell> {
+class _InvoiceLineProductCellState
+    extends ConsumerState<InvoiceLineProductCell> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -68,8 +69,7 @@ class _InvoiceLineProductCellState extends ConsumerState<InvoiceLineProductCell>
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: selected ? AppColors.ink : AppColors.neutral400,
-                      fontWeight:
-                          selected ? FontWeight.w500 : FontWeight.w400,
+                      fontWeight: selected ? FontWeight.w500 : FontWeight.w400,
                     ),
                   ),
                   if (selected && widget.product!.sku.isNotEmpty)

@@ -19,10 +19,7 @@ class CustomerInvoicesController extends _$CustomerInvoicesController {
   @override
   CustomerInvoicesState build(String customerId) {
     return CustomerInvoicesState(
-      filters: InvoiceFilters(
-        partyId: customerId,
-        type: InvoiceType.sales,
-      ),
+      filters: InvoiceFilters(partyId: customerId, type: InvoiceType.sales),
     );
   }
 
@@ -59,7 +56,9 @@ class CustomerInvoicesController extends _$CustomerInvoicesController {
     );
 
     try {
-      final rows = await ref.read(invoiceRepositoryProvider).listSalesInvoices(
+      final rows = await ref
+          .read(invoiceRepositoryProvider)
+          .listSalesInvoices(
             session,
             filters: state.filters,
             page: const PaginationCursor(limit: pageSize + 1),
@@ -89,7 +88,9 @@ class CustomerInvoicesController extends _$CustomerInvoicesController {
 
     state = state.copyWith(isLoadingMore: true, clearLoadMoreError: true);
     try {
-      final rows = await ref.read(invoiceRepositoryProvider).listSalesInvoices(
+      final rows = await ref
+          .read(invoiceRepositoryProvider)
+          .listSalesInvoices(
             session,
             filters: state.filters,
             page: PaginationCursor(

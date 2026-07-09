@@ -81,7 +81,9 @@ void main() {
       tester,
       size: _d,
       overrides: [
-        invoiceRepositoryProvider.overrideWith((ref) => FakeInvoiceRepository()),
+        invoiceRepositoryProvider.overrideWith(
+          (ref) => FakeInvoiceRepository(),
+        ),
         warehouseRepositoryProvider.overrideWith(
           (ref) => _FakeWarehouseRepo([_warehouse()]),
         ),
@@ -105,7 +107,8 @@ void main() {
       size: _d,
       overrides: [
         invoiceRepositoryProvider.overrideWith(
-          (ref) => FakeInvoiceRepository(detailById: {'inv-1': _sampleDetail()}),
+          (ref) =>
+              FakeInvoiceRepository(detailById: {'inv-1': _sampleDetail()}),
         ),
       ],
       session: _session({'invoices.view_sales', 'invoices.print'}),
@@ -120,7 +123,8 @@ void main() {
       size: _narrow,
       overrides: [
         invoiceRepositoryProvider.overrideWith(
-          (ref) => FakeInvoiceRepository(detailById: {'inv-1': _sampleDetail()}),
+          (ref) =>
+              FakeInvoiceRepository(detailById: {'inv-1': _sampleDetail()}),
         ),
       ],
       session: _session({'invoices.view_sales', 'invoices.print'}),
@@ -224,9 +228,7 @@ Future<void> _capture(WidgetTester tester, String name) async {
     final image = await boundary.toImage(pixelRatio: 2.0);
     final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
     final dir = Directory('build/screenshots')..createSync(recursive: true);
-    File('${dir.path}/$name.png').writeAsBytesSync(
-      bytes!.buffer.asUint8List(),
-    );
+    File('${dir.path}/$name.png').writeAsBytesSync(bytes!.buffer.asUint8List());
     image.dispose();
   });
 }
@@ -356,14 +358,47 @@ List<InvoiceSummary> _sampleSummaries() {
   }
 
   return [
-    s('a', 'SI-2026-014', 'مؤسسة النخبة لقطع غيار السيارات', '335.000',
-        InvoiceStatus.confirmed, 14),
-    s('b', 'SI-2026-013', 'ورشة الفهد للصيانة', '1240.500',
-        InvoiceStatus.partiallyPaid, 12),
-    s('c', 'SI-2026-012', 'شركة المسار للنقل', '780.000', InvoiceStatus.paid, 9),
+    s(
+      'a',
+      'SI-2026-014',
+      'مؤسسة النخبة لقطع غيار السيارات',
+      '335.000',
+      InvoiceStatus.confirmed,
+      14,
+    ),
+    s(
+      'b',
+      'SI-2026-013',
+      'ورشة الفهد للصيانة',
+      '1240.500',
+      InvoiceStatus.partiallyPaid,
+      12,
+    ),
+    s(
+      'c',
+      'SI-2026-012',
+      'شركة المسار للنقل',
+      '780.000',
+      InvoiceStatus.paid,
+      9,
+    ),
     s('d', 'SI-2026-011', 'محطة الواحة', '95.250', InvoiceStatus.confirmed, 7),
-    s('e', 'SI-2026-010', 'مركز السرعة للزيوت', '460.000', InvoiceStatus.paid, 4),
-    s('f', 'SI-2026-009', 'مؤسسة الإتقان', '210.000', InvoiceStatus.cancelled, 2),
+    s(
+      'e',
+      'SI-2026-010',
+      'مركز السرعة للزيوت',
+      '460.000',
+      InvoiceStatus.paid,
+      4,
+    ),
+    s(
+      'f',
+      'SI-2026-009',
+      'مؤسسة الإتقان',
+      '210.000',
+      InvoiceStatus.cancelled,
+      2,
+    ),
   ];
 }
 

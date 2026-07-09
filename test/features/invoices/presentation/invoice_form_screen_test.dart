@@ -43,15 +43,14 @@ class FakeWarehouseRepository extends WarehouseRepository {
       const [];
 }
 
-Widget _wrap({
-  required AppSession session,
-  required Widget child,
-}) {
+Widget _wrap({required AppSession session, required Widget child}) {
   return ProviderScope(
     overrides: [
       authControllerProvider.overrideWith(() => TestAuthController(session)),
       invoiceRepositoryProvider.overrideWith((ref) => FakeInvoiceRepository()),
-      warehouseRepositoryProvider.overrideWith((ref) => FakeWarehouseRepository()),
+      warehouseRepositoryProvider.overrideWith(
+        (ref) => FakeWarehouseRepository(),
+      ),
     ],
     child: MaterialApp(
       locale: const Locale('en'),
@@ -85,30 +84,30 @@ void main() {
     expect(find.text('Confirm invoice'), findsNothing);
   });
 
-  testWidgets('new purchase with create only shows confirm but not save draft', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      _wrap(
-        session: _session(permissions: {'invoices.create_purchase'}),
-        child: const InvoiceFormScreen(invoiceType: InvoiceType.purchase),
-      ),
-    );
-    await tester.pumpAndSettle();
+  testWidgets(
+    'new purchase with create only shows confirm but not save draft',
+    (tester) async {
+      await tester.pumpWidget(
+        _wrap(
+          session: _session(permissions: {'invoices.create_purchase'}),
+          child: const InvoiceFormScreen(invoiceType: InvoiceType.purchase),
+        ),
+      );
+      await tester.pumpAndSettle();
 
-    expect(find.text('Confirm invoice'), findsOneWidget);
-    expect(find.text('Save draft'), findsNothing);
-  });
+      expect(find.text('Confirm invoice'), findsOneWidget);
+      expect(find.text('Save draft'), findsNothing);
+    },
+  );
 
   testWidgets('purchase draft with create and edit shows both actions', (
     tester,
   ) async {
     await tester.pumpWidget(
       _wrap(
-        session: _session(permissions: {
-          'invoices.create_purchase',
-          'invoices.edit_draft',
-        }),
+        session: _session(
+          permissions: {'invoices.create_purchase', 'invoices.edit_draft'},
+        ),
         child: const InvoiceFormScreen(
           invoiceType: InvoiceType.purchase,
           draftId: 'draft-1',

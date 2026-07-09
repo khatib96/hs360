@@ -20,10 +20,7 @@ class SupplierPurchaseInvoicesController
   @override
   SupplierPurchaseInvoicesState build(String supplierId) {
     return SupplierPurchaseInvoicesState(
-      filters: InvoiceFilters(
-        partyId: supplierId,
-        type: InvoiceType.purchase,
-      ),
+      filters: InvoiceFilters(partyId: supplierId, type: InvoiceType.purchase),
     );
   }
 

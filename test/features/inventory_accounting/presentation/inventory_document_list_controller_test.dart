@@ -17,7 +17,9 @@ import 'package:hs360/features/inventory_accounting/presentation/inventory_docum
 
 import '../fake_inventory_document_repository.dart';
 
-AppSession _session({Set<String> permissions = const {'inventory_documents.view'}}) {
+AppSession _session({
+  Set<String> permissions = const {'inventory_documents.view'},
+}) {
   return AppSession(
     userId: 'u',
     email: 'e@test.com',
@@ -142,10 +144,12 @@ void main() {
         overrides: [
           authControllerProvider.overrideWith(
             () => TestAuthController(
-              _session(permissions: {
-                'inventory_documents.view',
-                'inventory_documents.cancel',
-              }),
+              _session(
+                permissions: {
+                  'inventory_documents.view',
+                  'inventory_documents.cancel',
+                },
+              ),
             ),
           ),
           inventoryDocumentRepositoryProvider.overrideWith((ref) => repo),
@@ -161,10 +165,14 @@ void main() {
         inventoryDocumentDetailControllerProvider('doc-1').notifier,
       );
       expect(
-        controller.canShowCancelButton(_session(permissions: {
-          'inventory_documents.view',
-          'inventory_documents.cancel',
-        })),
+        controller.canShowCancelButton(
+          _session(
+            permissions: {
+              'inventory_documents.view',
+              'inventory_documents.cancel',
+            },
+          ),
+        ),
         isFalse,
       );
     });
@@ -180,10 +188,12 @@ void main() {
         overrides: [
           authControllerProvider.overrideWith(
             () => TestAuthController(
-              _session(permissions: {
-                'inventory_documents.view',
-                'inventory_documents.cancel',
-              }),
+              _session(
+                permissions: {
+                  'inventory_documents.view',
+                  'inventory_documents.cancel',
+                },
+              ),
             ),
           ),
           inventoryDocumentRepositoryProvider.overrideWith((ref) => repo),

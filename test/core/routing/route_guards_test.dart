@@ -722,17 +722,11 @@ void main() {
     test('purchase form route distinguishes create vs draft edit', () {
       final createOnly = session(
         accountType: 'user',
-        permissions: {
-          'invoices.view_purchase',
-          'invoices.create_purchase',
-        },
+        permissions: {'invoices.view_purchase', 'invoices.create_purchase'},
       );
       final editOnly = session(
         accountType: 'user',
-        permissions: {
-          'invoices.view_purchase',
-          'invoices.edit_draft',
-        },
+        permissions: {'invoices.view_purchase', 'invoices.edit_draft'},
       );
       final both = session(
         accountType: 'user',
@@ -857,33 +851,36 @@ void main() {
       }
     });
 
-    test('inventory_documents.create_opening required for opening stock form', () {
-      final viewerOnly = session(
-        accountType: 'user',
-        permissions: {'inventory_documents.view'},
-      );
-      expect(
-        guardRedirectForPath(
-          path: AppRoutes.inventoryDocumentsOpeningStock,
-          hasSupabaseSession: true,
-          authState: loaded(viewerOnly),
-        ),
-        AppRoutes.blocked,
-      );
+    test(
+      'inventory_documents.create_opening required for opening stock form',
+      () {
+        final viewerOnly = session(
+          accountType: 'user',
+          permissions: {'inventory_documents.view'},
+        );
+        expect(
+          guardRedirectForPath(
+            path: AppRoutes.inventoryDocumentsOpeningStock,
+            hasSupabaseSession: true,
+            authState: loaded(viewerOnly),
+          ),
+          AppRoutes.blocked,
+        );
 
-      final creator = session(
-        accountType: 'user',
-        permissions: {'inventory_documents.create_opening'},
-      );
-      expect(
-        guardRedirectForPath(
-          path: AppRoutes.inventoryDocumentsOpeningStock,
-          hasSupabaseSession: true,
-          authState: loaded(creator),
-        ),
-        isNull,
-      );
-    });
+        final creator = session(
+          accountType: 'user',
+          permissions: {'inventory_documents.create_opening'},
+        );
+        expect(
+          guardRedirectForPath(
+            path: AppRoutes.inventoryDocumentsOpeningStock,
+            hasSupabaseSession: true,
+            authState: loaded(creator),
+          ),
+          isNull,
+        );
+      },
+    );
 
     test('settings.tax.view can access tax settings route', () {
       final taxViewer = session(
@@ -947,10 +944,7 @@ void main() {
       expect(
         guardRedirectForPath(
           path: AppRoutes.documentPreview,
-          queryParameters: const {
-            'kind': 'sales_invoice',
-            'entityId': 'inv-1',
-          },
+          queryParameters: const {'kind': 'sales_invoice', 'entityId': 'inv-1'},
           hasSupabaseSession: true,
           authState: loaded(viewOnly),
         ),
@@ -964,10 +958,7 @@ void main() {
       expect(
         guardRedirectForPath(
           path: AppRoutes.documentPreview,
-          queryParameters: const {
-            'kind': 'sales_invoice',
-            'entityId': 'inv-1',
-          },
+          queryParameters: const {'kind': 'sales_invoice', 'entityId': 'inv-1'},
           hasSupabaseSession: true,
           authState: loaded(withPrint),
         ),
@@ -975,24 +966,27 @@ void main() {
       );
     });
 
-    test('document preview allows customer statement with ledger permission', () {
-      final ledgerViewer = session(
-        accountType: 'user',
-        permissions: {'customers.view_ledger'},
-      );
-      expect(
-        guardRedirectForPath(
-          path: AppRoutes.documentPreview,
-          queryParameters: const {
-            'kind': 'customer_statement',
-            'entityId': 'cust-1',
-          },
-          hasSupabaseSession: true,
-          authState: loaded(ledgerViewer),
-        ),
-        isNull,
-      );
-    });
+    test(
+      'document preview allows customer statement with ledger permission',
+      () {
+        final ledgerViewer = session(
+          accountType: 'user',
+          permissions: {'customers.view_ledger'},
+        );
+        expect(
+          guardRedirectForPath(
+            path: AppRoutes.documentPreview,
+            queryParameters: const {
+              'kind': 'customer_statement',
+              'entityId': 'cust-1',
+            },
+            hasSupabaseSession: true,
+            authState: loaded(ledgerViewer),
+          ),
+          isNull,
+        );
+      },
+    );
 
     test('document preview payment voucher always blocked', () {
       final withPrint = session(
@@ -1002,15 +996,144 @@ void main() {
       expect(
         guardRedirectForPath(
           path: AppRoutes.documentPreview,
-          queryParameters: const {
-            'kind': 'payment_voucher',
-            'entityId': 'v-1',
-          },
+          queryParameters: const {'kind': 'payment_voucher', 'entityId': 'v-1'},
           hasSupabaseSession: true,
           authState: loaded(withPrint),
         ),
         AppRoutes.dashboard,
       );
+    });
+
+    test('contract path matchers exclude new segment', () {
+      expect(isContractsNewPath('/contracts/new'), isTrue);
+      expect(isContractDetailPath('/contracts/new'), isFalse);
+      expect(isContractDetailPath('/contracts/contract-1'), isTrue);
+      expect(isContractConvertPath('/contracts/contract-1/convert'), isTrue);
+    });
+
+    test('contract routes enforce permissions', () {
+      final manager = session(accountType: 'manager');
+      final viewer = session(
+        accountType: 'user',
+        permissions: {'contracts.view'},
+      );
+      final creator = session(
+        accountType: 'user',
+        permissions: {'contracts.create'},
+      );
+      final convertUser = session(
+        accountType: 'user',
+        permissions: {'contracts.convert_trial'},
+      );
+      final zero = session(accountType: 'user');
+
+      for (final path in [
+        AppRoutes.contracts,
+        AppRoutes.contractsNew,
+        '/contracts/contract-1',
+        '/contracts/contract-1/convert',
+      ]) {
+        expect(
+          guardRedirectForPath(
+            path: path,
+            hasSupabaseSession: true,
+            authState: loaded(manager),
+          ),
+          isNull,
+        );
+      }
+
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.contracts,
+          hasSupabaseSession: true,
+          authState: loaded(viewer),
+        ),
+        isNull,
+      );
+      expect(
+        guardRedirectForPath(
+          path: '/contracts/contract-1',
+          hasSupabaseSession: true,
+          authState: loaded(viewer),
+        ),
+        isNull,
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.contractsNew,
+          hasSupabaseSession: true,
+          authState: loaded(viewer),
+        ),
+        AppRoutes.dashboard,
+      );
+      expect(
+        guardRedirectForPath(
+          path: '/contracts/contract-1/convert',
+          hasSupabaseSession: true,
+          authState: loaded(viewer),
+        ),
+        AppRoutes.dashboard,
+      );
+
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.contractsNew,
+          hasSupabaseSession: true,
+          authState: loaded(creator),
+        ),
+        isNull,
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.contracts,
+          hasSupabaseSession: true,
+          authState: loaded(creator),
+        ),
+        AppRoutes.blocked,
+      );
+      expect(
+        guardRedirectForPath(
+          path: '/contracts/contract-1',
+          hasSupabaseSession: true,
+          authState: loaded(creator),
+        ),
+        AppRoutes.blocked,
+      );
+      expect(resolveHomeRoute(creator), AppRoutes.blocked);
+
+      expect(
+        guardRedirectForPath(
+          path: '/contracts/contract-1/convert',
+          hasSupabaseSession: true,
+          authState: loaded(convertUser),
+        ),
+        isNull,
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.contracts,
+          hasSupabaseSession: true,
+          authState: loaded(convertUser),
+        ),
+        AppRoutes.blocked,
+      );
+
+      for (final path in [
+        AppRoutes.contracts,
+        AppRoutes.contractsNew,
+        '/contracts/contract-1',
+        '/contracts/contract-1/convert',
+      ]) {
+        expect(
+          guardRedirectForPath(
+            path: path,
+            hasSupabaseSession: true,
+            authState: loaded(zero),
+          ),
+          AppRoutes.blocked,
+        );
+      }
     });
   });
 }

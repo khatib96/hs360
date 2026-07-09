@@ -1116,6 +1116,86 @@ class AppLocalizationsEn extends AppLocalizations {
   String get customerContractsEmpty => 'No contracts yet.';
 
   @override
+  String get customerContractsPrepared =>
+      'Contract list for this customer will appear here once available.';
+
+  @override
+  String get customerContractsNotLoaded => 'Open this tab to load contracts.';
+
+  @override
+  String get contractTitle => 'Contracts';
+
+  @override
+  String get contractDetailTitle => 'Contract';
+
+  @override
+  String get contractCreateTitle => 'New contract';
+
+  @override
+  String get contractConvertTitle => 'Convert trial';
+
+  @override
+  String get contractListPrepared =>
+      'Contract list will appear here once available.';
+
+  @override
+  String get contractCreatePrepared =>
+      'Contract creation will open here once ready.';
+
+  @override
+  String get contractDetailPrepared =>
+      'Contract details will appear here once available.';
+
+  @override
+  String get contractConvertPrepared =>
+      'Trial conversion will open here once ready.';
+
+  @override
+  String get contractCreateNew => 'New contract';
+
+  @override
+  String get contractViewAll => 'All contracts';
+
+  @override
+  String get contractTypeTrial => 'Trial';
+
+  @override
+  String get contractTypeRental => 'Rental';
+
+  @override
+  String get contractStatusDraft => 'Draft';
+
+  @override
+  String get contractStatusActive => 'Active';
+
+  @override
+  String get contractStatusSuspended => 'Suspended';
+
+  @override
+  String get contractStatusCompleted => 'Completed';
+
+  @override
+  String get contractStatusTerminatedEarly => 'Terminated early';
+
+  @override
+  String get contractStatusExpired => 'Expired';
+
+  @override
+  String get contractColumnNumber => 'Contract #';
+
+  @override
+  String get contractColumnType => 'Type';
+
+  @override
+  String get contractColumnStatus => 'Status';
+
+  @override
+  String get contractColumnStartDate => 'Start date';
+
+  @override
+  String get contractColumnMonthlyValue => 'Monthly value';
+
+  @override
   String get customerInvoicesEmpty => 'No invoices yet.';
 
   @override
@@ -2184,6 +2264,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get navInvoices => 'Invoices';
+
+  @override
+  String get navContracts => 'Contracts';
 
   @override
   String get navVouchers => 'Vouchers';

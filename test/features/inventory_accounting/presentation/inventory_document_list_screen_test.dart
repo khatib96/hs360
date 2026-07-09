@@ -69,11 +69,13 @@ void main() {
 
     await tester.pumpWidget(
       _wrap(
-        session: _session(permissions: {
-          'inventory_documents.view',
-          'inventory_documents.create_opening',
-          'inventory_documents.create_adjustment',
-        }),
+        session: _session(
+          permissions: {
+            'inventory_documents.view',
+            'inventory_documents.create_opening',
+            'inventory_documents.create_adjustment',
+          },
+        ),
         repo: repo,
       ),
     );

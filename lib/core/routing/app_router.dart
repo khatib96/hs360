@@ -30,6 +30,10 @@ import '../../features/invoices/presentation/invoice_detail_screen.dart';
 import '../../features/invoices/presentation/invoice_list_screen.dart';
 import '../../features/invoices/presentation/invoice_form_screen.dart';
 import '../../features/invoices/presentation/invoice_return_screen.dart';
+import '../../features/contracts/presentation/contract_convert_screen.dart';
+import '../../features/contracts/presentation/contract_create_screen.dart';
+import '../../features/contracts/presentation/contract_detail_screen.dart';
+import '../../features/contracts/presentation/contract_list_screen.dart';
 import '../../features/vouchers/presentation/voucher_detail_screen.dart';
 import '../../features/vouchers/presentation/voucher_form_screen.dart';
 import '../../features/vouchers/domain/voucher_type.dart';
@@ -247,6 +251,28 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.vouchers,
         name: AppRoutes.vouchersName,
         builder: (context, state) => const VoucherListScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.contractsNew,
+        name: AppRoutes.contractsNewName,
+        builder: (context, state) => const ContractCreateScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.contractsConvert,
+        name: AppRoutes.contractsConvertName,
+        builder: (context, state) =>
+            ContractConvertScreen(contractId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: AppRoutes.contractsDetail,
+        name: AppRoutes.contractsDetailName,
+        builder: (context, state) =>
+            ContractDetailScreen(contractId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: AppRoutes.contracts,
+        name: AppRoutes.contractsName,
+        builder: (context, state) => const ContractListScreen(),
       ),
       GoRoute(
         path: AppRoutes.journalDetail,

@@ -83,8 +83,7 @@ class InvoiceDetailScreen extends ConsumerWidget {
             canConfirmDraft: controller.canConfirmDraft(session),
             canCancel: controller.canShowCancel(session),
             canReturn: controller.canCreateReturn(session),
-            canPreview:
-                canPrintInvoice(session) && isInvoicePrintable(detail),
+            canPreview: canPrintInvoice(session) && isInvoicePrintable(detail),
             isSubmitting: state.isSubmitting,
             onEditDraft: () {
               final route = controller.confirmDraftRoute();
@@ -143,10 +142,7 @@ class InvoiceDetailScreen extends ConsumerWidget {
         ],
       );
 
-      body = InvoiceSheet(
-        banner: _banner(l10n, state),
-        child: sheetChild,
-      );
+      body = InvoiceSheet(banner: _banner(l10n, state), child: sheetChild);
     }
 
     return AppShell(

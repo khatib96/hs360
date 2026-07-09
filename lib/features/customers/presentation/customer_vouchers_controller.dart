@@ -21,10 +21,7 @@ class CustomerVouchersController extends _$CustomerVouchersController {
   @override
   CustomerVouchersState build(String customerId) {
     return CustomerVouchersState(
-      filters: VoucherFilters(
-        partyId: customerId,
-        type: VoucherType.receipt,
-      ),
+      filters: VoucherFilters(partyId: customerId, type: VoucherType.receipt),
     );
   }
 
@@ -61,7 +58,9 @@ class CustomerVouchersController extends _$CustomerVouchersController {
     );
 
     try {
-      final raw = await ref.read(voucherRepositoryProvider).listVouchers(
+      final raw = await ref
+          .read(voucherRepositoryProvider)
+          .listVouchers(
             session,
             filters: state.filters,
             page: const PaginationCursor(limit: pageSize + 1),
@@ -93,13 +92,12 @@ class CustomerVouchersController extends _$CustomerVouchersController {
 
     state = state.copyWith(isLoadingMore: true, clearLoadMoreError: true);
     try {
-      final raw = await ref.read(voucherRepositoryProvider).listVouchers(
+      final raw = await ref
+          .read(voucherRepositoryProvider)
+          .listVouchers(
             session,
             filters: state.filters,
-            page: PaginationCursor(
-              offset: _rpcOffset,
-              limit: pageSize + 1,
-            ),
+            page: PaginationCursor(offset: _rpcOffset, limit: pageSize + 1),
           );
       _rpcOffset += raw.length;
       final rows = scopeCustomerReceiptVouchers(raw, customerId);

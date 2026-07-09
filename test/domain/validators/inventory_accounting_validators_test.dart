@@ -28,8 +28,14 @@ void main() {
       );
 
       expect(result.isValid, isFalse);
-      expect(result.codes, contains(FinanceException.validationGainReasonRequired));
-      expect(result.codes, contains(FinanceException.validationLossReasonRequired));
+      expect(
+        result.codes,
+        contains(FinanceException.validationGainReasonRequired),
+      );
+      expect(
+        result.codes,
+        contains(FinanceException.validationLossReasonRequired),
+      );
     });
 
     test('rejects serialized products', () {
@@ -50,7 +56,10 @@ void main() {
         ),
       );
 
-      expect(result.codes, contains(FinanceException.validationSerializedNotSupported));
+      expect(
+        result.codes,
+        contains(FinanceException.validationSerializedNotSupported),
+      );
     });
   });
 
@@ -131,9 +140,7 @@ void main() {
               qty: Decimal.parse('1.5'),
               unitCost: Decimal.one,
               isSerialized: true,
-              serialUnits: [
-                SerializedUnitInput(serialNumber: 'SN-1'),
-              ],
+              serialUnits: [SerializedUnitInput(serialNumber: 'SN-1')],
             ),
           ],
         ),
@@ -170,53 +177,59 @@ void main() {
       );
     });
 
-    test('serialized stock-in passes with matching integer qty and serials', () {
-      final result = const InventoryAdjustmentDocumentValidator().validate(
-        InventoryAdjustmentDocumentInput(
-          warehouseId: 'wh-1',
-          date: DateTime(2026, 6, 1),
-          notes: 'Adjustment',
-          direction: InventoryAdjustmentDirection.stockIn,
-          reason: costReason,
-          lines: [
-            InventoryAdjustmentDocumentLineInput(
-              productId: 'p1',
-              qty: Decimal.fromInt(2),
-              unitCost: Decimal.one,
-              isSerialized: true,
-              serialUnits: const [
-                SerializedUnitInput(serialNumber: 'SN-1'),
-                SerializedUnitInput(serialNumber: 'SN-2'),
-              ],
-            ),
-          ],
-        ),
-      );
+    test(
+      'serialized stock-in passes with matching integer qty and serials',
+      () {
+        final result = const InventoryAdjustmentDocumentValidator().validate(
+          InventoryAdjustmentDocumentInput(
+            warehouseId: 'wh-1',
+            date: DateTime(2026, 6, 1),
+            notes: 'Adjustment',
+            direction: InventoryAdjustmentDirection.stockIn,
+            reason: costReason,
+            lines: [
+              InventoryAdjustmentDocumentLineInput(
+                productId: 'p1',
+                qty: Decimal.fromInt(2),
+                unitCost: Decimal.one,
+                isSerialized: true,
+                serialUnits: const [
+                  SerializedUnitInput(serialNumber: 'SN-1'),
+                  SerializedUnitInput(serialNumber: 'SN-2'),
+                ],
+              ),
+            ],
+          ),
+        );
 
-      expect(result.isValid, isTrue);
-    });
+        expect(result.isValid, isTrue);
+      },
+    );
 
-    test('serialized stock-out passes with matching integer qty and unit ids', () {
-      final result = const InventoryAdjustmentDocumentValidator().validate(
-        InventoryAdjustmentDocumentInput(
-          warehouseId: 'wh-1',
-          date: DateTime(2026, 6, 1),
-          notes: 'Adjustment',
-          direction: InventoryAdjustmentDirection.stockOut,
-          reason: costReason,
-          lines: [
-            InventoryAdjustmentDocumentLineInput(
-              productId: 'p1',
-              qty: Decimal.fromInt(2),
-              isSerialized: true,
-              unitIds: const ['unit-1', 'unit-2'],
-            ),
-          ],
-        ),
-      );
+    test(
+      'serialized stock-out passes with matching integer qty and unit ids',
+      () {
+        final result = const InventoryAdjustmentDocumentValidator().validate(
+          InventoryAdjustmentDocumentInput(
+            warehouseId: 'wh-1',
+            date: DateTime(2026, 6, 1),
+            notes: 'Adjustment',
+            direction: InventoryAdjustmentDirection.stockOut,
+            reason: costReason,
+            lines: [
+              InventoryAdjustmentDocumentLineInput(
+                productId: 'p1',
+                qty: Decimal.fromInt(2),
+                isSerialized: true,
+                unitIds: const ['unit-1', 'unit-2'],
+              ),
+            ],
+          ),
+        );
 
-      expect(result.isValid, isTrue);
-    });
+        expect(result.isValid, isTrue);
+      },
+    );
   });
 
   group('OpeningStockValidator', () {
@@ -237,7 +250,10 @@ void main() {
         ),
       );
 
-      expect(result.codes, contains(FinanceException.validationSerializedNotSupported));
+      expect(
+        result.codes,
+        contains(FinanceException.validationSerializedNotSupported),
+      );
     });
   });
 }

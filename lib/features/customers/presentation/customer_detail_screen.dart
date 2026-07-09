@@ -6,6 +6,7 @@ import 'package:hs360/l10n/app_localizations.dart';
 import '../../../core/routing/app_routes.dart';
 import '../../../shared/widgets/app_shell.dart';
 import '../../../shared/widgets/message_banner.dart';
+import 'customer_contracts_controller.dart';
 import 'customer_detail_controller.dart';
 import 'customer_detail_state.dart';
 import 'customer_error_messages.dart';
@@ -27,6 +28,7 @@ class CustomerDetailScreen extends ConsumerStatefulWidget {
 
   final String customerId;
 
+  static const contractsTabIndex = 2;
   static const invoicesTabIndex = 3;
   static const vouchersTabIndex = 4;
   static const statementTabIndex = 5;
@@ -39,6 +41,7 @@ class CustomerDetailScreen extends ConsumerStatefulWidget {
 class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
+  var _contractsLoadTriggered = false;
   var _invoicesLoadTriggered = false;
   var _vouchersLoadTriggered = false;
   var _statementLoadTriggered = false;
@@ -60,9 +63,21 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
   void _onTabChanged() {
     if (_tabController.indexIsChanging) return;
     final index = _tabController.index;
+    _maybeLoadContracts(index);
     _maybeLoadInvoices(index);
     _maybeLoadVouchers(index);
     _maybeLoadStatement(index);
+  }
+
+  void _maybeLoadContracts(int index) {
+    if (_contractsLoadTriggered ||
+        index != CustomerDetailScreen.contractsTabIndex) {
+      return;
+    }
+    _contractsLoadTriggered = true;
+    ref
+        .read(customerContractsControllerProvider(widget.customerId).notifier)
+        .load();
   }
 
   void _maybeLoadInvoices(int index) {
@@ -211,7 +226,7 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
             children: [
               CustomerProfileTab(customer: customer),
               CustomerServiceLocationsSection(customerId: customer.id),
-              const CustomerContractsTab(),
+              CustomerContractsTab(customerId: customer.id),
               CustomerInvoicesTab(customerId: customer.id),
               CustomerVouchersTab(customerId: customer.id),
               CustomerStatementTab(customerId: customer.id),

@@ -5,6 +5,7 @@ import 'package:hs360/features/contracts/data/contract_repository.dart';
 import 'package:hs360/features/contracts/domain/closure_draft.dart';
 import 'package:hs360/features/contracts/domain/contract_detail.dart';
 import 'package:hs360/features/contracts/domain/contract_draft.dart';
+import 'package:hs360/features/contracts/domain/contract_filters.dart';
 import 'package:hs360/features/contracts/domain/contract_pricing_preview.dart';
 import 'package:hs360/features/contracts/domain/contract_status.dart';
 import 'package:hs360/features/contracts/domain/contract_summary.dart';
@@ -13,6 +14,7 @@ import 'package:hs360/features/contracts/domain/rental_collection_draft.dart';
 import 'package:hs360/features/contracts/domain/trial_conversion_draft.dart';
 import 'package:hs360/features/contracts/domain/trial_extension_draft.dart';
 import 'package:hs360/features/contracts/domain/trial_return_draft.dart';
+import 'package:hs360/features/finance_shared/domain/pagination_cursor.dart';
 
 class FakeContractRepository extends ContractRepository {
   FakeContractRepository({
@@ -40,6 +42,7 @@ class FakeContractRepository extends ContractRepository {
   ClosureDraft? lastClosureDraft;
   RentalCollectionDraft? lastCollectionDraft;
   String? lastIdempotencyKey;
+  var listCallCount = 0;
 
   @override
   Future<ContractPricingPreview> previewContractProfit(
@@ -161,6 +164,63 @@ class FakeContractRepository extends ContractRepository {
     if (error == null) return;
     if (error is FinanceException) throw error;
     throw const FinanceException(code: FinanceException.unknown);
+  }
+
+  @override
+  Future<List<ContractSummary>> listContracts(
+    AppSession session, {
+    ContractFilters filters = const ContractFilters(),
+    PaginationCursor page = const PaginationCursor(),
+  }) async {
+    listCallCount++;
+    _throwIfFetchError();
+    final filtered = summaries.where((row) => _matchesFilters(row, filters));
+    final start = page.offset;
+    final end = start + page.limit + 1;
+    return filtered.skip(start).take(end - start).toList();
+  }
+
+  @override
+  Future<ContractDetail> fetchContractDetail(
+    AppSession session,
+    String contractId,
+  ) async {
+    _throwIfFetchError();
+    final detail = detailById[contractId];
+    if (detail == null) {
+      throw const FinanceException(code: FinanceException.notFound);
+    }
+    return detail;
+  }
+
+  bool _matchesFilters(ContractSummary row, ContractFilters filters) {
+    if (filters.type != null && row.type != filters.type) return false;
+    if (filters.status != null && row.status != filters.status) return false;
+    final customerId = filters.customerId?.trim();
+    if (customerId != null &&
+        customerId.isNotEmpty &&
+        row.customerId != customerId) {
+      return false;
+    }
+    if (filters.lowProfitOverrideOnly && row.minProfitOverridden != true) {
+      return false;
+    }
+    final search = filters.search?.trim().toLowerCase();
+    if (search != null && search.isNotEmpty) {
+      final haystack = [
+        row.contractNumber,
+        row.customerNameEn,
+        row.customerNameAr,
+      ].whereType<String>().join(' ').toLowerCase();
+      if (!haystack.contains(search)) return false;
+    }
+    if (!filters.dateRange.isEmpty) {
+      final from = filters.dateRange.from;
+      final to = filters.dateRange.to;
+      if (from != null && row.startDate.isBefore(from)) return false;
+      if (to != null && row.startDate.isAfter(to)) return false;
+    }
+    return true;
   }
 }
 

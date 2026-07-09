@@ -11,7 +11,9 @@ import '../domain/stock_count_draft.dart';
 import '../../../domain/validators/inventory_adjustment_document_validator.dart';
 import '../../../domain/validators/opening_stock_validator.dart';
 
-InventoryDocumentSummary mapInventoryDocumentSummary(Map<String, dynamic> json) {
+InventoryDocumentSummary mapInventoryDocumentSummary(
+  Map<String, dynamic> json,
+) {
   return InventoryDocumentSummary(
     id: json['id'] as String,
     documentNumber: json['document_number'] as String?,
@@ -50,16 +52,12 @@ InventoryDocumentDetail mapInventoryDocumentDetail(Map<String, dynamic> json) {
     reversalJournalEntryId: json['reversal_journal_entry_id'] as String?,
     lines: linesRaw is List
         ? linesRaw
-              .map(
-                (line) => _mapLine(Map<String, dynamic>.from(line as Map)),
-              )
+              .map((line) => _mapLine(Map<String, dynamic>.from(line as Map)))
               .toList()
         : const [],
     movements: movementsRaw is List
         ? movementsRaw
-              .map(
-                (m) => _mapMovement(Map<String, dynamic>.from(m as Map)),
-              )
+              .map((m) => _mapMovement(Map<String, dynamic>.from(m as Map)))
               .toList()
         : const [],
   );
@@ -155,12 +153,13 @@ Map<String, dynamic> inventoryDocumentPayload(
     'notes': input.notes.trim(),
     'reason_code': input.reason?.code,
     'lines': [
-      for (var i = 0; i < input.lines.length; i++) _adjustmentLineJson(
-        input.lines[i],
-        input.direction,
-        input.reason,
-        i + 1,
-      ),
+      for (var i = 0; i < input.lines.length; i++)
+        _adjustmentLineJson(
+          input.lines[i],
+          input.direction,
+          input.reason,
+          i + 1,
+        ),
     ],
   };
 }

@@ -18,9 +18,7 @@ String buildCashBankLoadedRowsCsv({
   required String openingBalanceLabel,
 }) {
   final buffer = StringBuffer()
-    ..writeln(
-      '${_escape(accountCode)},${_escape(accountName)}',
-    )
+    ..writeln('${_escape(accountCode)},${_escape(accountName)}')
     ..writeln(
       '${_escape(openingBalanceLabel)},${_escape(openingBalance.toString())}',
     )
