@@ -125,6 +125,9 @@ run_suite "supabase/tests/phase_6_contract_lifecycle_rpc.sql"
 printf 'Phase L: Phase 6 M5 rental collection and billing engine\n'
 run_suite "supabase/tests/phase_6_rental_collection_billing_engine.sql"
 
+printf 'Phase M: Phase 6 M8 contract read RPCs\n'
+run_suite "supabase/tests/phase_6_contract_read_rpc.sql"
+
 printf 'Phase C: baseline pollution gate\n'
 for suite in "${phase_a_suites[@]}"; do
   run_suite "$suite"

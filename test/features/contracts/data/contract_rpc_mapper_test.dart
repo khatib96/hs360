@@ -89,5 +89,54 @@ void main() {
       expect(detail.assetLines, hasLength(1));
       expect(detail.consumableLines, isEmpty);
     });
+
+    test('mapContractDetail parses customer and lifecycle fields', () {
+      final detail = mapContractDetail({
+        'id': 'con-2',
+        'contract_number': 'CON-002',
+        'type': 'trial',
+        'status': 'completed',
+        'start_date': '2026-06-01',
+        'customer_id': 'cust-2',
+        'customer_name_en': 'Acme Corp',
+        'customer_name_ar': 'أكمة',
+        'service_location_id': 'loc-2',
+        'service_location_name': 'Main Site',
+        'monthly_rental_value': '100.000',
+        'renewed_from_contract_id': 'con-0',
+        'renewed_at': '2026-06-15',
+        'extension_reason': 'Customer request',
+        'returned_at': '2026-07-01',
+        'return_reason': 'Trial ended',
+        'trial_outcome': 'not_converted',
+        'asset_lines': const [],
+        'consumable_lines': const [],
+      });
+
+      expect(detail.customerNameEn, 'Acme Corp');
+      expect(detail.customerNameAr, 'أكمة');
+      expect(detail.serviceLocationName, 'Main Site');
+      expect(detail.renewedFromContractId, 'con-0');
+      expect(detail.extensionReason, 'Customer request');
+      expect(detail.returnReason, 'Trial ended');
+      expect(detail.trialOutcome, 'not_converted');
+    });
+
+    test('mapContractDetail parses total_contract_value', () {
+      final detail = mapContractDetail({
+        'id': 'con-3',
+        'contract_number': 'CON-003',
+        'type': 'rental',
+        'status': 'active',
+        'start_date': '2026-07-01',
+        'customer_id': 'cust-1',
+        'monthly_rental_value': '120.000',
+        'total_contract_value': '1440.000',
+        'asset_lines': const [],
+        'consumable_lines': const [],
+      });
+
+      expect(detail.totalContractValue, Decimal.parse('1440.000'));
+    });
   });
 }

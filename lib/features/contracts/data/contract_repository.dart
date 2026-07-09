@@ -40,7 +40,6 @@ class ContractRepository {
     return client;
   }
 
-  // M7 temporary client stub — no RPC until M8
   Future<List<ContractSummary>> listContracts(
     AppSession session, {
     ContractFilters filters = const ContractFilters(),
@@ -49,10 +48,23 @@ class ContractRepository {
     if (!canViewContracts(session)) {
       throw const FinanceException(code: FinanceException.permissionDenied);
     }
-    throw const FinanceException(code: FinanceException.notAvailable);
+    try {
+      final rows = await _requireClient.rpc(
+        'list_contracts',
+        params: _listParams(filters, page),
+      );
+      return (rows as List)
+          .map(
+            (row) => ContractSummary.fromListRow(
+              Map<String, dynamic>.from(row as Map),
+            ),
+          )
+          .toList();
+    } catch (e, st) {
+      throw FinanceException.fromSupabase(e, st);
+    }
   }
 
-  // M7 temporary client stub — no RPC until M8
   Future<ContractDetail> fetchContractDetail(
     AppSession session,
     String contractId,
@@ -60,7 +72,32 @@ class ContractRepository {
     if (!canViewContracts(session)) {
       throw const FinanceException(code: FinanceException.permissionDenied);
     }
-    throw const FinanceException(code: FinanceException.notAvailable);
+    try {
+      final json = await _requireClient.rpc(
+        'get_contract_detail',
+        params: {'p_contract_id': contractId},
+      );
+      return mapContractDetail(Map<String, dynamic>.from(json as Map));
+    } catch (e, st) {
+      throw FinanceException.fromSupabase(e, st);
+    }
+  }
+
+  Map<String, dynamic> _listParams(
+    ContractFilters filters,
+    PaginationCursor page,
+  ) {
+    return {
+      'p_customer_id': filters.customerId,
+      'p_type': filters.type?.toDb(),
+      'p_status': filters.status?.toDb(),
+      'p_date_from': filters.dateRange.from?.toIso8601String().split('T').first,
+      'p_date_to': filters.dateRange.to?.toIso8601String().split('T').first,
+      'p_search': filters.search,
+      'p_low_profit_override_only': filters.lowProfitOverrideOnly,
+      'p_limit': page.limit,
+      'p_offset': page.offset,
+    };
   }
 
   Future<ContractPricingPreview> previewContractProfit(

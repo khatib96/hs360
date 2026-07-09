@@ -3,12 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
+import '../../../core/localization/locale_controller.dart';
 import '../../../core/routing/app_routes.dart';
 import '../../../shared/widgets/app_shell.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../../finance_shared/presentation/finance_placeholder_screen.dart';
 import '../../invoices/presentation/widgets/invoice_design.dart';
+import '../../invoices/presentation/widgets/invoice_shared_widgets.dart';
 import '../domain/contract_permissions.dart';
+import 'contract_display_helpers.dart';
+import 'contract_list_controller.dart';
+import 'widgets/contract_filters_bar.dart';
+import 'widgets/contract_table.dart';
 
 class ContractListScreen extends ConsumerWidget {
   const ContractListScreen({super.key});
@@ -16,7 +22,10 @@ class ContractListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+    final locale = ref.watch(localeProvider);
     final session = ref.watch(authControllerProvider).valueOrNull;
+    final state = ref.watch(contractListControllerProvider);
+    final controller = ref.read(contractListControllerProvider.notifier);
 
     if (session != null && !canViewContracts(session)) {
       return FinancePlaceholderScreen(
@@ -38,22 +47,113 @@ class ContractListScreen extends ConsumerWidget {
       );
     }
 
+    final isWide = InvoiceDesign.isDesktop(context);
+    Widget tableArea;
+    if (state.isLoading && state.contracts.isEmpty) {
+      tableArea = _InTableMessage(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(height: 16),
+            Text(l10n.loading),
+          ],
+        ),
+      );
+    } else if (state.hasError && state.contracts.isEmpty) {
+      tableArea = _InTableMessage(
+        child: InvoiceErrorState(
+          message: contractErrorMessage(l10n, state.errorCode!),
+          onRetry: controller.refresh,
+        ),
+      );
+    } else if (!state.isLoading && state.contracts.isEmpty) {
+      tableArea = _InTableMessage(
+        child: Text(
+          state.filters.hasActiveFilters
+              ? l10n.contractListEmptyFiltered
+              : l10n.contractListEmpty,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
+      );
+    } else {
+      tableArea = isWide
+          ? ContractTable(
+              contracts: state.contracts,
+              languageCode: locale.languageCode,
+            )
+          : ContractCardList(
+              contracts: state.contracts,
+              languageCode: locale.languageCode,
+            );
+    }
+
+    final body = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ContractFiltersBar(
+          key: const Key('contract-filters-bar'),
+          filters: state.filters,
+          onTypeChanged: controller.setType,
+          onStatusChanged: controller.setStatus,
+          onSearchChanged: controller.setSearch,
+          onDateFromChanged: controller.setDateFrom,
+          onDateToChanged: controller.setDateTo,
+          onLowProfitOverrideChanged: controller.setLowProfitOverrideOnly,
+        ),
+        const SizedBox(height: 12),
+        Expanded(
+          child: DecoratedBox(
+            decoration: InvoiceDesign.panel,
+            child: ClipRRect(
+              borderRadius: InvoiceDesign.radius,
+              child: tableArea,
+            ),
+          ),
+        ),
+        if (state.hasMore)
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: state.isLoadingMore
+                ? const Center(child: CircularProgressIndicator())
+                : Center(
+                    child: OutlinedButton(
+                      onPressed: controller.loadMore,
+                      child: Text(l10n.loadMore),
+                    ),
+                  ),
+          ),
+        if (state.loadMoreErrorCode != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Center(
+              child: Text(contractErrorMessage(l10n, state.loadMoreErrorCode!)),
+            ),
+          ),
+      ],
+    );
+
     return AppShell(
       title: l10n.contractTitle,
       currentRoute: AppRoutes.contracts,
       actions: actions,
-      body: SingleChildScrollView(
-        padding: InvoiceDesign.pagePadding,
-        child: DecoratedBox(
-          decoration: InvoiceDesign.panel,
-          child: Padding(
-            padding: const EdgeInsetsDirectional.all(24),
-            child: Text(
-              l10n.contractListPrepared,
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-          ),
-        ),
+      body: Padding(padding: InvoiceDesign.pagePadding, child: body),
+    );
+  }
+}
+
+class _InTableMessage extends StatelessWidget {
+  const _InTableMessage({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsetsDirectional.all(32),
+        child: child,
       ),
     );
   }

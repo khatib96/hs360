@@ -2354,6 +2354,342 @@ abstract class AppLocalizations {
   /// **'Monthly value'**
   String get contractColumnMonthlyValue;
 
+  /// No description provided for @contractColumnCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer'**
+  String get contractColumnCustomer;
+
+  /// No description provided for @contractColumnServiceLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Service location'**
+  String get contractColumnServiceLocation;
+
+  /// No description provided for @contractListEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No contracts yet.'**
+  String get contractListEmpty;
+
+  /// No description provided for @contractListEmptyFiltered.
+  ///
+  /// In en, this message translates to:
+  /// **'No contracts match your filters.'**
+  String get contractListEmptyFiltered;
+
+  /// No description provided for @contractFilterType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get contractFilterType;
+
+  /// No description provided for @contractFilterSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by contract #, customer, or phone'**
+  String get contractFilterSearchHint;
+
+  /// No description provided for @contractFilterLowProfitOverride.
+  ///
+  /// In en, this message translates to:
+  /// **'Low-profit override only'**
+  String get contractFilterLowProfitOverride;
+
+  /// No description provided for @contractSectionOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get contractSectionOverview;
+
+  /// No description provided for @contractSectionAssets.
+  ///
+  /// In en, this message translates to:
+  /// **'Assets'**
+  String get contractSectionAssets;
+
+  /// No description provided for @contractSectionConsumables.
+  ///
+  /// In en, this message translates to:
+  /// **'Consumables'**
+  String get contractSectionConsumables;
+
+  /// No description provided for @contractSectionLifecycle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lifecycle'**
+  String get contractSectionLifecycle;
+
+  /// No description provided for @contractSectionPricingSnapshot.
+  ///
+  /// In en, this message translates to:
+  /// **'Pricing snapshot'**
+  String get contractSectionPricingSnapshot;
+
+  /// No description provided for @contractFieldEndDate.
+  ///
+  /// In en, this message translates to:
+  /// **'End date'**
+  String get contractFieldEndDate;
+
+  /// No description provided for @contractFieldTrialEndDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Trial end'**
+  String get contractFieldTrialEndDate;
+
+  /// No description provided for @contractFieldBillingDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Billing day'**
+  String get contractFieldBillingDay;
+
+  /// No description provided for @contractFieldRefillDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill day'**
+  String get contractFieldRefillDay;
+
+  /// No description provided for @contractFieldNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get contractFieldNotes;
+
+  /// No description provided for @contractFieldSerialNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Serial'**
+  String get contractFieldSerialNumber;
+
+  /// No description provided for @contractFieldProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Product'**
+  String get contractFieldProduct;
+
+  /// No description provided for @contractFieldQtyPerRefill.
+  ///
+  /// In en, this message translates to:
+  /// **'Qty per refill'**
+  String get contractFieldQtyPerRefill;
+
+  /// No description provided for @contractFieldRefillFrequency.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill frequency (months)'**
+  String get contractFieldRefillFrequency;
+
+  /// No description provided for @contractFieldMonthlyCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly cost'**
+  String get contractFieldMonthlyCost;
+
+  /// No description provided for @contractFieldUnitCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit cost'**
+  String get contractFieldUnitCost;
+
+  /// No description provided for @contractFieldDeviceMonthlyCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Device monthly cost'**
+  String get contractFieldDeviceMonthlyCost;
+
+  /// No description provided for @contractFieldOilMonthlyCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Consumable monthly cost'**
+  String get contractFieldOilMonthlyCost;
+
+  /// No description provided for @contractFieldTotalMonthlyCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Total monthly cost'**
+  String get contractFieldTotalMonthlyCost;
+
+  /// No description provided for @contractFieldMonthlyProfit.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly profit'**
+  String get contractFieldMonthlyProfit;
+
+  /// No description provided for @contractFieldConvertedFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Converted from'**
+  String get contractFieldConvertedFrom;
+
+  /// No description provided for @contractFieldConvertedTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Converted to'**
+  String get contractFieldConvertedTo;
+
+  /// No description provided for @contractFieldReturnReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Return reason'**
+  String get contractFieldReturnReason;
+
+  /// No description provided for @contractFieldClosureReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Closure reason'**
+  String get contractFieldClosureReason;
+
+  /// No description provided for @contractFieldOverrideReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Override reason'**
+  String get contractFieldOverrideReason;
+
+  /// No description provided for @contractAssetsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No asset lines on this contract.'**
+  String get contractAssetsEmpty;
+
+  /// No description provided for @contractConsumablesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No consumable lines on this contract.'**
+  String get contractConsumablesEmpty;
+
+  /// No description provided for @contractLifecycleEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No lifecycle metadata recorded yet.'**
+  String get contractLifecycleEmpty;
+
+  /// No description provided for @contractSectionProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'Products'**
+  String get contractSectionProducts;
+
+  /// No description provided for @contractSectionValueSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Contract value'**
+  String get contractSectionValueSummary;
+
+  /// No description provided for @contractSectionUpcomingSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming schedule'**
+  String get contractSectionUpcomingSchedule;
+
+  /// No description provided for @contractSectionHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get contractSectionHistory;
+
+  /// No description provided for @contractFieldProductType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get contractFieldProductType;
+
+  /// No description provided for @contractFieldQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get contractFieldQuantity;
+
+  /// No description provided for @contractFieldContractDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get contractFieldContractDuration;
+
+  /// No description provided for @contractDurationMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'{months, plural, =1{1 month} other{{months} months}}'**
+  String contractDurationMonths(int months);
+
+  /// No description provided for @contractFieldTotalContractValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Total contract value'**
+  String get contractFieldTotalContractValue;
+
+  /// No description provided for @contractFieldMonthlyRentalValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly rental value'**
+  String get contractFieldMonthlyRentalValue;
+
+  /// No description provided for @contractNextVisit.
+  ///
+  /// In en, this message translates to:
+  /// **'Next visit'**
+  String get contractNextVisit;
+
+  /// No description provided for @contractNextPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Next payment'**
+  String get contractNextPayment;
+
+  /// No description provided for @contractRemainingDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{1 day remaining} other{{days} days remaining}}'**
+  String contractRemainingDays(int days);
+
+  /// No description provided for @contractRemainingDaysOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'-{days, plural, =1{1 day} other{{days} days}}'**
+  String contractRemainingDaysOverdue(int days);
+
+  /// No description provided for @contractOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get contractOverdue;
+
+  /// No description provided for @contractProductsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No products on this contract.'**
+  String get contractProductsEmpty;
+
+  /// No description provided for @contractScheduleEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming visits or payments scheduled yet.'**
+  String get contractScheduleEmpty;
+
+  /// No description provided for @contractHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No contract history recorded yet.'**
+  String get contractHistoryEmpty;
+
+  /// No description provided for @contractProductTypeAsset.
+  ///
+  /// In en, this message translates to:
+  /// **'Device'**
+  String get contractProductTypeAsset;
+
+  /// No description provided for @contractProductTypeConsumable.
+  ///
+  /// In en, this message translates to:
+  /// **'Consumable'**
+  String get contractProductTypeConsumable;
+
+  /// No description provided for @contractConvertLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Convert to rental'**
+  String get contractConvertLink;
+
   /// Invoices tab empty state when user can view invoices
   ///
   /// In en, this message translates to:

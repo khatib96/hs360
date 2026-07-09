@@ -49,7 +49,6 @@ class CustomerContractsController extends _$CustomerContractsController {
     state = state.copyWith(
       isLoading: true,
       isLoadingMore: false,
-      listUnavailable: false,
       clearError: true,
       clearLoadMoreError: true,
     );
@@ -70,15 +69,6 @@ class CustomerContractsController extends _$CustomerContractsController {
         hasMore: rows.length > pageSize,
       );
     } on FinanceException catch (e) {
-      if (e.code == FinanceException.notAvailable) {
-        state = state.copyWith(
-          isLoading: false,
-          hasLoaded: true,
-          listUnavailable: true,
-          clearError: true,
-        );
-        return;
-      }
       state = state.copyWith(isLoading: false, errorCode: e.code);
     } catch (_) {
       state = state.copyWith(

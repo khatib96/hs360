@@ -5,6 +5,7 @@ import 'package:hs360/features/contracts/data/contract_repository.dart';
 import 'package:hs360/features/contracts/domain/closure_draft.dart';
 import 'package:hs360/features/contracts/domain/contract_detail.dart';
 import 'package:hs360/features/contracts/domain/contract_draft.dart';
+import 'package:hs360/features/contracts/domain/contract_line.dart';
 import 'package:hs360/features/contracts/domain/contract_filters.dart';
 import 'package:hs360/features/contracts/domain/contract_pricing_preview.dart';
 import 'package:hs360/features/contracts/domain/contract_status.dart';
@@ -188,7 +189,7 @@ class FakeContractRepository extends ContractRepository {
     _throwIfFetchError();
     final detail = detailById[contractId];
     if (detail == null) {
-      throw const FinanceException(code: FinanceException.notFound);
+      throw const FinanceException(code: FinanceException.validationFailed);
     }
     return detail;
   }
@@ -236,16 +237,51 @@ ContractSummary sampleContractSummary({String id = 'contract-1'}) {
   );
 }
 
-ContractDetail sampleContractDetail({String id = 'contract-1'}) {
+ContractDetail sampleContractDetail({
+  String id = 'contract-1',
+  Decimal? totalContractValue,
+  DateTime? endDate,
+  int? billingDay,
+  int? refillDay,
+}) {
   return ContractDetail(
     id: id,
     contractNumber: 'CON-001',
     type: ContractType.rental,
     status: ContractStatus.active,
     customerId: 'cust-1',
+    customerNameEn: 'Acme Corp',
     serviceLocationId: 'loc-1',
-    startDate: DateTime(2026, 7, 1),
+    serviceLocationName: 'Main Site',
+    startDate: DateTime(2026, 7, 9),
+    endDate: endDate ?? DateTime(2027, 7, 9),
+    billingDay: billingDay,
+    refillDay: refillDay,
     monthlyRentalValue: Decimal.parse('120.000'),
+    totalContractValue: totalContractValue,
+    snapshotDeviceMonthlyCost: Decimal.parse('40.000'),
+    snapshotOilMonthlyCost: Decimal.parse('10.000'),
+    snapshotTotalMonthlyCost: Decimal.parse('50.000'),
+    snapshotMonthlyProfit: Decimal.parse('70.000'),
+    assetLines: [
+      ContractAssetLine(
+        id: 'line-asset-1',
+        productId: 'prod-1',
+        serialNumber: 'SN-001',
+        productNameEn: 'Device A',
+        lineOrder: 0,
+      ),
+    ],
+    consumableLines: [
+      ContractConsumableLine(
+        id: 'line-cons-1',
+        productId: 'oil-1',
+        productNameEn: 'Oil A',
+        qtyPerRefill: Decimal.parse('500'),
+        refillFrequencyMonths: 1,
+        lineOrder: 1,
+      ),
+    ],
   );
 }
 

@@ -1186,6 +1186,198 @@ class AppLocalizationsAr extends AppLocalizations {
   String get contractColumnMonthlyValue => 'القيمة الشهرية';
 
   @override
+  String get contractColumnCustomer => 'العميل';
+
+  @override
+  String get contractColumnServiceLocation => 'موقع الخدمة';
+
+  @override
+  String get contractListEmpty => 'لا توجد عقود بعد.';
+
+  @override
+  String get contractListEmptyFiltered => 'لا توجد عقود مطابقة لعوامل التصفية.';
+
+  @override
+  String get contractFilterType => 'النوع';
+
+  @override
+  String get contractFilterSearchHint => 'ابحث برقم العقد أو العميل أو الهاتف';
+
+  @override
+  String get contractFilterLowProfitOverride => 'تجاوز الحد الأدنى للربح فقط';
+
+  @override
+  String get contractSectionOverview => 'نظرة عامة';
+
+  @override
+  String get contractSectionAssets => 'الأجهزة';
+
+  @override
+  String get contractSectionConsumables => 'المستهلكات';
+
+  @override
+  String get contractSectionLifecycle => 'دورة الحياة';
+
+  @override
+  String get contractSectionPricingSnapshot => 'لقطة التسعير';
+
+  @override
+  String get contractFieldEndDate => 'تاريخ الانتهاء';
+
+  @override
+  String get contractFieldTrialEndDate => 'نهاية التجربة';
+
+  @override
+  String get contractFieldBillingDay => 'يوم الفوترة';
+
+  @override
+  String get contractFieldRefillDay => 'يوم التعبئة';
+
+  @override
+  String get contractFieldNotes => 'ملاحظات';
+
+  @override
+  String get contractFieldSerialNumber => 'الرقم التسلسلي';
+
+  @override
+  String get contractFieldProduct => 'المنتج';
+
+  @override
+  String get contractFieldQtyPerRefill => 'الكمية لكل تعبئة';
+
+  @override
+  String get contractFieldRefillFrequency => 'تكرار التعبئة (أشهر)';
+
+  @override
+  String get contractFieldMonthlyCost => 'التكلفة الشهرية';
+
+  @override
+  String get contractFieldUnitCost => 'تكلفة الوحدة';
+
+  @override
+  String get contractFieldDeviceMonthlyCost => 'تكلفة الجهاز الشهرية';
+
+  @override
+  String get contractFieldOilMonthlyCost => 'تكلفة المستهلك الشهرية';
+
+  @override
+  String get contractFieldTotalMonthlyCost => 'إجمالي التكلفة الشهرية';
+
+  @override
+  String get contractFieldMonthlyProfit => 'الربح الشهري';
+
+  @override
+  String get contractFieldConvertedFrom => 'محوّل من';
+
+  @override
+  String get contractFieldConvertedTo => 'محوّل إلى';
+
+  @override
+  String get contractFieldReturnReason => 'سبب الإرجاع';
+
+  @override
+  String get contractFieldClosureReason => 'سبب الإغلاق';
+
+  @override
+  String get contractFieldOverrideReason => 'سبب التجاوز';
+
+  @override
+  String get contractAssetsEmpty => 'لا توجد بنود أجهزة في هذا العقد.';
+
+  @override
+  String get contractConsumablesEmpty => 'لا توجد بنود مستهلكات في هذا العقد.';
+
+  @override
+  String get contractLifecycleEmpty => 'لا توجد بيانات دورة حياة مسجلة بعد.';
+
+  @override
+  String get contractSectionProducts => 'المنتجات';
+
+  @override
+  String get contractSectionValueSummary => 'قيمة العقد';
+
+  @override
+  String get contractSectionUpcomingSchedule => 'المواعيد القادمة';
+
+  @override
+  String get contractSectionHistory => 'السجل';
+
+  @override
+  String get contractFieldProductType => 'النوع';
+
+  @override
+  String get contractFieldQuantity => 'الكمية';
+
+  @override
+  String get contractFieldContractDuration => 'المدة';
+
+  @override
+  String contractDurationMonths(int months) {
+    String _temp0 = intl.Intl.pluralLogic(
+      months,
+      locale: localeName,
+      other: '$months أشهر',
+      one: 'شهر واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get contractFieldTotalContractValue => 'إجمالي قيمة العقد';
+
+  @override
+  String get contractFieldMonthlyRentalValue => 'قيمة الإيجار الشهرية';
+
+  @override
+  String get contractNextVisit => 'الزيارة القادمة';
+
+  @override
+  String get contractNextPayment => 'الدفعة القادمة';
+
+  @override
+  String contractRemainingDays(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'متبقي $days أيام',
+      one: 'متبقي يوم واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String contractRemainingDaysOverdue(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days أيام',
+      one: 'يوم واحد',
+    );
+    return '-$_temp0';
+  }
+
+  @override
+  String get contractOverdue => 'متأخر';
+
+  @override
+  String get contractProductsEmpty => 'لا توجد منتجات في هذا العقد.';
+
+  @override
+  String get contractScheduleEmpty => 'لا توجد زيارات أو دفعات قادمة بعد.';
+
+  @override
+  String get contractHistoryEmpty => 'لا يوجد سجل للعقد بعد.';
+
+  @override
+  String get contractProductTypeAsset => 'جهاز';
+
+  @override
+  String get contractProductTypeConsumable => 'مستهلك';
+
+  @override
+  String get contractConvertLink => 'تحويل إلى إيجار';
+
+  @override
   String get customerInvoicesEmpty => 'لا توجد فواتير بعد.';
 
   @override

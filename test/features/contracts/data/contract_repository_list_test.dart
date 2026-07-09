@@ -24,7 +24,7 @@ AppSession _session(Set<String> permissions) {
 }
 
 void main() {
-  group('ContractRepository list stubs', () {
+  group('ContractRepository list/detail', () {
     test('listContracts denies without contracts.view', () {
       final repo = ContractRepository(null);
       expect(
@@ -48,37 +48,6 @@ void main() {
             (e) => e.code,
             'code',
             FinanceException.permissionDenied,
-          ),
-        ),
-      );
-    });
-
-    test('listContracts stub throws notAvailable without RPC', () {
-      final repo = ContractRepository(null);
-      expect(
-        () => repo.listContracts(_session({'contracts.view'})),
-        throwsA(
-          isA<FinanceException>().having(
-            (e) => e.code,
-            'code',
-            FinanceException.notAvailable,
-          ),
-        ),
-      );
-    });
-
-    test('fetchContractDetail stub throws notAvailable without RPC', () {
-      final repo = ContractRepository(null);
-      expect(
-        () => repo.fetchContractDetail(
-          _session({'contracts.view'}),
-          'contract-1',
-        ),
-        throwsA(
-          isA<FinanceException>().having(
-            (e) => e.code,
-            'code',
-            FinanceException.notAvailable,
           ),
         ),
       );
@@ -109,6 +78,20 @@ void main() {
 
       expect(rows, hasLength(1));
       expect(rows.first.id, 'c-1');
+    });
+
+    test('fake fetchContractDetail returns mapped detail', () async {
+      final repo = FakeContractRepository(
+        detailById: {'c-1': sampleContractDetail(id: 'c-1')},
+      );
+
+      final detail = await repo.fetchContractDetail(
+        _session({'contracts.view'}),
+        'c-1',
+      );
+
+      expect(detail.id, 'c-1');
+      expect(detail.contractNumber, 'CON-001');
     });
   });
 }

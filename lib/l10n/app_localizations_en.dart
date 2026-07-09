@@ -1196,6 +1196,201 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contractColumnMonthlyValue => 'Monthly value';
 
   @override
+  String get contractColumnCustomer => 'Customer';
+
+  @override
+  String get contractColumnServiceLocation => 'Service location';
+
+  @override
+  String get contractListEmpty => 'No contracts yet.';
+
+  @override
+  String get contractListEmptyFiltered => 'No contracts match your filters.';
+
+  @override
+  String get contractFilterType => 'Type';
+
+  @override
+  String get contractFilterSearchHint =>
+      'Search by contract #, customer, or phone';
+
+  @override
+  String get contractFilterLowProfitOverride => 'Low-profit override only';
+
+  @override
+  String get contractSectionOverview => 'Overview';
+
+  @override
+  String get contractSectionAssets => 'Assets';
+
+  @override
+  String get contractSectionConsumables => 'Consumables';
+
+  @override
+  String get contractSectionLifecycle => 'Lifecycle';
+
+  @override
+  String get contractSectionPricingSnapshot => 'Pricing snapshot';
+
+  @override
+  String get contractFieldEndDate => 'End date';
+
+  @override
+  String get contractFieldTrialEndDate => 'Trial end';
+
+  @override
+  String get contractFieldBillingDay => 'Billing day';
+
+  @override
+  String get contractFieldRefillDay => 'Refill day';
+
+  @override
+  String get contractFieldNotes => 'Notes';
+
+  @override
+  String get contractFieldSerialNumber => 'Serial';
+
+  @override
+  String get contractFieldProduct => 'Product';
+
+  @override
+  String get contractFieldQtyPerRefill => 'Qty per refill';
+
+  @override
+  String get contractFieldRefillFrequency => 'Refill frequency (months)';
+
+  @override
+  String get contractFieldMonthlyCost => 'Monthly cost';
+
+  @override
+  String get contractFieldUnitCost => 'Unit cost';
+
+  @override
+  String get contractFieldDeviceMonthlyCost => 'Device monthly cost';
+
+  @override
+  String get contractFieldOilMonthlyCost => 'Consumable monthly cost';
+
+  @override
+  String get contractFieldTotalMonthlyCost => 'Total monthly cost';
+
+  @override
+  String get contractFieldMonthlyProfit => 'Monthly profit';
+
+  @override
+  String get contractFieldConvertedFrom => 'Converted from';
+
+  @override
+  String get contractFieldConvertedTo => 'Converted to';
+
+  @override
+  String get contractFieldReturnReason => 'Return reason';
+
+  @override
+  String get contractFieldClosureReason => 'Closure reason';
+
+  @override
+  String get contractFieldOverrideReason => 'Override reason';
+
+  @override
+  String get contractAssetsEmpty => 'No asset lines on this contract.';
+
+  @override
+  String get contractConsumablesEmpty =>
+      'No consumable lines on this contract.';
+
+  @override
+  String get contractLifecycleEmpty => 'No lifecycle metadata recorded yet.';
+
+  @override
+  String get contractSectionProducts => 'Products';
+
+  @override
+  String get contractSectionValueSummary => 'Contract value';
+
+  @override
+  String get contractSectionUpcomingSchedule => 'Upcoming schedule';
+
+  @override
+  String get contractSectionHistory => 'History';
+
+  @override
+  String get contractFieldProductType => 'Type';
+
+  @override
+  String get contractFieldQuantity => 'Quantity';
+
+  @override
+  String get contractFieldContractDuration => 'Duration';
+
+  @override
+  String contractDurationMonths(int months) {
+    String _temp0 = intl.Intl.pluralLogic(
+      months,
+      locale: localeName,
+      other: '$months months',
+      one: '1 month',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get contractFieldTotalContractValue => 'Total contract value';
+
+  @override
+  String get contractFieldMonthlyRentalValue => 'Monthly rental value';
+
+  @override
+  String get contractNextVisit => 'Next visit';
+
+  @override
+  String get contractNextPayment => 'Next payment';
+
+  @override
+  String contractRemainingDays(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days remaining',
+      one: '1 day remaining',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String contractRemainingDaysOverdue(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days',
+      one: '1 day',
+    );
+    return '-$_temp0';
+  }
+
+  @override
+  String get contractOverdue => 'Overdue';
+
+  @override
+  String get contractProductsEmpty => 'No products on this contract.';
+
+  @override
+  String get contractScheduleEmpty =>
+      'No upcoming visits or payments scheduled yet.';
+
+  @override
+  String get contractHistoryEmpty => 'No contract history recorded yet.';
+
+  @override
+  String get contractProductTypeAsset => 'Device';
+
+  @override
+  String get contractProductTypeConsumable => 'Consumable';
+
+  @override
+  String get contractConvertLink => 'Convert to rental';
+
+  @override
   String get customerInvoicesEmpty => 'No invoices yet.';
 
   @override

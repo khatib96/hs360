@@ -15,7 +15,10 @@ class ContractDetail {
     required this.type,
     required this.status,
     this.customerId,
+    this.customerNameAr,
+    this.customerNameEn,
     this.serviceLocationId,
+    this.serviceLocationName,
     required this.startDate,
     this.endDate,
     this.trialDays,
@@ -23,6 +26,7 @@ class ContractDetail {
     this.billingDay,
     this.refillDay,
     this.monthlyRentalValue,
+    this.totalContractValue,
     this.snapshotDeviceMonthlyCost,
     this.snapshotOilMonthlyCost,
     this.snapshotTotalMonthlyCost,
@@ -31,6 +35,12 @@ class ContractDetail {
     this.overrideReason,
     this.convertedFromContractId,
     this.convertedToContractId,
+    this.renewedFromContractId,
+    this.renewedToContractId,
+    this.extensionReason,
+    this.returnedAt,
+    this.returnReason,
+    this.trialOutcome,
     this.returnCondition,
     this.closureReason,
     this.closedAt,
@@ -44,7 +54,10 @@ class ContractDetail {
   final ContractType type;
   final ContractStatus status;
   final String? customerId;
+  final String? customerNameAr;
+  final String? customerNameEn;
   final String? serviceLocationId;
+  final String? serviceLocationName;
   final DateTime startDate;
   final DateTime? endDate;
   final int? trialDays;
@@ -52,6 +65,7 @@ class ContractDetail {
   final int? billingDay;
   final int? refillDay;
   final Decimal? monthlyRentalValue;
+  final Decimal? totalContractValue;
   final Decimal? snapshotDeviceMonthlyCost;
   final Decimal? snapshotOilMonthlyCost;
   final Decimal? snapshotTotalMonthlyCost;
@@ -60,6 +74,12 @@ class ContractDetail {
   final String? overrideReason;
   final String? convertedFromContractId;
   final String? convertedToContractId;
+  final String? renewedFromContractId;
+  final String? renewedToContractId;
+  final String? extensionReason;
+  final DateTime? returnedAt;
+  final String? returnReason;
+  final String? trialOutcome;
   final ContractReturnCondition? returnCondition;
   final String? closureReason;
   final DateTime? closedAt;

@@ -259,11 +259,11 @@ void main() {
     expect(find.byKey(const Key('customer-statement-loaded')), findsOneWidget);
   });
 
-  testWidgets('contracts tab prepared with view permission', (tester) async {
+  testWidgets('contracts tab shows error when list fails', (tester) async {
     final l10n = lookupAppLocalizations(const Locale('en'));
     final repo = FakeCustomerRepository(customers: [sampleCustomer()]);
     final contractRepo = FakeContractRepository(
-      fetchError: const FinanceException(code: FinanceException.notAvailable),
+      fetchError: const FinanceException(code: FinanceException.unknown),
     );
 
     await tester.pumpWidget(
@@ -276,7 +276,7 @@ void main() {
     await tester.pumpAndSettle();
     await selectCustomerTab(tester, CustomerDetailScreen.contractsTabIndex);
     await tester.pumpAndSettle();
-    expect(find.text(l10n.customerContractsPrepared), findsOneWidget);
+    expect(find.text(l10n.financeErrorUnknown), findsOneWidget);
   });
 
   testWidgets('contracts tab shows rows from fake repository', (tester) async {

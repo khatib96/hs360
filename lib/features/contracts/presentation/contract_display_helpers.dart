@@ -1,8 +1,11 @@
+import 'package:decimal/decimal.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
 import '../../finance_shared/presentation/finance_error_messages.dart';
+import '../domain/contract_detail.dart';
 import '../domain/contract_status.dart';
 import '../domain/contract_type.dart';
+import 'contract_product_row.dart';
 
 String contractErrorMessage(AppLocalizations l10n, String code) =>
     financeErrorMessage(l10n, code);
@@ -31,3 +34,111 @@ String formatContractDate(DateTime date) {
   final d = date.day.toString().padLeft(2, '0');
   return '$y-$m-$d';
 }
+
+String contractCustomerName({
+  required String languageCode,
+  String? nameAr,
+  String? nameEn,
+}) {
+  final isArabic = languageCode.toLowerCase().startsWith('ar');
+  final primary = isArabic ? nameAr : nameEn;
+  final fallback = isArabic ? nameEn : nameAr;
+  return (primary?.trim().isNotEmpty == true
+          ? primary
+          : fallback?.trim().isNotEmpty == true
+          ? fallback
+          : null) ??
+      '—';
+}
+
+const contractStatusFilterOptions = <ContractStatus>[
+  ContractStatus.draft,
+  ContractStatus.active,
+  ContractStatus.suspended,
+  ContractStatus.completed,
+  ContractStatus.terminatedEarly,
+  ContractStatus.expired,
+];
+
+const contractTypeFilterOptions = <ContractType>[
+  ContractType.trial,
+  ContractType.rental,
+];
+
+/// Full billing months between [start] and [end].
+///
+/// Example: 2026-07-09 → 2027-07-09 = 12 months (not 13).
+int? billingMonthsBetween(DateTime start, DateTime end) {
+  if (end.isBefore(start)) return null;
+
+  var months = (end.year - start.year) * 12 + (end.month - start.month);
+  if (end.day < start.day) {
+    months -= 1;
+  }
+  return months < 0 ? null : months;
+}
+
+/// Derives contract duration in full billing months.
+int? contractDurationMonths(ContractDetail detail) {
+  final end =
+      detail.endDate ??
+      (detail.type == ContractType.trial ? detail.trialEndDate : null);
+  if (end == null) return null;
+  return billingMonthsBetween(detail.startDate, end);
+}
+
+/// Display-only total: prefers stored value, else monthly × duration.
+Decimal? contractDisplayTotalValue(ContractDetail detail) {
+  final stored = detail.totalContractValue;
+  if (stored != null) return stored;
+
+  final monthly = detail.monthlyRentalValue;
+  final months = contractDurationMonths(detail);
+  if (monthly == null || months == null || months <= 0) return null;
+  return monthly * Decimal.fromInt(months);
+}
+
+List<ContractProductRow> buildContractProductRows(ContractDetail detail) {
+  final rows = <ContractProductRow>[
+    for (final line in detail.assetLines)
+      ContractProductRow(
+        lineOrder: line.lineOrder,
+        isAsset: true,
+        productNameAr: line.productNameAr,
+        productNameEn: line.productNameEn,
+        serialNumber: line.serialNumber,
+      ),
+    for (final line in detail.consumableLines)
+      ContractProductRow(
+        lineOrder: line.lineOrder,
+        isAsset: false,
+        productNameAr: line.productNameAr,
+        productNameEn: line.productNameEn,
+        quantity: line.qtyPerRefill,
+        refillFrequencyMonths: line.refillFrequencyMonths,
+      ),
+  ];
+  rows.sort((a, b) {
+    final order = a.lineOrder.compareTo(b.lineOrder);
+    if (order != 0) return order;
+    if (a.isAsset == b.isAsset) return 0;
+    return a.isAsset ? -1 : 1;
+  });
+  return rows;
+}
+
+String contractProductTypeLabel(AppLocalizations l10n, bool isAsset) {
+  return isAsset
+      ? l10n.contractProductTypeAsset
+      : l10n.contractProductTypeConsumable;
+}
+
+/// Formats remaining days for schedule rows. Negative values indicate overdue.
+String formatRemainingDays(AppLocalizations l10n, int days) {
+  if (days < 0) {
+    return l10n.contractRemainingDaysOverdue(days.abs());
+  }
+  return l10n.contractRemainingDays(days);
+}
+
+bool isRemainingDaysOverdue(int days) => days < 0;

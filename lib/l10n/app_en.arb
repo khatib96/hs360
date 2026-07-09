@@ -615,6 +615,83 @@
   "contractColumnStatus": "Status",
   "contractColumnStartDate": "Start date",
   "contractColumnMonthlyValue": "Monthly value",
+  "contractColumnCustomer": "Customer",
+  "contractColumnServiceLocation": "Service location",
+  "contractListEmpty": "No contracts yet.",
+  "contractListEmptyFiltered": "No contracts match your filters.",
+  "contractFilterType": "Type",
+  "contractFilterSearchHint": "Search by contract #, customer, or phone",
+  "contractFilterLowProfitOverride": "Low-profit override only",
+  "contractSectionOverview": "Overview",
+  "contractSectionAssets": "Assets",
+  "contractSectionConsumables": "Consumables",
+  "contractSectionLifecycle": "Lifecycle",
+  "contractSectionPricingSnapshot": "Pricing snapshot",
+  "contractFieldEndDate": "End date",
+  "contractFieldTrialEndDate": "Trial end",
+  "contractFieldBillingDay": "Billing day",
+  "contractFieldRefillDay": "Refill day",
+  "contractFieldNotes": "Notes",
+  "contractFieldSerialNumber": "Serial",
+  "contractFieldProduct": "Product",
+  "contractFieldQtyPerRefill": "Qty per refill",
+  "contractFieldRefillFrequency": "Refill frequency (months)",
+  "contractFieldMonthlyCost": "Monthly cost",
+  "contractFieldUnitCost": "Unit cost",
+  "contractFieldDeviceMonthlyCost": "Device monthly cost",
+  "contractFieldOilMonthlyCost": "Consumable monthly cost",
+  "contractFieldTotalMonthlyCost": "Total monthly cost",
+  "contractFieldMonthlyProfit": "Monthly profit",
+  "contractFieldConvertedFrom": "Converted from",
+  "contractFieldConvertedTo": "Converted to",
+  "contractFieldReturnReason": "Return reason",
+  "contractFieldClosureReason": "Closure reason",
+  "contractFieldOverrideReason": "Override reason",
+  "contractAssetsEmpty": "No asset lines on this contract.",
+  "contractConsumablesEmpty": "No consumable lines on this contract.",
+  "contractLifecycleEmpty": "No lifecycle metadata recorded yet.",
+  "contractSectionProducts": "Products",
+  "contractSectionValueSummary": "Contract value",
+  "contractSectionUpcomingSchedule": "Upcoming schedule",
+  "contractSectionHistory": "History",
+  "contractFieldProductType": "Type",
+  "contractFieldQuantity": "Quantity",
+  "contractFieldContractDuration": "Duration",
+  "contractDurationMonths": "{months, plural, =1{1 month} other{{months} months}}",
+  "@contractDurationMonths": {
+    "placeholders": {
+      "months": {
+        "type": "int"
+      }
+    }
+  },
+  "contractFieldTotalContractValue": "Total contract value",
+  "contractFieldMonthlyRentalValue": "Monthly rental value",
+  "contractNextVisit": "Next visit",
+  "contractNextPayment": "Next payment",
+  "contractRemainingDays": "{days, plural, =1{1 day remaining} other{{days} days remaining}}",
+  "@contractRemainingDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "contractRemainingDaysOverdue": "-{days, plural, =1{1 day} other{{days} days}}",
+  "@contractRemainingDaysOverdue": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "contractOverdue": "Overdue",
+  "contractProductsEmpty": "No products on this contract.",
+  "contractScheduleEmpty": "No upcoming visits or payments scheduled yet.",
+  "contractHistoryEmpty": "No contract history recorded yet.",
+  "contractProductTypeAsset": "Device",
+  "contractProductTypeConsumable": "Consumable",
+  "contractConvertLink": "Convert to rental",
   "customerInvoicesEmpty": "No invoices yet.",
   "@customerInvoicesEmpty": {
     "description": "Invoices tab empty state when user can view invoices"

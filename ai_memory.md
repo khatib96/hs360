@@ -1,6 +1,98 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-09 (Session: Phase 6 M7 — **Routes, Navigation, and Customer 360 Integration verified and closed**).
+> Updated 2026-07-10 (Session: Phase 6 M8 Follow-up — **Contract Detail UI Simplification verified and closed**).
+
+---
+
+## Session 2026-07-10 - Phase 6 M8 Follow-up Contract Detail UI Simplification Closure
+
+**Decision:** M8 follow-up is closed. Contract detail is an operational document view
+aligned with invoice/voucher styling. Internal cost/profit snapshot fields are never
+rendered on the normal detail page, even for privileged users.
+
+### Delivered
+
+- Refactored contract detail sections: unified products table, contract value
+  summary, prepared upcoming schedule and history sections (empty until real RPCs).
+- Removed separate assets/consumables tables, lifecycle section ("دورة الحياة"),
+  and pricing snapshot section from detail UI.
+- Added display helpers: full billing-month duration, display-only total value,
+  unified product rows, remaining-days formatter for future schedule rows.
+- Added `totalContractValue` to `ContractDetail` + mapper.
+- Migration `083_phase_6_contract_detail_read_hardening.sql`:
+  - `total_contract_value` in `build_contract_detail_json`
+  - Revoked authenticated `SELECT` on `idempotency_key` / `idempotency_payload_hash`
+- SQL tests cases 17–18 for total value in detail JSON and idempotency ACL.
+- AR/EN l10n for products, value summary, schedule, history, duration, overdue copy.
+
+### Locked follow-up rules
+
+- Duration = **full billing months** (`2026-07-09` → `2027-07-09` = 12, not 13).
+- Schedule section: empty prepared state only; no inference from `billingDay` /
+  `refillDay` without explicit backend dates.
+- History section: empty prepared state only; no fake lifecycle events.
+
+### Verification
+
+- `supabase db reset` + `phase_6_contract_read_rpc.sql` passed (18 cases).
+- `dart analyze .` passed.
+- Codex follow-up verification passed:
+  - `dart analyze .` clean.
+  - `flutter test test/features/contracts/ test/features/customers/presentation/customer_contracts_controller_test.dart test/features/customers/presentation/customer_detail_screen_test.dart test/core/localization/finance_l10n_parity_test.dart test/core/routing/route_guards_test.dart test/shared/widgets/app_shell_permission_test.dart` passed (140 tests).
+  - `docker exec -i supabase_db_hs360 psql -U postgres -d postgres -v ON_ERROR_STOP=1 < supabase/tests/phase_6_contract_read_rpc.sql` passed with `phase_6_contract_read_rpc_verification_passed` (18 cases).
+- `git diff --check` passed.
+- Owner reviewed the updated contract detail UI and approved the shape as matching
+  the intended operational contract view.
+
+**Next:** Phase 6 M9+ — schedule/history RPCs, create/convert/close/PDF workflows.
+
+---
+
+## Session 2026-07-10 - Phase 6 M8 Contract List and Detail UI Closure
+
+**Decision:** Phase 6 M8 is closed. Contract list and detail screens, Customer 360
+contracts tab, and repository reads are wired to real `list_contracts` /
+`get_contract_detail` RPCs with ACL hardening on base tables and permission-masked
+detail fields.
+
+### Delivered
+
+- Added migration `082_phase_6_contract_read_rpc.sql`:
+  - Revoked direct `SELECT` on sensitive `contracts` / `contract_lines` columns.
+  - Updated `contracts_safe` and added `contract_lines_safe`.
+  - `mask_contract_read_json`, `build_contract_detail_json`, `list_contracts`,
+    `get_contract_detail` RPCs.
+- Added `supabase/tests/phase_6_contract_read_rpc.sql` (cases 1–16) registered as
+  Phase M in `scripts/test/run_sql_suites.sh`.
+- Replaced M7 `notAvailable` stubs in `ContractRepository` with real RPC calls.
+- Extended `ContractSummary` / `ContractDetail` + `mapContractDetail` for party,
+  location, and lifecycle fields.
+- Added list/detail controllers, filters bar, table, detail sections; replaced
+  list/detail screen shells.
+- Customer 360 contracts tab shows real rows; removed prepared/unavailable paths.
+- AR/EN l10n for list/detail filters, columns, sections, empty states.
+
+### Locked M8 rules
+
+- `list_contracts` never returns snapshot cost/profit columns, even for users with
+  all field permissions.
+- Detail snapshot fields are permission-masked server-side; Flutter renders only
+  keys returned by RPC.
+- Missing contract on detail: RPC raises `validation_failed`; Flutter maps to
+  `isNotFound` and shows `financeErrorNotFound` — never raw validation text.
+- Direct `SELECT` on sensitive base-table columns fails with
+  `insufficient_privilege`; safe views succeed without snapshot columns.
+- Phone search uses `customers.phone_primary`.
+
+### Verification
+
+- `supabase db reset` + `phase_6_contract_read_rpc.sql` passed (16 cases).
+- `dart analyze` on contracts + customer contracts paths passed.
+- Targeted Flutter tests passed (128 tests): contracts presentation/data,
+  customer contracts, route guards, app shell nav, finance l10n parity.
+- `git diff --check` passed.
+
+**Next:** Phase 6 M9+ — contract create/convert/close/PDF workflows (out of M8 scope).
 
 ---
 

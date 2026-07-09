@@ -83,7 +83,10 @@ ContractDetail mapContractDetail(Map<String, dynamic> json) {
     type: ContractType.fromDb(json['type'] as String?),
     status: ContractStatus.fromDb(json['status'] as String?),
     customerId: json['customer_id'] as String?,
+    customerNameAr: json['customer_name_ar'] as String?,
+    customerNameEn: json['customer_name_en'] as String?,
     serviceLocationId: json['service_location_id'] as String?,
+    serviceLocationName: json['service_location_name'] as String?,
     startDate: DateTime.parse(json['start_date'] as String),
     endDate: json['end_date'] != null
         ? DateTime.parse(json['end_date'] as String)
@@ -95,6 +98,7 @@ ContractDetail mapContractDetail(Map<String, dynamic> json) {
     billingDay: json['billing_day'] as int?,
     refillDay: json['refill_day'] as int?,
     monthlyRentalValue: tryParseDecimal(json['monthly_rental_value']),
+    totalContractValue: tryParseDecimal(json['total_contract_value']),
     snapshotDeviceMonthlyCost: tryParseDecimal(
       json['snapshot_device_monthly_cost'],
     ),
@@ -107,6 +111,14 @@ ContractDetail mapContractDetail(Map<String, dynamic> json) {
     overrideReason: json['override_reason'] as String?,
     convertedFromContractId: json['converted_from_contract_id'] as String?,
     convertedToContractId: json['converted_to_contract_id'] as String?,
+    renewedFromContractId: json['renewed_from_contract_id'] as String?,
+    renewedToContractId: json['renewed_to_contract_id'] as String?,
+    extensionReason: json['extension_reason'] as String?,
+    returnedAt: json['returned_at'] != null
+        ? DateTime.parse(json['returned_at'] as String)
+        : null,
+    returnReason: json['return_reason'] as String?,
+    trialOutcome: json['trial_outcome'] as String?,
     returnCondition: returnConditionRaw != null
         ? ContractReturnCondition.fromDb(returnConditionRaw)
         : null,

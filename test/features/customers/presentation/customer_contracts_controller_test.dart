@@ -42,9 +42,9 @@ void main() {
     );
   }
 
-  test('load marks prepared when list stub is unavailable', () async {
+  test('load surfaces repository errors', () async {
     final repo = FakeContractRepository(
-      fetchError: const FinanceException(code: FinanceException.notAvailable),
+      fetchError: const FinanceException(code: FinanceException.unknown),
     );
     final c = container(
       repo: repo,
@@ -55,8 +55,8 @@ void main() {
     await c.read(customerContractsControllerProvider('cust-1').notifier).load();
 
     final state = c.read(customerContractsControllerProvider('cust-1'));
-    expect(state.listUnavailable, isTrue);
-    expect(state.hasLoaded, isTrue);
+    expect(state.errorCode, FinanceException.unknown);
+    expect(state.hasLoaded, isFalse);
     expect(state.permissionDenied, isFalse);
   });
 

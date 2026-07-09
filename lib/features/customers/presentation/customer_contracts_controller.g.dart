@@ -7,7 +7,7 @@ part of 'customer_contracts_controller.dart';
 // **************************************************************************
 
 String _$customerContractsControllerHash() =>
-    r'e32e26185882dfe526c30ca4e5c22b47eb0e519e';
+    r'abcbe3405df473f7b60efb7a9c352c113538f6bb';
 
 /// Copied from Dart SDK
 class _SystemHash {
