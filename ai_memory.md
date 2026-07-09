@@ -1,6 +1,57 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-09 (Session: Phase 6 M5 — **Rental Collection & Billing Engine verified and closed**).
+> Updated 2026-07-09 (Session: Phase 6 M6 — **Domain Models, Validators, and Repositories verified and closed**).
+
+---
+
+## Session 2026-07-09 - Phase 6 M6 Domain Models, Validators, and Repositories Closure
+
+**Decision:** Phase 6 M6 is closed for the Flutter application layer. Contracts
+now have domain models, client validators, RPC repository/mappers, permission
+helpers, and fake repository fixtures — with no widget-level Supabase access.
+
+### Delivered
+
+- Added `lib/features/contracts/domain/` with enums, drafts, pricing/collection
+  preview models, minimal `ContractSummary` / `ContractDetail`, filters, and
+  `contract_permissions.dart`.
+- Added `lib/domain/validators/contract_validator.dart` and
+  `contract_lifecycle_validator.dart` with reusable `FinanceException` codes
+  mapped in `finance_error_messages.dart`.
+- Added `lib/features/contracts/data/contract_repository.dart` +
+  `contract_rpc_mapper.dart` covering M3–M5 RPCs only:
+  `preview_contract_profit`, `create_trial_contract`, `create_rental_contract`,
+  lifecycle RPCs, `preview_rental_collection`, `collect_rental_payment`.
+- Moved canonical `canViewContracts` to contracts domain; re-exported from
+  `customer_permissions.dart` without breaking Customer 360 imports.
+- Added `test/features/contracts/fake_contract_repository.dart` and focused
+  Dart tests for validators, permissions, mapper masking, and repository gates.
+
+### Locked M6 rules
+
+- Money uses `Decimal` only; RPC payloads emit `Decimal.toString()` — no
+  `double` in contract models/payloads.
+- `collect_rental_payment` client gate matches migration `081`: requires
+  **both** `vouchers.create_receipt` and `invoices.create_sales`.
+- `preview_rental_collection` client gate is OR:
+  `vouchers.create_receipt` / `invoices.create_sales` / `invoices.view_sales`.
+- Sensitive pricing fields parse as nullable when absent from masked preview
+  JSON.
+- `list_contracts` / `get_contract_detail` remain deferred: summary/detail
+  models and fixture mappers exist, but no repository methods call missing RPCs.
+
+### Verification
+
+- `dart analyze .` passed.
+- `flutter test test/domain/validators/contract_* test/features/contracts/`
+  passed (33 tests).
+- Customer 360 regression passed (`flutter test test/features/customers/`).
+- Codex follow-up verification regenerated `contract_repository.g.dart` with
+  `dart run build_runner build --delete-conflicting-outputs`, removing the
+  temporary placeholder hash risk. `dart analyze .`, the 33 focused M6 tests,
+  and `git diff --check` passed again after regeneration.
+
+**Next:** Phase 6 M7 — routes, navigation, and Customer 360 contracts integration.
 
 ---
 
@@ -75,8 +126,7 @@ accounting entries atomically.
   cancellation, permissions, read-only preview, duplicate-month rejection, and
   invalid month rejection.
 
-**Next:** Define Phase 6 M6 scope on top of the closed M3/M4/M5 contract,
-lifecycle, and collection foundation.
+**Next:** Phase 6 M6 Flutter domain/repository layer (closed in session above).
 
 ---
 

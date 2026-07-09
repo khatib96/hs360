@@ -85,6 +85,26 @@ class FinanceException extends AppException {
       'finance_validation_serialized_not_supported';
   static const validationSerializedQtyIntegerRequired =
       'finance_validation_serialized_qty_integer_required';
+  static const validationServiceLocationRequired =
+      'finance_validation_service_location_required';
+  static const validationAssetLinesRequired =
+      'finance_validation_asset_lines_required';
+  static const validationMonthlyRentalInvalid =
+      'finance_validation_monthly_rental_invalid';
+  static const validationBillingDayInvalid =
+      'finance_validation_billing_day_invalid';
+  static const validationRefillDayInvalid =
+      'finance_validation_refill_day_invalid';
+  static const validationOverrideReasonRequired =
+      'finance_validation_override_reason_required';
+  static const validationTrialEndDateInvalid =
+      'finance_validation_trial_end_date_invalid';
+  static const validationReturnConditionRequired =
+      'finance_validation_return_condition_required';
+  static const validationClosureTypeRequired =
+      'finance_validation_closure_type_required';
+  static const validationCoverageMonthsRequired =
+      'finance_validation_coverage_months_required';
 
   factory FinanceException.fromSupabase(
     Object error, [

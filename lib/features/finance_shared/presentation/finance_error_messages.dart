@@ -84,6 +84,26 @@ String financeErrorMessage(
       l10n.inventoryDocumentSerializedNotSupportedYet,
     FinanceException.validationSerializedQtyIntegerRequired =>
       l10n.financeValidationSerializedQtyIntegerRequired,
+    FinanceException.validationServiceLocationRequired =>
+      l10n.financeValidationPartyRequired,
+    FinanceException.validationAssetLinesRequired =>
+      l10n.financeValidationLinesRequired,
+    FinanceException.validationMonthlyRentalInvalid =>
+      l10n.financeValidationLinePriceInvalid,
+    FinanceException.validationBillingDayInvalid =>
+      l10n.financeErrorValidationFailed,
+    FinanceException.validationRefillDayInvalid =>
+      l10n.financeErrorValidationFailed,
+    FinanceException.validationOverrideReasonRequired =>
+      l10n.financeValidationReturnReasonRequired,
+    FinanceException.validationTrialEndDateInvalid =>
+      l10n.financeValidationDueDateBeforeInvoiceDate,
+    FinanceException.validationReturnConditionRequired =>
+      l10n.financeValidationReturnReasonRequired,
+    FinanceException.validationClosureTypeRequired =>
+      l10n.financeErrorValidationFailed,
+    FinanceException.validationCoverageMonthsRequired =>
+      l10n.financeValidationLinesRequired,
     FinanceException.supabaseNotConfigured =>
       l10n.authErrorSupabaseNotConfigured,
     _ => _unknownMessage(l10n, code, technicalDetail),
