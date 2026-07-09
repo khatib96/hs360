@@ -100,6 +100,9 @@ Invoke-SqlSuite -SuitePath "supabase/tests/phase_6_contract_creation_rpc.sql"
 Write-Host "Phase K: Phase 6 M4 contract lifecycle RPCs"
 Invoke-SqlSuite -SuitePath "supabase/tests/phase_6_contract_lifecycle_rpc.sql"
 
+Write-Host "Phase L: Phase 6 M5 rental collection and billing engine"
+Invoke-SqlSuite -SuitePath "supabase/tests/phase_6_rental_collection_billing_engine.sql"
+
 Write-Host "Phase C: baseline regression (pollution gate)"
 foreach ($suite in $phaseAAllowlist) {
   Invoke-SqlSuite -SuitePath $suite

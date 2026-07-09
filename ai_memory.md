@@ -1,6 +1,127 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-08 (Session: Phase 6 M4 — **contract lifecycle RPCs verified and closed**).
+> Updated 2026-07-09 (Session: Phase 6 M5 — **Rental Collection & Billing Engine verified and closed**).
+
+---
+
+## Session 2026-07-09 - Phase 6 M5 Rental Collection & Billing Engine Closure
+
+**Decision:** Phase 6 M5 is closed for the backend SQL/RPC scope. Rental
+collection is now payment-confirmation first: confirmed collection creates the
+rental invoice, receipt voucher, allocation, covered-period ledger rows, and
+accounting entries atomically.
+
+### Delivered
+
+- Added migration `081_phase_6_rental_collection_billing_engine.sql`.
+- Added `rental_invoice_coverages` as a permanent monthly coverage ledger with
+  a unique guard on `(tenant_id, contract_id, coverage_month_key)`.
+- Added `rental_collection_operations` for M5 idempotency and stable JSON
+  replay payloads.
+- Added public authenticated RPCs:
+  - `collect_rental_payment(p_data jsonb, p_idempotency_key uuid)`.
+  - `preview_rental_collection(p_data jsonb)`.
+- Added `ensure_rental_service_product(p_tenant_id uuid)` for the tenant-scoped
+  system product `SYS-RENTAL-MONTHLY`.
+- Added coverage normalization, duplicate-month rejection, invalid-month
+  validation, amount checks, and rental invoice line materialization.
+- Extended Phase 5 allocation/payment helpers to support `rental_monthly`:
+  `validate_manual_allocations`, `allocate_receipt_fifo`,
+  `recompute_invoice_payment_state`, and `list_open_customer_invoices`.
+- Added Phase L SQL suite and runner entries in Bash and PowerShell.
+
+### Locked M5 rules
+
+- No automatic rental invoices. Confirmed payment is the only invoice trigger.
+- `preview_rental_collection` is read-only and must not create products,
+  product groups, invoices, vouchers, journals, or coverage rows.
+- Rental invoices use `type = 'rental_monthly'` and do not create stock
+  movements or COGS.
+- M5 v1 uses one invoice line per covered month, billed by
+  `contracts.monthly_rental_value`.
+- The system rental billing product uses `product_type = 'sale_only'`,
+  `can_be_sold = true`, `can_be_rented = false`, `avg_cost = 0`,
+  `is_serialized = false`, and explicit `tax_class = 'non_taxable'`.
+- Collection amount must equal the computed rental invoice total. No
+  overpayment, underpayment, partial-month billing, or unallocated residual in
+  M5 v1.
+- Coverage is permanent in M5 v1. If a related invoice/voucher is cancelled,
+  the covered contract month remains blocked from rebilling.
+- Exactly two journal postings are expected: rental invoice journal and receipt
+  voucher journal. Allocation updates payment state only.
+- Same idempotency key with the same canonical payload returns the same stable
+  JSON result; same key with a different payload raises
+  `idempotency_payload_mismatch`.
+
+### Verification
+
+- Cursor reported `npx supabase db reset` passed with migration `081` applied.
+- Cursor reported `./scripts/test/run_sql_suites.sh` passed with all phases
+  green, including Phase L with 16 cases.
+- `git diff --check` passed clean in Cursor and Codex.
+- Codex static review confirmed:
+  - `preview_rental_collection` no longer provisions `SYS-RENTAL-MONTHLY`.
+  - duplicate coverage months are rejected instead of silently deduped.
+  - invalid coverage month strings raise `validation_failed`.
+  - rental invoice posting has no inventory movement/COGS path.
+
+### Test updates
+
+- Added `supabase/tests/phase_6_rental_collection_billing_engine.sql`.
+- Phase L covers atomic success, multi-month advance/overdue collection,
+  duplicate-period rejection, idempotent replay, payload mismatch, trial
+  rejection, closed-contract bounds, amount mismatch, no stock/COGS, non-taxable
+  rental product behavior, no third journal, permanent coverage after
+  cancellation, permissions, read-only preview, duplicate-month rejection, and
+  invalid month rejection.
+
+**Next:** Define Phase 6 M6 scope on top of the closed M3/M4/M5 contract,
+lifecycle, and collection foundation.
+
+---
+
+## Session 2026-07-08 - Phase 6 M5 Rental Collection & Billing Engine Planning Lock
+
+**Decision:** Rename Phase 6 M5 from a generic rental billing milestone to
+**Rental Collection & Billing Engine**. The phase is payment-confirmation first:
+rental invoices must not be issued merely because a billing period exists.
+Confirmed collection drives invoice creation, receipt allocation, and accounting
+posting in one atomic flow.
+
+### Locked M5 direction
+
+- Do not create automatic monthly rental invoices before payment is confirmed.
+- Rental contracts generate candidate billable periods/coverage, not final
+  invoices by themselves.
+- A confirmed rental collection can cover one month, multiple future months, or
+  multiple overdue months.
+- The collection flow must let the caller specify or accept the rental periods
+  covered by the payment.
+- After confirmation, the system creates the rental invoice, creates or links
+  the receipt voucher, allocates the payment to the invoice, records covered
+  periods, and posts accounting entries atomically.
+- The same rental period for the same contract must not be billed twice.
+- M5 must reuse the existing Phase 5 invoice, voucher, allocation, document
+  numbering, tax/rounding, and journal patterns instead of creating a parallel
+  billing system.
+- M5 must support idempotency so retries or double-clicks do not duplicate
+  invoices, receipts, allocations, journals, or covered periods.
+
+### Expected M5 shape
+
+- Add a rental coverage/collection ledger table if needed to track billed and
+  paid contract periods independently from contract lifecycle.
+- Add preview/proposal RPCs for outstanding or prepaid rental coverage.
+- Add a confirmed collection RPC that receives contract, amount, receipt method,
+  coverage periods, and idempotency key.
+- Generate invoices only inside the confirmed collection transaction.
+- Support advance payment, delayed payment, and multiple-month payment in a
+  single operation.
+- Keep trial contracts out of rental billing unless they are converted to
+  rental through M4.
+
+**Next:** Draft the implementation plan/prompt for Phase 6 M5 under the name
+Rental Collection & Billing Engine.
 
 ---
 
