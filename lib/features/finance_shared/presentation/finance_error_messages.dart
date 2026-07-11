@@ -18,6 +18,10 @@ String financeErrorMessage(
     FinanceException.permissionDenied => l10n.financeErrorPermissionDenied,
     FinanceException.validationFailed => l10n.financeErrorValidationFailed,
     FinanceException.belowMinProfit => l10n.financeErrorBelowMinProfit,
+    FinanceException.manualWarehouseResolutionRequired =>
+      l10n.contractErrorManualWarehouseResolutionRequired,
+    FinanceException.consumableScheduleConflict =>
+      l10n.contractErrorConsumableScheduleConflict,
     FinanceException.idempotencyPayloadMismatch =>
       l10n.financeErrorIdempotencyPayloadMismatch,
     FinanceException.booksLocked => l10n.financeErrorBooksLocked,

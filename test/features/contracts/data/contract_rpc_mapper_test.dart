@@ -138,5 +138,48 @@ void main() {
 
       expect(detail.totalContractValue, Decimal.parse('1440.000'));
     });
+
+    test(
+      'mapContractDetail parses consumable current and scheduled fields',
+      () {
+        final detail = mapContractDetail({
+          'id': 'con-4',
+          'contract_number': 'CON-004',
+          'type': 'rental',
+          'status': 'active',
+          'start_date': '2026-07-01',
+          'customer_id': 'cust-1',
+          'monthly_rental_value': '120.000',
+          'asset_lines': const [],
+          'consumable_lines': [
+            {
+              'id': 'line-oil-1',
+              'product_id': 'oil-template',
+              'qty_per_refill': '500.000',
+              'refill_frequency_months': 1,
+              'current_oil_product_id': 'oil-a',
+              'current_oil_product_name_en': 'Oil A',
+              'current_qty_per_refill': '500.000',
+              'current_effective_from': '2026-07-01',
+              'scheduled_oil_product_id': 'oil-b',
+              'scheduled_oil_product_name_en': 'Oil B',
+              'scheduled_qty_per_refill': '700.000',
+              'scheduled_effective_from': '2026-08-01',
+            },
+          ],
+        });
+
+        final line = detail.consumableLines.single;
+        expect(line.currentOilProductId, 'oil-a');
+        expect(line.currentOilProductNameEn, 'Oil A');
+        expect(line.currentQtyPerRefill, Decimal.parse('500.000'));
+        expect(line.currentEffectiveFrom, DateTime(2026, 7, 1));
+        expect(line.scheduledOilProductId, 'oil-b');
+        expect(line.scheduledOilProductNameEn, 'Oil B');
+        expect(line.scheduledQtyPerRefill, Decimal.parse('700.000'));
+        expect(line.scheduledEffectiveFrom, DateTime(2026, 8, 1));
+        expect(line.snapshotUnitCost, isNull);
+      },
+    );
   });
 }

@@ -3,6 +3,7 @@ import 'package:hs360/core/errors/finance_exception.dart';
 import 'package:hs360/features/auth/domain/app_session.dart';
 import 'package:hs360/features/contracts/data/contract_repository.dart';
 import 'package:hs360/features/contracts/domain/closure_draft.dart';
+import 'package:hs360/features/contracts/domain/consumable_change_draft.dart';
 import 'package:hs360/features/contracts/domain/contract_detail.dart';
 import 'package:hs360/features/contracts/domain/contract_draft.dart';
 import 'package:hs360/features/contracts/domain/contract_line.dart';
@@ -41,7 +42,9 @@ class FakeContractRepository extends ContractRepository {
   TrialExtensionDraft? lastExtensionDraft;
   TrialReturnDraft? lastReturnDraft;
   ClosureDraft? lastClosureDraft;
+  ConsumableChangeDraft? lastConsumableChangeDraft;
   RentalCollectionDraft? lastCollectionDraft;
+  ContractDraft? lastPreviewDraft;
   String? lastIdempotencyKey;
   var listCallCount = 0;
 
@@ -51,6 +54,7 @@ class FakeContractRepository extends ContractRepository {
     ContractDraft draft,
   ) async {
     _throwIfFetchError();
+    lastPreviewDraft = draft;
     return pricingPreview ?? samplePricingPreview();
   }
 
@@ -122,6 +126,18 @@ class FakeContractRepository extends ContractRepository {
   ) async {
     _throwIfFetchError();
     lastClosureDraft = draft;
+    lastIdempotencyKey = idempotencyKey;
+    return draft.contractId;
+  }
+
+  @override
+  Future<String> scheduleConsumableChange(
+    AppSession session,
+    ConsumableChangeDraft draft,
+    String idempotencyKey,
+  ) async {
+    _throwIfFetchError();
+    lastConsumableChangeDraft = draft;
     lastIdempotencyKey = idempotencyKey;
     return draft.contractId;
   }
@@ -293,6 +309,24 @@ ContractDetail sampleContractDetail({
         lineOrder: 1,
       ),
     ],
+  );
+}
+
+ContractDetail sampleTrialDetail({String id = 'trial-1', DateTime? startDate}) {
+  final base = sampleContractDetail(id: id);
+  return ContractDetail(
+    id: id,
+    contractNumber: 'TRIAL-001',
+    type: ContractType.trial,
+    status: ContractStatus.active,
+    customerId: base.customerId,
+    customerNameEn: base.customerNameEn,
+    serviceLocationId: base.serviceLocationId,
+    serviceLocationName: base.serviceLocationName,
+    startDate: startDate ?? DateTime(2024, 1, 1),
+    monthlyRentalValue: base.monthlyRentalValue,
+    assetLines: base.assetLines,
+    consumableLines: base.consumableLines,
   );
 }
 

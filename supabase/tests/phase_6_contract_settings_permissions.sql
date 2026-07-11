@@ -107,7 +107,9 @@ rollback;
 begin;
 set local role postgres;
 do $$ begin perform public.allow_contract_write(); end $$;
-set local role authenticated;
+-- M10 blocks direct contract writes for application roles.  This case
+-- verifies table constraints, so seed and mutate its fixture as postgres.
+set local role postgres;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
 declare
@@ -241,11 +243,13 @@ rollback;
 begin;
 set local role postgres;
 do $$ begin perform public.allow_contract_write(); end $$;
-set local role authenticated;
+-- Constraint fixture; application roles must continue to use contract RPCs.
+set local role postgres;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
 declare
   v_tenant_a uuid := '00000000-0000-0000-0000-000000000101';
+  v_main_warehouse uuid := '00000000-0000-0000-0000-000000000701';
   v_customer_id uuid;
   v_contract_id uuid := gen_random_uuid();
   v_asset_product uuid := '00000000-0000-0000-0000-000000000901';
@@ -277,16 +281,16 @@ begin
   );
 
   insert into public.contract_lines (
-    id, tenant_id, contract_id, line_type, product_id, snapshot_unit_cost,
+    id, tenant_id, contract_id, line_type, product_id, source_warehouse_id, snapshot_unit_cost,
     snapshot_monthly_cost, line_order
   )
   values
     (
-      v_asset_line, v_tenant_a, v_contract_id, 'asset', v_asset_product,
+      v_asset_line, v_tenant_a, v_contract_id, 'asset', v_asset_product, v_main_warehouse,
       1, 1, 1
     ),
     (
-      v_consumable_line, v_tenant_a, v_contract_id, 'consumable', v_consumable_product,
+      v_consumable_line, v_tenant_a, v_contract_id, 'consumable', v_consumable_product, null,
       1, 1, 2
     );
 
@@ -322,7 +326,8 @@ rollback;
 begin;
 set local role postgres;
 do $$ begin perform public.allow_contract_write(); end $$;
-set local role authenticated;
+-- This setup writes a contract directly only to exercise invoice constraints.
+set local role postgres;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
 declare
@@ -461,7 +466,8 @@ rollback;
 begin;
 set local role postgres;
 do $$ begin perform public.allow_contract_write(); end $$;
-set local role authenticated;
+-- Cross-tenant FK fixtures are seeded outside the application write surface.
+set local role postgres;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000204';
 do $$
 declare

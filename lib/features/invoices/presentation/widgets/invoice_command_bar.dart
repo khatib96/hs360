@@ -75,7 +75,12 @@ class InvoiceCommandBar extends StatelessWidget {
         children: [
           Expanded(child: titleBlock),
           const SizedBox(width: 16),
-          actionGroup,
+          Flexible(
+            child: Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: actionGroup,
+            ),
+          ),
         ],
       );
     } else {

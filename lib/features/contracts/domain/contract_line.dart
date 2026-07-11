@@ -65,6 +65,16 @@ class ContractConsumableLine {
     this.productNameEn,
     this.productGroupNameAr,
     this.productGroupNameEn,
+    this.currentOilProductId,
+    this.currentOilProductNameAr,
+    this.currentOilProductNameEn,
+    this.currentQtyPerRefill,
+    this.currentEffectiveFrom,
+    this.scheduledOilProductId,
+    this.scheduledOilProductNameAr,
+    this.scheduledOilProductNameEn,
+    this.scheduledQtyPerRefill,
+    this.scheduledEffectiveFrom,
   });
 
   final String id;
@@ -79,6 +89,16 @@ class ContractConsumableLine {
   final String? productNameEn;
   final String? productGroupNameAr;
   final String? productGroupNameEn;
+  final String? currentOilProductId;
+  final String? currentOilProductNameAr;
+  final String? currentOilProductNameEn;
+  final Decimal? currentQtyPerRefill;
+  final DateTime? currentEffectiveFrom;
+  final String? scheduledOilProductId;
+  final String? scheduledOilProductNameAr;
+  final String? scheduledOilProductNameEn;
+  final Decimal? scheduledQtyPerRefill;
+  final DateTime? scheduledEffectiveFrom;
 
   factory ContractConsumableLine.fromRpcJson(Map<String, dynamic> json) {
     return ContractConsumableLine(
@@ -94,6 +114,26 @@ class ContractConsumableLine {
       productNameEn: json['product_name_en'] as String?,
       productGroupNameAr: json['product_group_name_ar'] as String?,
       productGroupNameEn: json['product_group_name_en'] as String?,
+      currentOilProductId: json['current_oil_product_id'] as String?,
+      currentOilProductNameAr: json['current_oil_product_name_ar'] as String?,
+      currentOilProductNameEn: json['current_oil_product_name_en'] as String?,
+      currentQtyPerRefill: tryParseDecimal(json['current_qty_per_refill']),
+      currentEffectiveFrom: _parseContractDate(json['current_effective_from']),
+      scheduledOilProductId: json['scheduled_oil_product_id'] as String?,
+      scheduledOilProductNameAr:
+          json['scheduled_oil_product_name_ar'] as String?,
+      scheduledOilProductNameEn:
+          json['scheduled_oil_product_name_en'] as String?,
+      scheduledQtyPerRefill: tryParseDecimal(json['scheduled_qty_per_refill']),
+      scheduledEffectiveFrom: _parseContractDate(
+        json['scheduled_effective_from'],
+      ),
     );
   }
+}
+
+DateTime? _parseContractDate(Object? value) {
+  if (value == null) return null;
+  if (value is DateTime) return value;
+  return DateTime.tryParse(value.toString());
 }

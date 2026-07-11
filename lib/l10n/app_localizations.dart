@@ -2774,6 +2774,180 @@ abstract class AppLocalizations {
   /// **'Convert to rental'**
   String get contractConvertLink;
 
+  /// No description provided for @contractConvertAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Convert to rental'**
+  String get contractConvertAction;
+
+  /// No description provided for @contractConvertConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Convert trial'**
+  String get contractConvertConfirmTitle;
+
+  /// No description provided for @contractConvertConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Convert this trial into a rental contract with the entered terms?'**
+  String get contractConvertConfirmBody;
+
+  /// No description provided for @contractExtendTrialTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Extend trial'**
+  String get contractExtendTrialTitle;
+
+  /// No description provided for @contractExtendTrialAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Extend trial'**
+  String get contractExtendTrialAction;
+
+  /// No description provided for @contractReturnTrialTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Return trial'**
+  String get contractReturnTrialTitle;
+
+  /// No description provided for @contractReturnTrialAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Return trial'**
+  String get contractReturnTrialAction;
+
+  /// No description provided for @contractCloseRentalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Close rental'**
+  String get contractCloseRentalTitle;
+
+  /// No description provided for @contractCloseRentalAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Close rental'**
+  String get contractCloseRentalAction;
+
+  /// No description provided for @contractFieldExtensionReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Extension reason'**
+  String get contractFieldExtensionReason;
+
+  /// No description provided for @contractFieldChangeReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Change reason'**
+  String get contractFieldChangeReason;
+
+  /// No description provided for @contractFieldEffectiveDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Effective date'**
+  String get contractFieldEffectiveDate;
+
+  /// No description provided for @contractFieldConversionStartDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Conversion start date'**
+  String get contractFieldConversionStartDate;
+
+  /// No description provided for @contractFieldCloseDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Close date'**
+  String get contractFieldCloseDate;
+
+  /// No description provided for @contractFieldClosedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed on'**
+  String get contractFieldClosedAt;
+
+  /// No description provided for @contractFieldReturnedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Returned on'**
+  String get contractFieldReturnedAt;
+
+  /// No description provided for @contractFieldReturnCondition.
+  ///
+  /// In en, this message translates to:
+  /// **'Return condition'**
+  String get contractFieldReturnCondition;
+
+  /// No description provided for @contractFieldClosureType.
+  ///
+  /// In en, this message translates to:
+  /// **'Closure type'**
+  String get contractFieldClosureType;
+
+  /// No description provided for @contractClosureTypeNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal completion'**
+  String get contractClosureTypeNormal;
+
+  /// No description provided for @contractClosureTypeEarlyTermination.
+  ///
+  /// In en, this message translates to:
+  /// **'Early termination'**
+  String get contractClosureTypeEarlyTermination;
+
+  /// No description provided for @contractReturnConditionAvailableUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Available (used)'**
+  String get contractReturnConditionAvailableUsed;
+
+  /// No description provided for @contractReturnConditionMaintenance.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintenance'**
+  String get contractReturnConditionMaintenance;
+
+  /// No description provided for @contractReturnConditionDamaged.
+  ///
+  /// In en, this message translates to:
+  /// **'Damaged'**
+  String get contractReturnConditionDamaged;
+
+  /// No description provided for @contractReturnConditionLost.
+  ///
+  /// In en, this message translates to:
+  /// **'Lost'**
+  String get contractReturnConditionLost;
+
+  /// No description provided for @contractErrorManualWarehouseResolutionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'This contract line needs manual warehouse resolution before it can be released.'**
+  String get contractErrorManualWarehouseResolutionRequired;
+
+  /// No description provided for @contractErrorConsumableScheduleConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'A future consumable change is already scheduled for this line.'**
+  String get contractErrorConsumableScheduleConflict;
+
+  /// No description provided for @contractConsumableCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Current consumable'**
+  String get contractConsumableCurrent;
+
+  /// No description provided for @contractConsumableScheduledBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'A consumable change is already scheduled for {date}.'**
+  String contractConsumableScheduledBanner(String date);
+
+  /// No description provided for @contractScheduleConsumableAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule consumable change'**
+  String get contractScheduleConsumableAction;
+
   /// No description provided for @contractCreateTrial.
   ///
   /// In en, this message translates to:

@@ -5,6 +5,7 @@ import '../../../core/errors/scan_exception.dart';
 import '../../finance_shared/presentation/finance_error_messages.dart';
 import '../domain/contract_detail.dart';
 import '../domain/contract_draft.dart';
+import '../domain/contract_return_condition.dart';
 import '../domain/contract_status.dart';
 import '../domain/contract_type.dart';
 import 'contract_form_draft_builder.dart';
@@ -54,6 +55,20 @@ String contractStatusLabel(AppLocalizations l10n, ContractStatus status) {
     ContractStatus.completed => l10n.contractStatusCompleted,
     ContractStatus.terminatedEarly => l10n.contractStatusTerminatedEarly,
     ContractStatus.expired => l10n.contractStatusExpired,
+  };
+}
+
+String contractReturnConditionLabel(
+  AppLocalizations l10n,
+  ContractReturnCondition condition,
+) {
+  return switch (condition) {
+    ContractReturnCondition.availableUsed =>
+      l10n.contractReturnConditionAvailableUsed,
+    ContractReturnCondition.maintenance =>
+      l10n.contractReturnConditionMaintenance,
+    ContractReturnCondition.damaged => l10n.contractReturnConditionDamaged,
+    ContractReturnCondition.lost => l10n.contractReturnConditionLost,
   };
 }
 

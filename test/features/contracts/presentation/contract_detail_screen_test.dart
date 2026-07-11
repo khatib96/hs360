@@ -9,6 +9,9 @@ import 'package:hs360/features/auth/domain/app_session.dart';
 import 'package:hs360/features/auth/presentation/auth_controller.dart';
 import 'package:hs360/features/contracts/data/contract_repository.dart';
 import 'package:hs360/features/contracts/presentation/contract_detail_screen.dart';
+import 'package:hs360/features/contracts/domain/contract_detail.dart';
+import 'package:hs360/features/contracts/domain/contract_status.dart';
+import 'package:hs360/features/contracts/domain/contract_type.dart';
 import 'package:hs360/features/invoices/presentation/widgets/invoice_sheet.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
@@ -171,6 +174,7 @@ void main() {
     expect(find.text('Device A'), findsNWidgets(2));
     expect(find.text('Oil A'), findsNWidgets(2));
     expect(find.text(l10n.contractScheduleEmpty), findsOneWidget);
+    expect(find.text(l10n.contractHistoryEmpty), findsOneWidget);
     expect(find.text(l10n.contractNextVisit), findsNothing);
     expect(find.text(l10n.contractNextPayment), findsNothing);
   });
@@ -194,5 +198,39 @@ void main() {
     expect(find.text(l10n.contractSectionUpcomingSchedule), findsOneWidget);
     expect(find.text(l10n.contractSectionHistory), findsOneWidget);
     expect(find.text('دورة الحياة'), findsNothing);
+  });
+
+  testWidgets('history shows business close date from detail', (tester) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+    final closeDate = DateTime(2026, 3, 15, 12);
+    final repo = FakeContractRepository(
+      detailById: {
+        'c-closed': ContractDetail(
+          id: 'c-closed',
+          contractNumber: 'CON-CLOSED',
+          type: ContractType.rental,
+          status: ContractStatus.completed,
+          startDate: DateTime(2026, 1, 1),
+          closedAt: closeDate,
+          closureReason: 'Customer moved',
+          monthlyRentalValue: Decimal.parse('100'),
+        ),
+      },
+    );
+
+    await tester.pumpWidget(
+      _wrap(
+        locale: const Locale('en'),
+        session: _managerSession(),
+        repo: repo,
+        contractId: 'c-closed',
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.contractFieldClosedAt), findsOneWidget);
+    expect(find.text('2026-03-15'), findsOneWidget);
+    expect(find.text('Customer moved'), findsOneWidget);
+    expect(find.text(l10n.contractHistoryEmpty), findsNothing);
   });
 }

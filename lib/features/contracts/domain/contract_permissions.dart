@@ -19,6 +19,13 @@ bool canReturnTrial(AppSession session) =>
 
 bool canCloseContract(AppSession session) => _can(session, 'contracts.close');
 
+bool canScheduleConsumableChange(AppSession session) =>
+    _can(session, 'contracts.oil_change');
+
+/// Matches migration `087` preview gate (create OR convert_trial).
+bool canPreviewContractProfit(AppSession session) =>
+    canCreateContract(session) || canConvertTrial(session);
+
 bool canApproveContractOverride(AppSession session) =>
     _can(session, 'contracts.approve_override');
 

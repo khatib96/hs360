@@ -1,6 +1,61 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-10 (Session: Phase 6 M8 Follow-up — **Contract Detail UI Simplification verified and closed**).
+> Updated 2026-07-12 (Session: Phase 6 M10 — **Trial conversion and lifecycle verified and closed**).
+
+---
+
+## Session 2026-07-12 - Phase 6 M10 Trial Conversion and Contract Lifecycle Closure
+
+**Decision:** Phase 6 M10 is closed. Trial contracts can convert to rentals from
+the current business date, rental lifecycle actions are available on contract
+detail, and future consumable changes are scheduled safely without exposing
+cost data to unauthorized users.
+
+### Delivered
+
+- Migration `087_phase_6_contract_lifecycle_non_serialized_assets.sql`:
+  - Added source-warehouse linkage and validation for non-serialized assets.
+  - Preserved business-effective close/return dates and lifecycle history.
+  - Updated lifecycle handling for non-serialized assets and profit-preview
+    authorization during trial conversion.
+- Migration `088_phase_6_schedule_consumable_change_rpc.sql`:
+  - Added idempotent `schedule_contract_consumable_change` with same-day and
+    future-date semantics plus a single-open-schedule guard.
+  - Enriched contract reads with current/scheduled consumable data while
+    preserving server-side masking of sensitive cost fields.
+- Flutter conversion UI and state/controller layer:
+  - Conversion start date defaults to today, with a 12-month rental term,
+    billing/refill day controls, unified M9 products table, and idempotent
+    conversion submit.
+  - Permission-gated per-product cost/profit expansion uses the M9 cost
+    breakdown rather than exposing costs in the normal contract value view.
+- Added lifecycle actions on contract detail: extend trial, return trial,
+  close rental, and schedule a consumable change.
+- Replaced raw UUID entry for consumable changes with an active
+  `consumable_rental` product search picker.
+- Extended contract models, repository mappings, Arabic/English localization,
+  fakes, and focused controller/widget/mapper tests.
+
+### Regression-harness fixes
+
+- Updated M1 SQL constraint fixtures to seed direct contract rows as `postgres`
+  and supply the required source warehouse. Application users remain blocked
+  from direct contract writes and must use RPCs.
+- Added M8 test-fixture cleanup for its committed contracts, lines, products,
+  inventory movements, customers, and temporary field-cost permissions. The
+  baseline pollution gate now remains meaningful after contract-read tests.
+
+### Verification
+
+- `flutter analyze`: clean, no issues.
+- `flutter test`: **811 tests passed**.
+- `bash scripts/test/run_sql_suites.sh`: all SQL phases passed, including M10
+  lifecycle, consumable scheduling, M8 reads, and the final pollution gate.
+- `git diff --check`: passed.
+
+**Next:** Plan Phase 6 M11 from the established M8-M10 contract model; preserve
+the unified product table, permission-masked financial details, and RPC-only
+contract writes.
 
 ---
 

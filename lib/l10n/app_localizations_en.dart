@@ -1434,6 +1434,98 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contractConvertLink => 'Convert to rental';
 
   @override
+  String get contractConvertAction => 'Convert to rental';
+
+  @override
+  String get contractConvertConfirmTitle => 'Convert trial';
+
+  @override
+  String get contractConvertConfirmBody =>
+      'Convert this trial into a rental contract with the entered terms?';
+
+  @override
+  String get contractExtendTrialTitle => 'Extend trial';
+
+  @override
+  String get contractExtendTrialAction => 'Extend trial';
+
+  @override
+  String get contractReturnTrialTitle => 'Return trial';
+
+  @override
+  String get contractReturnTrialAction => 'Return trial';
+
+  @override
+  String get contractCloseRentalTitle => 'Close rental';
+
+  @override
+  String get contractCloseRentalAction => 'Close rental';
+
+  @override
+  String get contractFieldExtensionReason => 'Extension reason';
+
+  @override
+  String get contractFieldChangeReason => 'Change reason';
+
+  @override
+  String get contractFieldEffectiveDate => 'Effective date';
+
+  @override
+  String get contractFieldConversionStartDate => 'Conversion start date';
+
+  @override
+  String get contractFieldCloseDate => 'Close date';
+
+  @override
+  String get contractFieldClosedAt => 'Closed on';
+
+  @override
+  String get contractFieldReturnedAt => 'Returned on';
+
+  @override
+  String get contractFieldReturnCondition => 'Return condition';
+
+  @override
+  String get contractFieldClosureType => 'Closure type';
+
+  @override
+  String get contractClosureTypeNormal => 'Normal completion';
+
+  @override
+  String get contractClosureTypeEarlyTermination => 'Early termination';
+
+  @override
+  String get contractReturnConditionAvailableUsed => 'Available (used)';
+
+  @override
+  String get contractReturnConditionMaintenance => 'Maintenance';
+
+  @override
+  String get contractReturnConditionDamaged => 'Damaged';
+
+  @override
+  String get contractReturnConditionLost => 'Lost';
+
+  @override
+  String get contractErrorManualWarehouseResolutionRequired =>
+      'This contract line needs manual warehouse resolution before it can be released.';
+
+  @override
+  String get contractErrorConsumableScheduleConflict =>
+      'A future consumable change is already scheduled for this line.';
+
+  @override
+  String get contractConsumableCurrent => 'Current consumable';
+
+  @override
+  String contractConsumableScheduledBanner(String date) {
+    return 'A consumable change is already scheduled for $date.';
+  }
+
+  @override
+  String get contractScheduleConsumableAction => 'Schedule consumable change';
+
+  @override
   String get contractCreateTrial => 'Create trial';
 
   @override

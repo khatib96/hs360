@@ -106,6 +106,9 @@ class FinanceException extends AppException {
   static const validationCoverageMonthsRequired =
       'finance_validation_coverage_months_required';
   static const belowMinProfit = 'finance_below_min_profit';
+  static const manualWarehouseResolutionRequired =
+      'manual_warehouse_resolution_required';
+  static const consumableScheduleConflict = 'consumable_schedule_conflict';
 
   factory FinanceException.fromSupabase(
     Object error, [
@@ -198,6 +201,18 @@ class FinanceException extends AppException {
     }
     if (message.contains('below_min_profit')) {
       return FinanceException(code: belowMinProfit, technicalDetail: message);
+    }
+    if (message.contains('manual_warehouse_resolution_required')) {
+      return FinanceException(
+        code: manualWarehouseResolutionRequired,
+        technicalDetail: message,
+      );
+    }
+    if (message.contains('consumable_schedule_conflict')) {
+      return FinanceException(
+        code: consumableScheduleConflict,
+        technicalDetail: message,
+      );
     }
 
     return FinanceException(code: unknown, technicalDetail: message);

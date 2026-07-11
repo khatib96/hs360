@@ -704,4 +704,72 @@ begin
 end $$;
 rollback;
 
+-- Remove the committed fixtures so the baseline pollution gate stays meaningful.
+begin;
+set local role postgres;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m8.fixture')::jsonb;
+  v_contract_id uuid := (v_fixture ->> 'contract_id')::uuid;
+  v_contract_b_id uuid := current_setting('test.p6m8.contract_b_id')::uuid;
+  v_customer_id uuid := (v_fixture ->> 'customer_id')::uuid;
+  v_customer_b_id uuid;
+  v_customer_account_id uuid;
+  v_asset_product_id uuid := (v_fixture ->> 'asset_product')::uuid;
+  v_consumable_product_id uuid := (v_fixture ->> 'consumable_product')::uuid;
+  v_unit_id uuid := (v_fixture ->> 'unit_a')::uuid;
+begin
+  select customer_id into v_customer_b_id
+  from public.contracts
+  where id = v_contract_b_id;
+
+  select account_id into v_customer_account_id
+  from public.customers
+  where id = v_customer_id;
+
+  delete from public.inventory_movements
+  where contract_line_id in (
+    select id from public.contract_lines
+    where contract_id in (v_contract_id, v_contract_b_id)
+  )
+    or product_unit_id = v_unit_id
+    or product_id in (v_asset_product_id, v_consumable_product_id);
+
+  update public.product_units
+  set
+    current_contract_id = null,
+    current_customer_id = null,
+    current_service_location_id = null
+  where id = v_unit_id;
+
+  delete from public.contracts
+  where id in (v_contract_id, v_contract_b_id);
+
+  delete from public.inventory_balances
+  where product_id in (v_asset_product_id, v_consumable_product_id);
+
+  delete from public.product_units
+  where id = v_unit_id;
+
+  delete from public.products
+  where id in (v_asset_product_id, v_consumable_product_id);
+
+  delete from public.customers
+  where id in (v_customer_id, v_customer_b_id);
+
+  delete from public.chart_of_accounts
+  where id = v_customer_account_id;
+
+  delete from public.user_permissions
+  where tenant_user_id = '00000000-0000-0000-0000-000000000305'
+    and permission_id in (
+      'contracts.view',
+      'contracts.field.snapshot_device_cost',
+      'contracts.field.snapshot_oil_cost',
+      'contracts.field.snapshot_total_cost',
+      'contracts.field.snapshot_profit'
+    );
+end $$;
+commit;
+
 select 'phase_6_contract_read_rpc_verification_passed' as result;

@@ -10,6 +10,7 @@ import '../domain/closure_draft.dart';
 import '../domain/contract_detail.dart';
 import '../domain/contract_draft.dart';
 import '../domain/contract_filters.dart';
+import '../domain/consumable_change_draft.dart';
 import '../domain/contract_permissions.dart';
 import '../domain/contract_pricing_preview.dart';
 import '../domain/contract_summary.dart';
@@ -104,7 +105,7 @@ class ContractRepository {
     AppSession session,
     ContractDraft draft,
   ) async {
-    if (!canCreateContract(session)) {
+    if (!canPreviewContractProfit(session)) {
       throw const FinanceException(code: FinanceException.permissionDenied);
     }
     try {
@@ -202,6 +203,21 @@ class ContractRepository {
       throw const FinanceException(code: FinanceException.permissionDenied);
     }
     return _mutateContract('close_contract', draft.toPayload(), idempotencyKey);
+  }
+
+  Future<String> scheduleConsumableChange(
+    AppSession session,
+    ConsumableChangeDraft draft,
+    String idempotencyKey,
+  ) async {
+    if (!canScheduleConsumableChange(session)) {
+      throw const FinanceException(code: FinanceException.permissionDenied);
+    }
+    return _mutateContract(
+      'schedule_contract_consumable_change',
+      draft.toPayload(),
+      idempotencyKey,
+    );
   }
 
   Future<RentalCollectionPreview> previewRentalCollection(

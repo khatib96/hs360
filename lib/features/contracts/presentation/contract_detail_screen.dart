@@ -12,12 +12,17 @@ import '../../invoices/presentation/widgets/invoice_command_bar.dart';
 import '../../invoices/presentation/widgets/invoice_design.dart';
 import '../../invoices/presentation/widgets/invoice_sheet.dart';
 import '../../invoices/presentation/widgets/invoice_shared_widgets.dart';
+import '../domain/contract_detail.dart';
+import '../domain/contract_lifecycle_actions.dart';
 import '../domain/contract_permissions.dart';
-import '../domain/contract_status.dart';
-import '../domain/contract_type.dart';
 import 'contract_detail_controller.dart';
+import 'contract_list_controller.dart';
 import 'contract_display_helpers.dart';
+import 'widgets/contract_closure_dialog.dart';
+import 'widgets/contract_consumable_change_dialog.dart';
 import 'widgets/contract_detail_sections.dart';
+import 'widgets/contract_trial_extension_dialog.dart';
+import 'widgets/contract_trial_return_dialog.dart';
 
 class ContractDetailScreen extends ConsumerWidget {
   const ContractDetailScreen({required this.contractId, super.key});
@@ -63,11 +68,17 @@ class ContractDetailScreen extends ConsumerWidget {
       body = Center(child: Text(l10n.financeErrorNotFound));
     } else {
       final detail = state.detail!;
-      final canConvert =
+      final showConvert =
+          session != null && canShowConvertTrialAction(session, detail);
+      final showExtend =
+          session != null && canShowExtendTrialAction(session, detail);
+      final showReturn =
+          session != null && canShowReturnTrialAction(session, detail);
+      final showClose =
+          session != null && canShowCloseRentalAction(session, detail);
+      final showConsumable =
           session != null &&
-          canConvertTrial(session) &&
-          detail.type == ContractType.trial &&
-          detail.status == ContractStatus.active;
+          canShowScheduleConsumableChangeAction(session, detail);
 
       body = InvoiceSheet(
         child: Column(
@@ -78,11 +89,31 @@ class ContractDetailScreen extends ConsumerWidget {
               subtitle:
                   '${contractTypeLabel(l10n, detail.type)} · ${contractCustomerName(languageCode: locale.languageCode, nameAr: detail.customerNameAr, nameEn: detail.customerNameEn)}',
               actions: [
-                if (canConvert)
+                if (showConvert)
                   TextButton(
                     onPressed: () =>
                         context.go(AppRoutes.contractConvertPath(contractId)),
                     child: Text(l10n.contractConvertLink),
+                  ),
+                if (showExtend)
+                  TextButton(
+                    onPressed: () => _extendTrial(context, ref, detail),
+                    child: Text(l10n.contractExtendTrialAction),
+                  ),
+                if (showReturn)
+                  TextButton(
+                    onPressed: () => _returnTrial(context, ref, detail),
+                    child: Text(l10n.contractReturnTrialAction),
+                  ),
+                if (showClose)
+                  TextButton(
+                    onPressed: () => _closeRental(context, ref, detail),
+                    child: Text(l10n.contractCloseRentalAction),
+                  ),
+                if (showConsumable)
+                  TextButton(
+                    onPressed: () => _scheduleConsumable(context, ref, detail),
+                    child: Text(l10n.contractScheduleConsumableAction),
                   ),
               ],
             ),
@@ -114,5 +145,77 @@ class ContractDetailScreen extends ConsumerWidget {
       currentRoute: AppRoutes.contracts,
       body: body,
     );
+  }
+
+  Future<void> _extendTrial(
+    BuildContext context,
+    WidgetRef ref,
+    ContractDetail detail,
+  ) async {
+    final changed = await showContractTrialExtensionDialog(
+      context,
+      ref,
+      detail: detail,
+    );
+    if (changed == true) {
+      await ref
+          .read(contractDetailControllerProvider(contractId).notifier)
+          .load(contractId);
+      await ref.read(contractListControllerProvider.notifier).refresh();
+    }
+  }
+
+  Future<void> _returnTrial(
+    BuildContext context,
+    WidgetRef ref,
+    ContractDetail detail,
+  ) async {
+    final changed = await showContractTrialReturnDialog(
+      context,
+      ref,
+      detail: detail,
+    );
+    if (changed == true) {
+      await ref
+          .read(contractDetailControllerProvider(contractId).notifier)
+          .load(contractId);
+      await ref.read(contractListControllerProvider.notifier).refresh();
+    }
+  }
+
+  Future<void> _closeRental(
+    BuildContext context,
+    WidgetRef ref,
+    ContractDetail detail,
+  ) async {
+    final closeDate = await showContractClosureDialog(
+      context,
+      ref,
+      detail: detail,
+    );
+    if (closeDate != null) {
+      await ref
+          .read(contractDetailControllerProvider(contractId).notifier)
+          .load(contractId);
+      await ref.read(contractListControllerProvider.notifier).refresh();
+    }
+  }
+
+  Future<void> _scheduleConsumable(
+    BuildContext context,
+    WidgetRef ref,
+    ContractDetail detail,
+  ) async {
+    final changed = await showContractConsumableChangeDialog(
+      context,
+      ref,
+      detail: detail,
+    );
+    if (changed == true) {
+      await ref
+          .read(contractDetailControllerProvider(contractId).notifier)
+          .load(contractId);
+      await ref.read(contractListControllerProvider.notifier).refresh();
+    }
   }
 }

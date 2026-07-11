@@ -1423,6 +1423,98 @@ class AppLocalizationsAr extends AppLocalizations {
   String get contractConvertLink => 'تحويل إلى إيجار';
 
   @override
+  String get contractConvertAction => 'تحويل إلى إيجار';
+
+  @override
+  String get contractConvertConfirmTitle => 'تحويل التجريبي';
+
+  @override
+  String get contractConvertConfirmBody =>
+      'تحويل هذا العقد التجريبي إلى عقد إيجار بالشروط المدخلة؟';
+
+  @override
+  String get contractExtendTrialTitle => 'تمديد التجريبي';
+
+  @override
+  String get contractExtendTrialAction => 'تمديد التجريبي';
+
+  @override
+  String get contractReturnTrialTitle => 'إرجاع التجريبي';
+
+  @override
+  String get contractReturnTrialAction => 'إرجاع التجريبي';
+
+  @override
+  String get contractCloseRentalTitle => 'إغلاق الإيجار';
+
+  @override
+  String get contractCloseRentalAction => 'إغلاق الإيجار';
+
+  @override
+  String get contractFieldExtensionReason => 'سبب التمديد';
+
+  @override
+  String get contractFieldChangeReason => 'سبب التغيير';
+
+  @override
+  String get contractFieldEffectiveDate => 'تاريخ السريان';
+
+  @override
+  String get contractFieldConversionStartDate => 'تاريخ بدء التحويل';
+
+  @override
+  String get contractFieldCloseDate => 'تاريخ الإغلاق';
+
+  @override
+  String get contractFieldClosedAt => 'أُغلق في';
+
+  @override
+  String get contractFieldReturnedAt => 'أُرجع في';
+
+  @override
+  String get contractFieldReturnCondition => 'حالة الإرجاع';
+
+  @override
+  String get contractFieldClosureType => 'نوع الإغلاق';
+
+  @override
+  String get contractClosureTypeNormal => 'إكمال عادي';
+
+  @override
+  String get contractClosureTypeEarlyTermination => 'إنهاء مبكر';
+
+  @override
+  String get contractReturnConditionAvailableUsed => 'متاح (مستخدم)';
+
+  @override
+  String get contractReturnConditionMaintenance => 'صيانة';
+
+  @override
+  String get contractReturnConditionDamaged => 'تالف';
+
+  @override
+  String get contractReturnConditionLost => 'مفقود';
+
+  @override
+  String get contractErrorManualWarehouseResolutionRequired =>
+      'يتطلب هذا السطر تحديد المستودع يدوياً قبل الإرجاع.';
+
+  @override
+  String get contractErrorConsumableScheduleConflict =>
+      'يوجد بالفعل تغيير مستهلكات مجدول لهذا السطر.';
+
+  @override
+  String get contractConsumableCurrent => 'المستهلك الحالي';
+
+  @override
+  String contractConsumableScheduledBanner(String date) {
+    return 'يوجد تغيير مستهلكات مجدول بتاريخ $date.';
+  }
+
+  @override
+  String get contractScheduleConsumableAction => 'جدولة تغيير المستهلك';
+
+  @override
   String get contractCreateTrial => 'إنشاء عقد تجريبي';
 
   @override

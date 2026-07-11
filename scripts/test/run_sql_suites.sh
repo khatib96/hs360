@@ -122,6 +122,9 @@ run_suite "supabase/tests/phase_6_contract_creation_rpc.sql"
 printf 'Phase K: Phase 6 M4 contract lifecycle RPCs\n'
 run_suite "supabase/tests/phase_6_contract_lifecycle_rpc.sql"
 
+printf 'Phase K.5: Phase 6 M10b schedule consumable change RPCs\n'
+run_suite "supabase/tests/phase_6_schedule_consumable_change_rpc.sql"
+
 printf 'Phase L: Phase 6 M5 rental collection and billing engine\n'
 run_suite "supabase/tests/phase_6_rental_collection_billing_engine.sql"
 

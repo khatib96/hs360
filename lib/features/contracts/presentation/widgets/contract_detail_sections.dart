@@ -497,9 +497,57 @@ class ContractHistorySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final rows = <Widget>[];
+
+    if (detail.extensionReason?.trim().isNotEmpty == true) {
+      rows.add(
+        ContractInfoRow(
+          label: l10n.contractFieldExtensionReason,
+          value: detail.extensionReason!,
+        ),
+      );
+    }
+    if (detail.returnReason?.trim().isNotEmpty == true) {
+      rows.add(
+        ContractInfoRow(
+          label: l10n.contractFieldReturnReason,
+          value: detail.returnReason!,
+        ),
+      );
+    }
+    if (detail.closureReason?.trim().isNotEmpty == true) {
+      rows.add(
+        ContractInfoRow(
+          label: l10n.contractFieldClosureReason,
+          value: detail.closureReason!,
+        ),
+      );
+    }
+    if (detail.returnedAt != null) {
+      rows.add(
+        ContractInfoRow(
+          label: l10n.contractFieldReturnedAt,
+          value: formatContractDate(detail.returnedAt!),
+        ),
+      );
+    }
+    if (detail.closedAt != null) {
+      rows.add(
+        ContractInfoRow(
+          label: l10n.contractFieldClosedAt,
+          value: formatContractDate(detail.closedAt!),
+        ),
+      );
+    }
+
     return ContractDetailPanel(
       title: l10n.contractSectionHistory,
-      child: Text(l10n.contractHistoryEmpty),
+      child: rows.isEmpty
+          ? Text(l10n.contractHistoryEmpty)
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: rows,
+            ),
     );
   }
 }
