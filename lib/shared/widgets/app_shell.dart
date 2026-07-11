@@ -57,12 +57,13 @@ class AppShell extends ConsumerWidget {
       );
     }
 
-    String currentPath = currentRoute ?? '';
+    var actualPath = '';
     try {
-      currentPath = currentPath.isEmpty
-          ? GoRouterState.of(context).uri.path
-          : currentPath;
+      actualPath = GoRouterState.of(context).uri.path;
     } catch (_) {}
+    final currentPath = currentRoute?.isNotEmpty == true
+        ? currentRoute!
+        : actualPath;
 
     final allItems = [
       _NavItem(
@@ -174,6 +175,19 @@ class AppShell extends ConsumerWidget {
         .where((item) => item.isVisible(session))
         .toList();
     final activeRoute = _activeNavRoute(currentPath, authorizedItems);
+    final showBackButton = _shouldShowBackButton(actualPath, activeRoute);
+    final backTarget = _backTarget(actualPath, activeRoute, session);
+    final leading = showBackButton
+        ? BackButton(
+            onPressed: () {
+              if (context.canPop()) {
+                context.pop();
+              } else {
+                context.go(backTarget);
+              }
+            },
+          )
+        : null;
     final isDesktop = MediaQuery.of(context).size.width > 768;
 
     if (isDesktop) {
@@ -189,7 +203,11 @@ class AppShell extends ConsumerWidget {
             const VerticalDivider(width: 1, color: AppColors.neutral200),
             Expanded(
               child: Scaffold(
-                appBar: AppBar(title: Text(title), actions: actions),
+                appBar: AppBar(
+                  leading: leading,
+                  title: Text(title),
+                  actions: actions,
+                ),
                 body: SafeArea(child: body),
               ),
             ),
@@ -199,14 +217,16 @@ class AppShell extends ConsumerWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text(title), actions: actions),
-      drawer: _MobileNavigationDrawer(
-        l10n: l10n,
-        theme: theme,
-        session: session,
-        activeRoute: activeRoute,
-        items: authorizedItems,
-      ),
+      appBar: AppBar(leading: leading, title: Text(title), actions: actions),
+      drawer: showBackButton
+          ? null
+          : _MobileNavigationDrawer(
+              l10n: l10n,
+              theme: theme,
+              session: session,
+              activeRoute: activeRoute,
+              items: authorizedItems,
+            ),
       body: SafeArea(child: body),
     );
   }
@@ -420,6 +440,36 @@ String? _activeNavRoute(String currentPath, List<_NavItem> items) {
 bool _matchesNavItem(String currentPath, _NavItem item) {
   if (currentPath == item.route) return true;
   return item.matchChildren && currentPath.startsWith('${item.route}/');
+}
+
+bool _shouldShowBackButton(String actualPath, String? activeRoute) {
+  if (actualPath.isEmpty) return false;
+  if (actualPath == AppRoutes.productsNew ||
+      actualPath == AppRoutes.inventoryTransfers ||
+      actualPath == AppRoutes.documentPreview) {
+    return true;
+  }
+  return activeRoute == null || actualPath != activeRoute;
+}
+
+String _backTarget(String actualPath, String? activeRoute, AppSession session) {
+  if (actualPath == AppRoutes.productsNew ||
+      actualPath.startsWith('/products/')) {
+    return AppRoutes.products;
+  }
+  if (actualPath.startsWith('/product-units/')) return AppRoutes.products;
+  if (actualPath.startsWith('/customers/')) return AppRoutes.customers;
+  if (actualPath.startsWith('/suppliers/')) return AppRoutes.suppliers;
+  if (actualPath.startsWith('/contracts/')) return AppRoutes.contracts;
+  if (actualPath.startsWith('/invoices/')) return AppRoutes.invoices;
+  if (actualPath.startsWith('/vouchers/')) return AppRoutes.vouchers;
+  if (actualPath.startsWith('/journal/')) return AppRoutes.journal;
+  if (actualPath == AppRoutes.inventoryTransfers ||
+      actualPath.startsWith('/inventory/documents/')) {
+    return AppRoutes.inventory;
+  }
+  if (activeRoute != null && activeRoute.isNotEmpty) return activeRoute;
+  return resolveHomeRoute(session);
 }
 
 class _ShellNavBackgroundPainter extends CustomPainter {

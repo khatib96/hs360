@@ -1,14 +1,43 @@
 import 'package:decimal/decimal.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
+import '../../../core/errors/scan_exception.dart';
 import '../../finance_shared/presentation/finance_error_messages.dart';
 import '../domain/contract_detail.dart';
+import '../domain/contract_draft.dart';
 import '../domain/contract_status.dart';
 import '../domain/contract_type.dart';
+import 'contract_form_draft_builder.dart';
 import 'contract_product_row.dart';
 
-String contractErrorMessage(AppLocalizations l10n, String code) =>
-    financeErrorMessage(l10n, code);
+String contractErrorMessage(AppLocalizations l10n, String code) {
+  return switch (code) {
+    ScanException.scanNotFound => l10n.scanErrorNotFound,
+    ScanException.scanAmbiguous => l10n.scanErrorAmbiguous,
+    _ => financeErrorMessage(l10n, code),
+  };
+}
+
+List<String> contractValidationMessages(
+  AppLocalizations l10n,
+  Iterable<String> codes,
+) {
+  return codes.map((code) => contractErrorMessage(l10n, code)).toList();
+}
+
+int? contractDraftDurationMonths(ContractDraft draft) {
+  final end = contractDraftEffectiveEndDate(draft);
+  if (end == null) return null;
+  return billingMonthsBetween(draft.startDate, end);
+}
+
+Decimal? contractDraftDisplayTotalValue(ContractDraft draft) {
+  if (draft.type != ContractType.rental) return null;
+  final monthly = draft.monthlyRentalValue;
+  final months = contractDraftDurationMonths(draft);
+  if (monthly == null || months == null || months <= 0) return null;
+  return monthly * Decimal.fromInt(months);
+}
 
 String contractTypeLabel(AppLocalizations l10n, ContractType type) {
   return switch (type) {
@@ -104,18 +133,29 @@ List<ContractProductRow> buildContractProductRows(ContractDetail detail) {
       ContractProductRow(
         lineOrder: line.lineOrder,
         isAsset: true,
+        productSku: line.productSku,
         productNameAr: line.productNameAr,
         productNameEn: line.productNameEn,
+        productGroupNameAr: line.productGroupNameAr,
+        productGroupNameEn: line.productGroupNameEn,
         serialNumber: line.serialNumber,
+        quantity: Decimal.one,
+        snapshotUnitCost: line.snapshotUnitCost,
+        snapshotMonthlyCost: line.snapshotMonthlyCost,
       ),
     for (final line in detail.consumableLines)
       ContractProductRow(
         lineOrder: line.lineOrder,
         isAsset: false,
+        productSku: line.productSku,
         productNameAr: line.productNameAr,
         productNameEn: line.productNameEn,
+        productGroupNameAr: line.productGroupNameAr,
+        productGroupNameEn: line.productGroupNameEn,
         quantity: line.qtyPerRefill,
         refillFrequencyMonths: line.refillFrequencyMonths,
+        snapshotUnitCost: line.snapshotUnitCost,
+        snapshotMonthlyCost: line.snapshotMonthlyCost,
       ),
   ];
   rows.sort((a, b) {
@@ -125,6 +165,13 @@ List<ContractProductRow> buildContractProductRows(ContractDetail detail) {
     return a.isAsset ? -1 : 1;
   });
   return rows;
+}
+
+String contractLocationSummary({String? governorate, String? area}) {
+  return [
+    if (governorate?.trim().isNotEmpty == true) governorate!.trim(),
+    if (area?.trim().isNotEmpty == true) area!.trim(),
+  ].join(' - ');
 }
 
 String contractProductTypeLabel(AppLocalizations l10n, bool isAsset) {

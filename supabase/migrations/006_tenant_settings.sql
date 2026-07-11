@@ -14,7 +14,7 @@ create table tenant_settings (
 
   min_monthly_profit numeric(15, 3) not null default 5.000,
   default_device_lifespan_months int default 24,
-  default_trial_days int default 30,
+  default_trial_days int default 3,
   min_profit_override_requires_admin boolean default true,
 
   gps_accuracy_threshold_m int default 200,

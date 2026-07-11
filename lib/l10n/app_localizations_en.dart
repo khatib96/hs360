@@ -1033,6 +1033,37 @@ class AppLocalizationsEn extends AppLocalizations {
       'Use Stock Transfers to move stock between warehouses.';
 
   @override
+  String get productSerialTrackingPrepare => 'Prepare serial tracking';
+
+  @override
+  String get productSerialTrackingPrefix => 'Serial prefix';
+
+  @override
+  String get productSerialTrackingStart => 'Start number';
+
+  @override
+  String get productSerialTrackingCount => 'Available count';
+
+  @override
+  String get productSerialTrackingGenerate => 'Generate serials';
+
+  @override
+  String get productSerialTrackingSerials => 'Serial numbers';
+
+  @override
+  String get productSerialTrackingReason => 'Reason';
+
+  @override
+  String get productSerialTrackingConfirm => 'Activate tracking';
+
+  @override
+  String get productSerialTrackingPrepared => 'Serial tracking prepared.';
+
+  @override
+  String get productSerialTrackingValidation =>
+      'Select a warehouse, generate exactly the available count, and enter a reason.';
+
+  @override
   String get customers => 'Customers';
 
   @override
@@ -1193,6 +1224,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contractColumnStartDate => 'Start date';
 
   @override
+  String get contractColumnDates => 'Dates';
+
+  @override
   String get contractColumnMonthlyValue => 'Monthly value';
 
   @override
@@ -1212,7 +1246,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get contractFilterSearchHint =>
-      'Search by contract #, customer, or phone';
+      'Search by contract #, customer, phone, governorate, or area';
 
   @override
   String get contractFilterLowProfitOverride => 'Low-profit override only';
@@ -1278,6 +1312,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contractFieldMonthlyProfit => 'Monthly profit';
 
   @override
+  String get contractFieldNetMonthlyProfit => 'Net monthly profit';
+
+  @override
   String get contractFieldConvertedFrom => 'Converted from';
 
   @override
@@ -1309,6 +1346,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contractSectionValueSummary => 'Contract value';
 
   @override
+  String get contractFinancialDetails => 'Cost and profitability';
+
+  @override
   String get contractSectionUpcomingSchedule => 'Upcoming schedule';
 
   @override
@@ -1319,6 +1359,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get contractFieldQuantity => 'Quantity';
+
+  @override
+  String get contractFieldFrequency => 'Frequency';
 
   @override
   String get contractFieldContractDuration => 'Duration';
@@ -1389,6 +1432,62 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get contractConvertLink => 'Convert to rental';
+
+  @override
+  String get contractCreateTrial => 'Create trial';
+
+  @override
+  String get contractCreateRental => 'Create rental';
+
+  @override
+  String get contractCreateConfirmTitle => 'Create contract';
+
+  @override
+  String get contractCreateConfirmBody =>
+      'Create this contract with the entered lines and terms?';
+
+  @override
+  String get contractAddRentalProduct => 'Add rental product';
+
+  @override
+  String get contractAddAssetLine => 'Add device';
+
+  @override
+  String get contractAddConsumableLine => 'Add consumable';
+
+  @override
+  String get contractRemoveLine => 'Remove line';
+
+  @override
+  String get contractSerialOrBarcode => 'Serial or barcode';
+
+  @override
+  String get contractResolveSerial => 'Resolve serial/barcode';
+
+  @override
+  String get contractTrialDaysLabel => 'Trial days';
+
+  @override
+  String get contractTermTwelveMonths => '12-month term';
+
+  @override
+  String get contractLowProfitWarning =>
+      'Monthly profit is below the minimum threshold.';
+
+  @override
+  String get contractRequestOverride => 'Request profit override';
+
+  @override
+  String get contractRefreshPreview => 'Refresh pricing preview';
+
+  @override
+  String get contractCustomerSelectFirst => 'Select a customer first.';
+
+  @override
+  String get contractSelectProductFirst => 'Select a product first.';
+
+  @override
+  String get contractNoAvailableUnits => 'No available units for this product.';
 
   @override
   String get customerInvoicesEmpty => 'No invoices yet.';
@@ -2490,6 +2589,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get financeErrorValidationFailed =>
       'The finance data is invalid. Review the form and try again.';
+
+  @override
+  String get financeErrorBelowMinProfit =>
+      'Monthly profit is below the minimum allowed. Adjust pricing or request an authorized override.';
 
   @override
   String get financeErrorIdempotencyPayloadMismatch =>

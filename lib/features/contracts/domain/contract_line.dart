@@ -12,8 +12,11 @@ class ContractAssetLine {
     this.snapshotUnitCost,
     this.snapshotMonthlyCost,
     this.serialNumber,
+    this.productSku,
     this.productNameAr,
     this.productNameEn,
+    this.productGroupNameAr,
+    this.productGroupNameEn,
   });
 
   final String id;
@@ -23,8 +26,11 @@ class ContractAssetLine {
   final Decimal? snapshotUnitCost;
   final Decimal? snapshotMonthlyCost;
   final String? serialNumber;
+  final String? productSku;
   final String? productNameAr;
   final String? productNameEn;
+  final String? productGroupNameAr;
+  final String? productGroupNameEn;
 
   factory ContractAssetLine.fromRpcJson(Map<String, dynamic> json) {
     return ContractAssetLine(
@@ -35,8 +41,11 @@ class ContractAssetLine {
       snapshotUnitCost: tryParseDecimal(json['snapshot_unit_cost']),
       snapshotMonthlyCost: tryParseDecimal(json['snapshot_monthly_cost']),
       serialNumber: json['serial_number'] as String?,
+      productSku: json['product_sku'] as String?,
       productNameAr: json['product_name_ar'] as String?,
       productNameEn: json['product_name_en'] as String?,
+      productGroupNameAr: json['product_group_name_ar'] as String?,
+      productGroupNameEn: json['product_group_name_en'] as String?,
     );
   }
 }
@@ -51,8 +60,11 @@ class ContractConsumableLine {
     this.refillFrequencyMonths,
     this.snapshotUnitCost,
     this.snapshotMonthlyCost,
+    this.productSku,
     this.productNameAr,
     this.productNameEn,
+    this.productGroupNameAr,
+    this.productGroupNameEn,
   });
 
   final String id;
@@ -62,8 +74,11 @@ class ContractConsumableLine {
   final int? refillFrequencyMonths;
   final Decimal? snapshotUnitCost;
   final Decimal? snapshotMonthlyCost;
+  final String? productSku;
   final String? productNameAr;
   final String? productNameEn;
+  final String? productGroupNameAr;
+  final String? productGroupNameEn;
 
   factory ContractConsumableLine.fromRpcJson(Map<String, dynamic> json) {
     return ContractConsumableLine(
@@ -74,8 +89,11 @@ class ContractConsumableLine {
       refillFrequencyMonths: json['refill_frequency_months'] as int?,
       snapshotUnitCost: tryParseDecimal(json['snapshot_unit_cost']),
       snapshotMonthlyCost: tryParseDecimal(json['snapshot_monthly_cost']),
+      productSku: json['product_sku'] as String?,
       productNameAr: json['product_name_ar'] as String?,
       productNameEn: json['product_name_en'] as String?,
+      productGroupNameAr: json['product_group_name_ar'] as String?,
+      productGroupNameEn: json['product_group_name_en'] as String?,
     );
   }
 }

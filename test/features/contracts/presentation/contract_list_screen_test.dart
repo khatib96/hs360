@@ -36,6 +36,7 @@ AppSession _session({Set<String> permissions = const {'contracts.view'}}) {
 Widget _wrap({
   required AppSession session,
   required FakeContractRepository repo,
+  Size size = const Size(1280, 800),
 }) {
   return ProviderScope(
     overrides: [
@@ -47,7 +48,7 @@ Widget _wrap({
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       builder: (context, child) => MediaQuery(
-        data: const MediaQueryData(size: Size(1280, 800)),
+        data: MediaQueryData(size: size),
         child: child ?? const SizedBox.shrink(),
       ),
       home: const ContractListScreen(),
@@ -69,6 +70,9 @@ void main() {
 
     expect(find.byKey(const Key('contract-table')), findsOneWidget);
     expect(find.text('CON-001'), findsOneWidget);
+    expect(find.text('Hawalli - Salmiya'), findsOneWidget);
+    expect(find.text('2026-07-01'), findsOneWidget);
+    expect(find.text('2027-07-01'), findsOneWidget);
   });
 
   testWidgets('shows empty state when filtered results are empty', (
@@ -87,5 +91,29 @@ void main() {
 
     expect(find.byKey(const Key('contract-filters-bar')), findsOneWidget);
     expect(find.text('No contracts match your filters.'), findsOneWidget);
+  });
+
+  testWidgets('fits the desktop table without horizontal scrolling', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _wrap(
+        session: _session(),
+        repo: FakeContractRepository(
+          summaries: [sampleContractSummary(id: 'contract-1')],
+        ),
+        size: const Size(900, 800),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('contract-table')), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('contract-table')),
+        matching: find.byType(SingleChildScrollView),
+      ),
+      findsNothing,
+    );
   });
 }

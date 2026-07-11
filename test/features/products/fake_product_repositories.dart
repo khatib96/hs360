@@ -17,6 +17,7 @@ class FakeProductRepository extends ProductRepository {
   FakeProductRepository({
     this.products = const [],
     this.productById,
+    this.stockSummary,
     this.stockThrows = false,
     this.stockLabelsById = const {},
     this.stockLabelsThrows = false,
@@ -26,6 +27,7 @@ class FakeProductRepository extends ProductRepository {
 
   List<Product> products;
   Product? productById;
+  ProductStockSummary? stockSummary;
   bool stockThrows;
   Map<String, ProductStockLabel> stockLabelsById;
   bool stockLabelsThrows;
@@ -128,6 +130,7 @@ class FakeProductRepository extends ProductRepository {
   Future<ProductStockSummary> fetchProductStock(String productId) async {
     stockFetchCount++;
     if (stockThrows) throw Exception('stock failed');
+    if (stockSummary != null) return stockSummary!;
     return ProductStockSummary(
       productId: productId,
       totalQtyAvailable: Decimal.fromInt(5),

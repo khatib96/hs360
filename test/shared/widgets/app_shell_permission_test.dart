@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hs360/core/routing/app_routes.dart';
 import 'package:hs360/features/auth/domain/app_permissions.dart';
 import 'package:hs360/features/auth/domain/app_session.dart';
 import 'package:hs360/features/auth/presentation/auth_controller.dart';
@@ -145,6 +147,55 @@ void main() {
     expect(find.text(l10n.inventory), findsWidgets);
     expect(find.text(l10n.inventoryTransfers), findsNothing);
     expect(find.text(l10n.inventoryMovements), findsNothing);
+  });
+
+  testWidgets('nested module screen shows back and falls back to module list', (
+    tester,
+  ) async {
+    final appSession = session(permissions: {'contracts.view'});
+    final router = GoRouter(
+      initialLocation: '/contracts/c-1',
+      routes: [
+        GoRoute(
+          path: AppRoutes.contracts,
+          builder: (context, state) => const AppShell(
+            title: 'Contracts',
+            currentRoute: AppRoutes.contracts,
+            body: Text('contracts-list'),
+          ),
+        ),
+        GoRoute(
+          path: '/contracts/:id',
+          builder: (context, state) => const AppShell(
+            title: 'Contract detail',
+            currentRoute: AppRoutes.contracts,
+            body: Text('contract-detail'),
+          ),
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          authControllerProvider.overrideWith(
+            () => TestAuthController(appSession),
+          ),
+        ],
+        child: MaterialApp.router(
+          locale: const Locale('en'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          routerConfig: router,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(BackButton), findsOneWidget);
+    await tester.tap(find.byType(BackButton));
+    await tester.pumpAndSettle();
+    expect(find.text('contracts-list'), findsOneWidget);
   });
 
   testWidgets('customers.view shows customers navigation item', (tester) async {

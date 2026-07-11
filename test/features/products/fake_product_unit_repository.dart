@@ -19,6 +19,9 @@ class FakeProductUnitRepository extends ProductUnitRepository {
   bool permissionDeniedOnCreate = false;
   ProductUnitCreateInput? lastCreateInput;
   List<ProductUnitCreateInput>? lastBulkInput;
+  List<String>? lastPreparedSerials;
+  String? lastPreparedWarehouseId;
+  String? lastPrepareReason;
   String? lastCorrectedSerial;
   String? lastCorrectionReason;
 
@@ -28,7 +31,11 @@ class FakeProductUnitRepository extends ProductUnitRepository {
     AppSession session, {
     Map<String, Warehouse>? warehousesById,
   }) async {
-    return unitById;
+    if (unitById != null && unitById!.id == unitId) return unitById;
+    for (final unit in units) {
+      if (unit.id == unitId) return unit;
+    }
+    return null;
   }
 
   @override
@@ -83,5 +90,19 @@ class FakeProductUnitRepository extends ProductUnitRepository {
   }) async {
     lastBulkInput = units;
     return List.generate(units.length, (i) => 'id-$i');
+  }
+
+  @override
+  Future<List<String>> prepareSerialTracking({
+    required AppSession session,
+    required String productId,
+    required String warehouseId,
+    required List<String> serials,
+    required String reason,
+  }) async {
+    lastPreparedWarehouseId = warehouseId;
+    lastPreparedSerials = serials;
+    lastPrepareReason = reason;
+    return List.generate(serials.length, (i) => 'prepared-$i');
   }
 }

@@ -99,7 +99,7 @@ class ContractDetailScreen extends ConsumerWidget {
               languageCode: locale.languageCode,
             ),
             const SizedBox(height: 12),
-            ContractValueSummarySection(detail: detail),
+            ContractValueSummarySection(detail: detail, session: session),
             const SizedBox(height: 12),
             ContractUpcomingScheduleSection(detail: detail),
             const SizedBox(height: 12),

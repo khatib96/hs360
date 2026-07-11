@@ -41,6 +41,7 @@ void main() {
     FinanceException.validationReturnQtyExceedsReturnable,
     FinanceException.validationCashAccountRequired,
     FinanceException.validationAccountRequired,
+    FinanceException.belowMinProfit,
   ];
 
   group('financeErrorMessage', () {
@@ -72,6 +73,10 @@ void main() {
       expect(
         financeErrorMessage(ar, FinanceException.backendMigrationRequired),
         ar.financeErrorBackendMigrationRequired,
+      );
+      expect(
+        financeErrorMessage(en, FinanceException.belowMinProfit),
+        en.financeErrorBelowMinProfit,
       );
     });
 

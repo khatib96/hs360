@@ -57,6 +57,13 @@ void main() {
       );
     });
 
+    test('maps below_min_profit', () {
+      final error = FinanceException.fromSupabase(
+        Exception('below_min_profit'),
+      );
+      expect(error.code, FinanceException.belowMinProfit);
+    });
+
     test('maps missing cash invoice RPC to backend migration required', () {
       final error = FinanceException.fromSupabase(
         const PostgrestException(

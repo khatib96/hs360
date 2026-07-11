@@ -4,8 +4,8 @@
 > trial contracts, rental contracts, serialized rental assets, rental
 > consumables, profitability snapshots, contract billing, and lifecycle control.
 >
-> Status: M0/M0.5 complete (2026-07-05). **M1 implemented** in migration
-> `077_phase_6_contract_settings_permissions.sql` (2026-07-05).
+> Status: **M0 through M9 complete** (M9 closed 2026-07-11). M10 is the next
+> implementation milestone.
 >
 > Owner directive: contracts are the core business workflow, not an auxiliary
 > module. Phase 6 must be treated with the same accounting and operational
@@ -1135,6 +1135,12 @@ Make existing contracts easy to find, inspect, and operate.
 
 ## M9 - Contract Form UI
 
+> **Status: complete (2026-07-11).** Implemented and verified with the unified
+> rental-product form, manual/scan serial resolution, non-serialized asset
+> support, permission-gated per-product cost/profit tables, responsive contract
+> detail/list layouts, and idempotent submission. Persisted save-as-draft
+> remains explicitly deferred below as shared finance UX work.
+
 ### Goal
 
 Build a fast, professional contract creation screen that matches HS360's
@@ -1145,34 +1151,34 @@ invoice/document identity.
 1. Header:
    - contract type.
    - start date.
-   - end date or 12-month/open-ended selection.
-   - billing day.
-   - refill/replacement day.
+   - trial defaults to 3 editable days and does not show a billing day.
+   - rental previews 12 months when no end date is entered.
+   - rental billing/refill dates default to the contract start day and remain
+     editable.
 2. Customer block:
    - existing customer picker.
    - inline customer creation if needed.
    - service-location picker.
    - inline service-location creation if none exists.
-3. Asset lines:
-   - product picker.
-   - unit/serial picker.
-   - scan input.
-   - availability display.
-4. Consumable lines:
-   - product picker.
-   - quantity per replacement/refill.
-   - frequency.
-   - default/current marker.
-5. Pricing summary:
+3. Unified rental-product lines:
+   - one product picker containing rentable products.
+   - domain classification determines asset versus consumable behavior.
+   - serialized assets support manual serial/barcode entry and scanning.
+   - scanning an exact unit resolves and adds its product automatically.
+   - non-serialized rental assets can be contracted without a unit id.
+   - consumables expose quantity per refill and refill frequency.
+4. Pricing summary:
    - monthly rental value for rental contracts.
    - profit preview for authorized users.
+   - authorized cost details list every product separately with quantity, unit
+     cost, monthly cost, total monthly cost, and net monthly profit.
    - validation warning for low profit.
    - override reason for authorized users.
-6. Save:
+5. Save:
    - create trial.
    - create rental.
    - idempotent submit.
-7. UX:
+6. UX:
    - match invoice form density and command style.
    - no visible developer-like instructions in the app.
    - Arabic/English and RTL/LTR support.
@@ -1181,10 +1187,11 @@ invoice/document identity.
 
 - User can create a trial from the form.
 - User can create a rental from the form.
-- User can add multiple devices.
-- User can add multiple consumables.
-- Scan/select exact unit works.
+- User can add multiple rental products in one unified table.
+- Serialized scan/manual selection and non-serialized rental assets work.
 - Low-profit warning/override behaves correctly.
+- Cost/profit data is hidden unless the user has the matching field permission.
+- Cost breakdown is per product and responsive without horizontal scrolling.
 - Form remains visually aligned with Phase 5 finance screens.
 
 ---
@@ -1380,6 +1387,34 @@ Run one full business story:
 - `git diff --check` passes.
 - Manual story passes in Arabic and English.
 - Phase 7/8 have clean schedule/location/contract data to build on.
+
+---
+
+## Deferred UX Commitments (Recorded 2026-07-11)
+
+### Save As Draft
+
+Contract create must eventually support an explicit persisted **Save as draft**
+command. This is deferred from the current M9 form polish and must be designed
+with the shared finance draft work rather than as local widget state.
+
+Required follow-up scope:
+
+- persist and reopen contract drafts;
+- distinguish save, discard, and activate/create commands;
+- preserve customer, service location, dates, products, serial assignments,
+  refill quantities, notes, and commercial value;
+- define reservation rules so a draft never silently reserves stock or a
+  serialized unit;
+- add permission, audit, idempotency, stale-draft, and concurrent-edit tests;
+- align the interaction with invoice and voucher draft commands.
+
+### Navigation Acceptance Rule
+
+Every new contract create/detail/edit/convert/operation screen must expose a
+working back action. It must pop when navigation history exists and otherwise
+return to the contracts list. Missing back navigation is a release blocker for
+future contract UI milestones.
 
 ---
 

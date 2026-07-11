@@ -1026,6 +1026,38 @@ class AppLocalizationsAr extends AppLocalizations {
       'استخدم تحويلات المخزون لنقل المخزون بين المستودعات.';
 
   @override
+  String get productSerialTrackingPrepare => 'تجهيز الترقيم';
+
+  @override
+  String get productSerialTrackingPrefix => 'بادئة الرقم';
+
+  @override
+  String get productSerialTrackingStart => 'رقم البداية';
+
+  @override
+  String get productSerialTrackingCount => 'الكمية المتاحة';
+
+  @override
+  String get productSerialTrackingGenerate => 'إنشاء الأرقام';
+
+  @override
+  String get productSerialTrackingSerials => 'الأرقام التسلسلية';
+
+  @override
+  String get productSerialTrackingReason => 'السبب';
+
+  @override
+  String get productSerialTrackingConfirm => 'تفعيل التتبع';
+
+  @override
+  String get productSerialTrackingPrepared =>
+      'تم تجهيز تتبع الأرقام التسلسلية.';
+
+  @override
+  String get productSerialTrackingValidation =>
+      'اختر المستودع وأنشئ أرقامًا بعدد الكمية المتاحة تمامًا وأدخل السبب.';
+
+  @override
   String get customers => 'العملاء';
 
   @override
@@ -1183,6 +1215,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get contractColumnStartDate => 'تاريخ البدء';
 
   @override
+  String get contractColumnDates => 'التواريخ';
+
+  @override
   String get contractColumnMonthlyValue => 'القيمة الشهرية';
 
   @override
@@ -1201,7 +1236,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get contractFilterType => 'النوع';
 
   @override
-  String get contractFilterSearchHint => 'ابحث برقم العقد أو العميل أو الهاتف';
+  String get contractFilterSearchHint =>
+      'ابحث برقم العقد أو العميل أو الهاتف أو المحافظة أو المنطقة';
 
   @override
   String get contractFilterLowProfitOverride => 'تجاوز الحد الأدنى للربح فقط';
@@ -1267,6 +1303,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get contractFieldMonthlyProfit => 'الربح الشهري';
 
   @override
+  String get contractFieldNetMonthlyProfit => 'صافي الربح الشهري';
+
+  @override
   String get contractFieldConvertedFrom => 'محوّل من';
 
   @override
@@ -1297,6 +1336,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get contractSectionValueSummary => 'قيمة العقد';
 
   @override
+  String get contractFinancialDetails => 'التكلفة والربحية';
+
+  @override
   String get contractSectionUpcomingSchedule => 'المواعيد القادمة';
 
   @override
@@ -1307,6 +1349,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get contractFieldQuantity => 'الكمية';
+
+  @override
+  String get contractFieldFrequency => 'التكرار';
 
   @override
   String get contractFieldContractDuration => 'المدة';
@@ -1376,6 +1421,62 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get contractConvertLink => 'تحويل إلى إيجار';
+
+  @override
+  String get contractCreateTrial => 'إنشاء عقد تجريبي';
+
+  @override
+  String get contractCreateRental => 'إنشاء عقد إيجار';
+
+  @override
+  String get contractCreateConfirmTitle => 'إنشاء العقد';
+
+  @override
+  String get contractCreateConfirmBody =>
+      'إنشاء هذا العقد بالبنود والشروط المدخلة؟';
+
+  @override
+  String get contractAddRentalProduct => 'إضافة منتج تأجير';
+
+  @override
+  String get contractAddAssetLine => 'إضافة جهاز';
+
+  @override
+  String get contractAddConsumableLine => 'إضافة مستهلكات';
+
+  @override
+  String get contractRemoveLine => 'حذف السطر';
+
+  @override
+  String get contractSerialOrBarcode => 'رقم تسلسلي أو باركود';
+
+  @override
+  String get contractResolveSerial => 'تحقق من الرقم/الباركود';
+
+  @override
+  String get contractTrialDaysLabel => 'أيام التجربة';
+
+  @override
+  String get contractTermTwelveMonths => 'مدة 12 شهرًا';
+
+  @override
+  String get contractLowProfitWarning =>
+      'الربح الشهري أقل من الحد الأدنى المسموح.';
+
+  @override
+  String get contractRequestOverride => 'طلب تجاوز الربح';
+
+  @override
+  String get contractRefreshPreview => 'تحديث معاينة التسعير';
+
+  @override
+  String get contractCustomerSelectFirst => 'اختر العميل أولًا.';
+
+  @override
+  String get contractSelectProductFirst => 'اختر المنتج أولًا.';
+
+  @override
+  String get contractNoAvailableUnits => 'لا توجد وحدات متاحة لهذا المنتج.';
 
   @override
   String get customerInvoicesEmpty => 'لا توجد فواتير بعد.';
@@ -2467,6 +2568,10 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get financeErrorValidationFailed =>
       'بيانات المالية غير صالحة. راجع النموذج وحاول مجددًا.';
+
+  @override
+  String get financeErrorBelowMinProfit =>
+      'الربح الشهري أقل من الحد الأدنى المسموح. عدّل التسعير أو اطلب تجاوزًا مصرحًا به.';
 
   @override
   String get financeErrorIdempotencyPayloadMismatch =>

@@ -243,6 +243,38 @@ class ProductUnitRepository {
     }
   }
 
+  Future<List<String>> prepareSerialTracking({
+    required AppSession session,
+    required String productId,
+    required String warehouseId,
+    required List<String> serials,
+    required String reason,
+  }) async {
+    if (!canReconcileProductUnitSerials(session)) {
+      throw const ProductsException(code: ProductsException.permissionDenied);
+    }
+    final cleaned = serials.map((s) => s.trim()).where((s) => s.isNotEmpty);
+    final values = cleaned.toList();
+    if (values.isEmpty || reason.trim().isEmpty) {
+      throw const ProductsException(code: ProductsException.validationFailed);
+    }
+
+    try {
+      final response = await _requireClient.rpc(
+        'prepare_product_serial_tracking',
+        params: {
+          'p_product_id': productId,
+          'p_warehouse_id': warehouseId,
+          'p_serials': values,
+          'p_reason': reason.trim(),
+        },
+      );
+      return (response as List).map((id) => id as String).toList();
+    } catch (e, st) {
+      throw ProductsException.fromSupabase(e, st);
+    }
+  }
+
   Future<String> updateUnitSafe({
     required AppSession session,
     required String unitId,

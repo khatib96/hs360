@@ -326,19 +326,24 @@ begin
 
     begin
       v_product_id := (v_line ->> 'product_id')::uuid;
-      if not (v_line ? 'product_unit_id') then
-        raise exception 'validation_failed';
+      if v_line ? 'product_unit_id' and nullif(btrim(v_line ->> 'product_unit_id'), '') is not null then
+        v_product_unit_id := (v_line ->> 'product_unit_id')::uuid;
+      else
+        v_product_unit_id := null;
       end if;
-      v_product_unit_id := (v_line ->> 'product_unit_id')::uuid;
     exception
       when others then
         raise exception 'validation_failed';
     end;
 
     v_norm_line := jsonb_build_object(
-      'product_id', v_product_id,
-      'product_unit_id', v_product_unit_id
+      'product_id', v_product_id
     );
+    if v_product_unit_id is not null then
+      v_norm_line := v_norm_line || jsonb_build_object(
+        'product_unit_id', v_product_unit_id
+      );
+    end if;
     v_norm_assets := v_norm_assets || jsonb_build_array(v_norm_line);
   end loop;
 
@@ -490,6 +495,7 @@ declare
   v_unit_status public.unit_status;
   v_unit_warehouse_id uuid;
   v_prev_status public.unit_status;
+  v_product_is_serialized boolean;
   v_qty_per_refill numeric(15, 3);
   v_refill_frequency int;
   v_source_cost numeric(15, 3);
@@ -499,7 +505,7 @@ declare
   v_movement_type public.movement_type;
   v_unit_target_status public.unit_status;
   v_event_type text;
-  v_seen_units uuid[] := '{}';
+  v_seen_units uuid[] := '{}'::uuid[];
   v_min_overridden boolean := false;
   v_override_reason text;
 begin
@@ -591,51 +597,77 @@ begin
 
   for v_line in select value from jsonb_array_elements(v_asset_lines) loop
     v_product_id := (v_line ->> 'product_id')::uuid;
-    v_product_unit_id := (v_line ->> 'product_unit_id')::uuid;
+    v_product_unit_id := nullif(btrim(v_line ->> 'product_unit_id'), '')::uuid;
 
-    if v_product_unit_id = any (v_seen_units) then
-      raise exception 'validation_failed';
-    end if;
-    v_seen_units := array_append(v_seen_units, v_product_unit_id);
-
-    if not exists (
-      select 1
-      from public.products p
-      where p.id = v_product_id
-        and p.tenant_id = v_tenant_id
-        and p.product_type = 'asset_rental'::public.product_type
-        and coalesce(p.is_active, true)
-    ) then
-      raise exception 'validation_failed';
-    end if;
-
-    select pu.status, pu.current_warehouse_id
-    into v_unit_status, v_unit_warehouse_id
-    from public.product_units pu
-    where pu.id = v_product_unit_id
-      and pu.tenant_id = v_tenant_id
-      and pu.product_id = v_product_id
-    for update;
+    select p.is_serialized
+    into v_product_is_serialized
+    from public.products p
+    where p.id = v_product_id
+      and p.tenant_id = v_tenant_id
+      and p.product_type = 'asset_rental'::public.product_type
+      and coalesce(p.is_active, true);
 
     if not found then
       raise exception 'validation_failed';
     end if;
 
-    if v_unit_status not in ('available_new'::public.unit_status, 'available_used'::public.unit_status) then
-      raise exception 'validation_failed';
-    end if;
+    if coalesce(v_product_is_serialized, false) then
+      if v_product_unit_id is null then
+        raise exception 'validation_failed';
+      end if;
 
-    if exists (
-      select 1
+      if v_product_unit_id = any (v_seen_units) then
+        raise exception 'validation_failed';
+      end if;
+      v_seen_units := array_append(v_seen_units, v_product_unit_id);
+
+      select pu.status, pu.current_warehouse_id
+      into v_unit_status, v_unit_warehouse_id
       from public.product_units pu
       where pu.id = v_product_unit_id
-        and pu.current_contract_id is not null
-    ) then
-      raise exception 'validation_failed';
-    end if;
+        and pu.tenant_id = v_tenant_id
+        and pu.product_id = v_product_id
+      for update;
 
-    if v_unit_warehouse_id is null then
-      raise exception 'validation_failed';
+      if not found then
+        raise exception 'validation_failed';
+      end if;
+
+      if v_unit_status not in ('available_new'::public.unit_status, 'available_used'::public.unit_status) then
+        raise exception 'validation_failed';
+      end if;
+
+      if exists (
+        select 1
+        from public.product_units pu
+        where pu.id = v_product_unit_id
+          and pu.current_contract_id is not null
+      ) then
+        raise exception 'validation_failed';
+      end if;
+
+      if v_unit_warehouse_id is null then
+        raise exception 'validation_failed';
+      end if;
+    else
+      if v_product_unit_id is not null then
+        raise exception 'validation_failed';
+      end if;
+
+      v_unit_warehouse_id := null;
+      select ib.warehouse_id
+      into v_unit_warehouse_id
+      from public.inventory_balances ib
+      where ib.tenant_id = v_tenant_id
+        and ib.product_id = v_product_id
+        and ib.qty_available >= 1
+      order by ib.updated_at desc, ib.id
+      limit 1
+      for update;
+
+      if not found then
+        raise exception 'insufficient_stock';
+      end if;
     end if;
   end loop;
 
@@ -659,7 +691,7 @@ begin
     v_trial_days := coalesce(
       (v_normalized ->> 'trial_days')::int,
       v_settings.default_trial_days,
-      30
+      3
     );
     v_trial_end_date := v_start_date + v_trial_days;
     v_end_date := coalesce((v_normalized ->> 'end_date')::date, v_trial_end_date);
@@ -765,7 +797,9 @@ begin
   for v_line in select value from jsonb_array_elements(v_asset_lines) loop
     v_line_idx := v_line_idx + 1;
     v_product_id := (v_line ->> 'product_id')::uuid;
-    v_product_unit_id := (v_line ->> 'product_unit_id')::uuid;
+    v_product_unit_id := nullif(btrim(v_line ->> 'product_unit_id'), '')::uuid;
+    v_unit_warehouse_id := null;
+    v_prev_status := null;
 
     v_pricing_line := v_pricing_assets -> (v_line_idx - 1);
     if v_pricing_line is null then
@@ -789,12 +823,28 @@ begin
       v_line_idx
     );
 
-    select pu.status, pu.current_warehouse_id
-    into v_prev_status, v_unit_warehouse_id
-    from public.product_units pu
-    where pu.id = v_product_unit_id
-      and pu.tenant_id = v_tenant_id
-    for update;
+    if v_product_unit_id is not null then
+      select pu.status, pu.current_warehouse_id
+      into v_prev_status, v_unit_warehouse_id
+      from public.product_units pu
+      where pu.id = v_product_unit_id
+        and pu.tenant_id = v_tenant_id
+      for update;
+    else
+      select ib.warehouse_id
+      into v_unit_warehouse_id
+      from public.inventory_balances ib
+      where ib.tenant_id = v_tenant_id
+        and ib.product_id = v_product_id
+        and ib.qty_available >= 1
+      order by ib.updated_at desc, ib.id
+      limit 1
+      for update;
+    end if;
+
+    if v_unit_warehouse_id is null then
+      raise exception 'insufficient_stock';
+    end if;
 
     update public.inventory_balances ib
     set
@@ -821,33 +871,35 @@ begin
       'Contract ' || v_contract_number, auth.uid()
     );
 
-    insert into public.unit_events (
-      tenant_id, product_unit_id, event_type, occurred_at,
-      warehouse_id, customer_id, service_location_id, contract_id,
-      reference_table, reference_id, notes, metadata_json, created_by
-    )
-    values (
-      v_tenant_id, v_product_unit_id, v_event_type, now(),
-      v_unit_warehouse_id, v_customer_id, v_service_location_id, v_contract_id,
-      'contracts', v_contract_id,
-      'Contract ' || v_contract_number,
-      jsonb_build_object(
-        'previous_status', v_prev_status::text,
-        'contract_type', p_contract_type::text,
-        'contract_number', v_contract_number
-      ),
-      auth.uid()
-    );
+    if v_product_unit_id is not null then
+      insert into public.unit_events (
+        tenant_id, product_unit_id, event_type, occurred_at,
+        warehouse_id, customer_id, service_location_id, contract_id,
+        reference_table, reference_id, notes, metadata_json, created_by
+      )
+      values (
+        v_tenant_id, v_product_unit_id, v_event_type, now(),
+        v_unit_warehouse_id, v_customer_id, v_service_location_id, v_contract_id,
+        'contracts', v_contract_id,
+        'Contract ' || v_contract_number,
+        jsonb_build_object(
+          'previous_status', v_prev_status::text,
+          'contract_type', p_contract_type::text,
+          'contract_number', v_contract_number
+        ),
+        auth.uid()
+      );
 
-    update public.product_units pu
-    set
-      status = v_unit_target_status,
-      current_contract_id = v_contract_id,
-      current_customer_id = v_customer_id,
-      current_service_location_id = v_service_location_id,
-      updated_at = now()
-    where pu.id = v_product_unit_id
-      and pu.tenant_id = v_tenant_id;
+      update public.product_units pu
+      set
+        status = v_unit_target_status,
+        current_contract_id = v_contract_id,
+        current_customer_id = v_customer_id,
+        current_service_location_id = v_service_location_id,
+        updated_at = now()
+      where pu.id = v_product_unit_id
+        and pu.tenant_id = v_tenant_id;
+    end if;
   end loop;
 
   v_line_idx := 0;

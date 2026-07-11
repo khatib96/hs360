@@ -2042,6 +2042,66 @@ abstract class AppLocalizations {
   /// **'Use Stock Transfers to move stock between warehouses.'**
   String get productUnitWarehouseTransferHint;
 
+  /// No description provided for @productSerialTrackingPrepare.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepare serial tracking'**
+  String get productSerialTrackingPrepare;
+
+  /// No description provided for @productSerialTrackingPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Serial prefix'**
+  String get productSerialTrackingPrefix;
+
+  /// No description provided for @productSerialTrackingStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start number'**
+  String get productSerialTrackingStart;
+
+  /// No description provided for @productSerialTrackingCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Available count'**
+  String get productSerialTrackingCount;
+
+  /// No description provided for @productSerialTrackingGenerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate serials'**
+  String get productSerialTrackingGenerate;
+
+  /// No description provided for @productSerialTrackingSerials.
+  ///
+  /// In en, this message translates to:
+  /// **'Serial numbers'**
+  String get productSerialTrackingSerials;
+
+  /// No description provided for @productSerialTrackingReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get productSerialTrackingReason;
+
+  /// No description provided for @productSerialTrackingConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate tracking'**
+  String get productSerialTrackingConfirm;
+
+  /// No description provided for @productSerialTrackingPrepared.
+  ///
+  /// In en, this message translates to:
+  /// **'Serial tracking prepared.'**
+  String get productSerialTrackingPrepared;
+
+  /// No description provided for @productSerialTrackingValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a warehouse, generate exactly the available count, and enter a reason.'**
+  String get productSerialTrackingValidation;
+
   /// Customers module title and navigation label
   ///
   /// In en, this message translates to:
@@ -2348,6 +2408,12 @@ abstract class AppLocalizations {
   /// **'Start date'**
   String get contractColumnStartDate;
 
+  /// No description provided for @contractColumnDates.
+  ///
+  /// In en, this message translates to:
+  /// **'Dates'**
+  String get contractColumnDates;
+
   /// No description provided for @contractColumnMonthlyValue.
   ///
   /// In en, this message translates to:
@@ -2387,7 +2453,7 @@ abstract class AppLocalizations {
   /// No description provided for @contractFilterSearchHint.
   ///
   /// In en, this message translates to:
-  /// **'Search by contract #, customer, or phone'**
+  /// **'Search by contract #, customer, phone, governorate, or area'**
   String get contractFilterSearchHint;
 
   /// No description provided for @contractFilterLowProfitOverride.
@@ -2516,6 +2582,12 @@ abstract class AppLocalizations {
   /// **'Monthly profit'**
   String get contractFieldMonthlyProfit;
 
+  /// No description provided for @contractFieldNetMonthlyProfit.
+  ///
+  /// In en, this message translates to:
+  /// **'Net monthly profit'**
+  String get contractFieldNetMonthlyProfit;
+
   /// No description provided for @contractFieldConvertedFrom.
   ///
   /// In en, this message translates to:
@@ -2576,6 +2648,12 @@ abstract class AppLocalizations {
   /// **'Contract value'**
   String get contractSectionValueSummary;
 
+  /// No description provided for @contractFinancialDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost and profitability'**
+  String get contractFinancialDetails;
+
   /// No description provided for @contractSectionUpcomingSchedule.
   ///
   /// In en, this message translates to:
@@ -2599,6 +2677,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Quantity'**
   String get contractFieldQuantity;
+
+  /// No description provided for @contractFieldFrequency.
+  ///
+  /// In en, this message translates to:
+  /// **'Frequency'**
+  String get contractFieldFrequency;
 
   /// No description provided for @contractFieldContractDuration.
   ///
@@ -2689,6 +2773,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Convert to rental'**
   String get contractConvertLink;
+
+  /// No description provided for @contractCreateTrial.
+  ///
+  /// In en, this message translates to:
+  /// **'Create trial'**
+  String get contractCreateTrial;
+
+  /// No description provided for @contractCreateRental.
+  ///
+  /// In en, this message translates to:
+  /// **'Create rental'**
+  String get contractCreateRental;
+
+  /// No description provided for @contractCreateConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create contract'**
+  String get contractCreateConfirmTitle;
+
+  /// No description provided for @contractCreateConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Create this contract with the entered lines and terms?'**
+  String get contractCreateConfirmBody;
+
+  /// No description provided for @contractAddRentalProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Add rental product'**
+  String get contractAddRentalProduct;
+
+  /// No description provided for @contractAddAssetLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Add device'**
+  String get contractAddAssetLine;
+
+  /// No description provided for @contractAddConsumableLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Add consumable'**
+  String get contractAddConsumableLine;
+
+  /// No description provided for @contractRemoveLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove line'**
+  String get contractRemoveLine;
+
+  /// No description provided for @contractSerialOrBarcode.
+  ///
+  /// In en, this message translates to:
+  /// **'Serial or barcode'**
+  String get contractSerialOrBarcode;
+
+  /// No description provided for @contractResolveSerial.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolve serial/barcode'**
+  String get contractResolveSerial;
+
+  /// No description provided for @contractTrialDaysLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Trial days'**
+  String get contractTrialDaysLabel;
+
+  /// No description provided for @contractTermTwelveMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'12-month term'**
+  String get contractTermTwelveMonths;
+
+  /// No description provided for @contractLowProfitWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly profit is below the minimum threshold.'**
+  String get contractLowProfitWarning;
+
+  /// No description provided for @contractRequestOverride.
+  ///
+  /// In en, this message translates to:
+  /// **'Request profit override'**
+  String get contractRequestOverride;
+
+  /// No description provided for @contractRefreshPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh pricing preview'**
+  String get contractRefreshPreview;
+
+  /// No description provided for @contractCustomerSelectFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a customer first.'**
+  String get contractCustomerSelectFirst;
+
+  /// No description provided for @contractSelectProductFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a product first.'**
+  String get contractSelectProductFirst;
+
+  /// No description provided for @contractNoAvailableUnits.
+  ///
+  /// In en, this message translates to:
+  /// **'No available units for this product.'**
+  String get contractNoAvailableUnits;
 
   /// Invoices tab empty state when user can view invoices
   ///
@@ -4753,6 +4945,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The finance data is invalid. Review the form and try again.'**
   String get financeErrorValidationFailed;
+
+  /// No description provided for @financeErrorBelowMinProfit.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly profit is below the minimum allowed. Adjust pricing or request an authorized override.'**
+  String get financeErrorBelowMinProfit;
 
   /// No description provided for @financeErrorIdempotencyPayloadMismatch.
   ///

@@ -62,7 +62,7 @@ begin
     raise exception 'validation_failed';
   end if;
 
-  if v_product.is_serialized and p_product_unit_id is null then
+  if coalesce(v_product.is_serialized, false) and p_product_unit_id is null then
     raise exception 'validation_failed';
   end if;
 
@@ -81,7 +81,11 @@ begin
   case p_basis
     when 'unit_purchase_cost' then
       if p_product_unit_id is null then
-        raise exception 'validation_failed';
+        if coalesce(v_product.is_serialized, false) then
+          raise exception 'validation_failed';
+        end if;
+
+        return v_product.avg_cost;
       end if;
 
       select pu.purchase_cost

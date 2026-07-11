@@ -41,6 +41,14 @@ void main() {
       expect(payload['asset_lines'], isA<List>());
     });
 
+    test('asset line omits unit id when product is not serialized', () {
+      final payload = const ContractAssetLineDraft(
+        productId: 'prod-1',
+      ).toPayload();
+
+      expect(payload, {'product_id': 'prod-1'});
+    });
+
     test('conversion payload includes trial id', () {
       final payload = TrialConversionDraft(
         trialContractId: 'trial-1',

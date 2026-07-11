@@ -18,6 +18,8 @@ class ContractSummary {
     this.customerNameEn,
     this.serviceLocationId,
     this.serviceLocationName,
+    this.locationGovernorate,
+    this.locationArea,
     this.monthlyRentalValue,
     this.minProfitOverridden,
   });
@@ -33,6 +35,8 @@ class ContractSummary {
   final String? customerNameEn;
   final String? serviceLocationId;
   final String? serviceLocationName;
+  final String? locationGovernorate;
+  final String? locationArea;
   final Decimal? monthlyRentalValue;
   final bool? minProfitOverridden;
 
@@ -51,6 +55,8 @@ class ContractSummary {
       customerNameEn: row['customer_name_en'] as String?,
       serviceLocationId: row['service_location_id'] as String?,
       serviceLocationName: row['service_location_name'] as String?,
+      locationGovernorate: row['location_governorate'] as String?,
+      locationArea: row['location_area'] as String?,
       monthlyRentalValue: tryParseDecimal(row['monthly_rental_value']),
       minProfitOverridden: row['min_profit_overridden'] as bool?,
     );

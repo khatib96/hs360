@@ -210,6 +210,25 @@ No Phase 5 schema work should be layered on an unverified local database.
 28. Arabic/English responsive UI and permission coverage.
 29. SQL, Dart, widget, integration, performance, and manual close gates.
 
+### Deferred Form-Draft UX Commitment (Recorded 2026-07-11)
+
+The backend already contains invoice draft concepts, but the user-facing
+**Save as draft** workflow is not considered complete. A dedicated follow-up
+must provide consistent save/reopen/discard/confirm commands for sales and
+purchase invoices and decide whether receipt/payment vouchers gain persisted
+drafts before posting.
+
+The follow-up must cover permissions, audit history, idempotency, stale drafts,
+concurrent edits, unsaved-change prompts, and a shared command-bar interaction.
+Voucher drafts must not affect cash/bank balances, allocations, journals, or
+invoice payment state until confirmation.
+
+All finance create/detail/return screens must also meet the shared navigation
+rule: show a working back action that pops when possible and otherwise returns
+to the correct module list.
+
+---
+
 ### Explicitly Out of Scope
 
 The following are not Phase 5 completion blockers:

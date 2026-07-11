@@ -72,8 +72,10 @@ class ProductDetailController extends _$ProductDetailController {
       }
 
       var warehouses = <Warehouse>[];
-      if (product.isSerialized &&
-          (canCreateProductUnits(session) || canViewProductUnits(session))) {
+      if ((product.isSerialized &&
+              (canCreateProductUnits(session) ||
+                  canViewProductUnits(session))) ||
+          (!product.isSerialized && canReconcileProductUnitSerials(session))) {
         try {
           warehouses = await ref
               .read(warehouseRepositoryProvider)
@@ -197,6 +199,32 @@ class ProductDetailController extends _$ProductDetailController {
             units: units,
           );
       await _refreshAfterUnitMutation(productId);
+      return null;
+    } catch (e) {
+      return e is ProductsException ? e.code : ProductsException.unknown;
+    }
+  }
+
+  Future<String?> prepareSerialTracking({
+    required String productId,
+    required String warehouseId,
+    required List<String> serials,
+    required String reason,
+  }) async {
+    final session = ref.read(authControllerProvider).valueOrNull;
+    if (session == null) return ProductsException.permissionDenied;
+
+    try {
+      await ref
+          .read(productUnitRepositoryProvider)
+          .prepareSerialTracking(
+            session: session,
+            productId: productId,
+            warehouseId: warehouseId,
+            serials: serials,
+            reason: reason,
+          );
+      await load(productId);
       return null;
     } catch (e) {
       return e is ProductsException ? e.code : ProductsException.unknown;

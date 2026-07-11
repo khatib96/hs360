@@ -17,6 +17,7 @@ String financeErrorMessage(
     FinanceException.tenantNotFound => l10n.financeErrorTenantNotFound,
     FinanceException.permissionDenied => l10n.financeErrorPermissionDenied,
     FinanceException.validationFailed => l10n.financeErrorValidationFailed,
+    FinanceException.belowMinProfit => l10n.financeErrorBelowMinProfit,
     FinanceException.idempotencyPayloadMismatch =>
       l10n.financeErrorIdempotencyPayloadMismatch,
     FinanceException.booksLocked => l10n.financeErrorBooksLocked,

@@ -379,6 +379,26 @@ end $$;
 rollback;
 
 -- 7. List has no snapshot columns for field-restricted user
+-- 6c. Search by snapshotted governorate/area
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m8.fixture')::jsonb;
+  v_count int;
+begin
+  select count(*) into v_count
+  from public.list_contracts(p_search := 'Salmiya')
+  where id = (v_fixture ->> 'contract_id')::uuid;
+
+  if v_count <> 1 then
+    raise exception 'case6c failed: location area search';
+  end if;
+end $$;
+rollback;
+
+-- 7. List has no snapshot columns for field-restricted user
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000205';
@@ -456,6 +476,12 @@ begin
 
   if v_assets < 1 or v_consumables < 1 then
     raise exception 'case10 failed: missing lines';
+  end if;
+
+  if not ((v_detail -> 'asset_lines' -> 0) ? 'product_sku')
+    or not ((v_detail -> 'asset_lines' -> 0) ? 'product_group_name_en')
+    or not ((v_detail -> 'consumable_lines' -> 0) ? 'product_sku') then
+    raise exception 'case10 failed: missing product display metadata';
   end if;
 end $$;
 rollback;

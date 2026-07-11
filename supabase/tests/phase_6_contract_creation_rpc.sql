@@ -124,7 +124,8 @@ begin
     tenant_id, warehouse_id, product_id, qty_available
   )
   values
-    (v_tenant_a, v_main_warehouse, v_asset_product, 2.000)
+    (v_tenant_a, v_main_warehouse, v_asset_product, 2.000),
+    (v_tenant_a, v_main_warehouse, v_non_serialized_asset, 10.000)
   on conflict (warehouse_id, product_id) do update
   set qty_available = excluded.qty_available;
 
@@ -190,6 +191,7 @@ begin
     gen_random_uuid()
   );
 
+  execute 'set local role postgres';
   select * into v_row
   from public.contracts
   where id = v_contract_id;
@@ -293,6 +295,7 @@ begin
     gen_random_uuid()
   );
 
+  execute 'set local role postgres';
   select * into v_row from public.contracts where id = v_contract_id;
 
   if v_row.type is distinct from 'rental'::public.contract_type then
@@ -372,6 +375,7 @@ begin
     gen_random_uuid()
   );
 
+  execute 'set local role postgres';
   select count(*)::int into v_asset_lines
   from public.contract_lines
   where contract_id = v_contract_id
@@ -449,6 +453,7 @@ begin
     gen_random_uuid()
   );
 
+  execute 'set local role postgres';
   select count(*)::int into v_consumable_lines
   from public.contract_lines
   where contract_id = v_contract_id
@@ -468,7 +473,7 @@ begin
 end $$;
 rollback;
 
--- 5. Asset line without product_unit_id rejected.
+-- 5. Serialized assets require units; non-serialized assets may omit units.
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
@@ -490,6 +495,9 @@ set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
 declare
   v_fixture jsonb := current_setting('test.p6m3.fixture')::jsonb;
+  v_contract_id uuid;
+  v_line public.contract_lines%rowtype;
+  v_qty_available numeric(15, 3);
 begin
   begin
     perform public.create_rental_contract(
@@ -512,26 +520,38 @@ begin
       end if;
   end;
 
-  begin
-    perform public.create_rental_contract(
-      jsonb_build_object(
-        'customer_id', v_fixture ->> 'customer_id',
-        'service_location_id', v_fixture ->> 'service_location_id',
-        'start_date', current_date,
-        'monthly_rental_value', 20.000,
-        'asset_lines', jsonb_build_array(
-          jsonb_build_object('product_id', v_fixture ->> 'non_serialized_asset')
-        )
-      ),
-      gen_random_uuid()
-    );
-    raise exception 'case5b failed: non-serialized asset without unit accepted';
-  exception
-    when others then
-      if sqlerrm not like '%validation_failed%' then
-        raise;
-      end if;
-  end;
+  v_contract_id := public.create_rental_contract(
+    jsonb_build_object(
+      'customer_id', v_fixture ->> 'customer_id',
+      'service_location_id', v_fixture ->> 'service_location_id',
+      'start_date', current_date,
+      'monthly_rental_value', 20.000,
+      'asset_lines', jsonb_build_array(
+        jsonb_build_object('product_id', v_fixture ->> 'non_serialized_asset')
+      )
+    ),
+    gen_random_uuid()
+  );
+
+  execute 'set local role postgres';
+  select * into v_line
+  from public.contract_lines
+  where contract_id = v_contract_id
+    and product_id = (v_fixture ->> 'non_serialized_asset')::uuid
+    and line_type = 'asset'::public.contract_line_type;
+
+  if not found or v_line.product_unit_id is not null then
+    raise exception 'case5b failed: non-serialized asset should create asset line without unit';
+  end if;
+
+  select ib.qty_available into v_qty_available
+  from public.inventory_balances ib
+  where ib.warehouse_id = (v_fixture ->> 'main_warehouse')::uuid
+    and ib.product_id = (v_fixture ->> 'non_serialized_asset')::uuid;
+
+  if v_qty_available <> 9.000 then
+    raise exception 'case5b failed: non-serialized available stock expected 9 got %', v_qty_available;
+  end if;
 end $$;
 rollback;
 
@@ -749,6 +769,7 @@ begin
     gen_random_uuid()
   );
 
+  execute 'set local role postgres';
   select * into v_row from public.contracts where id = v_contract_id;
 
   if coalesce(v_row.min_profit_overridden, false) is distinct from true then
@@ -854,6 +875,7 @@ begin
     raise exception 'case11 failed: idempotent retry returned different ids';
   end if;
 
+  execute 'set local role postgres';
   select count(*)::int into v_contract_count
   from public.contracts
   where idempotency_key = v_key;
@@ -971,6 +993,7 @@ begin
     gen_random_uuid()
   );
 
+  execute 'set local role postgres';
   select * into v_unit
   from public.product_units
   where id = (v_fixture ->> 'unit_a')::uuid;
@@ -1142,6 +1165,7 @@ begin
     gen_random_uuid()
   );
 
+  execute 'set local role postgres';
   select * into v_row from public.contracts where id = v_contract_id;
 
   if v_row.id is null then

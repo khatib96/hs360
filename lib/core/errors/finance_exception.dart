@@ -105,6 +105,7 @@ class FinanceException extends AppException {
       'finance_validation_closure_type_required';
   static const validationCoverageMonthsRequired =
       'finance_validation_coverage_months_required';
+  static const belowMinProfit = 'finance_below_min_profit';
 
   factory FinanceException.fromSupabase(
     Object error, [
@@ -194,6 +195,9 @@ class FinanceException extends AppException {
     }
     if (message.contains('validation_failed')) {
       return FinanceException(code: validationFailed, technicalDetail: message);
+    }
+    if (message.contains('below_min_profit')) {
+      return FinanceException(code: belowMinProfit, technicalDetail: message);
     }
 
     return FinanceException(code: unknown, technicalDetail: message);

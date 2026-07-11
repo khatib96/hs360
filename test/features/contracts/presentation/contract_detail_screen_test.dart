@@ -58,7 +58,10 @@ Widget _wrap({
       locale: locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: ContractDetailScreen(contractId: contractId),
+      home: MediaQuery(
+        data: const MediaQueryData(size: Size(1280, 800)),
+        child: ContractDetailScreen(contractId: contractId),
+      ),
     ),
   );
 }
@@ -81,7 +84,7 @@ void main() {
     expect(find.textContaining('validation'), findsNothing);
   });
 
-  testWidgets('operational detail hides internal cost and lifecycle labels', (
+  testWidgets('manager detail shows an authorized financial details section', (
     tester,
   ) async {
     final l10n = lookupAppLocalizations(const Locale('en'));
@@ -140,11 +143,33 @@ void main() {
     expect(find.text(l10n.contractFieldTotalContractValue), findsWidgets);
     expect(find.text('Device A'), findsOneWidget);
     expect(find.text('Oil A'), findsOneWidget);
+    expect(find.textContaining('DEV-001'), findsOneWidget);
+    expect(find.textContaining('Devices'), findsOneWidget);
+    expect(find.textContaining('Oils'), findsOneWidget);
 
     expect(find.text(l10n.contractSectionLifecycle), findsNothing);
     expect(find.text(l10n.contractSectionPricingSnapshot), findsNothing);
+    expect(
+      find.byKey(const Key('contract-detail-financial-details')),
+      findsOneWidget,
+    );
+    await tester.drag(
+      find.descendant(of: sheet, matching: find.byType(ListView)),
+      const Offset(0, -1000),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(l10n.contractFinancialDetails));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('contract-cost-breakdown')), findsOneWidget);
+    expect(find.text(l10n.contractFieldUnitCost), findsNWidgets(2));
+    expect(find.text(l10n.contractFieldMonthlyCost), findsNWidgets(2));
+    expect(find.text(l10n.contractFieldTotalMonthlyCost), findsOneWidget);
+    expect(find.text(l10n.contractFieldNetMonthlyProfit), findsOneWidget);
     expect(find.text(l10n.contractFieldDeviceMonthlyCost), findsNothing);
-    expect(find.text(l10n.contractFieldMonthlyProfit), findsNothing);
+    expect(find.text(l10n.contractFieldOilMonthlyCost), findsNothing);
+    expect(find.text('Device A'), findsNWidgets(2));
+    expect(find.text('Oil A'), findsNWidgets(2));
     expect(find.text(l10n.contractScheduleEmpty), findsOneWidget);
     expect(find.text(l10n.contractNextVisit), findsNothing);
     expect(find.text(l10n.contractNextPayment), findsNothing);

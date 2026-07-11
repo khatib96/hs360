@@ -9,6 +9,7 @@ import '../../domain/product_stock_summary.dart';
 import '../../domain/product_type.dart';
 import '../../domain/product_unit_permissions.dart';
 import '../product_detail_controller.dart';
+import '../product_detail_state.dart';
 import '../../../inventory/domain/warehouse.dart';
 import '../product_display_helpers.dart';
 import 'product_stock_summary_card.dart';
@@ -16,6 +17,7 @@ import '../products_error_messages.dart';
 import 'add_product_unit_dialog.dart';
 import 'bulk_product_units_dialog.dart';
 import 'product_unit_table.dart';
+import 'prepare_serial_tracking_dialog.dart';
 
 class ProductDetailOverviewSection extends StatelessWidget {
   const ProductDetailOverviewSection({
@@ -147,6 +149,15 @@ class ProductDetailUnitsSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (!product.isSerialized) {
+      final state = ref.watch(productDetailControllerProvider(productId));
+      final controller = ref.read(
+        productDetailControllerProvider(productId).notifier,
+      );
+      final canPrepare =
+          canReconcileProductUnitSerials(session) &&
+          product.productType == ProductType.assetRental &&
+          state.stockSummary != null &&
+          state.warehouses.isNotEmpty;
       return ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -172,6 +183,15 @@ class ProductDetailUnitsSection extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           Text(l10n.productUnitsNotSerialized),
+          if (canPrepare) ...[
+            const SizedBox(height: 16),
+            FilledButton.icon(
+              onPressed: () =>
+                  _onPrepareSerialTracking(context, controller, state),
+              icon: const Icon(Icons.qr_code_2),
+              label: Text(l10n.productSerialTrackingPrepare),
+            ),
+          ],
         ],
       );
     }
@@ -265,6 +285,39 @@ class ProductDetailUnitsSection extends ConsumerWidget {
         ),
       ],
     );
+  }
+
+  Future<void> _onPrepareSerialTracking(
+    BuildContext context,
+    ProductDetailController controller,
+    ProductDetailUiState state,
+  ) async {
+    final result = await showPrepareSerialTrackingDialog(
+      context: context,
+      product: product,
+      stock: state.stockSummary,
+      warehouses: state.warehouses,
+      languageCode: languageCode,
+      l10n: l10n,
+    );
+    if (result == null) return;
+
+    final code = await controller.prepareSerialTracking(
+      productId: productId,
+      warehouseId: result.warehouseId,
+      serials: result.serials,
+      reason: result.reason,
+    );
+    if (!context.mounted) return;
+    if (code != null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(productsErrorMessage(l10n, code))));
+      return;
+    }
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(l10n.productSerialTrackingPrepared)));
   }
 
   Future<void> _onAdd(

@@ -1,11 +1,16 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
+import '../../../auth/domain/app_session.dart';
 import '../../../finance_shared/presentation/money_display.dart';
 import '../../../invoices/presentation/widgets/invoice_design.dart';
 import '../../../invoices/presentation/widgets/invoice_totals_panel.dart';
 import '../../domain/contract_detail.dart';
+import '../../domain/contract_permissions.dart';
 import '../contract_display_helpers.dart';
+import '../contract_product_row.dart';
+import 'contract_cost_breakdown.dart';
 import 'contract_detail_panel.dart';
 
 class ContractDetailHeader extends StatelessWidget {
@@ -173,71 +178,235 @@ class ContractProductsSection extends StatelessWidget {
       );
     }
 
-    final showSerial = rows.any(
-      (row) => row.serialNumber?.trim().isNotEmpty == true,
-    );
-
     return ContractDetailPanel(
       title: l10n.contractSectionProducts,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: DataTable(
-          key: const Key('contract-products-table'),
-          headingRowColor: WidgetStateProperty.all(InvoiceDesign.headerFill),
-          headingTextStyle: InvoiceDesign.columnHeaderStyle(context),
-          columns: [
-            DataColumn(label: Text(l10n.contractFieldProduct)),
-            DataColumn(label: Text(l10n.contractFieldProductType)),
-            if (showSerial)
-              DataColumn(label: Text(l10n.contractFieldSerialNumber)),
-            DataColumn(label: Text(l10n.contractFieldQuantity)),
-            DataColumn(label: Text(l10n.contractFieldRefillFrequency)),
-          ],
-          rows: [
-            for (final row in rows)
-              DataRow(
-                cells: [
-                  DataCell(
-                    Text(
-                      contractCustomerName(
-                        languageCode: languageCode,
-                        nameAr: row.productNameAr,
-                        nameEn: row.productNameEn,
-                      ),
-                    ),
-                  ),
-                  DataCell(Text(contractProductTypeLabel(l10n, row.isAsset))),
-                  if (showSerial)
-                    DataCell(
-                      Text(
-                        row.serialNumber?.trim().isNotEmpty == true
-                            ? row.serialNumber!
-                            : '—',
-                      ),
-                    ),
-                  DataCell(Text(row.quantity?.toString() ?? '—')),
-                  DataCell(Text(row.refillFrequencyMonths?.toString() ?? '—')),
-                ],
-              ),
-          ],
-        ),
+      child: LayoutBuilder(
+        key: const Key('contract-products-table'),
+        builder: (context, constraints) {
+          if (constraints.maxWidth < 620) {
+            return _ContractProductCards(
+              rows: rows,
+              languageCode: languageCode,
+            );
+          }
+          return _ContractProductsTable(rows: rows, languageCode: languageCode);
+        },
       ),
     );
   }
 }
 
-class ContractValueSummarySection extends StatelessWidget {
-  const ContractValueSummarySection({required this.detail, super.key});
+class _ContractProductsTable extends StatelessWidget {
+  const _ContractProductsTable({
+    required this.rows,
+    required this.languageCode,
+  });
 
-  final ContractDetail detail;
+  final List<ContractProductRow> rows;
+  final String languageCode;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    return Table(
+      columnWidths: const {
+        0: FixedColumnWidth(105),
+        1: FlexColumnWidth(1.5),
+        2: FlexColumnWidth(1.25),
+        3: FlexColumnWidth(),
+        4: FixedColumnWidth(76),
+        5: FixedColumnWidth(110),
+      },
+      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+      border: const TableBorder(
+        horizontalInside: BorderSide(color: InvoiceDesign.borderColor),
+      ),
+      children: [
+        TableRow(
+          decoration: const BoxDecoration(color: InvoiceDesign.headerFill),
+          children: [
+            _productHeader(context, l10n.productColumnSku),
+            _productHeader(context, l10n.contractFieldProduct),
+            _productHeader(context, l10n.contractFieldSerialNumber),
+            _productHeader(context, l10n.productFieldGroup),
+            _productHeader(context, l10n.contractFieldQuantity),
+            _productHeader(context, l10n.contractFieldRefillFrequency),
+          ],
+        ),
+        for (final row in rows)
+          TableRow(
+            children: [
+              _productCell(row.productSku),
+              _productCell(
+                contractCustomerName(
+                  languageCode: languageCode,
+                  nameAr: row.productNameAr,
+                  nameEn: row.productNameEn,
+                ),
+              ),
+              _productCell(row.serialNumber, emptyWhenMissing: true),
+              _productCell(
+                contractCustomerName(
+                  languageCode: languageCode,
+                  nameAr: row.productGroupNameAr,
+                  nameEn: row.productGroupNameEn,
+                ),
+              ),
+              _productCell(
+                row.quantity?.toString(),
+                emptyWhenMissing: true,
+                alignEnd: true,
+              ),
+              _productCell(
+                row.refillFrequencyMonths?.toString(),
+                emptyWhenMissing: true,
+                alignEnd: true,
+              ),
+            ],
+          ),
+      ],
+    );
+  }
+}
+
+class _ContractProductCards extends StatelessWidget {
+  const _ContractProductCards({required this.rows, required this.languageCode});
+
+  final List<ContractProductRow> rows;
+  final String languageCode;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Column(
+      children: [
+        for (var index = 0; index < rows.length; index++) ...[
+          if (index > 0) const Divider(height: 1),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  contractCustomerName(
+                    languageCode: languageCode,
+                    nameAr: rows[index].productNameAr,
+                    nameEn: rows[index].productNameEn,
+                  ),
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  '${l10n.productColumnSku}: ${rows[index].productSku ?? ''}',
+                ),
+                Text(
+                  '${l10n.productFieldGroup}: ${contractCustomerName(languageCode: languageCode, nameAr: rows[index].productGroupNameAr, nameEn: rows[index].productGroupNameEn)}',
+                ),
+                Text(
+                  '${l10n.contractFieldSerialNumber}: ${rows[index].serialNumber ?? ''}',
+                ),
+                if (rows[index].quantity != null)
+                  Text(
+                    '${l10n.contractFieldQuantity}: ${rows[index].quantity}',
+                  ),
+                if (rows[index].refillFrequencyMonths != null)
+                  Text(
+                    '${l10n.contractFieldRefillFrequency}: ${rows[index].refillFrequencyMonths}',
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+Widget _productHeader(BuildContext context, String label) {
+  return Padding(
+    padding: InvoiceDesign.cellPadding,
+    child: Text(
+      label,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      style: InvoiceDesign.columnHeaderStyle(context),
+    ),
+  );
+}
+
+Widget _productCell(
+  String? value, {
+  bool emptyWhenMissing = false,
+  bool alignEnd = false,
+}) {
+  final display = value?.trim().isNotEmpty == true
+      ? value!.trim()
+      : (emptyWhenMissing ? '' : '—');
+  return Padding(
+    padding: InvoiceDesign.cellPadding,
+    child: Align(
+      alignment: alignEnd
+          ? AlignmentDirectional.centerEnd
+          : AlignmentDirectional.centerStart,
+      child: Text(display, maxLines: 2, overflow: TextOverflow.ellipsis),
+    ),
+  );
+}
+
+class ContractValueSummarySection extends StatelessWidget {
+  const ContractValueSummarySection({
+    required this.detail,
+    required this.session,
+    super.key,
+  });
+
+  final ContractDetail detail;
+  final AppSession? session;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final languageCode = Localizations.localeOf(context).languageCode;
     final durationMonths = contractDurationMonths(detail);
     final durationLabel = contractDurationLabel(l10n, durationMonths);
     final totalValue = contractDisplayTotalValue(detail);
     final monthly = detail.monthlyRentalValue;
+    final canViewAssetCosts =
+        session != null && canViewContractDeviceCost(session!);
+    final canViewConsumableCosts =
+        session != null && canViewContractOilCost(session!);
+    final costRows = buildContractProductRows(detail)
+        .where(
+          (row) =>
+              row.snapshotUnitCost != null &&
+              row.snapshotMonthlyCost != null &&
+              (row.isAsset ? canViewAssetCosts : canViewConsumableCosts),
+        )
+        .map(
+          (row) => ContractCostRow(
+            productName: contractCustomerName(
+              languageCode: languageCode,
+              nameAr: row.productNameAr,
+              nameEn: row.productNameEn,
+            ),
+            productGroupName: contractCustomerName(
+              languageCode: languageCode,
+              nameAr: row.productGroupNameAr,
+              nameEn: row.productGroupNameEn,
+            ),
+            quantity: row.isAsset ? Decimal.one : row.quantity ?? Decimal.one,
+            unitCost: row.snapshotUnitCost!,
+            monthlyCost: row.snapshotMonthlyCost!,
+          ),
+        )
+        .toList();
+    final totalMonthlyCost =
+        session != null && canViewContractTotalCost(session!)
+        ? detail.snapshotTotalMonthlyCost
+        : null;
+    final netMonthlyProfit = session != null && canViewContractProfit(session!)
+        ? detail.snapshotMonthlyProfit
+        : null;
 
     if (monthly == null && totalValue == null && durationLabel == null) {
       return const SizedBox.shrink();
@@ -274,6 +443,29 @@ class ContractValueSummarySection extends StatelessWidget {
                     emphasized: true,
                   ),
               ],
+            ),
+          if (costRows.isNotEmpty ||
+              totalMonthlyCost != null ||
+              netMonthlyProfit != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: Material(
+                color: Colors.transparent,
+                child: ExpansionTile(
+                  key: const Key('contract-detail-financial-details'),
+                  tilePadding: EdgeInsets.zero,
+                  childrenPadding: EdgeInsets.zero,
+                  title: Text(l10n.contractFinancialDetails),
+                  children: [
+                    ContractCostBreakdown(
+                      key: const Key('contract-cost-breakdown'),
+                      rows: costRows,
+                      totalMonthlyCost: totalMonthlyCost,
+                      netMonthlyProfit: netMonthlyProfit,
+                    ),
+                  ],
+                ),
+              ),
             ),
         ],
       ),
