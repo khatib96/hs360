@@ -103,6 +103,25 @@ Invoke-SqlSuite -SuitePath "supabase/tests/phase_6_contract_lifecycle_rpc.sql"
 Write-Host "Phase L: Phase 6 M5 rental collection and billing engine"
 Invoke-SqlSuite -SuitePath "supabase/tests/phase_6_rental_collection_billing_engine.sql"
 
+Write-Host "Phase K.5: Phase 6 M10b schedule consumable change RPCs"
+Invoke-SqlSuite -SuitePath "supabase/tests/phase_6_schedule_consumable_change_rpc.sql"
+
+Write-Host "Phase M: Phase 6 M8 contract read RPCs"
+Invoke-SqlSuite -SuitePath "supabase/tests/phase_6_contract_read_rpc.sql"
+
+Write-Host "Phase M11: Phase 6 contract PDF"
+Invoke-SqlSuite -SuitePath "supabase/tests/phase_6_contract_pdf.sql"
+
+Write-Host "Phase M12: Phase 6 contract calendar handoff"
+Invoke-SqlSuite -SuitePath "supabase/tests/phase_6_contract_calendar_handoff.sql"
+Write-Host "M12 concurrency gate is Bash/CI-only."
+
+Write-Host "Phase N: Phase 6 M13 consolidated gap cases"
+Invoke-SqlSuite -SuitePath "supabase/tests/phase_6_contracts.sql"
+
+Write-Host "Phase N.5: Phase 6 M13 list covered rental months RPC (092)"
+Invoke-SqlSuite -SuitePath "supabase/tests/phase_6_list_covered_rental_months_rpc.sql"
+
 Write-Host "Phase C: baseline regression (pollution gate)"
 foreach ($suite in $phaseAAllowlist) {
   Invoke-SqlSuite -SuitePath $suite

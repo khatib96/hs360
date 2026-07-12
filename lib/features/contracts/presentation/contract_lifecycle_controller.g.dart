@@ -7,7 +7,7 @@ part of 'contract_lifecycle_controller.dart';
 // **************************************************************************
 
 String _$contractLifecycleControllerHash() =>
-    r'4ec1a5310255d45a341457af52465d48625e2a94';
+    r'ee40040bbefd6300589588f4f00beb1af67c18cc';
 
 /// See also [ContractLifecycleController].
 @ProviderFor(ContractLifecycleController)

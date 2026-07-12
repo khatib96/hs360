@@ -13,6 +13,7 @@ import 'package:hs360/features/contracts/domain/contract_detail.dart';
 import 'package:hs360/features/contracts/domain/contract_schedule_event.dart';
 import 'package:hs360/features/contracts/domain/contract_status.dart';
 import 'package:hs360/features/contracts/domain/contract_type.dart';
+import 'package:hs360/features/finance_shared/presentation/finance_placeholder_screen.dart';
 import 'package:hs360/features/invoices/presentation/widgets/invoice_sheet.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
@@ -307,5 +308,152 @@ void main() {
     expect(find.text('2026-03-15'), findsOneWidget);
     expect(find.text('Customer moved'), findsOneWidget);
     expect(find.text(l10n.contractHistoryEmpty), findsNothing);
+  });
+
+  testWidgets('permission denied shows back button on placeholder', (
+    tester,
+  ) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+
+    await tester.pumpWidget(
+      _wrap(
+        locale: const Locale('en'),
+        session: AppSession(
+          userId: 'u',
+          email: 'e@test.com',
+          tenantId: 't',
+          tenantUserId: 'tu',
+          accountType: 'user',
+          displayName: 'Test',
+          preferredLocale: 'en',
+          permissions: AppPermissions(isManager: false, permissions: const {}),
+        ),
+        repo: FakeContractRepository(),
+        contractId: 'c-1',
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.financeModuleAccessUnavailable), findsOneWidget);
+    expect(find.byType(FinancePlaceholderScreen), findsOneWidget);
+    expect(find.byType(BackButton), findsOneWidget);
+  });
+
+  testWidgets('collect rental action visible for eligible rental', (
+    tester,
+  ) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+    final repo = FakeContractRepository(
+      detailById: {'c-1': sampleContractDetail(id: 'c-1')},
+    );
+
+    await tester.pumpWidget(
+      _wrap(
+        locale: const Locale('en'),
+        session: AppSession(
+          userId: 'u',
+          email: 'e@test.com',
+          tenantId: 't',
+          tenantUserId: 'tu',
+          accountType: 'user',
+          displayName: 'Test',
+          preferredLocale: 'en',
+          permissions: AppPermissions(
+            isManager: false,
+            permissions: {
+              'contracts.view',
+              'invoices.create_sales',
+              'vouchers.create_receipt',
+            },
+          ),
+        ),
+        repo: repo,
+        contractId: 'c-1',
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const Key('contract-detail-collect-rental')),
+      findsOneWidget,
+    );
+    expect(find.text(l10n.contractCollectRentalAction), findsOneWidget);
+  });
+
+  testWidgets('preview without financial perms hides cost breakdown', (
+    tester,
+  ) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+    final repo = FakeContractRepository(
+      detailById: {'c-1': sampleContractDetail(id: 'c-1')},
+    );
+
+    await tester.pumpWidget(
+      _wrap(
+        locale: const Locale('en'),
+        session: AppSession(
+          userId: 'u',
+          email: 'e@test.com',
+          tenantId: 't',
+          tenantUserId: 'tu',
+          accountType: 'user',
+          displayName: 'Test',
+          preferredLocale: 'en',
+          permissions: AppPermissions(
+            isManager: false,
+            permissions: {'contracts.view', 'contracts.print'},
+          ),
+        ),
+        repo: repo,
+        contractId: 'c-1',
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('contract-detail-preview')), findsOneWidget);
+    expect(
+      find.byKey(const Key('contract-detail-financial-details')),
+      findsNothing,
+    );
+    expect(find.text(l10n.contractFinancialDetails), findsNothing);
+  });
+
+  testWidgets('close rental opens lifecycle dialog smoke', (tester) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+    final repo = FakeContractRepository(
+      detailById: {'c-1': sampleContractDetail(id: 'c-1')},
+    );
+
+    await tester.binding.setSurfaceSize(const Size(1280, 1200));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      _wrap(
+        locale: const Locale('en'),
+        session: AppSession(
+          userId: 'u',
+          email: 'e@test.com',
+          tenantId: 't',
+          tenantUserId: 'tu',
+          accountType: 'user',
+          displayName: 'Test',
+          preferredLocale: 'en',
+          permissions: AppPermissions(
+            isManager: false,
+            permissions: {'contracts.view', 'contracts.close'},
+          ),
+        ),
+        repo: repo,
+        contractId: 'c-1',
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(
+      find.widgetWithText(TextButton, l10n.contractCloseRentalAction).first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AlertDialog), findsOneWidget);
   });
 }

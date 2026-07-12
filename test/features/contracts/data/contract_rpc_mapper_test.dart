@@ -69,6 +69,30 @@ void main() {
       expect(result.invoiceTotal, Decimal.parse('120.000'));
     });
 
+    test('mapCoveredRentalMonths parses month keys only', () {
+      final months = mapCoveredRentalMonths({
+        'coverage_month_keys': ['2026-07-01', '2026-08-01'],
+      });
+
+      expect(months, ['2026-07-01', '2026-08-01']);
+    });
+
+    test('mapRentalCollectionPreview parses expected collected amount', () {
+      final preview = mapRentalCollectionPreview({
+        'contract_id': 'rental-1',
+        'contract_number': 'CON-001',
+        'coverage_months': ['2026-07-01'],
+        'subtotal': '100.000',
+        'tax_amount': '0.000',
+        'invoice_total': '100.000',
+        'expected_collected_amount': '100.000',
+      });
+
+      expect(preview.contractId, 'rental-1');
+      expect(preview.coverageMonths, ['2026-07-01']);
+      expect(preview.expectedCollectedAmount, Decimal.parse('100.000'));
+    });
+
     test('mapContractDetail tolerates optional keys', () {
       final detail = mapContractDetail({
         'id': 'con-1',

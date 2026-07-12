@@ -29,6 +29,22 @@ bool canShowCloseRentalAction(AppSession session, ContractDetail detail) =>
         detail.status == ContractStatus.suspended) &&
     !detail.status.isClosed;
 
+bool canShowCollectRentalAction(AppSession session, ContractDetail detail) {
+  if (detail.type != ContractType.rental) return false;
+  if (!canPreviewRentalCollection(session) &&
+      !canCollectRentalPayment(session)) {
+    return false;
+  }
+  return switch (detail.status) {
+    ContractStatus.active ||
+    ContractStatus.suspended ||
+    ContractStatus.completed ||
+    ContractStatus.terminatedEarly ||
+    ContractStatus.expired => true,
+    _ => false,
+  };
+}
+
 bool canShowScheduleConsumableChangeAction(
   AppSession session,
   ContractDetail detail,

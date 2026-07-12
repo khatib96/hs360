@@ -82,5 +82,35 @@ void main() {
       final session = _session({'contracts.close'});
       expect(canShowCloseRentalAction(session, _rentalDetail()), isTrue);
     });
+
+    test('collect rental visible for active rental with collect perms', () {
+      final session = _session({
+        'invoices.create_sales',
+        'vouchers.create_receipt',
+      });
+      expect(canShowCollectRentalAction(session, _rentalDetail()), isTrue);
+    });
+
+    test('collect rental visible for completed rental', () {
+      final session = _session({
+        'invoices.create_sales',
+        'vouchers.create_receipt',
+      });
+      expect(
+        canShowCollectRentalAction(
+          session,
+          _rentalDetail(status: ContractStatus.completed),
+        ),
+        isTrue,
+      );
+    });
+
+    test('collect rental hidden for trial contracts', () {
+      final session = _session({
+        'invoices.create_sales',
+        'vouchers.create_receipt',
+      });
+      expect(canShowCollectRentalAction(session, _trialDetail()), isFalse);
+    });
   });
 }

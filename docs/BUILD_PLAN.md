@@ -17,8 +17,8 @@
 | **2 - Authentication & Routing** | Done | not recorded |
 | **3 - Products & Inventory** | Done | 2026-05-30 |
 | **4 - Customers, Suppliers & CoA** | Engineering complete | 2026-06-06 |
-| **5 - Invoices, Vouchers & Journal** | Done | M1–M10 closed through migration `076`; Phase 6 next |
-| **6 - Contracts** | Not started | - |
+| **5 - Invoices, Vouchers & Journal** | Done | M1–M10 closed through migration `076` |
+| **6 - Contracts** | Complete | M0–M13 closed (2026-07-12) |
 | **7 - Calendar** | Not started | - |
 | **8 - Mobile Field Ops** | Not started | - |
 | **9 - POS, Maintenance & HR** | Not started | - |

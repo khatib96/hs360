@@ -4,8 +4,7 @@
 > trial contracts, rental contracts, serialized rental assets, rental
 > consumables, profitability snapshots, contract billing, and lifecycle control.
 >
-> Status: **M0 through M9 complete** (M9 closed 2026-07-11). M10 is the next
-> implementation milestone.
+> Status: **M0 through M13 complete** (2026-07-12). Phase 6 closed.
 >
 > Owner directive: contracts are the core business workflow, not an auxiliary
 > module. Phase 6 must be treated with the same accounting and operational
@@ -1394,25 +1393,34 @@ Cover:
 
 ### Required Manual Acceptance
 
-Run one full business story:
+Run one full business story in **English and Arabic** (UI only for business steps):
 
-1. Create customer and service location.
-2. Create trial contract with one device and one consumable.
+1. Create customer and service location (or use `p6m13_manual_setup.sh` for
+   customer + location only).
+2. Create trial contract with one device (consumable optional).
 3. Convert trial contract to rental contract with a 12-month term.
-4. Generate first rental invoice.
-5. Record receipt voucher from the invoice detail/customer flow.
-6. Print contract PDF.
+4. **Collect rental** via contract detail dialog (`collect_rental_payment` —
+   atomic invoice + receipt + allocation; amount locked to preview).
+5. Print contract PDF.
+6. Verify upcoming schedule on contract detail.
 7. Close the contract and return the device.
-8. Confirm customer statement remains correct.
+8. Confirm the **collected** rental invoice remains **fully paid** after close.
+9. Open customer statement and confirm collected period appears.
+
+**Not in manual UI scope:** open A/R preserved after close on a pre-existing
+unpaid invoice — covered only by SQL case P6M13-4 (`close_preserves_open_rental_invoice_ar`).
+
+Runner: `bash scripts/test/p6m13_manual_acceptance.sh` (EN + AR) then
+`bash scripts/test/p6m13_manual_cleanup.sh` (all P6M13 counters = 0).
 
 ### Acceptance
 
-- SQL regression passes.
-- Dart analysis passes.
-- Flutter tests pass.
+- Automated gates green (SQL ×2, analyze, flutter test, integration templates).
+- Manual AR/EN story passed via UI; P6M13 cleanup counters = 0.
 - `git diff --check` passes.
-- Manual story passes in Arabic and English.
-- Phase 7/8 have clean schedule/location/contract data to build on.
+
+**Status: closed (2026-07-12).** Extended manual AR/EN acceptance (`p6m13_manual_acceptance.sh`)
+covers PDF preview, upcoming schedule (server RPC + UI), customer statement, and cleanup gate.
 
 ---
 

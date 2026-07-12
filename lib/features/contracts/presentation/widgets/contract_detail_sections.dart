@@ -491,19 +491,28 @@ class ContractUpcomingScheduleSection extends StatelessWidget {
 
     if (events.isEmpty) {
       return ContractDetailPanel(
+        key: const Key('contract-upcoming-schedule-section'),
         title: l10n.contractSectionUpcomingSchedule,
-        child: Text(l10n.contractScheduleEmpty),
+        child: Text(
+          l10n.contractScheduleEmpty,
+          key: const Key('contract-upcoming-schedule-empty'),
+        ),
       );
     }
 
     return ContractDetailPanel(
+      key: const Key('contract-upcoming-schedule-section'),
       title: l10n.contractSectionUpcomingSchedule,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           for (var i = 0; i < events.length; i++) ...[
             if (i > 0) const Divider(height: 20),
-            _ScheduleEventRow(event: events[i], languageCode: languageCode),
+            _ScheduleEventRow(
+              key: Key('contract-upcoming-schedule-event-$i'),
+              event: events[i],
+              languageCode: languageCode,
+            ),
           ],
         ],
       ),
@@ -512,7 +521,11 @@ class ContractUpcomingScheduleSection extends StatelessWidget {
 }
 
 class _ScheduleEventRow extends StatelessWidget {
-  const _ScheduleEventRow({required this.event, required this.languageCode});
+  const _ScheduleEventRow({
+    required this.event,
+    required this.languageCode,
+    super.key,
+  });
 
   final ContractScheduleEvent event;
   final String languageCode;

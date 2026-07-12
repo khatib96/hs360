@@ -238,6 +238,25 @@ class ContractRepository {
     }
   }
 
+  Future<List<String>> listCoveredRentalMonths(
+    AppSession session,
+    String contractId,
+  ) async {
+    if (!canPreviewRentalCollection(session) &&
+        !canCollectRentalPayment(session)) {
+      throw const FinanceException(code: FinanceException.permissionDenied);
+    }
+    try {
+      final json = await _requireClient.rpc(
+        'list_covered_rental_months',
+        params: {'p_contract_id': contractId},
+      );
+      return mapCoveredRentalMonths(Map<String, dynamic>.from(json as Map));
+    } catch (e, st) {
+      throw FinanceException.fromSupabase(e, st);
+    }
+  }
+
   Future<RentalCollectionResult> collectRentalPayment(
     AppSession session,
     RentalCollectionDraft draft,

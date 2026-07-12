@@ -1539,6 +1539,59 @@ class AppLocalizationsAr extends AppLocalizations {
   String get contractScheduleConsumableAction => 'جدولة تغيير المستهلك';
 
   @override
+  String get contractCollectRentalAction => 'تحصيل إيجار';
+
+  @override
+  String get contractCollectRentalTitle => 'تحصيل دفعة إيجار';
+
+  @override
+  String get contractCollectCoverageMonths => 'أشهر التغطية';
+
+  @override
+  String get contractCollectCollectionDate => 'تاريخ التحصيل';
+
+  @override
+  String get contractCollectPaymentMethod => 'طريقة الدفع';
+
+  @override
+  String get contractCollectCashAccount => 'حساب النقد/البنك';
+
+  @override
+  String get contractCollectReferenceNo => 'المرجع';
+
+  @override
+  String get contractCollectExpectedAmount => 'المبلغ المتوقع تحصيله';
+
+  @override
+  String get contractCollectPreviewSubtotal => 'المجموع الفرعي';
+
+  @override
+  String get contractCollectPreviewTax => 'الضريبة';
+
+  @override
+  String get contractCollectPreviewTotal => 'إجمالي الفاتورة';
+
+  @override
+  String get contractCollectConfirmAction => 'تأكيد التحصيل';
+
+  @override
+  String get contractCollectViewInvoice => 'عرض الفاتورة';
+
+  @override
+  String get contractCollectViewReceipt => 'عرض سند القبض';
+
+  @override
+  String get contractCollectSuccess => 'تم تحصيل دفعة الإيجار بنجاح.';
+
+  @override
+  String get contractCollectNoEligibleMonths =>
+      'لا توجد أشهر تغطية مؤهلة متبقية لهذا العقد.';
+
+  @override
+  String get contractCollectCashAccountsUnavailable =>
+      'حسابات النقد/البنك غير متاحة لهذه الجلسة.';
+
+  @override
   String get contractCreateTrial => 'إنشاء عقد تجريبي';
 
   @override

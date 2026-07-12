@@ -1,6 +1,38 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-12 (Session: Phase 6 M12 — **Contract calendar handoff closed**).
+> Updated 2026-07-12 (Session: Phase 6 M13 — **closed**; extended manual AR/EN acceptance passed).
+
+---
+
+## Session 2026-07-12 - Phase 6 M13 Extended Manual Acceptance (closed)
+
+**Decision:** M13 and Phase 6 are closed. Extended manual acceptance passed EN+AR via
+`p6m13_manual_acceptance.sh`: trial → convert → schedule (server) → collect → contract
+PDF (no cost/profit) → schedule post-collect → customer statement → close → paid invoice.
+
+### Delivered (acceptance automation)
+
+- `p6m13_manual_acceptance_test.dart` extended: PDF preview (`document-preview-pdf` +
+  payload allowlist + forbidden PDF strings), upcoming schedule (RPC + UI before/after
+  collect), customer statement tab (rental invoice + receipt voucher entries, coverage month).
+- Test keys on `ContractUpcomingScheduleSection` for stable UI assertions.
+- `p6m13_manual_cleanup.sh`: journal immutability bypass, `rental_collection_operations`,
+  orphan `SYS-RENTAL-MONTHLY` removal.
+
+### Locked semantics
+
+- Manual collect uses atomic `collect_rental_payment`.
+- Collected month stays **paid** after close; open A/R after close = SQL P6M13-4 only.
+- Upcoming schedule after first collect may be empty when 30-day horizon has no further
+  pending billing rows (server-correct); test asserts pending rows after convert.
+
+### Closure verification (2026-07-12)
+
+- `bash scripts/test/p6m13_manual_acceptance.sh supabase_db_hs360 macos` — EN + AR passed
+- `p6m13_manual_cleanup.sh` after each locale — all counters 0
+- `flutter test` — 852 passed
+- `flutter analyze` — no issues
+- `git diff --check` — clean
 
 ---
 

@@ -22,6 +22,7 @@ import 'contract_display_helpers.dart';
 import 'widgets/contract_closure_dialog.dart';
 import 'widgets/contract_consumable_change_dialog.dart';
 import 'widgets/contract_detail_sections.dart';
+import 'widgets/contract_rental_collection_dialog.dart';
 import 'widgets/contract_trial_extension_dialog.dart';
 import 'widgets/contract_trial_return_dialog.dart';
 
@@ -44,6 +45,7 @@ class ContractDetailScreen extends ConsumerWidget {
         titleGetter: (l) => l.contractDetailTitle,
         bodyGetter: (l) => l.financeModuleAccessUnavailable,
         canView: (_) => false,
+        showBackButton: true,
         currentRoute: AppRoutes.contractDetailPath(contractId),
       );
     }
@@ -80,6 +82,9 @@ class ContractDetailScreen extends ConsumerWidget {
       final showConsumable =
           session != null &&
           canShowScheduleConsumableChangeAction(session, detail);
+      final showCollect =
+          session != null && canShowCollectRentalAction(session, detail);
+
       final showPreview =
           session != null &&
           canPrintContract(session) &&
@@ -128,6 +133,12 @@ class ContractDetailScreen extends ConsumerWidget {
                   TextButton(
                     onPressed: () => _closeRental(context, ref, detail),
                     child: Text(l10n.contractCloseRentalAction),
+                  ),
+                if (showCollect)
+                  TextButton(
+                    key: const Key('contract-detail-collect-rental'),
+                    onPressed: () => _collectRental(context, ref, detail),
+                    child: Text(l10n.contractCollectRentalAction),
                   ),
                 if (showConsumable)
                   TextButton(
@@ -216,6 +227,24 @@ class ContractDetailScreen extends ConsumerWidget {
       detail: detail,
     );
     if (closeDate != null) {
+      await ref
+          .read(contractDetailControllerProvider(contractId).notifier)
+          .load(contractId);
+      await ref.read(contractListControllerProvider.notifier).refresh();
+    }
+  }
+
+  Future<void> _collectRental(
+    BuildContext context,
+    WidgetRef ref,
+    ContractDetail detail,
+  ) async {
+    final changed = await showContractRentalCollectionDialog(
+      context,
+      ref,
+      detail: detail,
+    );
+    if (changed == true) {
       await ref
           .read(contractDetailControllerProvider(contractId).notifier)
           .load(contractId);

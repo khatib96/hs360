@@ -2996,6 +2996,108 @@ abstract class AppLocalizations {
   /// **'Schedule consumable change'**
   String get contractScheduleConsumableAction;
 
+  /// No description provided for @contractCollectRentalAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Collect rental'**
+  String get contractCollectRentalAction;
+
+  /// No description provided for @contractCollectRentalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Collect rental payment'**
+  String get contractCollectRentalTitle;
+
+  /// No description provided for @contractCollectCoverageMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'Coverage months'**
+  String get contractCollectCoverageMonths;
+
+  /// No description provided for @contractCollectCollectionDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Collection date'**
+  String get contractCollectCollectionDate;
+
+  /// No description provided for @contractCollectPaymentMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment method'**
+  String get contractCollectPaymentMethod;
+
+  /// No description provided for @contractCollectCashAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash/bank account'**
+  String get contractCollectCashAccount;
+
+  /// No description provided for @contractCollectReferenceNo.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference'**
+  String get contractCollectReferenceNo;
+
+  /// No description provided for @contractCollectExpectedAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected collected amount'**
+  String get contractCollectExpectedAmount;
+
+  /// No description provided for @contractCollectPreviewSubtotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Subtotal'**
+  String get contractCollectPreviewSubtotal;
+
+  /// No description provided for @contractCollectPreviewTax.
+  ///
+  /// In en, this message translates to:
+  /// **'Tax'**
+  String get contractCollectPreviewTax;
+
+  /// No description provided for @contractCollectPreviewTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice total'**
+  String get contractCollectPreviewTotal;
+
+  /// No description provided for @contractCollectConfirmAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm collection'**
+  String get contractCollectConfirmAction;
+
+  /// No description provided for @contractCollectViewInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'View invoice'**
+  String get contractCollectViewInvoice;
+
+  /// No description provided for @contractCollectViewReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'View receipt'**
+  String get contractCollectViewReceipt;
+
+  /// No description provided for @contractCollectSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Rental payment collected successfully.'**
+  String get contractCollectSuccess;
+
+  /// No description provided for @contractCollectNoEligibleMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'No eligible coverage months remain for this contract.'**
+  String get contractCollectNoEligibleMonths;
+
+  /// No description provided for @contractCollectCashAccountsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash/bank accounts are unavailable for this session.'**
+  String get contractCollectCashAccountsUnavailable;
+
   /// No description provided for @contractCreateTrial.
   ///
   /// In en, this message translates to:

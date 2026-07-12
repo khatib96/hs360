@@ -7,7 +7,7 @@ part of 'contract_convert_controller.dart';
 // **************************************************************************
 
 String _$contractConvertControllerHash() =>
-    r'2dbafb7a90fc6f3cdb1dd25bf3b98b948794d19c';
+    r'83c2af1eb4358dc9b827b766064efab1f2dba0de';
 
 /// Copied from Dart SDK
 class _SystemHash {

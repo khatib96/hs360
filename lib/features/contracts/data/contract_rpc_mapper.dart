@@ -52,6 +52,12 @@ ContractPricingPreview mapContractPricingPreview(Map<String, dynamic> json) {
   );
 }
 
+List<String> mapCoveredRentalMonths(Map<String, dynamic> json) {
+  final raw = json['coverage_month_keys'];
+  if (raw is! List) return const [];
+  return raw.map((value) => value.toString()).toList();
+}
+
 RentalCollectionPreview mapRentalCollectionPreview(Map<String, dynamic> json) {
   return RentalCollectionPreview.fromRpcJson(json);
 }

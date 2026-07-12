@@ -23,6 +23,7 @@ class FakeContractRepository extends ContractRepository {
     this.pricingPreview,
     this.collectionPreview,
     this.collectionResult,
+    this.coveredMonthKeys = const [],
     this.createdContractId = 'contract-new',
     this.fetchError,
     this.detailById = const {},
@@ -36,6 +37,8 @@ class FakeContractRepository extends ContractRepository {
   Object? fetchError;
   Map<String, ContractDetail> detailById;
   List<ContractSummary> summaries;
+
+  List<String> coveredMonthKeys;
 
   ContractDraft? lastCreateDraft;
   TrialConversionDraft? lastConversionDraft;
@@ -143,6 +146,15 @@ class FakeContractRepository extends ContractRepository {
   }
 
   @override
+  Future<List<String>> listCoveredRentalMonths(
+    AppSession session,
+    String contractId,
+  ) async {
+    _throwIfFetchError();
+    return List<String>.from(coveredMonthKeys);
+  }
+
+  @override
   Future<RentalCollectionPreview> previewRentalCollection(
     AppSession session,
     RentalCollectionDraft draft,
@@ -154,6 +166,7 @@ class FakeContractRepository extends ContractRepository {
           contractId: draft.contractId,
           coverageMonths: draft.coverageMonths,
           invoiceTotal: draft.amount,
+          expectedCollectedAmount: draft.amount,
         );
   }
 

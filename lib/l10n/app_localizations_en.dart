@@ -1551,6 +1551,59 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contractScheduleConsumableAction => 'Schedule consumable change';
 
   @override
+  String get contractCollectRentalAction => 'Collect rental';
+
+  @override
+  String get contractCollectRentalTitle => 'Collect rental payment';
+
+  @override
+  String get contractCollectCoverageMonths => 'Coverage months';
+
+  @override
+  String get contractCollectCollectionDate => 'Collection date';
+
+  @override
+  String get contractCollectPaymentMethod => 'Payment method';
+
+  @override
+  String get contractCollectCashAccount => 'Cash/bank account';
+
+  @override
+  String get contractCollectReferenceNo => 'Reference';
+
+  @override
+  String get contractCollectExpectedAmount => 'Expected collected amount';
+
+  @override
+  String get contractCollectPreviewSubtotal => 'Subtotal';
+
+  @override
+  String get contractCollectPreviewTax => 'Tax';
+
+  @override
+  String get contractCollectPreviewTotal => 'Invoice total';
+
+  @override
+  String get contractCollectConfirmAction => 'Confirm collection';
+
+  @override
+  String get contractCollectViewInvoice => 'View invoice';
+
+  @override
+  String get contractCollectViewReceipt => 'View receipt';
+
+  @override
+  String get contractCollectSuccess => 'Rental payment collected successfully.';
+
+  @override
+  String get contractCollectNoEligibleMonths =>
+      'No eligible coverage months remain for this contract.';
+
+  @override
+  String get contractCollectCashAccountsUnavailable =>
+      'Cash/bank accounts are unavailable for this session.';
+
+  @override
   String get contractCreateTrial => 'Create trial';
 
   @override
