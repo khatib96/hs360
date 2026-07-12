@@ -10,6 +10,7 @@ import 'package:hs360/features/auth/presentation/auth_controller.dart';
 import 'package:hs360/features/contracts/data/contract_repository.dart';
 import 'package:hs360/features/contracts/presentation/contract_detail_screen.dart';
 import 'package:hs360/features/contracts/domain/contract_detail.dart';
+import 'package:hs360/features/contracts/domain/contract_schedule_event.dart';
 import 'package:hs360/features/contracts/domain/contract_status.dart';
 import 'package:hs360/features/contracts/domain/contract_type.dart';
 import 'package:hs360/features/invoices/presentation/widgets/invoice_sheet.dart';
@@ -221,6 +222,57 @@ void main() {
     expect(find.text(l10n.contractSectionUpcomingSchedule), findsOneWidget);
     expect(find.text(l10n.contractSectionHistory), findsOneWidget);
     expect(find.text('دورة الحياة'), findsNothing);
+  });
+
+  testWidgets('upcoming schedule renders server events', (tester) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+    final repo = FakeContractRepository(
+      detailById: {
+        'c-sched': ContractDetail(
+          id: 'c-sched',
+          type: ContractType.rental,
+          status: ContractStatus.active,
+          startDate: DateTime(2026, 7, 1),
+          monthlyRentalValue: Decimal.parse('100'),
+          upcomingSchedule: [
+            ContractScheduleEvent(
+              id: 'evt-1',
+              type: 'billing_due',
+              scheduledDate: DateTime(2026, 8, 5),
+              daysRemaining: 12,
+            ),
+            ContractScheduleEvent(
+              id: 'evt-2',
+              type: 'refill_due',
+              scheduledDate: DateTime(2026, 8, 7),
+              productNameEn: 'Oil A',
+              actionKind: 'refill_with_consumable_change',
+              daysRemaining: 14,
+            ),
+          ],
+        ),
+      },
+    );
+
+    await tester.pumpWidget(
+      _wrap(
+        locale: const Locale('en'),
+        session: _managerSession(),
+        repo: repo,
+        contractId: 'c-sched',
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.contractScheduleEventBillingDue), findsOneWidget);
+    expect(find.text('2026-08-05'), findsOneWidget);
+    expect(find.text(l10n.contractScheduleEventRefillDue), findsOneWidget);
+    expect(find.text('Oil A'), findsOneWidget);
+    expect(
+      find.text(l10n.contractScheduleEventConsumableChange),
+      findsOneWidget,
+    );
+    expect(find.text(l10n.contractScheduleEmpty), findsNothing);
   });
 
   testWidgets('history shows business close date from detail', (tester) async {

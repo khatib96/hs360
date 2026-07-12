@@ -1,6 +1,52 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-12 (Session: Phase 6 M11 — **Contract PDF and document preview verified and closed**).
+> Updated 2026-07-12 (Session: Phase 6 M12 — **Contract calendar handoff closed**).
+
+---
+
+## Session 2026-07-12 - Phase 6 M12 Contract Calendar Handoff (closed)
+
+**Decision:** Phase 6 M12 is closed. Active and suspended contracts now produce
+canonical, idempotent contract-generated calendar rows for Phase 7/8 handoff.
+Contract detail reads server-provided `upcoming_schedule` (generated-only,
+pending, `scheduled_date >= today`, limit 10) without client-side date
+inference or financial side effects from sync.
+
+### Delivered
+
+- Migrations `090` (schema/provenance) and `091` (sync engine, lifecycle hooks,
+  read enrichment, status trigger).
+- Provenance: only `postgres` / `supabase_admin` may write generated rows
+  directly; GUC spoof blocked; tenant integrity trigger is `SECURITY DEFINER`.
+- Callable batch RPC `sync_tenant_contract_calendar_events` (`calendar.edit`);
+  internal sync revoked from `authenticated`.
+- Flutter read path: `ContractScheduleEvent`, mapper, and
+  `ContractUpcomingScheduleSection` (display only; no refresh RPC).
+- SQL suite `phase_6_contract_calendar_handoff.sql` with full M12 case matrix
+  (tenant isolation, billing policies, suspension, UNION refill, coverage→done,
+  horizon shrink, overdue preservation, no financial side effects) plus
+  concurrency shell with documented P6M12C cleanup.
+- Docs: `DATABASE_SCHEMA.md`, `RPC_SPEC.md`, `PHASE_6_CONTRACTS_PLAN.md` M12.
+
+### Locked semantics
+
+- Billing `source_key` uses coverage month (`YYYY-MM-01`); `scheduled_date` is
+  real `billing_day`.
+- Suspension **deletes** pending future billing/refill; reactivation re-syncs;
+  `trial_ending` and `contract_end` continue.
+- Horizon default 30 days; contract detail shows first 10 pending generated
+  events.
+
+### Closure verification (2026-07-12)
+
+- `supabase db reset` — passed
+- `bash scripts/test/run_sql_suites.sh supabase_db_hs360` — passed (Phase C last)
+- `phase_6_contract_calendar_handoff_concurrency.sh` — passed
+- P6M12C fixture counts all zero after concurrency
+- `dart format lib test` — 0 changed
+- `flutter analyze` — no issues
+- `flutter test` — 831 passed
+- `git diff --check` — clean
 
 ---
 

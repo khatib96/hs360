@@ -2762,6 +2762,42 @@ abstract class AppLocalizations {
   /// **'No upcoming visits or payments scheduled yet.'**
   String get contractScheduleEmpty;
 
+  /// No description provided for @contractScheduleEventTrialEnding.
+  ///
+  /// In en, this message translates to:
+  /// **'Trial ending'**
+  String get contractScheduleEventTrialEnding;
+
+  /// No description provided for @contractScheduleEventBillingDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Billing due'**
+  String get contractScheduleEventBillingDue;
+
+  /// No description provided for @contractScheduleEventRefillDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill due'**
+  String get contractScheduleEventRefillDue;
+
+  /// No description provided for @contractScheduleEventContractEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'Contract end'**
+  String get contractScheduleEventContractEnd;
+
+  /// No description provided for @contractScheduleEventConsumableChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Includes consumable change'**
+  String get contractScheduleEventConsumableChange;
+
+  /// No description provided for @contractScheduleRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining'**
+  String get contractScheduleRemaining;
+
   /// No description provided for @contractHistoryEmpty.
   ///
   /// In en, this message translates to:

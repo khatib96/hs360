@@ -2,6 +2,7 @@ import 'package:decimal/decimal.dart';
 
 import 'contract_line.dart';
 import 'contract_return_condition.dart';
+import 'contract_schedule_event.dart';
 import 'contract_status.dart';
 import 'contract_type.dart';
 
@@ -53,6 +54,7 @@ class ContractDetail {
     this.notes,
     this.assetLines = const [],
     this.consumableLines = const [],
+    this.upcomingSchedule = const [],
   });
 
   final String id;
@@ -98,4 +100,5 @@ class ContractDetail {
   final String? notes;
   final List<ContractAssetLine> assetLines;
   final List<ContractConsumableLine> consumableLines;
+  final List<ContractScheduleEvent> upcomingSchedule;
 }

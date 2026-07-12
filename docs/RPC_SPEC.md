@@ -52,8 +52,26 @@ extend_trial_contract(p_data jsonb, p_idempotency_key uuid) returns uuid
 return_trial_contract(p_data jsonb, p_idempotency_key uuid) returns uuid
 close_contract(p_data jsonb, p_idempotency_key uuid) returns uuid
 schedule_contract_consumable_change(p_data jsonb, p_idempotency_key uuid) returns uuid
+sync_tenant_contract_calendar_events(p_horizon_days int default null) returns jsonb
 generate_rental_invoice(p_data jsonb, p_idempotency_key uuid) returns uuid
+get_contract_detail(p_contract_id uuid) returns jsonb  -- includes upcoming_schedule (M12)
 ```
+
+**M12 calendar handoff (internal — not callable by authenticated):**
+
+```sql
+sync_contract_calendar_events_internal(p_contract_id uuid, p_horizon_days int default null) returns jsonb
+list_contract_upcoming_events_json(p_contract_id uuid, p_limit int default 10) returns jsonb
+```
+
+- `sync_tenant_contract_calendar_events` requires `calendar.edit`; default horizon
+  30 days, max 180.
+- Internal sync runs from lifecycle RPCs, contract status trigger, and postgres
+  maintenance only.
+- Generated rows use `source_kind = contract_generated` with stable `source_key`
+  (billing keyed by coverage month `YYYY-MM-01`).
+- `get_contract_detail.upcoming_schedule` returns up to 10 pending generated
+  events with whitelisted metadata only (no cost fields).
 
 Contract creation payload shape:
 

@@ -1428,6 +1428,25 @@ class AppLocalizationsEn extends AppLocalizations {
       'No upcoming visits or payments scheduled yet.';
 
   @override
+  String get contractScheduleEventTrialEnding => 'Trial ending';
+
+  @override
+  String get contractScheduleEventBillingDue => 'Billing due';
+
+  @override
+  String get contractScheduleEventRefillDue => 'Refill due';
+
+  @override
+  String get contractScheduleEventContractEnd => 'Contract end';
+
+  @override
+  String get contractScheduleEventConsumableChange =>
+      'Includes consumable change';
+
+  @override
+  String get contractScheduleRemaining => 'Remaining';
+
+  @override
   String get contractHistoryEmpty => 'No contract history recorded yet.';
 
   @override

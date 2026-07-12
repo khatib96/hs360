@@ -204,3 +204,25 @@ String formatRemainingDays(AppLocalizations l10n, int days) {
 }
 
 bool isRemainingDaysOverdue(int days) => days < 0;
+
+String contractScheduleEventTypeLabel(AppLocalizations l10n, String type) {
+  return switch (type) {
+    'trial_ending' => l10n.contractScheduleEventTrialEnding,
+    'billing_due' => l10n.contractScheduleEventBillingDue,
+    'refill_due' => l10n.contractScheduleEventRefillDue,
+    'contract_end' => l10n.contractScheduleEventContractEnd,
+    _ => type,
+  };
+}
+
+String contractScheduleProductName({
+  required String languageCode,
+  String? nameAr,
+  String? nameEn,
+}) {
+  return contractCustomerName(
+    languageCode: languageCode,
+    nameAr: nameAr,
+    nameEn: nameEn,
+  );
+}

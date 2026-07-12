@@ -1417,6 +1417,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String get contractScheduleEmpty => 'لا توجد زيارات أو دفعات قادمة بعد.';
 
   @override
+  String get contractScheduleEventTrialEnding => 'انتهاء التجريبي';
+
+  @override
+  String get contractScheduleEventBillingDue => 'استحقاق الفوترة';
+
+  @override
+  String get contractScheduleEventRefillDue => 'استحقاق التعبئة';
+
+  @override
+  String get contractScheduleEventContractEnd => 'انتهاء العقد';
+
+  @override
+  String get contractScheduleEventConsumableChange => 'يتضمن تغيير مستهلكات';
+
+  @override
+  String get contractScheduleRemaining => 'المتبقي';
+
+  @override
   String get contractHistoryEmpty => 'لا يوجد سجل للعقد بعد.';
 
   @override

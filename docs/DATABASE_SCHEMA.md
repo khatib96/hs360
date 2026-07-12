@@ -1354,11 +1354,20 @@ create table quotation_lines (
 
 A unified calendar view aggregating all date-bound events.
 
+**Phase 6 M12 (`090`/`091`):** `calendar_events` gained contract-generated
+provenance (`source_kind`, `source_key`, `source_metadata`, `contract_line_id`),
+enum value `billing_due`, unique `(tenant_id, source_key)` for generated rows,
+and tenant-safe composite FKs to contracts/lines. Active rentals sync pending
+`billing_due`, `refill_due`, `trial_ending`, and fixed-term `contract_end`
+events into the default 30-day horizon (cap 180 via batch RPC). Suspension
+deletes pending future billing/refill; reactivation re-syncs. Manual calendar
+rows are excluded from contract detail `upcoming_schedule`.
+
 ```sql
 create type calendar_event_type as enum (
   'refill_due', 'contract_start', 'contract_end',
   'trial_ending', 'follow_up', 'maintenance_due',
-  'payment_due', 'custom'
+  'payment_due', 'billing_due', 'custom'
 );
 
 create type calendar_event_status as enum (

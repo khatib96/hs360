@@ -214,5 +214,38 @@ void main() {
       expect(detail.signatureUrl, 'https://example.com/sig.png');
       expect(detail.assetLines.single.snapshotUnitPrimary, 'piece');
     });
+
+    test('mapContractDetail parses upcoming_schedule events', () {
+      final detail = mapContractDetail({
+        'id': 'con-6',
+        'type': 'rental',
+        'status': 'active',
+        'start_date': '2026-07-01',
+        'upcoming_schedule': [
+          {
+            'id': 'evt-1',
+            'type': 'billing_due',
+            'status': 'pending',
+            'scheduled_date': '2026-08-05',
+            'coverage_month_key': '2026-08-01',
+            'days_remaining': 12,
+          },
+          {
+            'id': 'evt-2',
+            'type': 'refill_due',
+            'status': 'pending',
+            'scheduled_date': '2026-08-07',
+            'product_name_en': 'Oil A',
+            'action_kind': 'refill_with_consumable_change',
+            'days_remaining': 14,
+          },
+        ],
+      });
+
+      expect(detail.upcomingSchedule, hasLength(2));
+      expect(detail.upcomingSchedule.first.type, 'billing_due');
+      expect(detail.upcomingSchedule.first.scheduledDate, DateTime(2026, 8, 5));
+      expect(detail.upcomingSchedule.last.isConsumableChange, isTrue);
+    });
   });
 }

@@ -134,6 +134,10 @@ run_suite "supabase/tests/phase_6_contract_read_rpc.sql"
 printf 'Phase M11: Phase 6 contract PDF\n'
 run_suite "supabase/tests/phase_6_contract_pdf.sql"
 
+printf 'Phase M12: Phase 6 contract calendar handoff\n'
+run_suite "supabase/tests/phase_6_contract_calendar_handoff.sql"
+bash "$repo_root/supabase/tests/phase_6_contract_calendar_handoff_concurrency.sh" "$container_name"
+
 printf 'Phase C: baseline pollution gate\n'
 for suite in "${phase_a_suites[@]}"; do
   run_suite "$suite"

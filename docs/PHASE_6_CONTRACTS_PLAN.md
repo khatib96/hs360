@@ -1281,6 +1281,28 @@ Produce a professional contract document using the Phase 5 print foundation.
 Prepare clean schedule data for Phase 7 calendar and Phase 8 field operations
 without building the full mobile visit workflow.
 
+### Delivered (2026-07-12)
+
+- Migrations `090_phase_6_contract_calendar_handoff_schema.sql` and
+  `091_phase_6_contract_calendar_handoff_functions.sql`:
+  - Added `billing_due` calendar type and contract-generated provenance columns
+    (`source_kind`, `source_key`, `source_metadata`, `contract_line_id`).
+  - Trusted-writer provenance guard (`postgres` / `supabase_admin` only; no GUC
+    spoof; `service_role` direct generated writes blocked).
+  - Idempotent contract sync internals with billing identity keyed by coverage
+    month (`source_key` = `contract:{id}:billing:{YYYY-MM-01}`).
+  - Refill UNION (regular cycle + future oil changes with `effective_from >=
+    current_date`), suspension purge/reactivation sync, and lifecycle hooks on
+    create/extend/return/convert/close/collect/schedule-consumable.
+  - `get_contract_detail` enrichment with generated-only `upcoming_schedule`
+    (pending, `scheduled_date >= current_date`, limit 10).
+  - Callable batch RPC `sync_tenant_contract_calendar_events` (`calendar.edit`).
+- SQL suite `supabase/tests/phase_6_contract_calendar_handoff.sql` plus
+  concurrency shell script; registered in `scripts/test/run_sql_suites.sh`
+  Phase M12.
+- Flutter read path: `ContractScheduleEvent`, mapper, and
+  `ContractUpcomingScheduleSection` (display only; no refresh RPC).
+
 ### Work
 
 1. Seed or expose upcoming contract events:
@@ -1309,6 +1331,10 @@ without building the full mobile visit workflow.
 - Trial end reminders can be found.
 - Re-running schedule generation does not duplicate events.
 - Schedule records are visibly tied to service location.
+- Contract detail shows server-provided `upcoming_schedule` without client-side
+  date inference.
+- Suspension removes pending billing/refill; reactivation recreates without
+  duplicate `source_key` rows.
 
 ---
 

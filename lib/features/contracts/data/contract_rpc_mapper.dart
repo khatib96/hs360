@@ -3,6 +3,7 @@ import '../domain/contract_detail.dart';
 import '../domain/contract_line.dart';
 import '../domain/contract_pricing_preview.dart';
 import '../domain/contract_return_condition.dart';
+import '../domain/contract_schedule_event.dart';
 import '../domain/contract_status.dart';
 import '../domain/contract_type.dart';
 import '../domain/rental_collection_draft.dart';
@@ -74,6 +75,7 @@ RentalCollectionResult mapRentalCollectionResult(Map<String, dynamic> json) {
 ContractDetail mapContractDetail(Map<String, dynamic> json) {
   final assetsRaw = json['asset_lines'] ?? json['assets'];
   final consumablesRaw = json['consumable_lines'] ?? json['consumables'];
+  final scheduleRaw = json['upcoming_schedule'];
 
   final returnConditionRaw = json['return_condition'] as String?;
 
@@ -147,6 +149,15 @@ ContractDetail mapContractDetail(Map<String, dynamic> json) {
               .map(
                 (line) => ContractConsumableLine.fromRpcJson(
                   Map<String, dynamic>.from(line as Map),
+                ),
+              )
+              .toList()
+        : const [],
+    upcomingSchedule: scheduleRaw is List
+        ? scheduleRaw
+              .map(
+                (event) => ContractScheduleEvent.fromRpcJson(
+                  Map<String, dynamic>.from(event as Map),
                 ),
               )
               .toList()
