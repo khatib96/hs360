@@ -7,9 +7,9 @@ and double-entry accounting.
 
 > Repository status updated: **2026-07-12**
 >
-> Current milestone: **Phase 7 M0-M0.5 complete; M1 not started**
+> Current milestone: **Phase 7 M1 complete; next M2**
 >
-> Latest applied migration: **`092_phase_6_list_covered_rental_months_rpc.sql`**
+> Latest applied migration: **`094_phase_7_calendar_event_model.sql`**
 
 ---
 
@@ -24,12 +24,13 @@ and double-entry accounting.
 | 4 | Engineering complete | Customers, suppliers, CoA, service locations, coordinates |
 | 5 | Complete | Invoices, returns, vouchers, journal, inventory accounting, PDFs |
 | 6 | Complete | Trial/rental contracts, lifecycle, billing, PDF, calendar handoff |
-| 7 | M0-M0.5 complete | Decisions and safety baseline closed; implementation starts at M1/`093` |
+| 7 | M1 complete | Working-schedule data model, settings UI, event provenance (`093`–`094`) |
 | 8-12 | Not started | Field execution and later operational/reporting/production phases |
 
-Phase 6 closed through M13/migration `092` on 2026-07-12. The Phase 7 plan is
-locked, and a pre-`093` safety snapshot was captured locally. No Phase 7 schema,
-Dart, or Flutter implementation has started.
+Phase 6 closed through M13/migration `092` on 2026-07-12. Phase 7 M1 closed on
+2026-07-12 with migrations `093`–`094`, SQL Phase O regression, and a Calendar
+Settings Flutter vertical slice. Main Calendar UI, reminders, and M2 generation
+work remain next.
 
 Detailed roadmap: [BUILD_PLAN.md](docs/BUILD_PLAN.md)
 
@@ -54,12 +55,14 @@ Phase 7 source of truth: [PHASE_7_CALENDAR_PLAN.md](docs/PHASE_7_CALENDAR_PLAN.m
 - Trial and rental contracts with multi-asset/multi-consumable support,
   cost/profit snapshots, lifecycle operations, rental collection, contract PDF,
   and protected calendar-event generation.
+- Calendar Settings: per-tenant IANA timezone, seven-day working schedule,
+  reminder toggles, permission-gated RPCs, and settings screen/navigation.
 - Automated SQL regression/concurrency suites and Flutter unit/widget tests.
 
 ## Planned, Not Yet Implemented
 
-- Phase 7 Calendar UI, working-schedule settings, date-based reminders, manual
-  events, assignment/rescheduling, mobile calendar, and route view.
+- Phase 7 main Calendar UI, date-based reminders, manual events,
+  assignment/rescheduling, mobile calendar, and route view.
 - Phase 8 field execution: GPS proof, live-camera photo, actual consumable
   delivery, coverage confirmation, stock-out, and optional payment collection.
 - Offline mobile synchronization. Drift is deliberately not a current
@@ -248,9 +251,20 @@ Before implementing a milestone:
 
 ---
 
+## M1 Verification (2026-07-12)
+
+- `npx supabase db reset` — migrations `093`–`094` applied cleanly.
+- `bash scripts/test/run_sql_suites.sh supabase_db_hs360` — all phases passed,
+  including Phase O `phase_7_calendar_working_schedule.sql` (67 cases).
+- `flutter analyze` — no issues.
+- `flutter test` — 888 passed.
+- `git diff --check` — clean.
+
+---
+
 ## Current Constraints
 
-- Phase 7 M1 and migration `093` have not started.
+- Phase 7 M2 (event generation engine) and migration `095` have not started.
 - Production Supabase/VPS deployment and external messaging credentials are not
   configured by this repository state.
 - The `resolve-google-maps-url` Edge Function has local verification but still

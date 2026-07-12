@@ -897,6 +897,72 @@ void main() {
       );
     });
 
+    test('settings.calendar.view resolves home to dashboard', () {
+      expect(
+        resolveHomeRoute(
+          session(accountType: 'user', permissions: {'settings.calendar.view'}),
+        ),
+        AppRoutes.dashboard,
+      );
+    });
+
+    test('settings.calendar.view can access calendar settings route', () {
+      final calendarViewer = session(
+        accountType: 'user',
+        permissions: {'settings.calendar.view'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.calendarSettings,
+          hasSupabaseSession: true,
+          authState: loaded(calendarViewer),
+        ),
+        isNull,
+      );
+    });
+
+    test('settings.calendar.edit can access calendar settings route', () {
+      final calendarEditor = session(
+        accountType: 'user',
+        permissions: {'settings.calendar.edit'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.calendarSettings,
+          hasSupabaseSession: true,
+          authState: loaded(calendarEditor),
+        ),
+        isNull,
+      );
+    });
+
+    test('settings.calendar.view alone cannot access contracts', () {
+      final calendarViewer = session(
+        accountType: 'user',
+        permissions: {'settings.calendar.view'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.contracts,
+          hasSupabaseSession: true,
+          authState: loaded(calendarViewer),
+        ),
+        AppRoutes.dashboard,
+      );
+    });
+
+    test('zero-permission user blocked from calendar settings', () {
+      final zeroUser = session(accountType: 'user');
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.calendarSettings,
+          hasSupabaseSession: true,
+          authState: loaded(zeroUser),
+        ),
+        AppRoutes.blocked,
+      );
+    });
+
     test('legacy invoices.view grants invoice list access', () {
       final legacyViewer = session(
         accountType: 'user',

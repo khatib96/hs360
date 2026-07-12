@@ -1,12 +1,60 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-12 (Session: Phase 7 M0.5 — **closed**; safety baseline captured, M1/093 not started).
+> Updated 2026-07-13 (Session: Phase 7 M1 — **closed and independently verified**; migrations `093`–`094`, next M2).
+
+---
+
+## Session 2026-07-12 - Phase 7 M1 Calendar and Working-Schedule Data Model (closed)
+
+**Decision:** Phase 7 M1 is closed. Migrations `093` and `094` applied; SQL
+Phase O `phase_7_calendar_working_schedule.sql` registered; Calendar Settings
+Flutter vertical slice shipped. Next: M2 event generation engine (`095`).
+
+**Delivered:**
+- `tenant_calendar_settings`, `tenant_working_days`, provisioning/backfill,
+  `settings.calendar.view/edit`, RLS + explicit REVOKE, configured-state
+  invariant triggers, `get_calendar_settings`, `update_calendar_settings`,
+  `list_calendar_timezones`, `resolve_tenant_working_window`.
+- `calendar_events.original_due_date` immutability, reschedule prep columns,
+  `calendar_refill_execution_facts` with M12-aware product integrity trigger,
+  post-fact terminal guards, internal overdue helpers.
+- Flutter: `lib/features/calendar/` domain/data/presentation, route
+  `/settings/calendar`, office-home guards, app shell nav, ARB strings.
+- Tests: SQL Phase O (67 cases); Flutter suite 888 passed.
+
+**Verification (2026-07-13, final independent M1 hardening pass):**
+- `npx supabase db reset` — clean through `094`.
+- `bash scripts/test/run_sql_suites.sh supabase_db_hs360` — all phases passed;
+  Phase O expanded to 67 cases covering execution-fact matrix and explicit
+  customer/service-location alignment.
+- `flutter analyze` — no issues; `flutter test` — 888 passed.
+- `git diff --check` — clean.
+
+**M1 hardening fixes:** oil-change product/qty pairing in deferred integrity
+trigger; completed visit customer/service-location alignment with the linked
+calendar event; overdue execution fixtures where completion occurs three days
+after `original_due_date`; next-due coverage assertions based on
+`actual_completion_date` rather than the planned date;
+`parse_calendar_work_time()` + Flutter boundary validation; configured
+working-day DELETE guard; expanded SQL coverage to 67 cases.
+
+**Final review outcome:** database reset, the complete SQL regression suite,
+Flutter analysis, all 888 Flutter tests, and whitespace validation were rerun
+after the final fixes and passed. M1 is safe to commit as one scoped milestone.
+No M2 code or migration `095` exists yet, and no Phase 8 execution writer was
+introduced.
+
+**Deferred to M2+ / Phase 8:** main Calendar UI, reminders (M3), calendar read
+RPCs (M4), reschedule RPCs (M8), Phase 8 execution-fact writes, precise
+execution-time effective dating for oil changes.
+
+**Next:** Phase 7 M2 — Event Generation Engine, starting at migration `095`.
 
 ---
 
 ## Session 2026-07-12 - Phase 7 M0.5 Safety Snapshot and Rollback (closed)
 
-**Decision:** Phase 7 M0.5 is closed. M1 and migration `093` have not started.
+**Decision:** Phase 7 M0.5 is closed.
 
 ### Safety artifacts (local/ignored)
 

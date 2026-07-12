@@ -3630,4 +3630,111 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get financeReversalLabel => 'Reversal';
+
+  @override
+  String get calendarSettingsTitle => 'Working Days & Hours';
+
+  @override
+  String get calendarSettingsPermissionDenied =>
+      'You do not have permission to view calendar settings.';
+
+  @override
+  String get calendarSettingsSetupRequired =>
+      'Calendar setup is required before working windows and reminders are available.';
+
+  @override
+  String get calendarSettingsTimezone => 'IANA timezone';
+
+  @override
+  String get calendarSettingsTimezoneRequired => 'Select a valid timezone.';
+
+  @override
+  String calendarSettingsLegacyTimezoneSuggestion(String timezone) {
+    return 'Legacy suggestion (unconfirmed): $timezone';
+  }
+
+  @override
+  String get calendarSettingsWorkingDaysSection => 'Working days';
+
+  @override
+  String get calendarSettingsDayMode => 'Day mode';
+
+  @override
+  String get calendarSettingsWorkStart => 'Start';
+
+  @override
+  String get calendarSettingsWorkEnd => 'End';
+
+  @override
+  String calendarSettingsDaySummary(String start, String end) {
+    return 'Window: $start – $end';
+  }
+
+  @override
+  String get calendarSettingsRemindEventDay =>
+      'Remind at event working-day start';
+
+  @override
+  String get calendarSettingsRemindPreviousDay =>
+      'Remind at previous working-day start';
+
+  @override
+  String get calendarSettingsSave => 'Save settings';
+
+  @override
+  String get calendarSettingsSaved => 'Calendar settings saved.';
+
+  @override
+  String get calendarSettingsValidationFailed =>
+      'Could not save calendar settings. Check the fields and try again.';
+
+  @override
+  String get calendarSettingsUnsavedTitle => 'Discard changes?';
+
+  @override
+  String get calendarSettingsUnsavedBody =>
+      'You have unsaved calendar settings changes.';
+
+  @override
+  String get calendarSettingsDiscard => 'Discard';
+
+  @override
+  String get calendarSettingsDayValidationError =>
+      'Review this day\'s settings.';
+
+  @override
+  String get calendarDayModeUnreviewed => 'Unreviewed';
+
+  @override
+  String get calendarDayModeDayOff => 'Day off';
+
+  @override
+  String get calendarDayModeWorkingHours => 'Working hours';
+
+  @override
+  String get calendarDayMode24Hours => '24 hours';
+
+  @override
+  String get calendarWeekdayMonday => 'Monday';
+
+  @override
+  String get calendarWeekdayTuesday => 'Tuesday';
+
+  @override
+  String get calendarWeekdayWednesday => 'Wednesday';
+
+  @override
+  String get calendarWeekdayThursday => 'Thursday';
+
+  @override
+  String get calendarWeekdayFriday => 'Friday';
+
+  @override
+  String get calendarWeekdaySaturday => 'Saturday';
+
+  @override
+  String get calendarWeekdaySunday => 'Sunday';
+
+  @override
+  String get navCalendarSettings => 'Calendar settings';
 }

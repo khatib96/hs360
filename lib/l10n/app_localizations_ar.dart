@@ -3591,4 +3591,110 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get financeReversalLabel => 'عكس';
+
+  @override
+  String get calendarSettingsTitle => 'أيام وساعات العمل';
+
+  @override
+  String get calendarSettingsPermissionDenied =>
+      'ليس لديك صلاحية عرض إعدادات التقويم.';
+
+  @override
+  String get calendarSettingsSetupRequired =>
+      'يلزم إعداد التقويم قبل تفعيل نوافذ العمل والتذكيرات.';
+
+  @override
+  String get calendarSettingsTimezone => 'المنطقة الزمنية IANA';
+
+  @override
+  String get calendarSettingsTimezoneRequired => 'اختر منطقة زمنية صالحة.';
+
+  @override
+  String calendarSettingsLegacyTimezoneSuggestion(String timezone) {
+    return 'اقتراح قديم (غير مؤكد): $timezone';
+  }
+
+  @override
+  String get calendarSettingsWorkingDaysSection => 'أيام العمل';
+
+  @override
+  String get calendarSettingsDayMode => 'وضع اليوم';
+
+  @override
+  String get calendarSettingsWorkStart => 'البداية';
+
+  @override
+  String get calendarSettingsWorkEnd => 'النهاية';
+
+  @override
+  String calendarSettingsDaySummary(String start, String end) {
+    return 'النافذة: $start – $end';
+  }
+
+  @override
+  String get calendarSettingsRemindEventDay =>
+      'تذكير عند بداية يوم العمل للموعد';
+
+  @override
+  String get calendarSettingsRemindPreviousDay =>
+      'تذكير عند بداية يوم العمل السابق';
+
+  @override
+  String get calendarSettingsSave => 'حفظ الإعدادات';
+
+  @override
+  String get calendarSettingsSaved => 'تم حفظ إعدادات التقويم.';
+
+  @override
+  String get calendarSettingsValidationFailed =>
+      'تعذر حفظ إعدادات التقويم. راجع الحقول وحاول مرة أخرى.';
+
+  @override
+  String get calendarSettingsUnsavedTitle => 'تجاهل التغييرات؟';
+
+  @override
+  String get calendarSettingsUnsavedBody =>
+      'لديك تغييرات غير محفوظة في إعدادات التقويم.';
+
+  @override
+  String get calendarSettingsDiscard => 'تجاهل';
+
+  @override
+  String get calendarSettingsDayValidationError => 'راجع إعدادات هذا اليوم.';
+
+  @override
+  String get calendarDayModeUnreviewed => 'غير مراجع';
+
+  @override
+  String get calendarDayModeDayOff => 'يوم إجازة';
+
+  @override
+  String get calendarDayModeWorkingHours => 'ساعات عمل';
+
+  @override
+  String get calendarDayMode24Hours => '24 ساعة';
+
+  @override
+  String get calendarWeekdayMonday => 'الاثنين';
+
+  @override
+  String get calendarWeekdayTuesday => 'الثلاثاء';
+
+  @override
+  String get calendarWeekdayWednesday => 'الأربعاء';
+
+  @override
+  String get calendarWeekdayThursday => 'الخميس';
+
+  @override
+  String get calendarWeekdayFriday => 'الجمعة';
+
+  @override
+  String get calendarWeekdaySaturday => 'السبت';
+
+  @override
+  String get calendarWeekdaySunday => 'الأحد';
+
+  @override
+  String get navCalendarSettings => 'إعدادات التقويم';
 }

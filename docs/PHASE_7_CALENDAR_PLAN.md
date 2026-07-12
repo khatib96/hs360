@@ -4,8 +4,8 @@
 > contract-generated schedule data into a clear daily planning surface for the
 > office and assigned employees.
 >
-> Status: **M0 and M0.5 complete (2026-07-12). M1 and Phase 7 migration `093`
-> not started.**
+> Status: **M0, M0.5, and M1 complete (2026-07-12).** Migrations `093`–`094`
+> applied. Next milestone: **M2 — Event Generation Engine** (`095`).
 >
 > Owner direction: HS360 appointments are **day-based**, not exact-time
 > appointments. An event is due on a selected calendar date and is expected to
@@ -1012,13 +1012,16 @@ Create a trustworthy rollback point before the first Phase 7 migration.
   notifications, contracts, rental collection operations, orphan checks, and
   suspicious M11 test templates all zero.
 - `flutter analyze`: no issues.
-- `flutter test`: 852 passed.
+- `flutter test`: 888 passed.
 - `git diff --check`: clean.
-- M1 and migration `093` remain not started.
+- M1 and migrations `093`–`094` are complete (2026-07-12).
 
 ---
 
 ## M1 - Calendar and Working-Schedule Data Model
+
+**Status:** [x] Complete (2026-07-12). Migrations `093` and `094`; SQL Phase O;
+Calendar Settings Flutter slice; route guards and nav.
 
 ### Goal
 
@@ -1061,20 +1064,22 @@ future operational overrides safely.
 
 ### Acceptance
 
-- Every tenant has exactly seven weekday rows, initially unreviewed.
-- No weekday, weekend, time window, or timezone is inferred.
-- Configuration remains false until a manager atomically selects a valid IANA
+- [x] Every tenant has exactly seven weekday rows, initially unreviewed.
+- [x] No weekday, weekend, time window, or timezone is inferred.
+- [x] Configuration remains false until a manager atomically selects a valid IANA
   timezone and reviews all seven rows.
-- Friday/Saturday or any other day can independently be off, limited, or 24h;
+- [x] Friday/Saturday or any other day can independently be off, limited, or 24h;
   no weekend is hard-coded in application logic.
-- Half-day and full-day windows validate correctly.
-- Invalid/overnight/split windows are rejected clearly.
-- A date resolves in the tenant timezone consistently in SQL and Dart tests.
-- A working schedule can be read/updated only with accepted permissions.
-- Calendar viewers without settings permission cannot read Calendar Settings.
-- No working-hours reminder exists while configuration is incomplete.
-- Existing calendar events are not moved or deleted.
-- New Phase 7 events contain no fabricated time.
+- [x] Half-day and full-day windows validate correctly.
+- [x] Invalid/overnight/split windows are rejected clearly.
+- [x] A date resolves in the tenant timezone consistently in SQL tests.
+- [x] A working schedule can be read/updated only with accepted permissions.
+- [x] Calendar viewers without settings permission cannot read Calendar Settings.
+- [x] No working-hours reminder exists while configuration is incomplete.
+- [x] Existing calendar events are not moved or deleted.
+- [x] New Phase 7 events contain no fabricated time.
+- [x] `original_due_date` is forced from `scheduled_date` on insert and is
+  immutable; `calendar_refill_execution_facts` is internal-only in M1.
 
 ---
 
@@ -1789,5 +1794,5 @@ Do not begin route-map implementation until:
 - the map package/provider and privacy terms are accepted;
 - missing-coordinate fallback is designed.
 
-The next implementation action is M1 design/implementation beginning with
-`093_phase_7_calendar_working_schedule.sql`; it has not started in this session.
+The next implementation action is M2 — Event Generation Engine, beginning with
+migration `095`.

@@ -1363,30 +1363,61 @@ events into the default 30-day horizon (cap 180 via batch RPC). Suspension
 deletes pending future billing/refill; reactivation re-syncs. Manual calendar
 rows are excluded from contract detail `upcoming_schedule`.
 
-**Phase 7 M0 decision lock (planning only; Phase 7 migration `093` not
-started; `092` is the existing Phase 6 M13 covered-month read RPC):**
+**Phase 7 M1 (`093`/`094`):** `tenant_calendar_settings` and
+`tenant_working_days` store the owner-selected IANA timezone, seven weekday
+modes (`day_off`, `working_hours`, `24_hours`), reminder toggles, and
+`working_schedule_configured`. Provisioning creates seven initially unreviewed
+rows per tenant. Direct writes are revoked from API roles; reads use RLS plus
+`get_calendar_settings` / `update_calendar_settings` RPCs gated by
+`settings.calendar.view` / `settings.calendar.edit`. Internal helpers
+`resolve_tenant_working_window(tenant_id, date)` and
+`derive_calendar_event_overdue(event_id)` are revoked from API roles.
 
-- Phase 7 uses date-only appointments; current nullable `scheduled_time` and
-  `reminder_offsets_minutes` remain legacy schema until M1/M3 migrations but are
-  not authoritative for null-time events.
-- Add seven initially unreviewed tenant weekday rows plus an explicit
-  `working_schedule_configured = false` state. Do not seed a weekend, hours, or
-  a newly inferred timezone.
-- The existing `tenants.timezone` default `Asia/Kuwait` is legacy schema, not
-  proof of owner selection. It remains unconfirmed until Calendar Settings are
-  reviewed explicitly.
-- Calendar configuration requires an owner-selected IANA timezone and atomic
-  review of all seven weekdays.
-- Add dedicated `settings.calendar.view/edit` permissions.
-- Preserve `original_due_date`; derive overdue for pending, unexecuted rows in
-  the tenant timezone.
-- Phase 8 is the trusted writer for `actual_completion_date`, actual delivered
-  quantity, confirmed coverage, and confirmed `next_due_date`.
-- Refill generation keeps one outstanding event and advances only from trusted
-  actual completion/confirmed coverage. Billing generation stays independent.
+`calendar_events` gained immutable `original_due_date` (forced from
+`scheduled_date` on insert), reschedule prep columns, and `schedule_version`.
+`calendar_refill_execution_facts` holds trusted Phase 8 execution handoff data
+(one row per event). When `source_metadata.contract_oil_change_id` is present,
+`product_id` and `contracted_quantity_per_cycle` must both come from that
+specific `contract_oil_changes` row; otherwise the line's original product and
+`qty_per_refill` apply. `quantity_unit` must match `products.unit_primary`.
+The completed visit must match the event's customer and service location, and
+next-due proposals are based on `actual_completion_date` plus confirmed
+coverage rather than `original_due_date`.
+API roles have no SELECT/INSERT/UPDATE/DELETE on execution facts in M1.
+Configured tenants cannot delete individual `tenant_working_days` rows (BEFORE
+DELETE guard); tenant cascade delete remains valid. Post-fact BEFORE UPDATE
+guards block terminal changes to linked event/visit status fields after a fact
+exists; full terminal immutability is documented for Phase 8 write order.
 
-The exact physical storage for execution facts is finalized at the M1/M2 to
-Phase 8 handoff. It must not allow a Phase 7 client to fabricate execution.
+Legacy nullable `scheduled_time` and `reminder_offsets_minutes` remain for
+compatibility but are not authoritative for date-only Phase 7 events.
+
+```sql
+create type tenant_working_day_mode as enum (
+  'day_off', 'working_hours', '24_hours'
+);
+
+create table tenant_calendar_settings (
+  tenant_id uuid primary key references tenants(id) on delete cascade,
+  timezone_name text,
+  working_schedule_configured boolean not null default false,
+  remind_event_workday_start boolean not null default true,
+  remind_previous_workday_start boolean not null default true,
+  configured_at timestamptz,
+  configured_by uuid references auth.users(id),
+  updated_at timestamptz not null default now(),
+  updated_by uuid references auth.users(id)
+);
+
+create table tenant_working_days (
+  tenant_id uuid not null references tenant_calendar_settings(tenant_id) on delete cascade,
+  iso_weekday smallint not null check (iso_weekday between 1 and 7),
+  day_mode tenant_working_day_mode,
+  work_start time,
+  work_end time,
+  primary key (tenant_id, iso_weekday)
+);
+```
 
 ```sql
 create type calendar_event_type as enum (
@@ -1426,6 +1457,16 @@ create table calendar_events (
   completed_at timestamptz,
   completed_by uuid references auth.users(id),
 
+  -- Phase 7 M1 provenance / reschedule prep
+  original_due_date date not null,
+  reschedule_reason text,
+  rescheduled_at timestamptz,
+  rescheduled_by uuid references auth.users(id),
+  day_off_override_reason text,
+  day_off_override_at timestamptz,
+  day_off_override_by uuid references auth.users(id),
+  schedule_version int not null default 1,
+
   -- Recurrence (for monthly refills)
   is_recurring boolean default false,
   recurrence_rule text,                           -- iCal RRULE string
@@ -1441,6 +1482,32 @@ create index idx_calevents_date on calendar_events(scheduled_date);
 create index idx_calevents_contract on calendar_events(contract_id);
 create index idx_calevents_service_location on calendar_events(service_location_id);
 create index idx_calevents_status on calendar_events(status);
+```
+
+```sql
+create table calendar_refill_execution_facts (
+  id uuid primary key default gen_random_uuid(),
+  tenant_id uuid not null references tenants(id) on delete cascade,
+  calendar_event_id uuid not null unique,
+  visit_id uuid not null,
+  contract_id uuid not null,
+  contract_line_id uuid not null,
+  product_id uuid not null,
+  original_due_date date not null,
+  actual_completion_date date not null,
+  actual_quantity_delivered numeric(15,3) not null,
+  quantity_unit unit_of_measure not null,
+  contracted_quantity_per_cycle numeric(15,3) not null,
+  coverage_months int,
+  coverage_days int,
+  calculated_next_due_date date not null,
+  confirmed_next_due_date date not null,
+  next_due_overridden boolean not null default false,
+  created_at timestamptz not null default now(),
+  created_by uuid not null references auth.users(id)
+);
+-- Composite FKs to calendar_events, contracts, contract_lines, products, visits.
+-- REVOKE ALL from public, anon, authenticated in M1; Phase 8 owns writes.
 ```
 
 ---

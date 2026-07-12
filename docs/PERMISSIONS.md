@@ -158,7 +158,8 @@ The full catalog includes permissions for:
 - `messaging` (whatsapp, email)
 - `settings` (company, users, currencies, templates, etc.)
 
-Phase 7 adds dedicated Calendar Settings permissions:
+Phase 7 adds dedicated Calendar Settings permissions (seeded in migration
+`093`, `sort_order` 181–182):
 
 - `settings.calendar.view` — view the seven-day working schedule, selected IANA
   timezone, and reminder policies.

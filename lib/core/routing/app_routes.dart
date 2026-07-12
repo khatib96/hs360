@@ -24,6 +24,7 @@ abstract final class AppRoutes {
   static const accounts = '/accounts';
   static const templateSettings = '/settings/templates';
   static const taxSettings = '/settings/tax';
+  static const calendarSettings = '/settings/calendar';
   static const documentPreview = '/documents/preview';
   static const invoices = '/invoices';
   static const invoicesNewSales = '/invoices/new/sales';
@@ -74,6 +75,7 @@ abstract final class AppRoutes {
   static const accountsName = 'accounts';
   static const templateSettingsName = 'templateSettings';
   static const taxSettingsName = 'taxSettings';
+  static const calendarSettingsName = 'calendarSettings';
   static const documentPreviewName = 'documentPreview';
   static const invoicesName = 'invoices';
   static const invoicesNewSalesName = 'invoicesNewSales';

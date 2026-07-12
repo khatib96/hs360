@@ -73,23 +73,89 @@ list_contract_upcoming_events_json(p_contract_id uuid, p_limit int default 10) r
 - `get_contract_detail.upcoming_schedule` returns up to 10 pending generated
   events with whitelisted metadata only (no cost fields).
 
-**Phase 7 M0 supersession (planned; no Phase 7 RPC is implemented yet):**
+**Phase 7 M1 calendar settings RPCs (`093`):**
 
-- Phase 7 calendar RPCs are date-only and do not accept a fabricated event
-  time.
-- Working-schedule settings use dedicated `settings.calendar.view/edit`.
-- Read contracts return `original_due_date`, derived overdue state/days, and
-  trusted execution/coverage facts when available.
+```sql
+get_calendar_settings() returns jsonb
+update_calendar_settings(p_data jsonb) returns jsonb
+list_calendar_timezones(p_search text default null) returns table (timezone_name text)
+```
+
+- `get_calendar_settings` requires `settings.calendar.view` (or manager).
+- `update_calendar_settings` requires `settings.calendar.edit` (or manager).
+- `list_calendar_timezones` requires `settings.calendar.view` (or manager).
+- Client cannot set `working_schedule_configured`; server sets it on first valid
+  atomic save. `configured_at` / `configured_by` are set only on the first
+  `false → true` transition.
+- Direct INSERT/UPDATE/DELETE on `tenant_calendar_settings` and
+  `tenant_working_days` are revoked from API roles.
+
+**`get_calendar_settings` / `update_calendar_settings` response shape:**
+
+```json
+{
+  "timezone_name": "Asia/Kuwait",
+  "timezone_confirmed": true,
+  "legacy_timezone_suggestion": "Asia/Kuwait",
+  "working_schedule_configured": true,
+  "remind_event_workday_start": true,
+  "remind_previous_workday_start": true,
+  "can_edit": true,
+  "days": [
+    {
+      "iso_weekday": 1,
+      "day_mode": "working_hours",
+      "work_start": "08:00",
+      "work_end": "17:00"
+    }
+  ]
+}
+```
+
+**`update_calendar_settings` payload:**
+
+```json
+{
+  "timezone_name": "Asia/Kuwait",
+  "remind_event_workday_start": true,
+  "remind_previous_workday_start": true,
+  "days": [
+    {
+      "iso_weekday": 1,
+      "day_mode": "working_hours",
+      "work_start": "08:00",
+      "work_end": "17:00"
+    }
+  ]
+}
+```
+
+Day modes: `day_off`, `working_hours`, `24_hours`. Exactly seven distinct
+`iso_weekday` values (1–7) required. `work_start` / `work_end` required only for
+`working_hours`, validated as `HH:MM` with hour `00–23` and minute `00–59`
+via `parse_calendar_work_time()` (invalid values return `validation_failed`).
+
+**Internal (revoked from API roles):**
+
+```sql
+resolve_tenant_working_window(p_tenant_id uuid, p_date date) returns jsonb
+derive_calendar_event_overdue(p_event_id uuid) returns jsonb
+tenant_local_today(p_tenant_id uuid) returns date
+```
+
+**Phase 7 M0 supersession (remaining planned work):**
+
+- Phase 7 calendar event read/reschedule RPCs are date-only and do not accept a
+  fabricated event time.
+- Read contracts will return derived overdue state when M4 lands.
 - M2 must correct refill generation to one outstanding due event per cadence
-  chain. A missed refill stays pending/overdue and blocks later refill
-  generation.
-- Only trusted Phase 8 execution may supply `actual_completion_date`, actual
-  delivered quantity, confirmed coverage, and confirmed `next_due_date`.
-- The next refill uses the confirmed next date; financial billing cadence is
-  unaffected.
+  chain.
+- Only trusted Phase 8 execution may write `calendar_refill_execution_facts`.
+- Execution-fact integrity requires the completed visit to match the linked
+  event's customer and service location. Phase 8 calculates the proposed next
+  due date from `actual_completion_date` plus confirmed coverage, never from
+  the original planned due date.
 - Manual next-date override requires a dedicated permission, reason, and audit.
-- Exact Phase 7 RPC names and JSON contracts are added milestone-by-milestone
-  before their migrations.
 
 Contract creation payload shape:
 

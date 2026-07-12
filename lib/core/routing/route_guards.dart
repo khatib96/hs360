@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/auth/domain/app_session.dart';
 import '../../features/auth/presentation/auth_controller.dart';
+import '../../features/calendar/domain/calendar_permissions.dart';
 import '../../features/contracts/domain/contract_permissions.dart';
 import '../../features/finance_shared/domain/finance_permissions.dart';
 import '../../features/invoices/domain/invoice_type.dart';
@@ -45,6 +46,8 @@ const _officePermissionIds = [
   'settings.templates.edit',
   'settings.tax.view',
   'settings.tax.edit',
+  'settings.calendar.view',
+  'settings.calendar.edit',
 ];
 
 bool isPublicRoute(String path) =>
@@ -256,6 +259,9 @@ bool _isPathAllowed(
   }
   if (path == AppRoutes.taxSettings) {
     return canViewTaxSettings(session);
+  }
+  if (path == AppRoutes.calendarSettings) {
+    return canViewCalendarSettings(session);
   }
   if (path == AppRoutes.documentPreview) {
     final kind = DocumentKind.fromDocumentType(queryParameters['kind']);

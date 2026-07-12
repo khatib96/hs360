@@ -6907,6 +6907,198 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reversal'**
   String get financeReversalLabel;
+
+  /// No description provided for @calendarSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Working Days & Hours'**
+  String get calendarSettingsTitle;
+
+  /// No description provided for @calendarSettingsPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have permission to view calendar settings.'**
+  String get calendarSettingsPermissionDenied;
+
+  /// No description provided for @calendarSettingsSetupRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar setup is required before working windows and reminders are available.'**
+  String get calendarSettingsSetupRequired;
+
+  /// No description provided for @calendarSettingsTimezone.
+  ///
+  /// In en, this message translates to:
+  /// **'IANA timezone'**
+  String get calendarSettingsTimezone;
+
+  /// No description provided for @calendarSettingsTimezoneRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a valid timezone.'**
+  String get calendarSettingsTimezoneRequired;
+
+  /// No description provided for @calendarSettingsLegacyTimezoneSuggestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Legacy suggestion (unconfirmed): {timezone}'**
+  String calendarSettingsLegacyTimezoneSuggestion(String timezone);
+
+  /// No description provided for @calendarSettingsWorkingDaysSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Working days'**
+  String get calendarSettingsWorkingDaysSection;
+
+  /// No description provided for @calendarSettingsDayMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Day mode'**
+  String get calendarSettingsDayMode;
+
+  /// No description provided for @calendarSettingsWorkStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get calendarSettingsWorkStart;
+
+  /// No description provided for @calendarSettingsWorkEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'End'**
+  String get calendarSettingsWorkEnd;
+
+  /// No description provided for @calendarSettingsDaySummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Window: {start} – {end}'**
+  String calendarSettingsDaySummary(String start, String end);
+
+  /// No description provided for @calendarSettingsRemindEventDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind at event working-day start'**
+  String get calendarSettingsRemindEventDay;
+
+  /// No description provided for @calendarSettingsRemindPreviousDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind at previous working-day start'**
+  String get calendarSettingsRemindPreviousDay;
+
+  /// No description provided for @calendarSettingsSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save settings'**
+  String get calendarSettingsSave;
+
+  /// No description provided for @calendarSettingsSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar settings saved.'**
+  String get calendarSettingsSaved;
+
+  /// No description provided for @calendarSettingsValidationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save calendar settings. Check the fields and try again.'**
+  String get calendarSettingsValidationFailed;
+
+  /// No description provided for @calendarSettingsUnsavedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard changes?'**
+  String get calendarSettingsUnsavedTitle;
+
+  /// No description provided for @calendarSettingsUnsavedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You have unsaved calendar settings changes.'**
+  String get calendarSettingsUnsavedBody;
+
+  /// No description provided for @calendarSettingsDiscard.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get calendarSettingsDiscard;
+
+  /// No description provided for @calendarSettingsDayValidationError.
+  ///
+  /// In en, this message translates to:
+  /// **'Review this day\'s settings.'**
+  String get calendarSettingsDayValidationError;
+
+  /// No description provided for @calendarDayModeUnreviewed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unreviewed'**
+  String get calendarDayModeUnreviewed;
+
+  /// No description provided for @calendarDayModeDayOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Day off'**
+  String get calendarDayModeDayOff;
+
+  /// No description provided for @calendarDayModeWorkingHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Working hours'**
+  String get calendarDayModeWorkingHours;
+
+  /// No description provided for @calendarDayMode24Hours.
+  ///
+  /// In en, this message translates to:
+  /// **'24 hours'**
+  String get calendarDayMode24Hours;
+
+  /// No description provided for @calendarWeekdayMonday.
+  ///
+  /// In en, this message translates to:
+  /// **'Monday'**
+  String get calendarWeekdayMonday;
+
+  /// No description provided for @calendarWeekdayTuesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Tuesday'**
+  String get calendarWeekdayTuesday;
+
+  /// No description provided for @calendarWeekdayWednesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Wednesday'**
+  String get calendarWeekdayWednesday;
+
+  /// No description provided for @calendarWeekdayThursday.
+  ///
+  /// In en, this message translates to:
+  /// **'Thursday'**
+  String get calendarWeekdayThursday;
+
+  /// No description provided for @calendarWeekdayFriday.
+  ///
+  /// In en, this message translates to:
+  /// **'Friday'**
+  String get calendarWeekdayFriday;
+
+  /// No description provided for @calendarWeekdaySaturday.
+  ///
+  /// In en, this message translates to:
+  /// **'Saturday'**
+  String get calendarWeekdaySaturday;
+
+  /// No description provided for @calendarWeekdaySunday.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunday'**
+  String get calendarWeekdaySunday;
+
+  /// No description provided for @navCalendarSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar settings'**
+  String get navCalendarSettings;
 }
 
 class _AppLocalizationsDelegate

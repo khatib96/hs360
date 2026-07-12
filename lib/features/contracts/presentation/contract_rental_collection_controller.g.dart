@@ -7,7 +7,7 @@ part of 'contract_rental_collection_controller.dart';
 // **************************************************************************
 
 String _$contractRentalCollectionControllerHash() =>
-    r'1f0dd01b34836ae372426f86140d80362e64903f';
+    r'2f5c8e79e0e96c4368aaf6ff52985e64e8d8ef0f';
 
 /// Copied from Dart SDK
 class _SystemHash {

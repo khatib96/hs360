@@ -12,6 +12,7 @@ import '../../features/auth/presentation/auth_controller.dart';
 import '../../features/customers/domain/customer_permissions.dart'
     hide canViewVouchers;
 import '../../core/documents/domain/document_permissions.dart';
+import '../../features/calendar/domain/calendar_permissions.dart';
 
 class _NavItem {
   const _NavItem({
@@ -168,6 +169,12 @@ class AppShell extends ConsumerWidget {
         icon: Icons.description_outlined,
         route: AppRoutes.templateSettings,
         isVisible: canViewTemplateSettings,
+      ),
+      _NavItem(
+        titleGetter: (l) => l.navCalendarSettings,
+        icon: Icons.calendar_month_outlined,
+        route: AppRoutes.calendarSettings,
+        isVisible: canViewCalendarSettings,
       ),
     ];
 

@@ -1520,5 +1520,54 @@
   "financeActionScan": "Scan",
   "financeActionSelectSerial": "Select serial",
   "financeCancellationReason": "Cancellation reason",
-  "financeReversalLabel": "Reversal"
+  "financeReversalLabel": "Reversal",
+  "calendarSettingsTitle": "Working Days & Hours",
+  "calendarSettingsPermissionDenied": "You do not have permission to view calendar settings.",
+  "calendarSettingsSetupRequired": "Calendar setup is required before working windows and reminders are available.",
+  "calendarSettingsTimezone": "IANA timezone",
+  "calendarSettingsTimezoneRequired": "Select a valid timezone.",
+  "calendarSettingsLegacyTimezoneSuggestion": "Legacy suggestion (unconfirmed): {timezone}",
+  "@calendarSettingsLegacyTimezoneSuggestion": {
+    "placeholders": {
+      "timezone": {
+        "type": "String"
+      }
+    }
+  },
+  "calendarSettingsWorkingDaysSection": "Working days",
+  "calendarSettingsDayMode": "Day mode",
+  "calendarSettingsWorkStart": "Start",
+  "calendarSettingsWorkEnd": "End",
+  "calendarSettingsDaySummary": "Window: {start} – {end}",
+  "@calendarSettingsDaySummary": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "calendarSettingsRemindEventDay": "Remind at event working-day start",
+  "calendarSettingsRemindPreviousDay": "Remind at previous working-day start",
+  "calendarSettingsSave": "Save settings",
+  "calendarSettingsSaved": "Calendar settings saved.",
+  "calendarSettingsValidationFailed": "Could not save calendar settings. Check the fields and try again.",
+  "calendarSettingsUnsavedTitle": "Discard changes?",
+  "calendarSettingsUnsavedBody": "You have unsaved calendar settings changes.",
+  "calendarSettingsDiscard": "Discard",
+  "calendarSettingsDayValidationError": "Review this day's settings.",
+  "calendarDayModeUnreviewed": "Unreviewed",
+  "calendarDayModeDayOff": "Day off",
+  "calendarDayModeWorkingHours": "Working hours",
+  "calendarDayMode24Hours": "24 hours",
+  "calendarWeekdayMonday": "Monday",
+  "calendarWeekdayTuesday": "Tuesday",
+  "calendarWeekdayWednesday": "Wednesday",
+  "calendarWeekdayThursday": "Thursday",
+  "calendarWeekdayFriday": "Friday",
+  "calendarWeekdaySaturday": "Saturday",
+  "calendarWeekdaySunday": "Sunday",
+  "navCalendarSettings": "Calendar settings"
 }

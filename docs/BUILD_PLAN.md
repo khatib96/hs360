@@ -19,7 +19,7 @@
 | **4 - Customers, Suppliers & CoA** | Engineering complete | 2026-06-06 |
 | **5 - Invoices, Vouchers & Journal** | Done | M1–M10 closed through migration `076` |
 | **6 - Contracts** | Complete | M0–M13 closed (2026-07-12) |
-| **7 - Calendar** | M0-M0.5 complete; M1 not started | Decisions and safety baseline closed 2026-07-12; no Phase 7 migration started |
+| **7 - Calendar** | M1 complete | Working-schedule model + settings UI closed 2026-07-12 (`093`–`094`); next M2 |
 | **8 - Mobile Field Ops** | Not started | - |
 | **9 - POS, Maintenance & HR** | Not started | - |
 | **10 - Reports & Close** | Not started | - |
