@@ -158,6 +158,17 @@ The full catalog includes permissions for:
 - `messaging` (whatsapp, email)
 - `settings` (company, users, currencies, templates, etc.)
 
+Phase 7 adds dedicated Calendar Settings permissions:
+
+- `settings.calendar.view` — view the seven-day working schedule, selected IANA
+  timezone, and reminder policies.
+- `settings.calendar.edit` — atomically configure/edit those settings.
+
+These permissions are independent from `calendar.view` and
+`calendar.view_assigned`. Viewing events never grants settings access. Granting
+or revoking Calendar Settings permissions remains restricted to the Manager or
+the accepted user/permission-management authority.
+
 Phase 5 M10 note: voucher create permissions allow the workflow, but the
 posting RPCs still reject protected direct-voucher accounts such as cash/bank
 as payment destinations, A/R, A/P, inventory, tax-reserved accounts,

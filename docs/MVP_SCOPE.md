@@ -84,10 +84,16 @@
 
 ### Calendar
 
-- Calendar view only.
-- Generated refill events.
+- Date-based calendar with an upper calendar and lower selected-day agenda.
+- Owner-configured seven-day working schedule and IANA timezone; no inferred
+  weekend, hours, or timezone.
+- Generated refill events, overdue visibility, and basic manual events.
 - Calendar events carry service location when generated from contracts.
-- Basic reassignment can be manual in the database or Manager screen if time allows.
+- Assignment and date-only rescheduling through permission-gated RPCs.
+- In-app reminder foundations anchored to enabled working-day policies.
+- Assigned mobile calendar plus display-only route view/native directions.
+- Actual refill completion, delivered quantity, coverage, stock, GPS/photo, and
+  next-due confirmation remain in the Mobile Refill Flow/Phase 8.
 
 ### Reports
 

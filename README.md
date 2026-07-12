@@ -102,7 +102,9 @@ Each tenant can override branding via build config — see `DEPLOYMENT.md` secti
 **Phase 5 is closed for the core accounting baseline.** M1–M10 are complete
 through migration `076` (2026-07-05). SQL regression, Dart analysis, Flutter
 unit tests, and the local Supabase seeded-template integration gate passed.
-Next: Phase 6 Contracts.
+Phase 6 Contracts is closed through M13/migration `092` (2026-07-12). Phase 7
+Calendar M0 decisions/scope and M0.5 safety baseline are closed. M1 and Phase 7
+migration `093` have not started.
 
 ---
 

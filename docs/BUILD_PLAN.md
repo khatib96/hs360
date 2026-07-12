@@ -19,7 +19,7 @@
 | **4 - Customers, Suppliers & CoA** | Engineering complete | 2026-06-06 |
 | **5 - Invoices, Vouchers & Journal** | Done | M1–M10 closed through migration `076` |
 | **6 - Contracts** | Complete | M0–M13 closed (2026-07-12) |
-| **7 - Calendar** | Not started | - |
+| **7 - Calendar** | M0-M0.5 complete; M1 not started | Decisions and safety baseline closed 2026-07-12; no Phase 7 migration started |
 | **8 - Mobile Field Ops** | Not started | - |
 | **9 - POS, Maintenance & HR** | Not started | - |
 | **10 - Reports & Close** | Not started | - |
@@ -30,6 +30,7 @@
 > Capability placement: `docs/CAPABILITIES_DECISION_REPORT.md`.
 > Phase 5 execution plan: `docs/PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md`.
 > Phase 6 execution plan: `docs/PHASE_6_CONTRACTS_PLAN.md`.
+> Phase 7 execution plan: `docs/PHASE_7_CALENDAR_PLAN.md`.
 
 ---
 
@@ -645,21 +646,37 @@ The core of the system: contracts can be created, billed, refilled, and closed.
 
 ## Phase 7 — Calendar & Scheduling (≈ 2 weeks)
 
+> Detailed execution plan: `docs/PHASE_7_CALENDAR_PLAN.md`. Its M0-M12
+> milestone order and owner-locked date-only scheduling semantics supersede the
+> older high-level ordering below where they conflict. The estimate above is a
+> legacy roadmap estimate; use the detailed plan for professional delivery
+> sizing.
+
 ### Goal
-A unified calendar showing all date-bound events, with reminders.
+A unified date-based calendar showing all scheduled operational events and the
+selected day's agenda. Events occur during the tenant's configured working
+window for that weekday; Phase 7 does not require or display an exact
+appointment time.
 
 ### Tasks
-1. `calendar_events` table + RLS
-2. `daily_calendar_seed_job` — generates next-30-days events for active contracts
-3. `reminders_job` — runs every 15 minutes
-4. Calendar screen (desktop): Day / Week / Month views
-5. Calendar screen (mobile): same views, touch-optimized
-6. Manual event creation (follow-ups, custom)
-7. Drag-and-drop rescheduling (desktop)
-8. Agent assignment / reassignment
-9. Route View: map of a user's daily visits by service location, area, and time, display-only in v1 planning
-10. Filters
-11. Native "Directions" action opens the selected service location in the phone's map app via `url_launcher`
+1. Harden the existing `calendar_events` table, RLS, and Phase 6 M12 provenance
+2. Add per-weekday working-day/hour settings, including day off, limited hours,
+   and 24-hour modes; all seven rows and IANA timezone are owner-configured,
+   with no inferred defaults
+3. Maintain contract-generated events idempotently; billing may materialize its
+   horizon, while each refill cadence keeps one outstanding due event until
+   trusted actual completion and confirmed coverage establish the next date
+4. Add date/working-day reminder foundations without fabricating event times
+5. Calendar screen (desktop): upper calendar + lower selected-day agenda, with
+   Day / Week / Month presentation as accepted in the detailed plan
+6. Calendar screen (mobile): the same date-only model, touch-optimized
+7. Manual event creation (follow-ups, custom)
+8. Date-only rescheduling; optional desktop drag-and-drop uses the same audited RPC
+9. Agent assignment / reassignment
+10. Route View: map of a user's selected-day events by service location and
+    area, display-only in v1 planning
+11. Filters
+12. Native "Directions" action opens the selected service location in the phone's map app via `url_launcher`
 
 ### Deliverables
 - Calendar shows real upcoming events
@@ -670,7 +687,14 @@ A unified calendar showing all date-bound events, with reminders.
 ### Acceptance
 - Active contracts produce calendar events for next 30 days
 - Calendar events carry `service_location_id` when generated from contracts
-- An event 1 hour from now triggers a notification
+- Selecting a date shows that day's agenda and configured working window
+- Day-off, limited-hours, and 24-hour weekdays resolve independently
+- Reminder creation uses the event date and tenant working-day anchors, not an
+  invented exact appointment time
+- No working-hours reminder is created until the manager configures all seven
+  weekdays and selects an IANA timezone
+- A missed refill stays pending/overdue with its original due date and does not
+  generate the next refill until Phase 8 confirms execution and coverage
 - A day's visits can be viewed on a map without route optimization
 
 ---

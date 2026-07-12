@@ -382,7 +382,7 @@ The calendar aggregates all date-bound events across the system:
 
 | Event Type | Source |
 |------------|--------|
-| `refill_due` | Generated from active contracts based on `refill_day` |
+| `refill_due` | First due date from contract cadence; later dates from trusted actual completion + confirmed coverage |
 | `contract_start` | Start of each contract |
 | `contract_end` | End_date of fixed-term contracts |
 | `trial_ending` | 7 days before `trial_end_date` |
@@ -393,7 +393,7 @@ The calendar aggregates all date-bound events across the system:
 
 ### 10.1 Views Available
 
-- **Day view** — list of today's events, ordered by time
+- **Day view** — list of today's date-based events in stable operational order
 - **Week view** — 7-column grid
 - **Month view** — calendar grid with event dots
 - **Agent view** — filtered by `assigned_agent_id`
@@ -402,18 +402,47 @@ The calendar aggregates all date-bound events across the system:
 
 ### 10.2 Reminders
 
-Each event has `reminder_offsets_minutes` (default: 1440 = 1 day, 60 = 1 hour before).
+Phase 7 events have no exact appointment time. `reminder_offsets_minutes` is a
+legacy field and must not be interpreted from midnight for null-time events.
 
-A scheduled Edge Function runs every 15 minutes:
-1. Find events where `scheduled_date + scheduled_time - offset` is within the last 15 minutes
-2. Generate notifications (push to mobile app, email, WhatsApp per tenant settings)
-3. Mark as sent
+The owner configures an IANA timezone and all seven weekday schedules. Until
+`working_schedule_configured` is true, the calendar shows setup-required state
+and creates no working-hours-based reminders.
+
+Initial in-app reminder policies are independently configurable:
+
+1. start of the event's working day;
+2. start of the previous working day.
+
+The reminder worker uses an idempotent delivery ledger. External email,
+WhatsApp, or SMS delivery requires its separately accepted configuration and
+must not be reported as sent merely because a notification was queued.
 
 ### 10.3 Recurring Refills
 
-Active contracts seed monthly recurring events. The `recurrence_rule` is iCal RRULE format (e.g. `FREQ=MONTHLY;BYMONTHDAY=3` for the 3rd of each month).
+Billing may continue to materialize financial due dates independently. Refill
+events do not blindly materialize every future cycle from the original planned
+day.
 
-A daily job materializes the next 30 days of recurring events into concrete `calendar_events` rows. This makes querying fast and lets agents see them in their calendar.
+Each refill cadence chain has at most one outstanding due event:
+
+- if it is not executed, it remains `pending` and is displayed as overdue;
+- it preserves `original_due_date` and exposes the delay count;
+- no next refill is generated merely because another planned cycle date passes;
+- Phase 8 records trusted `actual_completion_date`, actual delivered quantity,
+  confirmed coverage, and confirmed `next_due_date`;
+- the next refill is generated from that confirmed next date.
+
+Suggested Phase 8 coverage preview:
+
+```text
+coverage_ratio = actual_quantity_delivered / contracted_quantity_per_cycle
+next_due_date  = actual_completion_date + confirmed coverage duration
+```
+
+For 500 ml per monthly cycle and 1500 ml actually delivered, the proposal is
+three months of coverage. A manual next-date override requires permission,
+reason, and audit. Phase 7 never confirms quantity or reduces inventory.
 
 ---
 

@@ -30,7 +30,7 @@ create table tenants (
   default_locale text default 'ar',
   default_currency_id uuid,                       -- FK added after currencies table exists
   country_code text default 'KW',
-  timezone text default 'Asia/Kuwait',
+  timezone text default 'Asia/Kuwait',              -- legacy default; Phase 7 requires explicit Calendar Settings review
   subscription_status text default 'active',
   subscription_plan text default 'standard',
   trial_ends_at timestamptz,
@@ -1363,6 +1363,31 @@ events into the default 30-day horizon (cap 180 via batch RPC). Suspension
 deletes pending future billing/refill; reactivation re-syncs. Manual calendar
 rows are excluded from contract detail `upcoming_schedule`.
 
+**Phase 7 M0 decision lock (planning only; Phase 7 migration `093` not
+started; `092` is the existing Phase 6 M13 covered-month read RPC):**
+
+- Phase 7 uses date-only appointments; current nullable `scheduled_time` and
+  `reminder_offsets_minutes` remain legacy schema until M1/M3 migrations but are
+  not authoritative for null-time events.
+- Add seven initially unreviewed tenant weekday rows plus an explicit
+  `working_schedule_configured = false` state. Do not seed a weekend, hours, or
+  a newly inferred timezone.
+- The existing `tenants.timezone` default `Asia/Kuwait` is legacy schema, not
+  proof of owner selection. It remains unconfirmed until Calendar Settings are
+  reviewed explicitly.
+- Calendar configuration requires an owner-selected IANA timezone and atomic
+  review of all seven weekdays.
+- Add dedicated `settings.calendar.view/edit` permissions.
+- Preserve `original_due_date`; derive overdue for pending, unexecuted rows in
+  the tenant timezone.
+- Phase 8 is the trusted writer for `actual_completion_date`, actual delivered
+  quantity, confirmed coverage, and confirmed `next_due_date`.
+- Refill generation keeps one outstanding event and advances only from trusted
+  actual completion/confirmed coverage. Billing generation stays independent.
+
+The exact physical storage for execution facts is finalized at the M1/M2 to
+Phase 8 handoff. It must not allow a Phase 7 client to fabricate execution.
+
 ```sql
 create type calendar_event_type as enum (
   'refill_due', 'contract_start', 'contract_end',
@@ -1383,7 +1408,7 @@ create table calendar_events (
   -- When
   scheduled_date date not null,
   scheduled_time time,
-  reminder_offsets_minutes int[] default '{1440, 60}',  -- 1 day + 1 hour before
+  reminder_offsets_minutes int[] default '{1440, 60}',  -- legacy; Phase 7 replaces null-time interpretation
 
   -- Who/what
   assigned_agent_id uuid references employees(id),

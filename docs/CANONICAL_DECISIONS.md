@@ -231,6 +231,41 @@ Operational coordinates live on `customer_service_locations.latitude` and `custo
 
 ---
 
+## 4.9 Phase 7 Date-Based Calendar and Actual Refill Cadence
+
+Phase 7 appointments are date-based, not exact-time appointments.
+
+- `scheduled_date` is canonical; Phase 7 does not require or display
+  `scheduled_time`.
+- Working days, working windows, and IANA timezone are configured explicitly by
+  the owner/manager. No country, locale, weekend, timezone, or working-hours
+  default is inferred.
+- The system creates seven initially unreviewed weekday rows and keeps
+  `working_schedule_configured = false` until a manager selects a valid IANA
+  timezone and atomically reviews all seven days.
+- The existing legacy `tenants.timezone = Asia/Kuwait` default is not proof of
+  owner selection and cannot enable reminders without that explicit review.
+- No working-hours-based reminder is created while settings are unconfigured.
+- Initial in-app reminder policies are working-day start and previous-working-
+  day start; each is independently configurable.
+- Calendar Settings use dedicated `settings.calendar.view` and
+  `settings.calendar.edit` permissions. Calendar event-view permissions do not
+  imply settings access.
+- A missed event stays pending and is derived/displayed as overdue, including
+  `original_due_date` and overdue-day count, until trusted actual execution.
+- Phase 7 plans and displays; Phase 8 records `actual_completion_date`, actual
+  delivered quantity, confirmed coverage, and confirmed `next_due_date`.
+- A refill cadence has one outstanding due event. No later refill is generated
+  from the missed planned date while that event remains unexecuted.
+- After execution, the next refill is anchored to actual completion plus
+  confirmed coverage. Manual next-date override requires permission, reason,
+  and audit.
+- Billing cadence is financially independent from refill execution cadence.
+
+The detailed source of truth is `PHASE_7_CALENDAR_PLAN.md`.
+
+---
+
 ## 5. RLS
 
 Every business table has:
@@ -252,7 +287,7 @@ v1 is intentionally narrow:
 - Products, customers, trial contracts, rental contracts
 - Basic invoices and vouchers
 - Mobile refill flow with GPS and live photo
-- Calendar view only
+- Date-based calendar planning per section 4.9
 - Basic reports: customer balance and contract list
 
 Phase 2+:

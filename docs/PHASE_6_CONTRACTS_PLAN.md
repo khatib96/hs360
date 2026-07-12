@@ -1302,6 +1302,13 @@ without building the full mobile visit workflow.
 - Flutter read path: `ContractScheduleEvent`, mapper, and
   `ContractUpcomingScheduleSection` (display only; no refresh RPC).
 
+> **Phase 7 M0 supersession (2026-07-12):** M12 remains the delivered handoff
+> baseline, but Phase 7 M2 must change refill recurrence semantics. A missed
+> refill remains one pending/overdue event and does not spawn later refill
+> cycles from the old planned cadence. Trusted Phase 8 actual completion and
+> confirmed coverage establish the next refill date. Billing cadence remains
+> independent. See `PHASE_7_CALENDAR_PLAN.md`.
+
 ### Work
 
 1. Seed or expose upcoming contract events:

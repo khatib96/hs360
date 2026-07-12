@@ -76,7 +76,9 @@ The system must:
 - Filterable by agent, customer, service location, date range, status
 - Daily/weekly/monthly views
 - Reminders (push + email + WhatsApp)
-- Auto-generated refill schedule based on each contract's `refill_day`
+- Initial refill due date comes from the contract cadence. A missed refill stays
+  pending/overdue; later refills are anchored to trusted actual completion and
+  confirmed coverage rather than blindly repeating the old planned day.
 
 **Field Operations (Mobile)**
 - Daily visit schedule per agent

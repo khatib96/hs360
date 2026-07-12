@@ -73,6 +73,24 @@ list_contract_upcoming_events_json(p_contract_id uuid, p_limit int default 10) r
 - `get_contract_detail.upcoming_schedule` returns up to 10 pending generated
   events with whitelisted metadata only (no cost fields).
 
+**Phase 7 M0 supersession (planned; no Phase 7 RPC is implemented yet):**
+
+- Phase 7 calendar RPCs are date-only and do not accept a fabricated event
+  time.
+- Working-schedule settings use dedicated `settings.calendar.view/edit`.
+- Read contracts return `original_due_date`, derived overdue state/days, and
+  trusted execution/coverage facts when available.
+- M2 must correct refill generation to one outstanding due event per cadence
+  chain. A missed refill stays pending/overdue and blocks later refill
+  generation.
+- Only trusted Phase 8 execution may supply `actual_completion_date`, actual
+  delivered quantity, confirmed coverage, and confirmed `next_due_date`.
+- The next refill uses the confirmed next date; financial billing cadence is
+  unaffected.
+- Manual next-date override requires a dedicated permission, reason, and audit.
+- Exact Phase 7 RPC names and JSON contracts are added milestone-by-milestone
+  before their migrations.
+
 Contract creation payload shape:
 
 ```json

@@ -46,7 +46,7 @@ This is what the agent sees first thing in the morning.
 │                                         │
 │  ────────────────────────────────────   │
 │                                         │
-│  📍 09:30  Cafe Bloom · Refill         │
+│  📍 Cafe Bloom · Refill                 │
 │      Salmiya Block 5                    │
 │      [ Start ]                          │
 │                                         │
@@ -54,7 +54,7 @@ This is what the agent sees first thing in the morning.
 │      Salwa Block 2                      │
 │      [ Start ]                          │
 │                                         │
-│  📍 11:00  Pearl Tower Hotel · Refill   │
+│  📍 Pearl Tower Hotel · Refill          │
 │      Sharq                              │
 │      [ Start ]                          │
 │                                         │
@@ -331,13 +331,13 @@ Discrepancies are flagged in Manager reports. Repeated discrepancies trigger an 
 │   ●    ●    ●    ●●   ●●  ●●●  ●        │
 │                                         │
 │  Today, 15 May:                         │
-│   09:30  Cafe Bloom · Refill            │
+│   Cafe Bloom · Refill                   │
 │   10:00  Mr. Khalid · Collection        │
-│   11:00  Pearl Tower · Refill           │
-│   13:00  Sahara Rest. · Refill ✓        │
-│   14:00  Adel Holding · Refill ✓        │
-│   15:30  Al Manara · Refill             │
-│   17:00  Cafe Mood · Sales pitch        │
+│   Pearl Tower · Refill                  │
+│   Sahara Rest. · Refill ✓               │
+│   Adel Holding · Refill ✓               │
+│   Al Manara · Refill                    │
+│   Cafe Mood · Sales pitch               │
 │                                         │
 └─────────────────────────────────────────┘
 ```
@@ -352,7 +352,7 @@ Tap a day → opens that day's schedule.
 
 | Event Type | Source | Auto-generated? |
 |------------|--------|-----------------|
-| Refill due | Active rental contracts | Yes — based on `refill_day` |
+| Refill due | Active rental contracts / confirmed field execution | Initial due from contract cadence; later due from actual completion + confirmed coverage |
 | Contract end | Fixed-term contracts | Yes |
 | Trial ending | Trial periods | Yes — 7 days before `trial_end_date` |
 | Maintenance due | High-use devices | Yes — triggered by maintenance rules |
@@ -362,45 +362,46 @@ Tap a day → opens that day's schedule.
 
 ### 9.2 How Refill Events Are Generated
 
-A daily Edge Function `daily_calendar_seed_job()` runs at 00:30 tenant time:
+A secured scheduled job maintains refill events in tenant time. The Phase 7 M0
+rule is one outstanding refill per cadence chain:
 
 ```
-For each active rental contract with refill_day set:
-  Look at next 30 days
-  For each day where day_of_month = contract.refill_day:
-    If no calendar_event exists yet for that date/contract/service_location:
-      INSERT calendar_events (
-        type = 'refill_due',
-        contract_id = contract.id,
-        customer_id = contract.customer_id,
-        service_location_id = contract.service_location_id,
-        scheduled_date = that_date,
-        assigned_agent_id = (default refill agent for this customer, configurable),
-        is_recurring = true,
-        recurrence_rule = 'FREQ=MONTHLY;BYMONTHDAY=' || refill_day
-      )
+For each active refill cadence chain:
+  If an outstanding event exists:
+    keep it pending; derive overdue from original_due_date when late
+    do not create another refill event
+  Else if trusted Phase 8 execution confirmed next_due_date:
+    create the next event for confirmed next_due_date
+  Else:
+    create only the initial contract-cadence event
 ```
 
 This way:
-- Calendar always shows next 30 days populated
-- Agents see what's coming
-- Manual reassignment is allowed (move a visit to a different agent or date)
+- missed work remains visible rather than disappearing into a false future cycle;
+- `original_due_date` and overdue days remain available;
+- Phase 8 actual completion and confirmed coverage determine the next refill;
+- manual reassignment/date-only rescheduling does not claim execution;
+- financial billing cadence remains independent.
 
 ### 9.3 Reminders
 
-Each event has `reminder_offsets_minutes` (default `{1440, 60}` — 1 day and 1 hour before).
+Phase 7 appointments are date-only. The old minute-offset field is legacy and
+must not create a fabricated midnight appointment.
 
-A `reminders_job()` runs every 15 minutes:
+The manager explicitly reviews an IANA timezone and all seven weekday working
+schedules. Until `working_schedule_configured` is true, no working-hours-based
+reminder is created.
+
+The two initial in-app policies are independently configurable:
 
 ```
-For each pending calendar_event:
-  Compute reminder times = scheduled_date + scheduled_time - offsets
-  If any reminder time is in [now - 15min, now]:
-    Queue notification:
-      - Push to agent's mobile (if assigned)
-      - Email to agent
-      - WhatsApp to customer (if configured per template)
+At the start of the event working day, if enabled
+At the start of the previous working day, if enabled
 ```
+
+The worker uses an idempotent delivery ledger. External email/WhatsApp/SMS
+delivery is not guaranteed by Phase 7 without its separately accepted channel
+configuration.
 
 ### 9.4 Reassignment
 

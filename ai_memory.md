@@ -1,6 +1,88 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-12 (Session: Phase 6 M13 — **closed**; extended manual AR/EN acceptance passed).
+> Updated 2026-07-12 (Session: Phase 7 M0.5 — **closed**; safety baseline captured, M1/093 not started).
+
+---
+
+## Session 2026-07-12 - Phase 7 M0.5 Safety Snapshot and Rollback (closed)
+
+**Decision:** Phase 7 M0.5 is closed. M1 and migration `093` have not started.
+
+### Safety artifacts (local/ignored)
+
+- `supabase/.temp/phase_7_m0_5_migrations.txt`: filesystem/catalog inventory,
+  92 migrations through Phase 6 M13 `092`.
+- `supabase/.temp/phase_7_m0_5_schema_pre_093.sql`: schema-only dump, 38,071
+  lines / 1,200,515 bytes, SHA-256
+  `4a598551128f6d3164ac4f8885710b79db84e1cb77d1e85378cc22233c00ed8e`.
+- `supabase/.temp/phase_7_m0_5_counts.txt`: pre/post counts and calendar
+  relationship integrity results.
+- `supabase/.temp/phase_7_m0_5_rollback_notes.md`: rollback notes for planned
+  Phase 7 migrations `093`-`100`.
+
+### Database baseline
+
+- Tenants 2; tenant settings 2; calendar events 0; notifications 0; contracts
+  contributing future schedule 0.
+- Contract/customer/service-location/contract-line calendar orphan checks all 0.
+- Post-regression: migration count 92; calendar events, notifications,
+  contracts, rental collection operations, orphan checks, and suspicious M11
+  test templates all 0.
+
+### Verification
+
+- `bash scripts/test/run_sql_suites.sh supabase_db_hs360` — all phases passed,
+  including concurrency, M12, M13/092, and final pollution gate.
+- `flutter analyze` — no issues.
+- `flutter test` — 852 passed.
+- `git diff --check` — clean.
+
+No database reset, Phase 7 migration, Dart/Flutter implementation, dependency
+change, or generated application file was created in M0.5.
+
+**Next:** Phase 7 M1 — Calendar and Working-Schedule Data Model, starting at
+`093`, only when implementation is explicitly started.
+
+---
+
+## Session 2026-07-12 - Phase 7 M0 Decisions and Scope Lock (closed)
+
+**Decision:** Phase 7 M0 is closed as a documentation/decision milestone. M0.5
+has not started and Phase 7 migration `093` must not start before the M0.5 safety
+snapshot/rollback gate closes.
+
+### Locked semantics
+
+- Calendar appointments are date-only and occur within owner-configured working
+  windows; Phase 7 does not require/display an exact event time.
+- The system creates seven initially unreviewed weekday rows. No weekend, hours,
+  day mode, or IANA timezone is inferred. `working_schedule_configured` remains
+  false until a manager chooses the timezone and atomically reviews all days.
+- No working-hours reminder is created while settings are unconfigured.
+- Initial in-app policies are event-working-day start and previous-working-day
+  start, independently configurable.
+- Dedicated `settings.calendar.view/edit` permissions are separate from
+  `calendar.view/view_assigned`.
+- Missed events stay pending/overdue, preserve `original_due_date`, and expose
+  tenant-local overdue days until trusted actual execution.
+- Refill cadence has one outstanding event. The next refill is not generated
+  from the missed planned date; Phase 8 actual completion and confirmed coverage
+  establish confirmed `next_due_date`.
+- Phase 7 never confirms delivered quantity or changes stock. Manual next-date
+  override requires permission, reason, and audit. Billing cadence stays
+  independent.
+
+### Documentation reconciliation
+
+- Added canonical `PHASE_7_CALENDAR_PLAN.md` M0-M12 plan and marked M0 complete.
+- Reconciled `BUILD_PLAN.md`, `CANONICAL_DECISIONS.md`, `MVP_SCOPE.md`,
+  `CONTRACTS_LOGIC.md`, `DATABASE_SCHEMA.md`, `RPC_SPEC.md`, `PERMISSIONS.md`,
+  and the Phase 6 M12 handoff note.
+- No SQL/Dart/Flutter implementation and no Phase 7 migration `093` were
+  created. Existing migration `092` belongs to Phase 6 M13.
+
+**Historical next at M0 closure:** Phase 7 M0.5 safety snapshot and rollback;
+now completed in the session above.
 
 ---
 
