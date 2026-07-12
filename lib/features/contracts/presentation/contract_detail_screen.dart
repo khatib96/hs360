@@ -15,6 +15,7 @@ import '../../invoices/presentation/widgets/invoice_shared_widgets.dart';
 import '../domain/contract_detail.dart';
 import '../domain/contract_lifecycle_actions.dart';
 import '../domain/contract_permissions.dart';
+import '../domain/contract_print_support.dart';
 import 'contract_detail_controller.dart';
 import 'contract_list_controller.dart';
 import 'contract_display_helpers.dart';
@@ -79,6 +80,10 @@ class ContractDetailScreen extends ConsumerWidget {
       final showConsumable =
           session != null &&
           canShowScheduleConsumableChangeAction(session, detail);
+      final showPreview =
+          session != null &&
+          canPrintContract(session) &&
+          isContractPrintable(detail);
 
       body = InvoiceSheet(
         child: Column(
@@ -89,6 +94,20 @@ class ContractDetailScreen extends ConsumerWidget {
               subtitle:
                   '${contractTypeLabel(l10n, detail.type)} · ${contractCustomerName(languageCode: locale.languageCode, nameAr: detail.customerNameAr, nameEn: detail.customerNameEn)}',
               actions: [
+                if (showPreview)
+                  OutlinedButton.icon(
+                    key: const Key('contract-detail-preview'),
+                    onPressed: () {
+                      context.push(
+                        AppRoutes.documentPreviewPath(
+                          kind: documentKindForContract().documentType,
+                          entityId: detail.id,
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.picture_as_pdf_outlined, size: 18),
+                    label: Text(l10n.contractPreviewAction),
+                  ),
                 if (showConvert)
                   TextButton(
                     onPressed: () =>

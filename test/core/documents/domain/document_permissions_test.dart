@@ -143,6 +143,24 @@ void main() {
         isTrue,
       );
     });
+
+    test('contract requires contracts.view and contracts.print', () {
+      expect(canPreviewDocument(session(), DocumentKind.contract), isFalse);
+      expect(
+        canPreviewDocument(
+          session(permissions: {'contracts.view'}),
+          DocumentKind.contract,
+        ),
+        isFalse,
+      );
+      expect(
+        canPreviewDocument(
+          session(permissions: {'contracts.view', 'contracts.print'}),
+          DocumentKind.contract,
+        ),
+        isTrue,
+      );
+    });
   });
 
   group('canExportDocument', () {
@@ -203,6 +221,15 @@ void main() {
         permissions: {'product_units.view', 'product_units.print_label'},
       );
       expect(canExportDocument(withPrint, DocumentKind.assetTagLabel), isTrue);
+    });
+
+    test('contract export requires preview permissions', () {
+      final previewOnly = session(permissions: {'contracts.view'});
+      expect(canExportDocument(previewOnly, DocumentKind.contract), isFalse);
+      final withPrint = session(
+        permissions: {'contracts.view', 'contracts.print'},
+      );
+      expect(canExportDocument(withPrint, DocumentKind.contract), isTrue);
     });
 
     test('manager can export when preview allowed', () {

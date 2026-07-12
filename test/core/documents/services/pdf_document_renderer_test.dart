@@ -4,6 +4,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:hs360/core/documents/domain/document_kind.dart';
 import 'package:hs360/core/documents/domain/document_payload.dart';
 import 'package:hs360/core/documents/services/document_render_service.dart';
+import 'package:hs360/features/contracts/domain/contract_document_fixture.dart';
 import 'package:hs360/features/invoices/domain/sales_invoice_document_fixture.dart';
 
 import 'pdf/test_render_helpers.dart';
@@ -49,6 +50,24 @@ StatementPayload _largeStatementPayload(int lineCount) {
   );
 }
 
+ContractPayload _largeContractPayload(int lineCount) {
+  final fixture = contractDocumentFixture();
+  return ContractPayload(
+    document: fixture.document,
+    party: fixture.party,
+    location: fixture.location,
+    lines: List.generate(lineCount, (index) {
+      return {
+        'product_name': 'Rental product ${index + 1}',
+        'serial': 'SN-${(index + 1).toString().padLeft(4, '0')}',
+        'qty': Decimal.one,
+        'unit': 'piece',
+      };
+    }),
+    totals: fixture.totals,
+  );
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -68,6 +87,41 @@ void main() {
     expect(result.pageCount, greaterThanOrEqualTo(1));
   });
 
+  test('contract fixture renders non-empty PDF bytes', () async {
+    final service = DocumentRenderService();
+    final result = await service.render(
+      context: testContext(kind: DocumentKind.contract),
+      payload: contractDocumentFixture(),
+      userLocale: 'en',
+    );
+    expect(result.bytes, isNotEmpty);
+    expect(result.pageCount, greaterThanOrEqualTo(1));
+  });
+
+  test('draft contract PDF includes watermark overlay bytes', () async {
+    final service = DocumentRenderService();
+    final approved = await service.render(
+      context: testContext(kind: DocumentKind.contract),
+      payload: contractDocumentFixture(),
+      userLocale: 'en',
+    );
+    final draftPayload = ContractPayload(
+      document: {...contractDocumentFixture().document, 'is_draft': true},
+      party: contractDocumentFixture().party,
+      location: contractDocumentFixture().location,
+      lines: contractDocumentFixture().lines,
+      totals: contractDocumentFixture().totals,
+    );
+    final draft = await service.render(
+      context: testContext(kind: DocumentKind.contract),
+      payload: draftPayload,
+      userLocale: 'en',
+    );
+
+    expect(draft.bytes, isNotEmpty);
+    expect(draft.bytes, isNot(equals(approved.bytes)));
+  });
+
   test('Arabic statement smoke renders non-empty bytes', () async {
     final service = DocumentRenderService();
     final result = await service.render(
@@ -76,6 +130,28 @@ void main() {
       userLocale: 'ar',
     );
     expect(result.bytes, isNotEmpty);
+  });
+
+  test('Arabic contract smoke renders non-empty bytes', () async {
+    final service = DocumentRenderService();
+    final result = await service.render(
+      context: testContext(kind: DocumentKind.contract),
+      payload: contractDocumentFixture(),
+      userLocale: 'ar',
+    );
+    expect(result.bytes, isNotEmpty);
+  });
+
+  test('contract PDF renders 40 product lines across multiple pages', () async {
+    final service = DocumentRenderService();
+    final result = await service.render(
+      context: testContext(kind: DocumentKind.contract),
+      payload: _largeContractPayload(40),
+      userLocale: 'en',
+    );
+
+    expect(result.bytes, isNotEmpty);
+    expect(result.pageCount, greaterThan(1));
   });
 
   test(

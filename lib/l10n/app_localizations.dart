@@ -2288,6 +2288,18 @@ abstract class AppLocalizations {
   /// **'Contract'**
   String get contractDetailTitle;
 
+  /// No description provided for @contractPreviewAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview contract PDF'**
+  String get contractPreviewAction;
+
+  /// No description provided for @pdfDraftWatermark.
+  ///
+  /// In en, this message translates to:
+  /// **'DRAFT'**
+  String get pdfDraftWatermark;
+
   /// No description provided for @contractCreateTitle.
   ///
   /// In en, this message translates to:

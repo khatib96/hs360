@@ -17,6 +17,7 @@ class ContractAssetLine {
     this.productNameEn,
     this.productGroupNameAr,
     this.productGroupNameEn,
+    this.snapshotUnitPrimary,
   });
 
   final String id;
@@ -31,6 +32,7 @@ class ContractAssetLine {
   final String? productNameEn;
   final String? productGroupNameAr;
   final String? productGroupNameEn;
+  final String? snapshotUnitPrimary;
 
   factory ContractAssetLine.fromRpcJson(Map<String, dynamic> json) {
     return ContractAssetLine(
@@ -46,6 +48,7 @@ class ContractAssetLine {
       productNameEn: json['product_name_en'] as String?,
       productGroupNameAr: json['product_group_name_ar'] as String?,
       productGroupNameEn: json['product_group_name_en'] as String?,
+      snapshotUnitPrimary: json['snapshot_unit_primary'] as String?,
     );
   }
 }
@@ -75,6 +78,7 @@ class ContractConsumableLine {
     this.scheduledOilProductNameEn,
     this.scheduledQtyPerRefill,
     this.scheduledEffectiveFrom,
+    this.snapshotUnitPrimary,
   });
 
   final String id;
@@ -99,6 +103,7 @@ class ContractConsumableLine {
   final String? scheduledOilProductNameEn;
   final Decimal? scheduledQtyPerRefill;
   final DateTime? scheduledEffectiveFrom;
+  final String? snapshotUnitPrimary;
 
   factory ContractConsumableLine.fromRpcJson(Map<String, dynamic> json) {
     return ContractConsumableLine(
@@ -128,6 +133,7 @@ class ContractConsumableLine {
       scheduledEffectiveFrom: _parseContractDate(
         json['scheduled_effective_from'],
       ),
+      snapshotUnitPrimary: json['snapshot_unit_primary'] as String?,
     );
   }
 }

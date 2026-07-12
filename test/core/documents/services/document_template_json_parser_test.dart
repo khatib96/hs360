@@ -299,6 +299,143 @@ void main() {
     );
   });
 
+  Map<String, dynamic> validContractBody() => {
+    'schema_version': 1,
+    'settings': a4Settings(),
+    'blocks': [
+      {'type': 'tenant_header', 'id': 'hdr'},
+      {
+        'type': 'document_meta',
+        'id': 'meta',
+        'fields': [
+          'document.number',
+          'document.type',
+          'document.status',
+          'document.printed_at',
+        ],
+      },
+      {
+        'type': 'party_details',
+        'id': 'party',
+        'party_role': 'customer',
+        'fields': [
+          'party.name_ar',
+          'party.name_en',
+          'party.contact_person',
+          'party.phone',
+          'party.email',
+          'location.name',
+          'location.governorate',
+          'location.area',
+        ],
+      },
+      {
+        'type': 'contract_terms',
+        'id': 'terms',
+        'fields': [
+          'document.start_date',
+          'document.end_date',
+          'document.duration_months',
+        ],
+      },
+      {
+        'type': 'line_table',
+        'id': 'lines',
+        'columns': [
+          {
+            'field': 'line.product_name',
+            'label_key': 'col.product',
+            'label_ar': 'المنتج',
+            'label_en': 'Product',
+            'width_pct': 40,
+            'align': 'start',
+          },
+          {
+            'field': 'line.serial',
+            'label_key': 'col.serial',
+            'label_ar': 'التسلسلي',
+            'label_en': 'Serial',
+            'width_pct': 20,
+            'align': 'start',
+          },
+          {
+            'field': 'line.qty',
+            'label_key': 'col.qty',
+            'label_ar': 'الكمية',
+            'label_en': 'Qty',
+            'width_pct': 20,
+            'align': 'end',
+          },
+          {
+            'field': 'line.unit',
+            'label_key': 'col.unit',
+            'label_ar': 'الوحدة',
+            'label_en': 'Unit',
+            'width_pct': 20,
+            'align': 'end',
+          },
+        ],
+        'fields': ['line.product_name', 'line.serial', 'line.qty', 'line.unit'],
+      },
+      {
+        'type': 'contract_totals',
+        'id': 'totals',
+        'fields': [
+          'totals.monthly_rental',
+          'totals.total_value',
+          'totals.is_trial',
+        ],
+      },
+      {'type': 'footer', 'id': 'ftr', 'source': 'tenant_footer'},
+    ],
+  };
+
+  test('accepts valid contract template with four line columns', () {
+    expect(
+      () => parser.parse(
+        documentType: DocumentKind.contract,
+        paperKind: PaperKind.a4,
+        raw: validContractBody(),
+      ),
+      returnsNormally,
+    );
+  });
+
+  test('rejects contract line_table with forbidden line.group column', () {
+    final raw = validContractBody();
+    final blocks = raw['blocks'] as List<dynamic>;
+    final table =
+        blocks.firstWhere((block) => (block as Map)['type'] == 'line_table')
+            as Map<String, dynamic>;
+    final columns = List<Map<String, dynamic>>.from(
+      table['columns'] as List<dynamic>,
+    );
+    columns[0] = {
+      ...columns[0],
+      'field': 'line.group',
+      'label_key': 'col.group',
+      'label_ar': 'مجموعة',
+      'label_en': 'Group',
+    };
+    table['columns'] = columns;
+    table['fields'] = ['line.group', 'line.serial', 'line.qty', 'line.unit'];
+
+    expect(
+      () => parser.validateRaw(
+        documentType: DocumentKind.contract,
+        raw: raw,
+        paperKind: PaperKind.a4,
+      ),
+      throwsA(
+        predicate(
+          (e) =>
+              e is DocumentTemplateValidationException &&
+              e.message.contains('line.group'),
+        ),
+      ),
+    );
+  });
+
   test('rejects missing or non-string column labels', () {
     final raw = validStatementBody();
     final blocks = raw['blocks'] as List<dynamic>;

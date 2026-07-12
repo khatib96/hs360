@@ -19,6 +19,12 @@ class ContractDetail {
     this.customerNameEn,
     this.serviceLocationId,
     this.serviceLocationName,
+    this.contactPersonName,
+    this.contactPhone,
+    this.contactEmail,
+    this.locationGovernorate,
+    this.locationArea,
+    this.signatureUrl,
     required this.startDate,
     this.endDate,
     this.trialDays,
@@ -58,6 +64,12 @@ class ContractDetail {
   final String? customerNameEn;
   final String? serviceLocationId;
   final String? serviceLocationName;
+  final String? contactPersonName;
+  final String? contactPhone;
+  final String? contactEmail;
+  final String? locationGovernorate;
+  final String? locationArea;
+  final String? signatureUrl;
   final DateTime startDate;
   final DateTime? endDate;
   final int? trialDays;

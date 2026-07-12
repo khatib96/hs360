@@ -23,6 +23,7 @@ class DocumentRenderDto {
     required this.payloadJson,
     required this.fontBundle,
     this.logoBytes,
+    this.signatureBytes,
   });
 
   final String documentType;
@@ -37,6 +38,7 @@ class DocumentRenderDto {
   final Map<String, dynamic> payloadJson;
   final PdfFontTransferBundle fontBundle;
   final TransferableTypedData? logoBytes;
+  final TransferableTypedData? signatureBytes;
 }
 
 /// Font bytes transferred to the worker isolate (new bundle per run).
@@ -62,6 +64,7 @@ DocumentRenderDto buildDocumentRenderDto({
   String? previewLanguageOverride,
   required PdfFontTransferBundle fontBundle,
   Uint8List? logoBytes,
+  Uint8List? signatureBytes,
 }) {
   final languageCode = resolveEffectiveLanguage(
     templateMode: context.template.languageMode,
@@ -90,6 +93,9 @@ DocumentRenderDto buildDocumentRenderDto({
     logoBytes: logoBytes == null
         ? null
         : TransferableTypedData.fromList([logoBytes]),
+    signatureBytes: signatureBytes == null
+        ? null
+        : TransferableTypedData.fromList([signatureBytes]),
   );
 }
 
@@ -229,7 +235,41 @@ Map<String, dynamic> serializePayload(
       'party': v.party,
       'payment': _serializeMoneyMap(v.payment, decimalPlaces: decimalPlaces),
     },
+    ContractPayload c => {
+      'kind': c.kind.documentType,
+      'document': _serializeMap(c.document, decimalPlaces: decimalPlaces),
+      'party': c.party,
+      'location': c.location,
+      'lines': c.lines
+          .map((line) => _serializeMap(line, decimalPlaces: decimalPlaces))
+          .toList(),
+      'totals': _serializeContractTotals(
+        c.totals,
+        decimalPlaces: decimalPlaces,
+      ),
+    },
   };
+}
+
+Map<String, dynamic> _serializeContractTotals(
+  Map<String, dynamic> map, {
+  required int decimalPlaces,
+}) {
+  final out = <String, dynamic>{};
+  for (final entry in map.entries) {
+    final value = entry.value;
+    if (entry.key == 'is_trial') {
+      out[entry.key] = value;
+    } else if (value is Decimal) {
+      out[entry.key] = decimalTransferString(
+        value,
+        decimalPlaces: decimalPlaces,
+      );
+    } else {
+      out[entry.key] = _serializeValue(value, decimalPlaces: decimalPlaces);
+    }
+  }
+  return out;
 }
 
 Map<String, dynamic> _serializeMap(

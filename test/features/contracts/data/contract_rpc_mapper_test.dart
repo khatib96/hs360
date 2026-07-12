@@ -181,5 +181,38 @@ void main() {
         expect(line.snapshotUnitCost, isNull);
       },
     );
+
+    test('mapContractDetail parses contact location and signature fields', () {
+      final detail = mapContractDetail({
+        'id': 'con-5',
+        'contract_number': 'CON-005',
+        'type': 'rental',
+        'status': 'active',
+        'start_date': '2026-07-01',
+        'customer_id': 'cust-1',
+        'contact_person_name': 'Sara',
+        'contact_phone': '+965 5000 0000',
+        'contact_email': 'sara@example.com',
+        'location_governorate': 'Hawalli',
+        'location_area': 'Salmiya',
+        'signature_url': 'https://example.com/sig.png',
+        'asset_lines': [
+          {
+            'id': 'line-1',
+            'product_id': 'prod-1',
+            'snapshot_unit_primary': 'piece',
+          },
+        ],
+        'consumable_lines': const [],
+      });
+
+      expect(detail.contactPersonName, 'Sara');
+      expect(detail.contactPhone, '+965 5000 0000');
+      expect(detail.contactEmail, 'sara@example.com');
+      expect(detail.locationGovernorate, 'Hawalli');
+      expect(detail.locationArea, 'Salmiya');
+      expect(detail.signatureUrl, 'https://example.com/sig.png');
+      expect(detail.assetLines.single.snapshotUnitPrimary, 'piece');
+    });
   });
 }

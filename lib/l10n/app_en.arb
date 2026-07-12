@@ -604,6 +604,8 @@
   },
   "contractTitle": "Contracts",
   "contractDetailTitle": "Contract",
+  "contractPreviewAction": "Preview contract PDF",
+  "pdfDraftWatermark": "DRAFT",
   "contractCreateTitle": "New contract",
   "contractConvertTitle": "Convert trial",
   "contractListPrepared": "Contract list will appear here once available.",

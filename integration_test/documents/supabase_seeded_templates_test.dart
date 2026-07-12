@@ -10,7 +10,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  test('local Supabase exposes six seeded document templates', () async {
+  test('local Supabase exposes seven seeded document templates', () async {
     if (Env.supabaseAnonKey.isEmpty) {
       fail('SUPABASE_ANON_KEY is required for this integration gate');
     }
@@ -43,6 +43,7 @@ void main() {
       ),
       (DocumentKind.customerStatement, PaperKind.a4, 'customer_statement_a4'),
       (DocumentKind.assetTagLabel, PaperKind.labelSheet, 'asset_tag_label'),
+      (DocumentKind.contract, PaperKind.a4, 'contract_a4'),
     ];
 
     for (final entry in cases) {

@@ -41,6 +41,7 @@ AppSession _managerSession() {
         'contracts.field.snapshot_oil_cost',
         'contracts.field.snapshot_total_cost',
         'contracts.field.snapshot_profit',
+        'contracts.print',
       },
     ),
   );
@@ -85,6 +86,28 @@ void main() {
 
     expect(find.text(l10n.financeErrorNotFound), findsOneWidget);
     expect(find.textContaining('validation'), findsNothing);
+  });
+
+  testWidgets('preview button visible when contracts.print granted', (
+    tester,
+  ) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+    final repo = FakeContractRepository(
+      detailById: {'c-1': sampleContractDetail(id: 'c-1')},
+    );
+
+    await tester.pumpWidget(
+      _wrap(
+        locale: const Locale('en'),
+        session: _managerSession(),
+        repo: repo,
+        contractId: 'c-1',
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('contract-detail-preview')), findsOneWidget);
+    expect(find.text(l10n.contractPreviewAction), findsOneWidget);
   });
 
   testWidgets('manager detail shows an authorized financial details section', (

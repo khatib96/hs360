@@ -21,6 +21,7 @@ class PdfRenderContext {
     required this.layout,
     required this.resolver,
     this.logoBytes,
+    this.signatureBytes,
     this.rtl = false,
   });
 
@@ -35,6 +36,7 @@ class PdfRenderContext {
   final PdfPageLayout layout;
   final PdfFieldResolver resolver;
   final Uint8List? logoBytes;
+  final Uint8List? signatureBytes;
   final bool rtl;
 
   List<TemplateColumn> visibleColumns(TemplateBlock block) {
@@ -59,6 +61,7 @@ class PdfRenderContext {
     required Map<String, dynamic> payloadJson,
     required Map<String, dynamic>? currencyJson,
     Uint8List? logoBytes,
+    Uint8List? signatureBytes,
   }) {
     final kind = DocumentKind.fromDocumentType(documentType)!;
     final paper = PaperKind.fromValue(paperKind)!;
@@ -83,6 +86,7 @@ class PdfRenderContext {
       layout: layout,
       resolver: resolver,
       logoBytes: logoBytes,
+      signatureBytes: signatureBytes,
       rtl: languageCode == 'ar',
     );
   }

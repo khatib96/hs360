@@ -20,6 +20,9 @@ class DocumentTemplateJsonParser {
     'footer',
     'asset_identity',
     'qr_code',
+    'contract_terms',
+    'contract_totals',
+    'signature',
   };
 
   static const blockAllowedKeys = {
@@ -35,6 +38,9 @@ class DocumentTemplateJsonParser {
     'footer': {'type', 'id', 'source'},
     'asset_identity': {'type', 'id', 'fields'},
     'qr_code': {'type', 'id', 'payload_field', 'caption_field'},
+    'contract_terms': {'type', 'id', 'fields'},
+    'contract_totals': {'type', 'id', 'fields'},
+    'signature': {'type', 'id'},
   };
 
   static const columnKeys = {
@@ -191,7 +197,10 @@ class DocumentTemplateJsonParser {
         _validateQrCode(block);
       }
       if (type == 'line_table') {
-        _validateLineTable(block);
+        _validateLineTable(
+          block,
+          _blockFieldAllowlist(documentType, paperKind, type),
+        );
       }
 
       final allowlist = _blockFieldAllowlist(documentType, paperKind, type);
@@ -199,7 +208,9 @@ class DocumentTemplateJsonParser {
           type == 'party_details' ||
           type == 'totals' ||
           type == 'payment_details' ||
-          type == 'asset_identity') {
+          type == 'asset_identity' ||
+          type == 'contract_terms' ||
+          type == 'contract_totals') {
         _validateRequiredFields(block, type, allowlist);
       } else if (type == 'notes' && block.containsKey('fields')) {
         _validateNotesFields(block);
@@ -492,7 +503,10 @@ class DocumentTemplateJsonParser {
     }
   }
 
-  void _validateLineTable(Map<String, dynamic> block) {
+  void _validateLineTable(
+    Map<String, dynamic> block, [
+    List<String>? allowlist,
+  ]) {
     final columns = block['columns'];
     if (columns is! List) {
       throw const DocumentTemplateValidationException(
@@ -532,6 +546,13 @@ class DocumentTemplateJsonParser {
       if (colFields.contains(field)) {
         throw const DocumentTemplateValidationException(
           'invalid_document_template: duplicate column field',
+        );
+      }
+      if (allowlist != null &&
+          allowlist.isNotEmpty &&
+          !allowlist.contains(field)) {
+        throw DocumentTemplateValidationException(
+          'invalid_document_template: field $field not allowed in line_table',
         );
       }
       colFields.add(field);
@@ -715,6 +736,19 @@ class DocumentTemplateJsonParser {
         'spacer',
         'divider',
       ],
+      DocumentKind.contract when paperKind == PaperKind.a4 => [
+        'tenant_header',
+        'document_meta',
+        'party_details',
+        'contract_terms',
+        'line_table',
+        'contract_totals',
+        'notes',
+        'signature',
+        'footer',
+        'spacer',
+        'divider',
+      ],
       _ => const [],
     };
   }
@@ -758,6 +792,14 @@ class DocumentTemplateJsonParser {
         'asset_identity',
         'qr_code',
       ],
+      DocumentKind.contract => [
+        'tenant_header',
+        'document_meta',
+        'party_details',
+        'line_table',
+        'contract_totals',
+        'footer',
+      ],
       DocumentKind.paymentVoucher => const [],
     };
   }
@@ -771,6 +813,7 @@ class DocumentTemplateJsonParser {
       DocumentKind.purchaseInvoice => 'supplier',
       DocumentKind.receiptVoucher when paperKind == PaperKind.a4 => 'customer',
       DocumentKind.customerStatement => 'customer',
+      DocumentKind.contract => 'customer',
       _ => null,
     };
   }
@@ -794,6 +837,12 @@ class DocumentTemplateJsonParser {
         'document.to_date',
         'document.generated_at',
       ],
+      'document_meta' when documentType == DocumentKind.contract => [
+        'document.number',
+        'document.type',
+        'document.status',
+        'document.printed_at',
+      ],
       'party_details'
           when documentType == DocumentKind.salesInvoice ||
               documentType == DocumentKind.purchaseInvoice ||
@@ -803,6 +852,25 @@ class DocumentTemplateJsonParser {
           when documentType == DocumentKind.receiptVoucher &&
               paperKind == PaperKind.a4 =>
         ['party.name_ar', 'party.name_en'],
+      'party_details' when documentType == DocumentKind.contract => [
+        'party.name_ar',
+        'party.name_en',
+        'party.contact_person',
+        'party.phone',
+        'party.email',
+        'location.name',
+        'location.governorate',
+        'location.area',
+      ],
+      'contract_terms' when documentType == DocumentKind.contract => [
+        'document.start_date',
+        'document.end_date',
+        'document.trial_days',
+        'document.trial_end_date',
+        'document.duration_months',
+        'document.billing_day',
+        'document.refill_day',
+      ],
       'line_table'
           when documentType == DocumentKind.salesInvoice ||
               documentType == DocumentKind.purchaseInvoice =>
@@ -814,6 +882,12 @@ class DocumentTemplateJsonParser {
         'line.credit',
         'line.balance',
       ],
+      'line_table' when documentType == DocumentKind.contract => [
+        'line.product_name',
+        'line.serial',
+        'line.qty',
+        'line.unit',
+      ],
       'totals'
           when documentType == DocumentKind.salesInvoice ||
               documentType == DocumentKind.purchaseInvoice =>
@@ -823,6 +897,11 @@ class DocumentTemplateJsonParser {
         'summary.total_debit',
         'summary.total_credit',
         'summary.closing_balance',
+      ],
+      'contract_totals' when documentType == DocumentKind.contract => [
+        'totals.monthly_rental',
+        'totals.total_value',
+        'totals.is_trial',
       ],
       'payment_details'
           when documentType == DocumentKind.receiptVoucher &&

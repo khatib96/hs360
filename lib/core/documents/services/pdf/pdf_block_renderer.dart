@@ -2,6 +2,8 @@ import 'package:pdf/widgets.dart' as pw;
 
 import '../../domain/document_template.dart';
 import 'blocks/asset_identity_block.dart';
+import 'blocks/contract_terms_block.dart';
+import 'blocks/contract_totals_block.dart';
 import 'blocks/divider_block.dart';
 import 'blocks/document_meta_block.dart';
 import 'blocks/footer_block.dart';
@@ -10,6 +12,7 @@ import 'blocks/notes_block.dart';
 import 'blocks/party_details_block.dart';
 import 'blocks/payment_details_block.dart';
 import 'blocks/qr_code_block.dart';
+import 'blocks/signature_block.dart';
 import 'blocks/spacer_block.dart';
 import 'blocks/tenant_header_block.dart';
 import 'blocks/totals_block.dart';
@@ -32,6 +35,9 @@ class PdfBlockRenderer {
   final _notes = const NotesBlock();
   final _footer = const FooterBlock();
   final _assetIdentity = const AssetIdentityBlock();
+  final _contractTerms = const ContractTermsBlock();
+  final _contractTotals = const ContractTotalsBlock();
+  final _signature = const SignatureBlock();
   final _spacer = const SpacerBlock();
   final _divider = const DividerBlock();
 
@@ -46,6 +52,9 @@ class PdfBlockRenderer {
       'notes' => _notes.build(ctx, block),
       'footer' => _footer.build(ctx),
       'asset_identity' => _assetIdentity.build(ctx, block),
+      'contract_terms' => _contractTerms.build(ctx, block),
+      'contract_totals' => _contractTotals.build(ctx, block),
+      'signature' => _signature.build(ctx),
       'qr_code' => QrCodeBlock(encoder: _qrEncoder).build(ctx, block),
       'spacer' => _spacer.build(ctx, block),
       'divider' => _divider.build(ctx),

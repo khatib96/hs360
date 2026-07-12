@@ -4,6 +4,7 @@ import '../../../core/localization/locale_controller.dart';
 import '../../errors/document_exception.dart';
 import '../data/document_template_repository.dart';
 import '../../../features/finance_shared/documents/finance_document_payload_loader.dart';
+import '../../../features/contracts/documents/contract_document_payload_loader.dart';
 import '../domain/document_kind.dart';
 import '../domain/document_permissions.dart';
 import '../domain/document_render_result.dart';
@@ -96,6 +97,10 @@ class DocumentPreviewController extends _$DocumentPreviewController {
         kind: args.kind,
         entityId: args.entityId,
         invoiceType: args.invoiceType,
+      ),
+      DocumentKind.contract => loadContractDocumentPayload(
+        ref: ref,
+        entityId: args.entityId,
       ),
       _ => throw DocumentException(
         code: DocumentException.unsupportedDocumentType,

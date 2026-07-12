@@ -41,6 +41,17 @@ class DocumentRenderService {
       }
     }
 
+    Uint8List? signatureBytes;
+    if (payload is ContractPayload &&
+        payload.signatureUrl != null &&
+        _logoLoader != null) {
+      try {
+        signatureBytes = await _logoLoader.loadValidated(payload.signatureUrl);
+      } on LogoLoadException {
+        signatureBytes = null;
+      }
+    }
+
     final dto = buildDocumentRenderDto(
       context: context,
       payload: payload,
@@ -48,6 +59,7 @@ class DocumentRenderService {
       previewLanguageOverride: previewLanguageOverride,
       fontBundle: fontBundle,
       logoBytes: logoBytes,
+      signatureBytes: signatureBytes,
     );
 
     final resultDto = await Isolate.run(() => documentRenderWorker(dto));

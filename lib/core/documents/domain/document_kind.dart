@@ -5,7 +5,8 @@ enum DocumentKind {
   receiptVoucher('receipt_voucher'),
   paymentVoucher('payment_voucher'),
   customerStatement('customer_statement'),
-  assetTagLabel('asset_tag_label');
+  assetTagLabel('asset_tag_label'),
+  contract('contract');
 
   const DocumentKind(this.documentType);
 

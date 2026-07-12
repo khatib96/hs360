@@ -1160,6 +1160,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contractDetailTitle => 'Contract';
 
   @override
+  String get contractPreviewAction => 'Preview contract PDF';
+
+  @override
+  String get pdfDraftWatermark => 'DRAFT';
+
+  @override
   String get contractCreateTitle => 'New contract';
 
   @override

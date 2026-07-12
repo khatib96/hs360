@@ -10,6 +10,7 @@ import '../document_render_dto.dart';
 import '../document_render_result_dto.dart';
 import '../document_template_validator.dart';
 import '../qr_encoder.dart';
+import 'blocks/draft_watermark.dart';
 import 'label_renderer.dart';
 import 'pdf_block_renderer.dart';
 import 'pdf_font_registry.dart';
@@ -46,6 +47,7 @@ class PdfDocumentRenderer {
   Future<DocumentRenderResultDto> renderDto(DocumentRenderDto dto) async {
     PdfFontRegistry.installFromBundle(dto.fontBundle);
     final logoBytes = dto.logoBytes?.materialize().asUint8List();
+    final signatureBytes = dto.signatureBytes?.materialize().asUint8List();
 
     final ctx = PdfRenderContext.fromDto(
       documentType: dto.documentType,
@@ -57,6 +59,7 @@ class PdfDocumentRenderer {
       payloadJson: dto.payloadJson,
       currencyJson: dto.currencyJson,
       logoBytes: logoBytes,
+      signatureBytes: signatureBytes,
     );
 
     _validator.validate(
@@ -150,6 +153,45 @@ class PdfDocumentRenderer {
     final bodyBlocks = ctx.body.blocks
         .where((b) => b.type != 'tenant_header' && b.type != 'footer')
         .toList();
+    final isDraft = _isDraftPayload(ctx);
+
+    if (isDraft) {
+      doc.addPage(
+        pw.MultiPage(
+          pageTheme: pw.PageTheme(
+            pageFormat: pageFormat,
+            margin: ctx.layout.margins,
+            textDirection: ctx.rtl
+                ? pw.TextDirection.rtl
+                : pw.TextDirection.ltr,
+            buildBackground: (context) => buildDraftWatermark(ctx),
+          ),
+          maxPages: _tabularMaxPages(lineCount),
+          header: headerBlock != null
+              ? (context) => _blockRenderer.renderBlock(ctx, headerBlock!)
+              : null,
+          footer: footerBlock != null
+              ? (context) {
+                  pageCount = context.pagesCount;
+                  return _blockRenderer.renderBlock(ctx, footerBlock!);
+                }
+              : (context) {
+                  pageCount = context.pagesCount;
+                  return pw.SizedBox.shrink();
+                },
+          build: (context) {
+            final widgets = <pw.Widget>[];
+            for (final block in bodyBlocks) {
+              widgets.add(_blockRenderer.renderBlock(ctx, block));
+              widgets.add(pw.SizedBox(height: 8));
+            }
+            if (widgets.isNotEmpty) widgets.removeLast();
+            return widgets;
+          },
+        ),
+      );
+      return pageCount;
+    }
 
     doc.addPage(
       pw.MultiPage(
@@ -157,6 +199,7 @@ class PdfDocumentRenderer {
         margin: ctx.layout.margins,
         maxPages: _tabularMaxPages(lineCount),
         textDirection: ctx.rtl ? pw.TextDirection.rtl : pw.TextDirection.ltr,
+        pageTheme: null,
         header: headerBlock != null
             ? (context) => _blockRenderer.renderBlock(ctx, headerBlock!)
             : null,
@@ -187,6 +230,12 @@ class PdfDocumentRenderer {
     final lines = ctx.payload['lines'];
     if (lines is List) return lines.length;
     return 0;
+  }
+
+  bool _isDraftPayload(PdfRenderContext ctx) {
+    final document = ctx.payload['document'];
+    if (document is! Map) return false;
+    return document['is_draft'] == true;
   }
 }
 

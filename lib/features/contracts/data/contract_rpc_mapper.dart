@@ -87,6 +87,12 @@ ContractDetail mapContractDetail(Map<String, dynamic> json) {
     customerNameEn: json['customer_name_en'] as String?,
     serviceLocationId: json['service_location_id'] as String?,
     serviceLocationName: json['service_location_name'] as String?,
+    contactPersonName: json['contact_person_name'] as String?,
+    contactPhone: json['contact_phone'] as String?,
+    contactEmail: json['contact_email'] as String?,
+    locationGovernorate: json['location_governorate'] as String?,
+    locationArea: json['location_area'] as String?,
+    signatureUrl: json['signature_url'] as String?,
     startDate: DateTime.parse(json['start_date'] as String),
     endDate: json['end_date'] != null
         ? DateTime.parse(json['end_date'] as String)

@@ -365,6 +365,8 @@
   "customerContractsNotLoaded": "افتح هذا التبويب لتحميل العقود.",
   "contractTitle": "العقود",
   "contractDetailTitle": "العقد",
+  "contractPreviewAction": "معاينة عقد PDF",
+  "pdfDraftWatermark": "مسودة",
   "contractCreateTitle": "عقد جديد",
   "contractConvertTitle": "تحويل العقد التجريبي",
   "contractListPrepared": "ستظهر قائمة العقود هنا عند توفرها.",

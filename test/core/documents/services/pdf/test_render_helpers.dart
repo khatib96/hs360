@@ -145,6 +145,117 @@ TemplateBody _defaultBody({
       },
     );
   }
+  if (kind == DocumentKind.contract) {
+    return testParser.parse(
+      documentType: kind,
+      paperKind: paper,
+      raw: {
+        'schema_version': 1,
+        'settings': a4Settings(),
+        'blocks': [
+          {'type': 'tenant_header', 'id': 'hdr'},
+          {
+            'type': 'document_meta',
+            'id': 'meta',
+            'fields': [
+              'document.number',
+              'document.type',
+              'document.status',
+              'document.printed_at',
+            ],
+          },
+          {
+            'type': 'party_details',
+            'id': 'party',
+            'party_role': 'customer',
+            'fields': [
+              'party.name_ar',
+              'party.name_en',
+              'party.contact_person',
+              'party.phone',
+              'party.email',
+              'location.name',
+              'location.governorate',
+              'location.area',
+            ],
+          },
+          {
+            'type': 'contract_terms',
+            'id': 'terms',
+            'fields': [
+              'document.start_date',
+              'document.end_date',
+              'document.trial_days',
+              'document.trial_end_date',
+              'document.duration_months',
+              'document.billing_day',
+              'document.refill_day',
+            ],
+          },
+          {
+            'type': 'line_table',
+            'id': 'lines',
+            'columns': [
+              {
+                'field': 'line.product_name',
+                'label_key': 'col.product',
+                'label_ar': 'المنتج',
+                'label_en': 'Product',
+                'width_pct': 40,
+                'align': 'start',
+              },
+              {
+                'field': 'line.serial',
+                'label_key': 'col.serial',
+                'label_ar': 'التسلسلي',
+                'label_en': 'Serial',
+                'width_pct': 20,
+                'align': 'start',
+              },
+              {
+                'field': 'line.qty',
+                'label_key': 'col.qty',
+                'label_ar': 'الكمية',
+                'label_en': 'Qty',
+                'width_pct': 15,
+                'align': 'end',
+              },
+              {
+                'field': 'line.unit',
+                'label_key': 'col.unit',
+                'label_ar': 'الوحدة',
+                'label_en': 'Unit',
+                'width_pct': 25,
+                'align': 'end',
+              },
+            ],
+            'fields': [
+              'line.product_name',
+              'line.serial',
+              'line.qty',
+              'line.unit',
+            ],
+          },
+          {
+            'type': 'contract_totals',
+            'id': 'totals',
+            'fields': [
+              'totals.monthly_rental',
+              'totals.total_value',
+              'totals.is_trial',
+            ],
+          },
+          {
+            'type': 'notes',
+            'id': 'nts',
+            'fields': ['document.notes'],
+          },
+          {'type': 'signature', 'id': 'sig'},
+          {'type': 'footer', 'id': 'ftr', 'source': 'tenant_footer'},
+        ],
+      },
+    );
+  }
   if (kind == DocumentKind.customerStatement) {
     return testParser.parse(
       documentType: kind,

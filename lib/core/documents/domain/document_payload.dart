@@ -157,6 +157,28 @@ class InvoicePayload extends DocumentPayload {
   DocumentKind get kind => documentType;
 }
 
+/// Customer-facing contract print payload (Phase 6 M11).
+class ContractPayload extends DocumentPayload {
+  const ContractPayload({
+    required this.document,
+    required this.party,
+    required this.location,
+    required this.lines,
+    required this.totals,
+    this.signatureUrl,
+  });
+
+  final Map<String, dynamic> document;
+  final Map<String, dynamic> party;
+  final Map<String, dynamic> location;
+  final List<Map<String, dynamic>> lines;
+  final Map<String, dynamic> totals;
+  final String? signatureUrl;
+
+  @override
+  DocumentKind get kind => DocumentKind.contract;
+}
+
 /// Fixture payload for voucher renderer smoke tests (M3 — no live voucher RPC yet).
 class VoucherPayload extends DocumentPayload {
   const VoucherPayload({

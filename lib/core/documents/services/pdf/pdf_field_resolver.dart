@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../../domain/document_money_formatter.dart';
 import '../../domain/effective_language.dart';
 import '../../domain/tenant_currency_format.dart';
+import 'pdf_field_labels.dart';
 
 /// Resolves template field paths to display strings from serialized payload JSON.
 class PdfFieldResolver {
@@ -31,6 +32,8 @@ class PdfFieldResolver {
     'totals.discount',
     'totals.tax',
     'totals.total',
+    'totals.monthly_rental',
+    'totals.total_value',
     'payment.amount',
   };
   static const statementLineMoneyFields = {
@@ -40,6 +43,18 @@ class PdfFieldResolver {
   };
 
   String resolve(String field) {
+    if (field == 'totals.is_trial') {
+      return _formatTrialFlag(_rawValue(field));
+    }
+    if (field == 'document.type') {
+      return _formatContractType(_rawValue(field));
+    }
+    if (field == 'document.status') {
+      return _formatContractStatus(_rawValue(field));
+    }
+    if (field == 'line.unit') {
+      return _formatUnit(_rawValue(field));
+    }
     if (moneyFields.contains(field)) {
       return _formatMoney(_rawValue(field));
     }
@@ -47,6 +62,10 @@ class PdfFieldResolver {
         field == 'document.from_date' ||
         field == 'document.to_date' ||
         field == 'document.generated_at' ||
+        field == 'document.start_date' ||
+        field == 'document.end_date' ||
+        field == 'document.trial_end_date' ||
+        field == 'document.printed_at' ||
         field == 'line.date') {
       return _formatDate(_rawValue(field));
     }
@@ -96,6 +115,9 @@ class PdfFieldResolver {
     }
     if (field == 'line.date') {
       return _formatDate(line['entry_date']);
+    }
+    if (field == 'line.unit') {
+      return _formatUnit(line['unit']);
     }
     if (field == 'line.description') {
       final desc = line['description'];
@@ -156,5 +178,30 @@ class PdfFieldResolver {
     } catch (_) {
       return value.toString();
     }
+  }
+
+  String _formatUnit(dynamic value) {
+    return PdfFieldLabels.unitLabel(
+      value?.toString(),
+      languageCode: languageCode,
+    );
+  }
+
+  String _formatContractType(dynamic value) {
+    return PdfFieldLabels.contractTypeLabel(
+      value?.toString(),
+      languageCode: languageCode,
+    );
+  }
+
+  String _formatContractStatus(dynamic value) {
+    return PdfFieldLabels.contractStatusLabel(
+      value?.toString(),
+      languageCode: languageCode,
+    );
+  }
+
+  String _formatTrialFlag(dynamic value) {
+    return PdfFieldLabels.trialFlagLabel(value, languageCode: languageCode);
   }
 }

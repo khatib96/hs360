@@ -1154,6 +1154,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get contractDetailTitle => 'العقد';
 
   @override
+  String get contractPreviewAction => 'معاينة عقد PDF';
+
+  @override
+  String get pdfDraftWatermark => 'مسودة';
+
+  @override
   String get contractCreateTitle => 'عقد جديد';
 
   @override

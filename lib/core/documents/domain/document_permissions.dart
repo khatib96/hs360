@@ -20,6 +20,9 @@ bool canPreviewDocument(AppSession session, DocumentKind kind) {
       'customers.view_ledger',
     ),
     DocumentKind.assetTagLabel => session.permissions.can('product_units.view'),
+    DocumentKind.contract =>
+      session.permissions.can('contracts.view') &&
+          session.permissions.can('contracts.print'),
     DocumentKind.paymentVoucher => false,
   };
 }
@@ -36,6 +39,7 @@ bool canExportDocument(AppSession session, DocumentKind kind) {
     DocumentKind.assetTagLabel => session.permissions.can(
       'product_units.print_label',
     ),
+    DocumentKind.contract => true,
     DocumentKind.paymentVoucher => false,
   };
 }
