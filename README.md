@@ -1,143 +1,269 @@
 # HS360 — Multi-Tenant Business Management System
 
-> A purpose-built ERP for fragrance device rental & sales businesses.
-> Built initially for Hayat Secret (Kuwait). Designed as multi-tenant SaaS from day one.
-> Each tenant runs on their own self-hosted VPS.
-> Updated 2026-05-16 to resolve conflicts before Phase 0.
+HS360 is a bilingual Flutter/Supabase ERP for fragrance-device rental and sales
+businesses. It is being built first for Hayat Secret and is designed around
+serialized rental assets, recurring consumables, field service, customer debt,
+and double-entry accounting.
+
+> Repository status updated: **2026-07-12**
+>
+> Current milestone: **Phase 7 M0-M0.5 complete; M1 not started**
+>
+> Latest applied migration: **`092_phase_6_list_covered_rental_months_rpc.sql`**
 
 ---
 
-## Project Name
+## Current Implementation Status
 
-**HS360** (initial working name — may change before public release)
+| Phase | Status | Result |
+|-------|--------|--------|
+| 0 | Complete | Flutter project, structure, theme, localization foundation |
+| 1 | Complete | Local Supabase, schema, functions, views, triggers, RLS, seed |
+| 2 | Complete | Authentication, permission-aware routing, Arabic/English locale |
+| 3 | Complete | Products, product units, warehouses, balances, movements, transfers |
+| 4 | Engineering complete | Customers, suppliers, CoA, service locations, coordinates |
+| 5 | Complete | Invoices, returns, vouchers, journal, inventory accounting, PDFs |
+| 6 | Complete | Trial/rental contracts, lifecycle, billing, PDF, calendar handoff |
+| 7 | M0-M0.5 complete | Decisions and safety baseline closed; implementation starts at M1/`093` |
+| 8-12 | Not started | Field execution and later operational/reporting/production phases |
 
-The codebase is **product-agnostic**. The name "HS360" appears only in branding configs and can be replaced per tenant build.
+Phase 6 closed through M13/migration `092` on 2026-07-12. The Phase 7 plan is
+locked, and a pre-`093` safety snapshot was captured locally. No Phase 7 schema,
+Dart, or Flutter implementation has started.
 
----
+Detailed roadmap: [BUILD_PLAN.md](docs/BUILD_PLAN.md)
 
-## What Is This?
-
-A custom ERP that natively handles the **asset-rental + monthly-consumable** business model — something off-the-shelf systems like Odoo cannot do cleanly.
-
-The system manages:
-- **Direct sales** of devices, oils, and perfumes
-- **Rental contracts** where devices stay company-owned and oils are refilled monthly
-- **Field operations** with GPS-verified, live-photo-proven service visits
-- **Full double-entry accounting** with chart of accounts, vouchers, and invoices
-- **Customer ledger** with full transaction history
-- **WhatsApp integration** for individual messages and broadcast campaigns
-- **Granular permissions** — Manager (full) and User (per-permission custom access)
-- **Multi-tenant architecture** — sellable to other companies; each runs their own VPS
-
----
-
-## Stack
-
-| Layer | Choice | Why |
-|-------|--------|-----|
-| Frontend (Desktop + Mobile) | Flutter + Dart | Single codebase: Windows, macOS, Android, iOS |
-| Backend & Database | Self-Hosted Supabase | PostgreSQL + Auth + REST + Realtime + Storage + RLS |
-| Hosting | Tenant's own VPS | Data sovereignty per tenant |
-| State Management | Riverpod 2.x | Type-safe, modern, testable |
-| Local Cache (Mobile) | Drift (SQLite) | Offline-first for field agents |
-| Routing | GoRouter | Permission-aware redirects |
-| Notifications | Resend (email) + Meta WhatsApp Cloud API | Auto + broadcast |
-| Money handling | `decimal` package (Dart) + `numeric(15,3)` (Postgres) | Never floats |
+Phase 7 source of truth: [PHASE_7_CALENDAR_PLAN.md](docs/PHASE_7_CALENDAR_PLAN.md)
 
 ---
 
-## Document Map
+## Implemented Capabilities
 
-Read these in order:
+- Multi-tenant PostgreSQL model with tenant isolation and RLS.
+- Manager/full access and explicit per-user permission grants.
+- Arabic-first UI with English toggle and RTL/LTR support.
+- Products, groups, dual units, serialized assets, barcode/QR resolution, and
+  product-unit timeline foundation.
+- Warehouses, van-warehouse rules, stock balances, adjustments, transfers, and
+  inventory movement history.
+- Customers, suppliers, customer service locations, Google Maps coordinate
+  resolution foundation, and Customer 360 integrations.
+- Chart of accounts, purchase/sales invoices, returns, receipt/payment vouchers,
+  allocations, journal entries, tax foundation, and inventory accounting.
+- Structured JSON document templates with Arabic/English PDF preview and print.
+- Trial and rental contracts with multi-asset/multi-consumable support,
+  cost/profit snapshots, lifecycle operations, rental collection, contract PDF,
+  and protected calendar-event generation.
+- Automated SQL regression/concurrency suites and Flutter unit/widget tests.
 
-| # | File | Purpose |
-|---|------|---------|
-| 1 | `README.md` | You are here |
-| 2 | `PROJECT.md` | Vision, scope, business rules |
-| 3 | `ARCHITECTURE.md` | Tech stack, layers, code organization |
-| 4 | `DATABASE_SCHEMA.md` | All tables, columns, relationships, SQL |
-| 5 | `PRODUCTS_DETAIL.md` | Dual units, barcode vs serial, images |
-| 6 | `CONTRACTS_LOGIC.md` | Contract creation, oil tracking, profit math |
-| 7 | `PAYMENT_SYSTEM.md` | Vouchers, invoices, WAC, billing cycles |
-| 8 | `CUSTOMER_LEDGER.md` | Customer ledger + WhatsApp/email broadcast |
-| 9 | `FIELD_OPS.md` | Mobile app flows, GPS, calendar, refills |
-| 10 | `PERMISSIONS.md` | Manager / Custom-User model, fully explicit grants |
-| 11 | `CURRENCIES_AND_LOCALIZATION.md` | Dynamic currencies + bilingual everything |
-| 12 | `SECURITY.md` | RLS, tenant isolation, photo enforcement |
-| 13 | `DESIGN_SYSTEM.md` | Colors, typography, RTL, components |
-| 14 | `DEPLOYMENT.md` | Self-hosted VPS setup, connection, white-label |
-| 15 | `BUILD_PLAN.md` | Phased implementation roadmap |
-| 16 | `CANONICAL_DECISIONS.md` | Final decisions when older docs conflict |
-| 17 | `MVP_SCOPE.md` | Strict v1 scope |
-| 18 | `RPC_SPEC.md` | Required RPC signatures and behavior |
-| 19 | `.cursorrules` | AI assistant rules for this project |
+## Planned, Not Yet Implemented
 
----
-
-## Brand (Default for HS360)
-
-- **Working Name:** HS360
-- **Primary Color:** Gold `#C9A961`
-- **Background:** Pure Black `#0A0A0A` (logo context) / White `#FFFFFF` (app)
-- **Tone:** Premium, minimal, refined
-
-Each tenant can override branding via build config — see `DEPLOYMENT.md` section 5.
+- Phase 7 Calendar UI, working-schedule settings, date-based reminders, manual
+  events, assignment/rescheduling, mobile calendar, and route view.
+- Phase 8 field execution: GPS proof, live-camera photo, actual consumable
+  delivery, coverage confirmation, stock-out, and optional payment collection.
+- Offline mobile synchronization. Drift is deliberately not a current
+  dependency and is outside v1 unless scope changes.
+- External WhatsApp/email/SMS delivery automation. The schema/foundations do not
+  mean production messaging is active.
+- POS, maintenance operations UI, HR/payroll, advanced reports, communications,
+  and production polish from later roadmap phases.
 
 ---
 
-## Seven Core Principles
+## Phase 7 Decisions Already Locked
 
-1. **Multi-tenant by default** — Every table has `tenant_id`. RLS enforces isolation.
-2. **Self-hosted per tenant** — Each company runs their own VPS. No shared infrastructure.
-3. **Bilingual** — Every label, error, document works in Arabic (RTL) and English (LTR).
-4. **Permission-aware UI** — Manager sees all; Users see exactly what's granted.
-5. **Live capture only** — Field photos come from the camera, never the gallery.
-6. **Money is never a float** — `numeric(15,3)` in DB, `Decimal` in Dart, always.
-7. **Snapshots are sacred** — Contract costs frozen at creation, never updated retroactively.
+- Calendar appointments are date-based, not exact-time appointments.
+- The owner configures all seven working days and an IANA timezone; no weekend,
+  hours, or timezone is inferred.
+- No working-hours reminder is created before Calendar Settings are reviewed.
+- Missed events remain pending/overdue and preserve their original due date.
+- A refill cadence keeps one outstanding event. The next refill comes from
+  trusted Phase 8 actual completion and confirmed coverage, not the missed
+  planned date.
+- Calendar Settings permissions are separate:
+  - `settings.calendar.view`
+  - `settings.calendar.edit`
+- Event visibility remains controlled by `calendar.view` and
+  `calendar.view_assigned`.
 
----
-
-## Status
-
-**Phase 5 is closed for the core accounting baseline.** M1–M10 are complete
-through migration `076` (2026-07-05). SQL regression, Dart analysis, Flutter
-unit tests, and the local Supabase seeded-template integration gate passed.
-Phase 6 Contracts is closed through M13/migration `092` (2026-07-12). Phase 7
-Calendar M0 decisions/scope and M0.5 safety baseline are closed. M1 and Phase 7
-migration `093` have not started.
+See [PHASE_7_CALENDAR_PLAN.md](docs/PHASE_7_CALENDAR_PLAN.md) for the complete
+M0-M12 plan and acceptance gates.
 
 ---
 
-## Important Notes for Cursor
+## Technology Stack
 
-When starting any task:
-1. Always read `.cursorrules` first
-2. Read `docs/CANONICAL_DECISIONS.md` next
-3. Read the relevant document(s) for the area you're working in
-4. Never bypass RLS, never use `double` for money, never hardcode strings
-5. Permissions go through `user_has_permission()` SQL function, not legacy role checks
-6. Every new table gets `tenant_id` and RLS policies in the same migration
+| Layer | Current choice |
+|-------|----------------|
+| Application | Flutter / Dart |
+| Supported project targets | Windows, macOS, Android, iOS |
+| Backend | Supabase / PostgreSQL |
+| Local backend | Supabase CLI + Docker |
+| State management | Riverpod with generated providers |
+| Routing | GoRouter with permission-aware guards |
+| Localization | Flutter ARB, Arabic and English |
+| Money | Dart `decimal` + PostgreSQL `numeric(15,3)` |
+| Documents | `pdf` + `printing`, structured JSON templates |
+| Scanning | `mobile_scanner` + shared resolver |
+| Media/location foundation | `image_picker`, service-location coordinates |
 
----
-
-## Recent Changes (Important)
-
-The system has evolved from earlier drafts. **Current truth, in case of conflicts between docs:**
-
-- **Permission model:** Manager (full) / User (fully custom, zero defaults). **NO roles, NO templates.** Every permission explicitly granted. See `PERMISSIONS.md`.
-- **Currencies:** Fully dynamic via the `currencies` table. Manager can add any currency with custom decimals, names, symbols. See `CURRENCIES_AND_LOCALIZATION.md`.
-- **Bilingual:** Every user-entered name/description has `_ar` and `_en` columns. Every UI string is in ARB files. See `CURRENCIES_AND_LOCALIZATION.md`.
-- **Hosting:** Self-hosted per tenant via Docker on their VPS. See `DEPLOYMENT.md`.
-- **Product units:** Dual units (primary + secondary + conversion factor). See `PRODUCTS_DETAIL.md`.
-- **Customer ledger:** Major feature, full-screen, with WhatsApp integration. See `CUSTOMER_LEDGER.md`.
-- **Contract pricing:** Manual monthly value entered by agent + auto-snapshot of costs + min-profit threshold from settings. See `CONTRACTS_LOGIC.md`.
-
-If anything in older docs references fixed job labels as access types, treat those as **example permission templates** rather than hardcoded roles. The actual implementation uses the flexible permission system.
+Production hosting remains a deployment target, not a completed repository
+milestone. Current development and verification use the local Supabase stack.
 
 ---
 
-## Known Issues Before Phase 0
+## Repository Layout
 
-- There is no repo or application code yet; this folder currently contains planning documents only.
-- Some older documents may still contain partially updated examples. `docs/CANONICAL_DECISIONS.md` is the source of truth when documents conflict.
-- Migration plan from Google Sheets is TODO and must be defined before importing live Hayat Secret data.
+```text
+lib/
+  core/          Shared infrastructure: routing, network, documents, scanning
+  domain/        Shared business services and validators
+  features/      Feature-first data/domain/presentation modules
+  shared/        Shared application widgets
+
+supabase/
+  migrations/    Ordered PostgreSQL migrations (currently 001-092)
+  tests/         SQL regression and concurrency suites
+  functions/     Edge Functions
+  .temp/         Ignored local credentials and safety artifacts
+
+test/            Dart and Flutter unit/widget tests
+integration_test/ Integration and manual acceptance drivers
+docs/            Canonical product, architecture, and phase plans
+scripts/         Local run, verification, integration, and benchmark scripts
+```
+
+---
+
+## Local Development
+
+### Prerequisites
+
+- Flutter SDK compatible with `pubspec.yaml`.
+- Docker Desktop.
+- Node.js/npm for invoking the Supabase CLI through `npx`.
+
+### Start the local backend
+
+```bash
+flutter pub get
+npx --yes supabase start
+```
+
+For a new/disposable local database only, apply all migrations and seed data:
+
+```bash
+npx --yes supabase db reset
+```
+
+`db reset` is destructive to the local database. Do not run it against an
+environment containing data that must be preserved.
+
+### Run the app
+
+macOS/Linux:
+
+```bash
+./scripts/run-local.sh macos
+```
+
+Windows PowerShell:
+
+```powershell
+.\scripts\run-local.ps1 -Device windows
+```
+
+The scripts read local Supabase credentials and cache them under the ignored
+`supabase/.temp/` directory. Never commit real keys.
+
+---
+
+## Verification
+
+Core application gates:
+
+```bash
+flutter analyze
+flutter test
+git diff --check
+```
+
+Full local SQL regression, concurrency, and pollution gate:
+
+```bash
+bash scripts/test/run_sql_suites.sh supabase_db_hs360
+```
+
+Latest M0.5 baseline on 2026-07-12:
+
+- Full SQL suite: passed.
+- Flutter analysis: no issues.
+- Flutter tests: **852 passed**.
+- Post-test calendar/integrity/pollution checks: clean.
+- Migration count: **92**.
+
+---
+
+## Documentation Map
+
+Start with these sources:
+
+| Document | Purpose |
+|----------|---------|
+| [PROJECT.md](docs/PROJECT.md) | Product vision and business context |
+| [CANONICAL_DECISIONS.md](docs/CANONICAL_DECISIONS.md) | Final decisions when older text conflicts |
+| [MVP_SCOPE.md](docs/MVP_SCOPE.md) | Accepted v1 boundary |
+| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | Application architecture and code organization |
+| [DATABASE_SCHEMA.md](docs/DATABASE_SCHEMA.md) | Database model and migration-era notes |
+| [RPC_SPEC.md](docs/RPC_SPEC.md) | RPC contracts and server-side rules |
+| [PERMISSIONS.md](docs/PERMISSIONS.md) | Permission catalog and enforcement model |
+| [SECURITY.md](docs/SECURITY.md) | RLS, tenant isolation, audit, and sensitive settings |
+| [ENGINEERING_QUALITY.md](docs/ENGINEERING_QUALITY.md) | Quality and verification requirements |
+| [BUILD_PLAN.md](docs/BUILD_PLAN.md) | Overall phased roadmap |
+| [PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md](docs/PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md) | Closed finance execution plan |
+| [PHASE_6_CONTRACTS_PLAN.md](docs/PHASE_6_CONTRACTS_PLAN.md) | Closed contracts execution plan |
+| [PHASE_7_CALENDAR_PLAN.md](docs/PHASE_7_CALENDAR_PLAN.md) | Current calendar execution plan |
+
+Feature references include `PRODUCTS_DETAIL.md`, `CONTRACTS_LOGIC.md`,
+`PAYMENT_SYSTEM.md`, `CUSTOMER_LEDGER.md`, `FIELD_OPS.md`,
+`CURRENCIES_AND_LOCALIZATION.md`, `DESIGN_SYSTEM.md`, and `DEPLOYMENT.md`.
+
+---
+
+## Engineering Rules
+
+Before implementing a milestone:
+
+1. Read `docs/CANONICAL_DECISIONS.md` and the relevant phase plan.
+2. Follow `.cursor/rules/engineering-quality.mdc` and
+   `docs/ENGINEERING_QUALITY.md`.
+3. Keep business writes inside permission-gated, tenant-safe RPCs.
+4. Never bypass RLS from Flutter.
+5. Never use floating-point values for money.
+6. Keep all user-facing strings in ARB localization files.
+7. Add `tenant_id`, RLS, ACL, validation, audit, and tests with every new
+   business table/workflow.
+8. Preserve applied migrations; use forward-fix migrations after data exists.
+
+---
+
+## Current Constraints
+
+- Phase 7 M1 and migration `093` have not started.
+- Production Supabase/VPS deployment and external messaging credentials are not
+  configured by this repository state.
+- The `resolve-google-maps-url` Edge Function has local verification but still
+  requires deployment/linking for a target Supabase project.
+- Mobile field execution and offline sync remain future phases.
+- Older design documents may preserve historical examples. The canonical
+  decisions and active phase plan take precedence.
+
+---
+
+## Brand
+
+- Working product name: **HS360**.
+- Default brand: Hayat Secret gold `#C9A961` with Arabic/English typography.
+- Branding is currently present throughout the application and assets; full
+  white-label packaging remains a production/deployment task.
