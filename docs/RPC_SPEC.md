@@ -190,11 +190,89 @@ delivery and rechecks the current scheduled date, assigned employee, active user
 mapping, tenant membership, and calendar-event visibility. It leaves the plan
 pending while that tenant has an unfinished reconcile generation.
 
+**Phase 7 M4 calendar read RPCs (`097`):**
+
+```sql
+get_calendar_range_summary(p_date_from date, p_date_to date, p_filters jsonb default '{}') returns jsonb
+list_calendar_events(
+  p_date_from date,
+  p_date_to date,
+  p_filters jsonb default '{}',
+  p_cursor_in_range text default null,
+  p_cursor_overdue text default null,
+  p_limit int default null,
+  p_include_overdue_outside_range boolean default false
+) returns jsonb
+```
+
+- Both RPCs require `calendar.view` (tenant-wide) or `calendar.view_assigned`
+  (assigned rows only). `settings.calendar.view` does **not** grant calendar
+  event reads.
+- Maximum inclusive range: **62 days**. Default page size **50**, max **100**.
+- Overdue derivation uses `tenant_local_today(tenant_id)` only. When the tenant
+  working schedule is unconfigured, `tenant_local_today` is null,
+  `is_overdue=false`, `overdue_state='schedule_unconfigured'`, and summary
+  `overdue_outside_range.state='schedule_unconfigured'`.
+- `p_include_overdue_outside_range` defaults to **false** for `list_calendar_events`.
+  Summary always returns `overdue_outside_range` with a `state` field.
+- Assigned scope: `unassigned_count` is JSON `null` in dense `days[]`; tenant-wide
+  scope returns integer counts.
+- Display labels (customer, product, agent names) are always returned;
+  `available_actions.can_view_*` gates navigation only.
+- Rows never expose `source_key` or raw `source_metadata`; calendar-safe
+  `operational_metadata` may include `action_kind` and `coverage_month_key`.
+- `schedule_state` vocabulary: `working_day`, `non_working_day`,
+  `schedule_unconfigured`, `day_off_overridden`.
+- Ordering: `in_range` =
+  `scheduled_date, type_rank, id ASC`; overdue bucket =
+  `original_due_date, scheduled_date, type_rank, id ASC`.
+- Cursors are base64 JSON (`version=1`) binding `tenant_id`, `scope`,
+  `employee_id`, `date_from`, `date_to`, `bucket`, `filters_hash`, and `last`
+  keys (`scheduled_date` + `type_rank` + `id`; overdue adds `original_due_date`).
+  `filters_hash = encode(sha256(canonical_filters_json::text), 'hex')`.
+- Filter validation rejects unknown keys, empty arrays, `overdue_only` with
+  non-pending statuses, and `unassigned_only` with `assigned_agent_id`. Assigned
+  scope rejects foreign `assigned_agent_id` and `unassigned_only`.
+- Search requires at least two characters (case-insensitive substring match on
+  titles, customer/contract/location/agent names).
+
+**`get_calendar_range_summary` response:** `date_from`, `date_to`,
+`timezone_name`, `working_schedule_configured`, `tenant_local_today`, `scope`,
+`filters_hash`, dense `days[]` (one object per date with `event_count`,
+`unassigned_count`, `overdue_count`, `working_day`), `overdue_outside_range`
+(`state`, `count`, `oldest_original_due_date`), `filters_applied`.
+
+**`list_calendar_events` response:** `in_range` and `overdue_outside_range`
+objects each with `rows`, `next_cursor`, `has_more`. Row objects include titles,
+schedule/overdue fields, linked display names, an `execution_summary` key
+(explicit JSON `null` without a refill fact; otherwise actual completion,
+delivered/contracted quantities, coverage, and next-due facts), and
+`available_actions`.
+
+**Internal / revoked from API roles (`097`):**
+
+```sql
+calendar_read_scoped_events(...) returns setof ...
+assert_calendar_event_view() returns calendar_read_scope_context
+parse_calendar_read_filters(jsonb, text, uuid) returns calendar_read_filter_bundle
+calendar_read_filters_hash(calendar_read_filter_bundle) returns text
+decode_calendar_list_cursor(text) returns jsonb
+validate_calendar_list_cursor_binding(...) returns void
+encode_calendar_list_cursor(jsonb) returns text
+```
+
+**ACL hardening (`097`):** `REVOKE SELECT` on `calendar_events` from
+`authenticated` and `anon`. Calendar reads must use the M4 RPCs.
+`list_contract_upcoming_events_json` remains internal (EXECUTE revoked from API
+roles); hardened to use `tenant_local_today` and return `[]` when unconfigured.
+Contract detail still embeds upcoming schedule via `build_contract_detail_json`.
+
 **Phase 7 M0 supersession (remaining planned work):**
 
 - Phase 7 calendar event read/reschedule RPCs are date-only and do not accept a
   fabricated event time.
-- Read contracts will return derived overdue state when M4 lands.
+- M4 read RPCs (`097`) return derived overdue state, dense day summaries, and
+  dual-bucket pagination; direct `calendar_events` SELECT is revoked from API roles.
 - M2 must correct refill generation to one outstanding due event per cadence
   chain.
 - Only trusted Phase 8 execution may write `calendar_refill_execution_facts`.

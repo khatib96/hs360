@@ -1,6 +1,35 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-13 (Session: Phase 7 M3 — **closed**; migration `096`, next M4).
+> Updated 2026-07-13 (Session: Phase 7 M4 **closed**; migration `097`; next M5).
+
+---
+
+## Session 2026-07-13 - Phase 7 M4 Calendar Read APIs (closed)
+
+**Decision:** Phase 7 M4 is closed after final hardening and verification.
+
+**Delivered in this hardening pass:**
+- `097`: strict typed Boolean/UUID/enum-array filter validation; stable
+  `execution_summary` key (`null` without a fact, otherwise an object including
+  contracted quantity and coverage facts).
+- Phase R: **68 cases** (filter matrix, UUID/enum-array matrix, real execution
+  fact fixture, JSON contract shape, performance EXPLAIN gate, M12 cross-check,
+  and pollution cleanup).
+- M12 + P7M2 generation engine: trusted postgres verification after
+  `REVOKE SELECT` on `calendar_events` for API roles.
+- Full SQL suite Phase A→R passes; `flutter analyze` clean; **888** Flutter tests pass.
+- No migration `098`. No commit/push in this session.
+
+**Highlights (unchanged from `097`):**
+- Public RPCs: `get_calendar_range_summary`, `list_calendar_events`.
+- Set-based core `calendar_read_scoped_events`; dual-bucket cursors with
+  `filters_hash` binding; max range 62 days, page size 50/100.
+- Overdue via `tenant_local_today` only; `schedule_unconfigured` when unconfigured.
+- `REVOKE SELECT` on `calendar_events` for API roles; hardened internal
+  `list_contract_upcoming_events_json`.
+- Assigned scope: `unassigned_count` JSON null; calendar-safe labels always shown.
+
+**Next:** Phase 7 M5 — Flutter domain, repository, routes, and navigation.
 
 ---
 

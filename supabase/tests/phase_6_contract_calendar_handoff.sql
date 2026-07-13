@@ -146,6 +146,39 @@ begin
 end;
 $$;
 
+
+-- Trusted backend verification helpers (postgres role only).
+create or replace function pg_temp.p6m12_assert_no_direct_select_authenticated()
+returns void language plpgsql as $$
+begin
+  begin
+    perform count(*) from public.calendar_events;
+    raise exception 'm12 regression failed: authenticated direct SELECT succeeded';
+  exception when insufficient_privilege then
+    null;
+  end;
+end; $$;
+
+create or replace function pg_temp.p6m12_configure_calendar()
+returns void language plpgsql as $$
+begin
+  perform set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-000000000201', true);
+  perform public.update_calendar_settings(jsonb_build_object(
+    'timezone_name', 'Asia/Kuwait',
+    'remind_event_workday_start', true,
+    'remind_previous_workday_start', false,
+    'days', jsonb_build_array(
+      jsonb_build_object('iso_weekday', 1, 'day_mode', 'working_hours', 'work_start', '08:00', 'work_end', '17:00'),
+      jsonb_build_object('iso_weekday', 2, 'day_mode', 'working_hours', 'work_start', '08:00', 'work_end', '17:00'),
+      jsonb_build_object('iso_weekday', 3, 'day_mode', 'working_hours', 'work_start', '08:00', 'work_end', '17:00'),
+      jsonb_build_object('iso_weekday', 4, 'day_mode', 'working_hours', 'work_start', '08:00', 'work_end', '17:00'),
+      jsonb_build_object('iso_weekday', 5, 'day_mode', 'working_hours', 'work_start', '08:00', 'work_end', '13:00'),
+      jsonb_build_object('iso_weekday', 6, 'day_mode', 'day_off'),
+      jsonb_build_object('iso_weekday', 7, 'day_mode', '24_hours')
+    )
+  ));
+end; $$;
+
 create or replace function pg_temp.p6m12_cash_account()
 returns uuid
 language sql
@@ -161,9 +194,9 @@ $$;
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
-do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, false); end $$;
 set local role postgres;
-do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, false); end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
@@ -172,7 +205,7 @@ declare
   v_trial_id uuid;
   v_count int;
 begin
-  v_trial_id := public.create_trial_contract(
+v_trial_id := public.create_trial_contract(
     jsonb_build_object(
       'customer_id', v_fixture ->> 'customer_id',
       'service_location_id', v_fixture ->> 'service_location_id',
@@ -187,18 +220,32 @@ begin
     ),
     gen_random_uuid()
   );
-
-  select count(*) into v_count
+  perform set_config('test.p6m12.ctx.v_trial_id', v_trial_id::text, true);
+  perform set_config('test.p6m12.ctx.v_fixture', v_fixture::text, true);
+end $$;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+set local role postgres;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_trial_id uuid;
+  v_count int;
+begin
+  v_trial_id := nullif(current_setting('test.p6m12.ctx.v_trial_id', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+select count(*) into v_count
   from public.calendar_events ce
   where ce.contract_id = v_trial_id
     and ce.type = 'trial_ending'::public.calendar_event_type
     and ce.source_kind = 'contract_generated'::public.calendar_event_source_kind
     and ce.customer_id is not null
     and ce.service_location_id is not null;
-
-  if v_count <> 1 then
+if v_count <> 1 then
     raise exception 'case1 failed: expected one trial_ending, got %', v_count;
-  end if;
+end if;
+  perform set_config('test.p6m12.ctx.v_count', v_count::text, true);
+  perform set_config('test.p6m12.ctx.v_trial_id', v_trial_id::text, true);
 end $$;
 rollback;
 
@@ -206,9 +253,9 @@ rollback;
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
-do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, false); end $$;
 set local role postgres;
-do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, false); end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
@@ -218,19 +265,48 @@ declare
   v_billing int;
   v_refill int;
 begin
-  v_contract_id := pg_temp.p6m12_create_rental(v_fixture);
-
-  select count(*) into v_billing
+v_contract_id := pg_temp.p6m12_create_rental(v_fixture);
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
+  perform set_config('test.p6m12.ctx.v_fixture', v_fixture::text, true);
+end $$;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+set local role postgres;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_contract_id uuid;
+  v_billing int;
+  v_refill int;
+begin
+  v_contract_id := nullif(current_setting('test.p6m12.ctx.v_contract_id', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+select count(*) into v_billing
   from public.calendar_events ce
   where ce.contract_id = v_contract_id and ce.type = 'billing_due'::public.calendar_event_type;
-
-  select count(*) into v_refill
+  perform set_config('test.p6m12.ctx.v_billing', v_billing::text, true);
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
+end $$;
+set local role postgres;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_contract_id uuid;
+  v_billing int;
+  v_refill int;
+begin
+  v_contract_id := nullif(current_setting('test.p6m12.ctx.v_contract_id', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+  v_billing := nullif(current_setting('test.p6m12.ctx.v_billing', true), '')::int;
+select count(*) into v_refill
   from public.calendar_events ce
   where ce.contract_id = v_contract_id and ce.type = 'refill_due'::public.calendar_event_type;
-
-  if v_billing < 1 or v_refill < 1 then
+if v_billing < 1 or v_refill < 1 then
     raise exception 'case2 failed: billing=% refill=%', v_billing, v_refill;
-  end if;
+end if;
+  perform set_config('test.p6m12.ctx.v_refill', v_refill::text, true);
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
+  perform set_config('test.p6m12.ctx.v_billing', v_billing::text, true);
 end $$;
 rollback;
 
@@ -238,9 +314,9 @@ rollback;
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
-do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, false); end $$;
 set local role postgres;
-do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, false); end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
@@ -251,12 +327,41 @@ declare
   v_fixed_end int;
   v_open_end int;
 begin
-  v_fixed := pg_temp.p6m12_create_rental(v_fixture, current_date, (current_date + 20)::date);
-  select count(*) into v_fixed_end
+v_fixed := pg_temp.p6m12_create_rental(v_fixture, current_date, (current_date + 20)::date);
+  perform set_config('test.p6m12.ctx.v_fixed', v_fixed::text, true);
+  perform set_config('test.p6m12.ctx.v_fixture', v_fixture::text, true);
+end $$;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+set local role postgres;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_fixed uuid;
+  v_open uuid;
+  v_fixed_end int;
+  v_open_end int;
+begin
+  v_fixed := nullif(current_setting('test.p6m12.ctx.v_fixed', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+select count(*) into v_fixed_end
   from public.calendar_events
   where contract_id = v_fixed and type = 'contract_end'::public.calendar_event_type;
-
-  v_open := public.create_rental_contract(
+  perform set_config('test.p6m12.ctx.v_fixed_end', v_fixed_end::text, true);
+  perform set_config('test.p6m12.ctx.v_fixed', v_fixed::text, true);
+end $$;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_fixed uuid;
+  v_open uuid;
+  v_fixed_end int;
+  v_open_end int;
+begin
+  v_fixed := nullif(current_setting('test.p6m12.ctx.v_fixed', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+  v_fixed_end := nullif(current_setting('test.p6m12.ctx.v_fixed_end', true), '')::int;
+v_open := public.create_rental_contract(
     jsonb_build_object(
       'customer_id', v_fixture ->> 'customer_id',
       'service_location_id', v_fixture ->> 'service_location_id',
@@ -273,13 +378,33 @@ begin
     ),
     gen_random_uuid()
   );
-  select count(*) into v_open_end
+  perform set_config('test.p6m12.ctx.v_open', v_open::text, true);
+  perform set_config('test.p6m12.ctx.v_fixture', v_fixture::text, true);
+end $$;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+set local role postgres;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_fixed uuid;
+  v_open uuid;
+  v_fixed_end int;
+  v_open_end int;
+begin
+  v_fixed := nullif(current_setting('test.p6m12.ctx.v_fixed', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+  v_fixed_end := nullif(current_setting('test.p6m12.ctx.v_fixed_end', true), '')::int;
+  v_open := nullif(current_setting('test.p6m12.ctx.v_open', true), '')::uuid;
+select count(*) into v_open_end
   from public.calendar_events
   where contract_id = v_open and type = 'contract_end'::public.calendar_event_type;
-
-  if v_fixed_end <> 1 or v_open_end <> 0 then
+if v_fixed_end <> 1 or v_open_end <> 0 then
     raise exception 'case3 failed: fixed=% open=%', v_fixed_end, v_open_end;
-  end if;
+end if;
+  perform set_config('test.p6m12.ctx.v_open_end', v_open_end::text, true);
+  perform set_config('test.p6m12.ctx.v_open', v_open::text, true);
+  perform set_config('test.p6m12.ctx.v_fixed_end', v_fixed_end::text, true);
 end $$;
 rollback;
 
@@ -287,9 +412,9 @@ rollback;
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
-do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, false); end $$;
 set local role postgres;
-do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, false); end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
@@ -328,9 +453,9 @@ rollback;
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
-do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, false); end $$;
 set local role postgres;
-do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, false); end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
@@ -401,7 +526,7 @@ rollback;
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
-do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, false); end $$;
 set local role postgres;
 do $$
 declare
@@ -421,13 +546,32 @@ declare
   v_billing int;
   v_start date := date '2026-03-20';
 begin
-  v_contract_id := pg_temp.p6m12_create_rental(v_fixture, v_start, (v_start + interval '12 months')::date, 5, 7, 1);
-  select count(*) into v_billing
+v_contract_id := pg_temp.p6m12_create_rental(v_fixture, v_start, (v_start + interval '12 months')::date, 5, 7, 1);
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
+  perform set_config('test.p6m12.ctx.v_fixture', v_fixture::text, true);
+  perform set_config('test.p6m12.ctx.v_start', v_start::text, true);
+end $$;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+set local role postgres;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_contract_id uuid;
+  v_billing int;
+  v_start date := date '2026-03-20';
+begin
+  v_contract_id := nullif(current_setting('test.p6m12.ctx.v_contract_id', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+  v_start := nullif(current_setting('test.p6m12.ctx.v_start', true), '')::date;
+select count(*) into v_billing
   from public.calendar_events
   where contract_id = v_contract_id and type = 'billing_due'::public.calendar_event_type;
-  if v_billing <> 0 then
+if v_billing <> 0 then
     raise exception 'case13 manual policy failed: billing=%', v_billing;
-  end if;
+end if;
+  perform set_config('test.p6m12.ctx.v_billing', v_billing::text, true);
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
 end $$;
 set local role postgres;
 do $$
@@ -444,9 +588,9 @@ rollback;
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
-do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, false); end $$;
 set local role postgres;
-do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, false); end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
@@ -455,16 +599,32 @@ declare
   v_contract_id uuid;
   v_key text;
 begin
-  v_contract_id := pg_temp.p6m12_create_rental(v_fixture, current_date, (current_date + 120)::date, 5, 7, 1);
-  select ce.source_key into v_key
+v_contract_id := pg_temp.p6m12_create_rental(v_fixture, current_date, (current_date + 120)::date, 5, 7, 1);
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
+  perform set_config('test.p6m12.ctx.v_fixture', v_fixture::text, true);
+end $$;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+set local role postgres;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_contract_id uuid;
+  v_key text;
+begin
+  v_contract_id := nullif(current_setting('test.p6m12.ctx.v_contract_id', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+select ce.source_key into v_key
   from public.calendar_events ce
   where ce.contract_id = v_contract_id
     and ce.type = 'billing_due'::public.calendar_event_type
   order by ce.scheduled_date
   limit 1;
-  if v_key is null or v_key !~ ':billing:[0-9]{4}-[0-9]{2}-01$' then
+if v_key is null or v_key !~ ':billing:[0-9]{4}-[0-9]{2}-01$' then
     raise exception 'case14 failed: source_key=%', v_key;
-  end if;
+end if;
+  perform set_config('test.p6m12.ctx.v_key', v_key::text, true);
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
 end $$;
 rollback;
 
@@ -472,9 +632,9 @@ rollback;
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
-do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, false); end $$;
 set local role postgres;
-do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, false); end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
@@ -551,9 +711,9 @@ rollback;
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
-do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, false); end $$;
 set local role postgres;
-do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, false); end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
@@ -565,25 +725,56 @@ declare
   v_status text;
   v_queued_after uuid;
 begin
-  v_contract_id := pg_temp.p6m12_create_rental(v_fixture, current_date - 1);
-
-  select cl.id into v_line_id
+v_contract_id := pg_temp.p6m12_create_rental(v_fixture, current_date - 1);
+select cl.id into v_line_id
   from public.contract_lines cl
   where cl.contract_id = v_contract_id and cl.line_type = 'consumable'::public.contract_line_type
   limit 1;
-
-  select ce.id into v_outstanding_id
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
+  perform set_config('test.p6m12.ctx.v_fixture', v_fixture::text, true);
+  perform set_config('test.p6m12.ctx.v_line_id', v_line_id::text, true);
+end $$;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+set local role postgres;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_contract_id uuid;
+  v_line_id uuid;
+  v_outstanding_id uuid;
+  v_status text;
+  v_queued_after uuid;
+begin
+  v_contract_id := nullif(current_setting('test.p6m12.ctx.v_contract_id', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+  v_line_id := nullif(current_setting('test.p6m12.ctx.v_line_id', true), '')::uuid;
+select ce.id into v_outstanding_id
   from public.calendar_events ce
   where ce.contract_id = v_contract_id
     and ce.type = 'refill_due'::public.calendar_event_type
     and ce.status = 'pending'::public.calendar_event_status
   limit 1;
-
-  if v_outstanding_id is null then
+if v_outstanding_id is null then
     raise exception 'case20b failed: expected outstanding refill from Rule 0 materialization';
-  end if;
-
-  perform public.schedule_contract_consumable_change(
+end if;
+  perform set_config('test.p6m12.ctx.v_outstanding_id', v_outstanding_id::text, true);
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
+end $$;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_contract_id uuid;
+  v_line_id uuid;
+  v_outstanding_id uuid;
+  v_status text;
+  v_queued_after uuid;
+begin
+  v_contract_id := nullif(current_setting('test.p6m12.ctx.v_contract_id', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+  v_line_id := nullif(current_setting('test.p6m12.ctx.v_line_id', true), '')::uuid;
+  v_outstanding_id := nullif(current_setting('test.p6m12.ctx.v_outstanding_id', true), '')::uuid;
+perform public.schedule_contract_consumable_change(
     jsonb_build_object(
       'contract_id', v_contract_id,
       'contract_line_id', v_line_id,
@@ -594,19 +785,23 @@ begin
     ),
     gen_random_uuid()
   );
-
-  select coc.calendar_materialization_status, coc.calendar_queued_after_event_id
+select coc.calendar_materialization_status, coc.calendar_queued_after_event_id
   into v_status, v_queued_after
   from public.contract_oil_changes coc
   where coc.contract_id = v_contract_id
     and coc.contract_line_id = v_line_id
     and coc.effective_from = current_date
   limit 1;
-
-  if v_status <> 'queued' or v_queued_after is distinct from v_outstanding_id then
+if v_status <> 'queued' or v_queued_after is distinct from v_outstanding_id then
     raise exception 'case20b failed: status=% queued_after=% outstanding=%',
       v_status, v_queued_after, v_outstanding_id;
-  end if;
+end if;
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
+  perform set_config('test.p6m12.ctx.v_line_id', v_line_id::text, true);
+  perform set_config('test.p6m12.ctx.v_fixture', v_fixture::text, true);
+  perform set_config('test.p6m12.ctx.v_status', v_status::text, true);
+  perform set_config('test.p6m12.ctx.v_queued_after', v_queued_after::text, true);
+  perform set_config('test.p6m12.ctx.v_outstanding_id', v_outstanding_id::text, true);
 end $$;
 rollback;
 
@@ -614,11 +809,12 @@ rollback;
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
-do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, false); end $$;
 set local role postgres;
-do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, false); end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+do $$ begin perform pg_temp.p6m12_configure_calendar(); end $$;
 do $$
 declare
   v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
@@ -644,9 +840,9 @@ rollback;
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
-do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, false); end $$;
 set local role postgres;
-do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, false); end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
@@ -657,12 +853,14 @@ declare
 begin
   v_contract_id := pg_temp.p6m12_create_rental(v_fixture, current_date, (current_date + 20)::date);
 
+  v_manual_id := gen_random_uuid();
   insert into public.calendar_events (
-    tenant_id, type, status, scheduled_date,
+    id, tenant_id, type, status, scheduled_date,
     contract_id, customer_id, service_location_id,
     title_en, source_kind, source_metadata
   )
   values (
+    v_manual_id,
     '00000000-0000-0000-0000-000000000101'::uuid,
     'custom'::public.calendar_event_type,
     'pending'::public.calendar_event_status,
@@ -673,8 +871,7 @@ begin
     'Manual follow-up',
     'manual'::public.calendar_event_source_kind,
     '{}'::jsonb
-  )
-  returning id into v_manual_id;
+  );
 
   perform set_config('test.p6m12.contract_id', v_contract_id::text, true);
   perform set_config('test.p6m12.manual_id', v_manual_id::text, true);
@@ -698,6 +895,7 @@ begin
 end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+set local role postgres;
 do $$
 declare
   v_contract_id uuid := current_setting('test.p6m12.contract_id')::uuid;
@@ -726,9 +924,9 @@ rollback;
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
-do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, false); end $$;
 set local role postgres;
-do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, false); end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
@@ -807,9 +1005,9 @@ rollback;
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
-do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, false); end $$;
 set local role postgres;
-do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, false); end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
@@ -820,7 +1018,7 @@ declare
   v_after date;
   v_new_end date := current_date + 25;
 begin
-  v_trial_id := public.create_trial_contract(
+v_trial_id := public.create_trial_contract(
     jsonb_build_object(
       'customer_id', v_fixture ->> 'customer_id',
       'service_location_id', v_fixture ->> 'service_location_id',
@@ -835,14 +1033,42 @@ begin
     ),
     gen_random_uuid()
   );
-
-  select ce.scheduled_date into v_before
+  perform set_config('test.p6m12.ctx.v_trial_id', v_trial_id::text, true);
+  perform set_config('test.p6m12.ctx.v_fixture', v_fixture::text, true);
+end $$;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+set local role postgres;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_trial_id uuid;
+  v_before date;
+  v_after date;
+  v_new_end date := current_date + 25;
+begin
+  v_trial_id := nullif(current_setting('test.p6m12.ctx.v_trial_id', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+select ce.scheduled_date into v_before
   from public.calendar_events ce
   where ce.contract_id = v_trial_id
     and ce.type = 'trial_ending'::public.calendar_event_type
     and ce.status = 'pending'::public.calendar_event_status;
-
-  perform public.extend_trial_contract(
+  perform set_config('test.p6m12.ctx.v_before', v_before::text, true);
+  perform set_config('test.p6m12.ctx.v_trial_id', v_trial_id::text, true);
+end $$;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_trial_id uuid;
+  v_before date;
+  v_after date;
+  v_new_end date := current_date + 25;
+begin
+  v_trial_id := nullif(current_setting('test.p6m12.ctx.v_trial_id', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+  v_before := nullif(current_setting('test.p6m12.ctx.v_before', true), '')::date;
+perform public.extend_trial_contract(
     jsonb_build_object(
       'trial_contract_id', v_trial_id,
       'new_trial_end_date', v_new_end,
@@ -850,16 +1076,36 @@ begin
     ),
     gen_random_uuid()
   );
-
-  select ce.scheduled_date into v_after
+  perform set_config('test.p6m12.ctx.v_trial_id', v_trial_id::text, true);
+  perform set_config('test.p6m12.ctx.v_new_end', v_new_end::text, true);
+end $$;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+set local role postgres;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_trial_id uuid;
+  v_before date;
+  v_after date;
+  v_new_end date := current_date + 25;
+begin
+  v_trial_id := nullif(current_setting('test.p6m12.ctx.v_trial_id', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+  v_before := nullif(current_setting('test.p6m12.ctx.v_before', true), '')::date;
+  v_new_end := nullif(current_setting('test.p6m12.ctx.v_new_end', true), '')::date;
+select ce.scheduled_date into v_after
   from public.calendar_events ce
   where ce.contract_id = v_trial_id
     and ce.type = 'trial_ending'::public.calendar_event_type
     and ce.status = 'pending'::public.calendar_event_status;
-
-  if v_before is null or v_after <> v_new_end then
+if v_before is null or v_after <> v_new_end then
     raise exception 'case7 failed: before=% after=% expected=%', v_before, v_after, v_new_end;
-  end if;
+end if;
+  perform set_config('test.p6m12.ctx.v_after', v_after::text, true);
+  perform set_config('test.p6m12.ctx.v_trial_id', v_trial_id::text, true);
+  perform set_config('test.p6m12.ctx.v_before', v_before::text, true);
+  perform set_config('test.p6m12.ctx.v_new_end', v_new_end::text, true);
 end $$;
 rollback;
 
@@ -867,9 +1113,9 @@ rollback;
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
-do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, false); end $$;
 set local role postgres;
-do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, false); end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
@@ -955,7 +1201,7 @@ rollback;
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
-do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, false); end $$;
 set local role postgres;
 do $$
 declare
@@ -977,16 +1223,15 @@ declare
   v_first date;
   v_expected date;
 begin
-  v_start := make_date(
+v_start := make_date(
     extract(year from current_date)::int,
     extract(month from current_date)::int,
     20
   );
-  if v_start < current_date then
+if v_start < current_date then
     v_start := (v_start + interval '1 month')::date;
-  end if;
-
-  v_contract_id := pg_temp.p6m12_create_rental(
+end if;
+v_contract_id := pg_temp.p6m12_create_rental(
     v_fixture,
     v_start,
     (v_start + interval '12 months')::date,
@@ -994,20 +1239,59 @@ begin
     7,
     1
   );
-
-  select min(ce.scheduled_date) into v_first
+  perform set_config('test.p6m12.ctx.v_start', v_start::text, true);
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
+  perform set_config('test.p6m12.ctx.v_fixture', v_fixture::text, true);
+  perform set_config('test.p6m12.ctx.v_billing_day', v_billing_day::text, true);
+end $$;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+set local role postgres;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_contract_id uuid;
+  v_start date;
+  v_billing_day int := 5;
+  v_first date;
+  v_expected date;
+begin
+  v_start := nullif(current_setting('test.p6m12.ctx.v_start', true), '')::date;
+  v_contract_id := nullif(current_setting('test.p6m12.ctx.v_contract_id', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+  v_billing_day := nullif(current_setting('test.p6m12.ctx.v_billing_day', true), '')::int;
+select min(ce.scheduled_date) into v_first
   from public.calendar_events ce
   where ce.contract_id = v_contract_id
     and ce.type = 'billing_due'::public.calendar_event_type;
-
-  v_expected := public.calendar_make_day_in_month(
+  perform set_config('test.p6m12.ctx.v_first', v_first::text, true);
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
+end $$;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_contract_id uuid;
+  v_start date;
+  v_billing_day int := 5;
+  v_first date;
+  v_expected date;
+begin
+  v_start := nullif(current_setting('test.p6m12.ctx.v_start', true), '')::date;
+  v_contract_id := nullif(current_setting('test.p6m12.ctx.v_contract_id', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+  v_billing_day := nullif(current_setting('test.p6m12.ctx.v_billing_day', true), '')::int;
+  v_first := nullif(current_setting('test.p6m12.ctx.v_first', true), '')::date;
+v_expected := public.calendar_make_day_in_month(
     (date_trunc('month', v_start) + interval '1 month')::date,
     v_billing_day
   );
-
-  if v_first is null or v_first <> v_expected then
+if v_first is null or v_first <> v_expected then
     raise exception 'case11 failed: first=% expected=% start=%', v_first, v_expected, v_start;
-  end if;
+end if;
+  perform set_config('test.p6m12.ctx.v_expected', v_expected::text, true);
+  perform set_config('test.p6m12.ctx.v_start', v_start::text, true);
+  perform set_config('test.p6m12.ctx.v_billing_day', v_billing_day::text, true);
+  perform set_config('test.p6m12.ctx.v_first', v_first::text, true);
 end $$;
 rollback;
 
@@ -1015,7 +1299,7 @@ rollback;
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
-do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, false); end $$;
 set local role postgres;
 do $$
 declare
@@ -1038,7 +1322,7 @@ declare
   v_second date;
   v_expected_second date;
 begin
-  v_contract_id := pg_temp.p6m12_create_rental(
+v_contract_id := pg_temp.p6m12_create_rental(
     v_fixture,
     v_start,
     (v_start + interval '12 months')::date,
@@ -1046,31 +1330,92 @@ begin
     7,
     1
   );
-
-  select ce.scheduled_date into v_first
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
+  perform set_config('test.p6m12.ctx.v_fixture', v_fixture::text, true);
+  perform set_config('test.p6m12.ctx.v_start', v_start::text, true);
+  perform set_config('test.p6m12.ctx.v_billing_day', v_billing_day::text, true);
+end $$;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+set local role postgres;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_contract_id uuid;
+  v_start date := current_date + 3;
+  v_billing_day int := 5;
+  v_first date;
+  v_second date;
+  v_expected_second date;
+begin
+  v_contract_id := nullif(current_setting('test.p6m12.ctx.v_contract_id', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+  v_start := nullif(current_setting('test.p6m12.ctx.v_start', true), '')::date;
+  v_billing_day := nullif(current_setting('test.p6m12.ctx.v_billing_day', true), '')::int;
+select ce.scheduled_date into v_first
   from public.calendar_events ce
   where ce.contract_id = v_contract_id
     and ce.type = 'billing_due'::public.calendar_event_type
   order by ce.scheduled_date
   limit 1;
-
-  select ce.scheduled_date into v_second
+  perform set_config('test.p6m12.ctx.v_first', v_first::text, true);
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
+end $$;
+set local role postgres;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_contract_id uuid;
+  v_start date := current_date + 3;
+  v_billing_day int := 5;
+  v_first date;
+  v_second date;
+  v_expected_second date;
+begin
+  v_contract_id := nullif(current_setting('test.p6m12.ctx.v_contract_id', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+  v_start := nullif(current_setting('test.p6m12.ctx.v_start', true), '')::date;
+  v_billing_day := nullif(current_setting('test.p6m12.ctx.v_billing_day', true), '')::int;
+  v_first := nullif(current_setting('test.p6m12.ctx.v_first', true), '')::date;
+select ce.scheduled_date into v_second
   from public.calendar_events ce
   where ce.contract_id = v_contract_id
     and ce.type = 'billing_due'::public.calendar_event_type
   order by ce.scheduled_date
   offset 1
   limit 1;
-
-  v_expected_second := public.calendar_make_day_in_month(
+  perform set_config('test.p6m12.ctx.v_second', v_second::text, true);
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
+end $$;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_contract_id uuid;
+  v_start date := current_date + 3;
+  v_billing_day int := 5;
+  v_first date;
+  v_second date;
+  v_expected_second date;
+begin
+  v_contract_id := nullif(current_setting('test.p6m12.ctx.v_contract_id', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+  v_start := nullif(current_setting('test.p6m12.ctx.v_start', true), '')::date;
+  v_billing_day := nullif(current_setting('test.p6m12.ctx.v_billing_day', true), '')::int;
+  v_first := nullif(current_setting('test.p6m12.ctx.v_first', true), '')::date;
+  v_second := nullif(current_setting('test.p6m12.ctx.v_second', true), '')::date;
+v_expected_second := public.calendar_make_day_in_month(
     (date_trunc('month', v_start) + interval '1 month')::date,
     v_billing_day
   );
-
-  if v_first <> v_start or v_second <> v_expected_second then
+if v_first <> v_start or v_second <> v_expected_second then
     raise exception 'case12 failed: first=% second=% expected_second=% start=%',
       v_first, v_second, v_expected_second, v_start;
-  end if;
+end if;
+  perform set_config('test.p6m12.ctx.v_expected_second', v_expected_second::text, true);
+  perform set_config('test.p6m12.ctx.v_start', v_start::text, true);
+  perform set_config('test.p6m12.ctx.v_billing_day', v_billing_day::text, true);
+  perform set_config('test.p6m12.ctx.v_first', v_first::text, true);
+  perform set_config('test.p6m12.ctx.v_second', v_second::text, true);
 end $$;
 set local role postgres;
 do $$
@@ -1087,9 +1432,9 @@ rollback;
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
-do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, false); end $$;
 set local role postgres;
-do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, false); end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
@@ -1101,7 +1446,7 @@ declare
   v_status public.calendar_event_status;
   v_schedule jsonb;
 begin
-  v_contract_id := pg_temp.p6m12_create_rental(
+v_contract_id := pg_temp.p6m12_create_rental(
     v_fixture,
     (current_date - interval '45 days')::date,
     (current_date + interval '12 months')::date,
@@ -1109,8 +1454,24 @@ begin
     7,
     1
   );
-
-  select
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
+  perform set_config('test.p6m12.ctx.v_fixture', v_fixture::text, true);
+end $$;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+set local role postgres;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_contract_id uuid;
+  v_coverage date;
+  v_billing_id uuid;
+  v_status public.calendar_event_status;
+  v_schedule jsonb;
+begin
+  v_contract_id := nullif(current_setting('test.p6m12.ctx.v_contract_id', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+select
     ce.id,
     ce.status,
     (ce.source_metadata ->> 'coverage_month_key')::date
@@ -1121,12 +1482,29 @@ begin
     and ce.status = 'pending'::public.calendar_event_status
   order by ce.scheduled_date, ce.id
   limit 1;
-
-  if v_billing_id is null then
+if v_billing_id is null then
     raise exception 'case15 failed: no pending billing event for contract %', v_contract_id;
-  end if;
-
-  perform public.collect_rental_payment(
+end if;
+  perform set_config('test.p6m12.ctx.v_billing_id', v_billing_id::text, true);
+  perform set_config('test.p6m12.ctx.v_status', v_status::text, true);
+  perform set_config('test.p6m12.ctx.v_coverage', v_coverage::text, true);
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
+end $$;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_contract_id uuid;
+  v_coverage date;
+  v_billing_id uuid;
+  v_status public.calendar_event_status;
+  v_schedule jsonb;
+begin
+  v_contract_id := nullif(current_setting('test.p6m12.ctx.v_contract_id', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+  v_billing_id := nullif(current_setting('test.p6m12.ctx.v_billing_id', true), '')::uuid;
+  v_status := nullif(current_setting('test.p6m12.ctx.v_status', true), '')::public.calendar_event_status;
+  v_coverage := nullif(current_setting('test.p6m12.ctx.v_coverage', true), '')::date;
+perform public.collect_rental_payment(
     jsonb_build_object(
       'contract_id', v_contract_id,
       'date', current_date,
@@ -1137,20 +1515,58 @@ begin
     ),
     gen_random_uuid()
   );
-
-  select ce.status into v_status
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
+  perform set_config('test.p6m12.ctx.v_coverage', v_coverage::text, true);
+end $$;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+set local role postgres;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_contract_id uuid;
+  v_coverage date;
+  v_billing_id uuid;
+  v_status public.calendar_event_status;
+  v_schedule jsonb;
+begin
+  v_contract_id := nullif(current_setting('test.p6m12.ctx.v_contract_id', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+  v_billing_id := nullif(current_setting('test.p6m12.ctx.v_billing_id', true), '')::uuid;
+  v_status := nullif(current_setting('test.p6m12.ctx.v_status', true), '')::public.calendar_event_status;
+  v_coverage := nullif(current_setting('test.p6m12.ctx.v_coverage', true), '')::date;
+select ce.status into v_status
   from public.calendar_events ce
   where ce.id = v_billing_id;
-
-  v_schedule := coalesce(
+  perform set_config('test.p6m12.ctx.v_status', v_status::text, true);
+  perform set_config('test.p6m12.ctx.v_billing_id', v_billing_id::text, true);
+end $$;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_contract_id uuid;
+  v_coverage date;
+  v_billing_id uuid;
+  v_status public.calendar_event_status;
+  v_schedule jsonb;
+begin
+  v_contract_id := nullif(current_setting('test.p6m12.ctx.v_contract_id', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+  v_billing_id := nullif(current_setting('test.p6m12.ctx.v_billing_id', true), '')::uuid;
+  v_status := nullif(current_setting('test.p6m12.ctx.v_status', true), '')::public.calendar_event_status;
+  v_coverage := nullif(current_setting('test.p6m12.ctx.v_coverage', true), '')::date;
+v_schedule := coalesce(
     public.get_contract_detail(v_contract_id) -> 'upcoming_schedule',
     '[]'::jsonb
   );
-
-  if v_status <> 'done'::public.calendar_event_status
+if v_status <> 'done'::public.calendar_event_status
     or v_schedule @> jsonb_build_array(jsonb_build_object('id', v_billing_id::text)) then
     raise exception 'case15 failed: status=% schedule_contains=%', v_status, v_schedule;
-  end if;
+end if;
+  perform set_config('test.p6m12.ctx.v_schedule', v_schedule::text, true);
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
+  perform set_config('test.p6m12.ctx.v_status', v_status::text, true);
+  perform set_config('test.p6m12.ctx.v_billing_id', v_billing_id::text, true);
 end $$;
 rollback;
 
@@ -1158,9 +1574,9 @@ rollback;
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
-do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, false); end $$;
 set local role postgres;
-do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, false); end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
@@ -1212,9 +1628,9 @@ rollback;
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
-do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, false); end $$;
 set local role postgres;
-do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, false); end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
@@ -1275,9 +1691,9 @@ rollback;
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
-do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, false); end $$;
 set local role postgres;
-do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, false); end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
@@ -1288,25 +1704,71 @@ declare
   v_missed_id uuid;
   v_manual_id uuid;
 begin
-  v_contract_id := pg_temp.p6m12_create_rental(v_fixture, current_date, (current_date + 60)::date);
-
-  select ce.id into v_done_id
+v_contract_id := pg_temp.p6m12_create_rental(v_fixture, current_date, (current_date + 60)::date);
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
+  perform set_config('test.p6m12.ctx.v_fixture', v_fixture::text, true);
+end $$;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+set local role postgres;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_contract_id uuid;
+  v_done_id uuid;
+  v_missed_id uuid;
+  v_manual_id uuid;
+begin
+  v_contract_id := nullif(current_setting('test.p6m12.ctx.v_contract_id', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+select ce.id into v_done_id
   from public.calendar_events ce
   where ce.contract_id = v_contract_id
     and ce.type = 'billing_due'::public.calendar_event_type
   order by ce.scheduled_date
   limit 1;
-
-  select ce.id into v_missed_id
+  perform set_config('test.p6m12.ctx.v_done_id', v_done_id::text, true);
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
+end $$;
+set local role postgres;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_contract_id uuid;
+  v_done_id uuid;
+  v_missed_id uuid;
+  v_manual_id uuid;
+begin
+  v_contract_id := nullif(current_setting('test.p6m12.ctx.v_contract_id', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+  v_done_id := nullif(current_setting('test.p6m12.ctx.v_done_id', true), '')::uuid;
+select ce.id into v_missed_id
   from public.calendar_events ce
   where ce.contract_id = v_contract_id
     and ce.type = 'refill_due'::public.calendar_event_type
   order by ce.scheduled_date
   limit 1;
-
-  perform set_config('test.p6m12.contract_id', v_contract_id::text, true);
-  perform set_config('test.p6m12.done_id', v_done_id::text, true);
-  perform set_config('test.p6m12.missed_id', v_missed_id::text, true);
+  perform set_config('test.p6m12.ctx.v_missed_id', v_missed_id::text, true);
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
+end $$;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_contract_id uuid;
+  v_done_id uuid;
+  v_missed_id uuid;
+  v_manual_id uuid;
+begin
+  v_contract_id := nullif(current_setting('test.p6m12.ctx.v_contract_id', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+  v_done_id := nullif(current_setting('test.p6m12.ctx.v_done_id', true), '')::uuid;
+  v_missed_id := nullif(current_setting('test.p6m12.ctx.v_missed_id', true), '')::uuid;
+perform set_config('test.p6m12.contract_id', v_contract_id::text, true);
+perform set_config('test.p6m12.done_id', v_done_id::text, true);
+perform set_config('test.p6m12.missed_id', v_missed_id::text, true);
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
+  perform set_config('test.p6m12.ctx.v_done_id', v_done_id::text, true);
+  perform set_config('test.p6m12.ctx.v_missed_id', v_missed_id::text, true);
 end $$;
 set local role postgres;
 do $$
@@ -1377,9 +1839,9 @@ rollback;
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
-do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, false); end $$;
 set local role postgres;
-do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, false); end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
@@ -1461,9 +1923,9 @@ rollback;
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
-do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, false); end $$;
 set local role postgres;
-do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, false); end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
@@ -1476,7 +1938,7 @@ declare
   v_count int;
   v_action text;
 begin
-  v_contract_id := pg_temp.p6m12_create_rental(
+v_contract_id := pg_temp.p6m12_create_rental(
     v_fixture,
     current_date,
     (current_date + interval '12 months')::date,
@@ -1484,24 +1946,65 @@ begin
     extract(day from v_merge_date)::int,
     1
   );
-
-  select cl.id into v_line_id
+select cl.id into v_line_id
   from public.contract_lines cl
   where cl.contract_id = v_contract_id
     and cl.line_type = 'consumable'::public.contract_line_type
   limit 1;
-
-  select ce.id into v_outstanding_id
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
+  perform set_config('test.p6m12.ctx.v_fixture', v_fixture::text, true);
+  perform set_config('test.p6m12.ctx.v_merge_date', v_merge_date::text, true);
+  perform set_config('test.p6m12.ctx.v_line_id', v_line_id::text, true);
+end $$;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+set local role postgres;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_contract_id uuid;
+  v_line_id uuid;
+  v_merge_date date := current_date + 14;
+  v_outstanding_id uuid;
+  v_count int;
+  v_action text;
+begin
+  v_contract_id := nullif(current_setting('test.p6m12.ctx.v_contract_id', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+  v_merge_date := nullif(current_setting('test.p6m12.ctx.v_merge_date', true), '')::date;
+  v_line_id := nullif(current_setting('test.p6m12.ctx.v_line_id', true), '')::uuid;
+select ce.id into v_outstanding_id
   from public.calendar_events ce
   where ce.contract_id = v_contract_id
     and ce.type = 'refill_due'::public.calendar_event_type
     and ce.status = 'pending'::public.calendar_event_status
   limit 1;
-
-  perform set_config('test.p6m12.contract_id', v_contract_id::text, true);
-  perform set_config('test.p6m12.line_id', v_line_id::text, true);
-  perform set_config('test.p6m12.merge_date', v_merge_date::text, true);
-  perform set_config('test.p6m12.outstanding_id', v_outstanding_id::text, true);
+  perform set_config('test.p6m12.ctx.v_outstanding_id', v_outstanding_id::text, true);
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
+end $$;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_contract_id uuid;
+  v_line_id uuid;
+  v_merge_date date := current_date + 14;
+  v_outstanding_id uuid;
+  v_count int;
+  v_action text;
+begin
+  v_contract_id := nullif(current_setting('test.p6m12.ctx.v_contract_id', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+  v_merge_date := nullif(current_setting('test.p6m12.ctx.v_merge_date', true), '')::date;
+  v_line_id := nullif(current_setting('test.p6m12.ctx.v_line_id', true), '')::uuid;
+  v_outstanding_id := nullif(current_setting('test.p6m12.ctx.v_outstanding_id', true), '')::uuid;
+perform set_config('test.p6m12.contract_id', v_contract_id::text, true);
+perform set_config('test.p6m12.line_id', v_line_id::text, true);
+perform set_config('test.p6m12.merge_date', v_merge_date::text, true);
+perform set_config('test.p6m12.outstanding_id', v_outstanding_id::text, true);
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
+  perform set_config('test.p6m12.ctx.v_line_id', v_line_id::text, true);
+  perform set_config('test.p6m12.ctx.v_merge_date', v_merge_date::text, true);
+  perform set_config('test.p6m12.ctx.v_outstanding_id', v_outstanding_id::text, true);
 end $$;
 set local role postgres;
 do $$
@@ -1521,7 +2024,7 @@ declare
   v_count int;
   v_action text;
 begin
-  perform public.schedule_contract_consumable_change(
+perform public.schedule_contract_consumable_change(
     jsonb_build_object(
       'contract_id', v_contract_id,
       'contract_line_id', v_line_id,
@@ -1532,18 +2035,41 @@ begin
     ),
     gen_random_uuid()
   );
-
-  select count(*), max(ce.source_metadata ->> 'action_kind')
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
+  perform set_config('test.p6m12.ctx.v_line_id', v_line_id::text, true);
+  perform set_config('test.p6m12.ctx.v_fixture', v_fixture::text, true);
+  perform set_config('test.p6m12.ctx.v_merge_date', v_merge_date::text, true);
+end $$;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+set local role postgres;
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_contract_id uuid := current_setting('test.p6m12.contract_id')::uuid;
+  v_line_id uuid := current_setting('test.p6m12.line_id')::uuid;
+  v_merge_date date := current_setting('test.p6m12.merge_date')::date;
+  v_count int;
+  v_action text;
+begin
+  v_contract_id := nullif(current_setting('test.p6m12.ctx.v_contract_id', true), '')::uuid;
+  v_line_id := nullif(current_setting('test.p6m12.ctx.v_line_id', true), '')::uuid;
+  v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
+  v_merge_date := nullif(current_setting('test.p6m12.ctx.v_merge_date', true), '')::date;
+select count(*), max(ce.source_metadata ->> 'action_kind')
   into v_count, v_action
   from public.calendar_events ce
   where ce.contract_id = v_contract_id
     and ce.type = 'refill_due'::public.calendar_event_type
     and ce.scheduled_date = v_merge_date
     and ce.status = 'pending'::public.calendar_event_status;
-
-  if v_count <> 1 or v_action <> 'refill_with_consumable_change' then
+if v_count <> 1 or v_action <> 'refill_with_consumable_change' then
     raise exception 'case20 failed: count=% action=% date=%', v_count, v_action, v_merge_date;
-  end if;
+end if;
+  perform set_config('test.p6m12.ctx.v_count', v_count::text, true);
+  perform set_config('test.p6m12.ctx.v_action', v_action::text, true);
+  perform set_config('test.p6m12.ctx.v_contract_id', v_contract_id::text, true);
+  perform set_config('test.p6m12.ctx.v_merge_date', v_merge_date::text, true);
 end $$;
 rollback;
 
@@ -1551,9 +2077,9 @@ rollback;
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
-do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, false); end $$;
 set local role postgres;
-do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, false); end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
@@ -1619,6 +2145,7 @@ begin
 end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+set local role postgres;
 do $$
 declare
   v_contract_f1 uuid := current_setting('test.p6m12.contract_f1')::uuid;
@@ -1648,11 +2175,12 @@ rollback;
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
-do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, false); end $$;
 set local role postgres;
-do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, false); end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+do $$ begin perform pg_temp.p6m12_configure_calendar(); end $$;
 do $$
 declare
   v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
@@ -1662,12 +2190,14 @@ declare
 begin
   v_contract_id := pg_temp.p6m12_create_rental(v_fixture);
 
+  v_manual_id := gen_random_uuid();
   insert into public.calendar_events (
-    tenant_id, type, status, scheduled_date,
+    id, tenant_id, type, status, scheduled_date,
     contract_id, customer_id, service_location_id,
     title_en, source_kind, source_metadata
   )
   values (
+    v_manual_id,
     '00000000-0000-0000-0000-000000000101'::uuid,
     'billing_due'::public.calendar_event_type,
     'pending'::public.calendar_event_status,
@@ -1678,8 +2208,7 @@ begin
     'Manual billing follow-up',
     'manual'::public.calendar_event_source_kind,
     '{}'::jsonb
-  )
-  returning id into v_manual_id;
+  );
 
   v_schedule := coalesce(
     public.get_contract_detail(v_contract_id) -> 'upcoming_schedule',
@@ -1696,9 +2225,9 @@ rollback;
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
-do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.customers', pg_temp.p6m12_customer_setup()::text, false); end $$;
 set local role postgres;
-do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, true); end $$;
+do $$ begin perform set_config('test.p6m12.fixture', pg_temp.p6m12_inventory_setup(current_setting('test.p6m12.customers')::jsonb)::text, false); end $$;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
@@ -1766,6 +2295,33 @@ begin
       v_journals_before, v_journals_after,
       v_movements_before, v_movements_after,
       v_stock_before, v_stock_after;
+  end if;
+end $$;
+rollback;
+
+
+-- M12 regression after M4 ACL: authenticated cannot direct-read calendar_events.
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+do $$ begin perform pg_temp.p6m12_assert_no_direct_select_authenticated(); end $$;
+set local role postgres;
+do $$
+declare
+  v_fixture jsonb;
+  v_contract_id uuid;
+  v_count int;
+begin
+  perform set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-000000000201', true);
+  v_fixture := pg_temp.p6m12_inventory_setup(pg_temp.p6m12_customer_setup());
+  v_contract_id := pg_temp.p6m12_create_rental(v_fixture);
+  select count(*)::int into v_count
+  from public.calendar_events ce
+  where ce.contract_id = v_contract_id
+    and ce.type = 'refill_due'::public.calendar_event_type
+    and ce.source_kind = 'contract_generated'::public.calendar_event_source_kind;
+  if v_count < 1 then
+    raise exception 'm12 regression failed: trusted verification count=%', v_count;
   end if;
 end $$;
 rollback;

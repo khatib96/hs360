@@ -1234,10 +1234,16 @@ do $$
 declare
   v_fixture jsonb := current_setting('test.p7m1.fixture')::jsonb;
   v_contract_id uuid;
-  v_count int;
 begin
   v_contract_id := pg_temp.p7m1_create_rental(v_fixture);
-
+  perform set_config('test.p7m1.ctx.v_contract_id', v_contract_id::text, true);
+end $$;
+set local role postgres;
+do $$
+declare
+  v_contract_id uuid := nullif(current_setting('test.p7m1.ctx.v_contract_id', true), '')::uuid;
+  v_count int;
+begin
   select count(*) into v_count
   from public.calendar_events ce
   where ce.contract_id = v_contract_id

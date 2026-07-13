@@ -146,7 +146,7 @@ create policy "T_delete_with_permission" on T
 | `journal_entries` | `journal.view` | system functions only | n/a | n/a |
 | `journal_lines` | `journal.view` | system functions only | n/a | n/a |
 | `quotations` | `quotations.view` | `quotations.create` | `quotations.edit` | `quotations.delete` |
-| `calendar_events` | `calendar.view` or `calendar.view_assigned` | `calendar.create` | `calendar.edit` | `calendar.delete` |
+| `calendar_events` | M4 RPCs only (`get_calendar_range_summary`, `list_calendar_events`); direct `SELECT` revoked for `authenticated`/`anon` | `calendar.create` | `calendar.edit` | `calendar.delete` |
 | `notifications` | own row (`recipient_user_id = auth.uid()`) or `notifications.view` | system functions or `notifications.create` | n/a | `notifications.delete` |
 | `audit_log` | `audit_log.view` | trigger only | n/a | never |
 
@@ -155,6 +155,13 @@ tenant's reconcile cursor to finish, refreshes the event occurrence, and
 revalidates the current assignment, active employee/user mapping, tenant
 membership, and `calendar.view_assigned` visibility immediately before the
 system notification insert.
+
+**Phase 7 M4 (`097`):** `calendar_events` is RPC-only for API roles.
+`get_calendar_range_summary` and `list_calendar_events` enforce
+`calendar.view` vs `calendar.view_assigned` server-side via
+`assert_calendar_event_view`. `list_contract_upcoming_events_json` is internal
+only (EXECUTE revoked from `authenticated`/`anon`); contract detail still
+receives upcoming rows through `build_contract_detail_json`.
 
 ### 3.3 Cost Column Protection
 

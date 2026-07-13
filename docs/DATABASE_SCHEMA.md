@@ -1444,6 +1444,20 @@ retryable plan attempts (`plans_retried`) from terminal failures and records
 tenant-isolated reconcile failures (`tenants_failed`). Terminal plan snapshots
 (`delivered`/`expired`/`failed`) are immutability-protected.
 
+**Phase 7 M4 (`097`):** calendar event reads for API roles are RPC-only.
+`get_calendar_range_summary` returns dense per-day counts plus
+`overdue_outside_range.state`; `list_calendar_events` returns dual buckets
+(`in_range`, `overdue_outside_range`) with independent base64 cursors bound to
+`tenant_id`, scope, `employee_id`, date range, bucket, and `filters_hash`.
+Shared set-based core `calendar_read_scoped_events` joins display labels and
+optional `calendar_refill_execution_facts` for `execution_summary`. Overdue
+derivation uses `tenant_local_today` (not `try_tenant_local_today`). Assigned
+scope nulls `unassigned_count` in day summaries. `REVOKE SELECT` on
+`calendar_events` for `authenticated`/`anon`; `list_contract_upcoming_events_json`
+EXECUTE revoked (internal contract-detail embed only). Types:
+`calendar_read_filter_bundle`, `calendar_read_scope_context`. No new
+`calendar_events` indexes in M4 (EXPLAIN gate at current volume).
+
 Legacy nullable `scheduled_time` and `reminder_offsets_minutes` remain for
 compatibility but are not authoritative for date-only Phase 7 events.
 

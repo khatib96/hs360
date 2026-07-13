@@ -5,7 +5,7 @@
 > office and assigned employees.
 >
 > Status: **M0, M0.5, M1, M2, and M3 complete (2026-07-13).** Migrations `093`–`096`
-> applied. Next milestone: **M4 — Calendar Read APIs**.
+> applied. Next milestone: **M5 — Flutter Domain, Repository, Routes, and Navigation**.
 >
 > Owner direction: HS360 appointments are **day-based**, not exact-time
 > appointments. An event is due on a selected calendar date and is expected to
@@ -1212,6 +1212,11 @@ concurrency scripts are registered in `run_sql_suites.sh` / `.ps1`.
 Expose one canonical, bounded, filterable calendar read model for desktop and
 mobile.
 
+### Status
+
+**Closed (2026-07-13)** — migration `097_phase_7_calendar_read_rpc.sql`, SQL
+Phase R (`phase_7_calendar_read_rpc.sql`, 68 cases).
+
 ### Work
 
 1. Add range/count read RPC(s) with a documented maximum range.
@@ -1234,15 +1239,29 @@ mobile.
     pagination SQL tests.
 16. Document JSON response contracts in `RPC_SPEC.md`.
 
+### Implementation notes (M4)
+
+- Public RPCs: `get_calendar_range_summary`, `list_calendar_events`.
+- Shared core: `calendar_read_scoped_events` (set-based, static SQL).
+- Max range 62 days; page size default 50, max 100.
+- Dual-bucket cursors (`in_range`, `overdue_outside_range`) with
+  `filters_hash` binding.
+- Overdue uses `tenant_local_today` only; unconfigured schedule surfaces
+  `schedule_unconfigured` without treating events as overdue.
+- `REVOKE SELECT` on `calendar_events` for API roles; hardened
+  `list_contract_upcoming_events_json` (internal).
+- Phase R EXPLAIN gate on scoped read; no new `calendar_events` index required
+  at current fixture volume.
+
 ### Acceptance
 
-- Manager/global and assigned-only results differ correctly.
-- Month counts do not leak other employees' events.
-- Selected-day rows and month counts are consistent.
-- Date limits and pagination are deterministic.
-- Overdue events remain visible with accurate tenant-local delay counts.
-- Arabic/English titles and linked display names are complete.
-- No widget will need direct Supabase table access.
+- [x] Manager/global and assigned-only results differ correctly.
+- [x] Month counts do not leak other employees' events.
+- [x] Selected-day rows and month counts are consistent.
+- [x] Date limits and pagination are deterministic.
+- [x] Overdue events remain visible with accurate tenant-local delay counts.
+- [x] Arabic/English titles and linked display names are complete.
+- [x] No widget will need direct Supabase table access.
 
 ---
 
