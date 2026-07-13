@@ -206,6 +206,15 @@ begin
   where cust.id = any (v_customer_ids)
     and cust.account_id is not null;
 
+  delete from public.calendar_refill_execution_facts
+  where contract_id = any (v_contract_ids);
+
+  delete from public.calendar_deferred_lifecycle_reconciliations
+  where contract_id = any (v_contract_ids);
+
+  delete from public.contract_oil_changes
+  where contract_id = any (v_contract_ids);
+
   delete from public.calendar_events
   where contract_id = any (v_contract_ids);
 
@@ -250,6 +259,10 @@ begin
 
   delete from public.chart_of_accounts
   where id = any (v_account_ids);
+
+  update public.tenant_calendar_settings
+  set timezone_name = null
+  where tenant_id = '00000000-0000-0000-0000-000000000101'::uuid;
 end;
 $cleanup$;
 SQL
@@ -429,6 +442,10 @@ begin
   values (v_tenant_a, v_main_warehouse, v_asset_product, 2.000)
   on conflict (warehouse_id, product_id) do update
   set qty_available = excluded.qty_available;
+
+  update public.tenant_calendar_settings tcs
+  set timezone_name = 'Asia/Kuwait'
+  where tcs.tenant_id = v_tenant_a;
 
   return p_customers || jsonb_build_object(
     'marker', p_marker,

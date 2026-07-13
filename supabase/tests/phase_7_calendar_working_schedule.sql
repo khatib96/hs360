@@ -139,6 +139,10 @@ begin
   on conflict (warehouse_id, product_id) do update
   set qty_available = excluded.qty_available;
 
+  update public.tenant_calendar_settings tcs
+  set timezone_name = 'Asia/Kuwait'
+  where tcs.tenant_id = v_tenant_a;
+
   return p_customers || jsonb_build_object(
     'asset_product', v_asset_product,
     'oil_a', v_oil_a,
@@ -236,6 +240,13 @@ begin
   v_oil_change_id := null;
 
   if p_with_oil_change then
+    if v_event_date < current_date then
+      v_event_date := current_date + 14;
+      update public.calendar_events
+      set scheduled_date = v_event_date
+      where id = v_event_id;
+    end if;
+
     perform public.schedule_contract_consumable_change(
       jsonb_build_object(
         'contract_id', v_contract_id,
@@ -247,8 +258,6 @@ begin
       ),
       gen_random_uuid()
     );
-
-    perform public.sync_contract_calendar_events_internal(v_contract_id, 60);
 
     select
       ce.id,

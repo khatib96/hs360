@@ -1389,6 +1389,33 @@ DELETE guard); tenant cascade delete remains valid. Post-fact BEFORE UPDATE
 guards block terminal changes to linked event/visit status fields after a fact
 exists; full terminal immutability is documented for Phase 8 write order.
 
+**Phase 7 M2 (`095`):** generation is timezone-gated via `calendar_timezone_ready`
+(valid IANA `timezone_name` only). `try_tenant_local_today` is used for
+generation/suspend/reinstate paths; deferred lifecycle reconcile uses
+`occurred_at AT TIME ZONE timezone_name` (never server `current_date`).
+`sync_contract_calendar_events_entry_internal` reconciles deferred lifecycle ops
+then calls `_core_internal` (no reconcile recursion). Reactivation replacement
+runs only from `handle_contract_status_calendar_handoff` on
+`suspended → active`. Suspension cancels (not deletes) pending future
+`billing_due`/`refill_due`; overdue rows are preserved.
+
+Refill generation is a confirmed-execution chain: one outstanding `refill_due`
+per consumable line (`ux_calendar_events_outstanding_refill`), with
+`generated_from_execution_fact_id` on fact/queued successors. Consumable-change
+calendar materialization uses Rules 0–3 on `contract_oil_changes` with CHECK
+`chk_contract_oil_changes_materialization_state`. Deferred ops queue in
+`calendar_deferred_lifecycle_reconciliations` (contract-level
+`FOR UPDATE OF c SKIP LOCKED`). Batch runs ledger:
+`calendar_generation_runs` / `calendar_generation_run_tenants`; scheduler
+`run_scheduled_calendar_generation` is postgres-only with
+`pg_try_advisory_xact_lock(hashtext('calendar_generation_batch'))`.
+Done predecessors without a trusted execution fact stop the chain; Rule 0 is
+available only when no outstanding event and no done predecessor exist. Queued
+oil materialized during reactivation retains `calendar_queued_after_event_id`
+as audit lineage, while Rule 1 metadata survives routine regeneration. M2
+helper functions are revoked from API roles, and batch/deferred failure ledgers
+store sanitized caller-supplied SQLSTATE codes.
+
 Legacy nullable `scheduled_time` and `reminder_offsets_minutes` remain for
 compatibility but are not authoritative for date-only Phase 7 events.
 

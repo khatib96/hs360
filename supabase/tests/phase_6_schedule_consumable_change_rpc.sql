@@ -84,6 +84,10 @@ begin
   on conflict (warehouse_id, product_id) do update
   set qty_available = excluded.qty_available;
 
+  update public.tenant_calendar_settings tcs
+  set timezone_name = 'Asia/Kuwait'
+  where tcs.tenant_id = v_tenant_a;
+
   return p_customers || jsonb_build_object(
     'asset_product', v_asset_product,
     'unit_a', v_unit_a,

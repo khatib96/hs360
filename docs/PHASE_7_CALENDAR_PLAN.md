@@ -4,8 +4,8 @@
 > contract-generated schedule data into a clear daily planning surface for the
 > office and assigned employees.
 >
-> Status: **M0, M0.5, and M1 complete (2026-07-12).** Migrations `093`–`094`
-> applied. Next milestone: **M2 — Event Generation Engine** (`095`).
+> Status: **M0, M0.5, M1, and M2 complete (2026-07-13).** Migrations `093`–`095`
+> applied. Next milestone: **M3 — Reminder Foundation**.
 >
 > Owner direction: HS360 appointments are **day-based**, not exact-time
 > appointments. An event is due on a selected calendar date and is expected to
@@ -1090,6 +1090,13 @@ future operational overrides safely.
 Complete and harden the server-side generation pipeline needed by the calendar
 without weakening Phase 6 provenance or idempotency.
 
+**Status: complete (2026-07-13).** Migration
+`095_phase_7_calendar_event_generation_engine.sql` applied; SQL Phase P and
+concurrency suites registered. Final independent hardening expanded Phase P to
+16 cases and covered deferred failure/retry, helper ACL, no-fact chain stops,
+Rule 1 regeneration, multi-month `on_activation` billing, and queued-oil
+reactivation materialization.
+
 ### Work
 
 1. Reuse and extend M12 generation rather than replace it.
@@ -1128,18 +1135,18 @@ without weakening Phase 6 provenance or idempotency.
 
 ### Acceptance
 
-- Re-running generation creates no duplicates.
-- A generation retry after partial failure converges safely.
-- Generated rows retain assignment/reschedule overrides.
-- Contract suspension/reactivation/closure behavior remains correct.
-- Non-working-day due dates are visible as conflicts, not silently changed.
-- A missed refill stays pending/overdue and blocks the next refill in that
+- [x] Re-running generation creates no duplicates.
+- [x] A generation retry after partial failure converges safely.
+- [x] Generated rows retain assignment/reschedule overrides.
+- [x] Contract suspension/reactivation/closure behavior remains correct.
+- [x] Non-working-day due dates are visible as conflicts, not silently changed (M3 reminders still deferred).
+- [x] A missed refill stays pending/overdue and blocks the next refill in that
   cadence chain.
-- Trusted actual completion plus confirmed coverage becomes the only next-refill
+- [x] Trusted actual completion plus confirmed coverage becomes the only next-refill
   anchor.
-- No invoice, voucher, journal, inventory movement, or visit completion is
+- [x] No invoice, voucher, journal, inventory movement, or visit completion is
   caused by generation.
-- Scheduled job execution is secured and observable.
+- [x] Scheduled job execution is secured and observable (`run_scheduled_calendar_generation`, postgres-only).
 
 ---
 
@@ -1613,7 +1620,7 @@ after Phase 6 migration `092`:
 |--------------------|-----------|---------|
 | `093_phase_7_calendar_working_schedule.sql` | M1 | Weekly schedule, timezone, constraints, RLS/ACL |
 | `094_phase_7_calendar_event_model.sql` | M1 | Date-only/reschedule/override model hardening |
-| `095_phase_7_calendar_generation.sql` | M2 | Generation and scheduled-run hardening |
+| `095_phase_7_calendar_event_generation_engine.sql` | M2 | Confirmed-execution refill chain, deferred lifecycle reconcile, batch ledger |
 | `096_phase_7_calendar_reminders.sql` | M3 | Reminder rules/ledger/job foundation |
 | `097_phase_7_calendar_read_rpc.sql` | M4 | Range/day/filter read contracts |
 | `098_phase_7_calendar_manual_event_rpc.sql` | M7 | Manual create/edit/cancel behavior |

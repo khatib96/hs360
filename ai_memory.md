@@ -1,6 +1,35 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-13 (Session: Phase 7 M1 — **closed and independently verified**; migrations `093`–`094`, next M2).
+> Updated 2026-07-13 (Session: Phase 7 M2 — **closed**; migration `095`, next M3).
+
+---
+
+## Session 2026-07-13 - Phase 7 M2 Event Generation Engine (closed)
+
+**Decision:** Phase 7 M2 is closed. Migration `095` applied; SQL Phase P
+(`phase_7_calendar_event_generation_engine.sql` + concurrency script) registered.
+M12 handoff tests updated for M2 refill-chain semantics. Next: M3 reminders.
+
+**Highlights:**
+- Timezone-only generation gate (`calendar_timezone_ready` / `try_tenant_local_today`).
+- Deferred lifecycle queue + contract-level reconcile (`calendar_deferred_lifecycle_reconciliations`).
+- Confirmed-execution refill chain (one outstanding refill per line; fact/queued successors).
+- Consumable-change Rules 0–3 with materialization CHECK on `contract_oil_changes`.
+- Postgres-only batch scheduler with advisory lock + run ledger tables.
+- Entry/core sync split prevents reconcile recursion.
+- Final independent hardening fixed SQLSTATE propagation in failure handlers,
+  API-role ACL on M2 helpers, unlocked-duplicate migration consolidation,
+  predecessor/fact gating, Rule 1 metadata preservation, queued-oil
+  reactivation materialization, and later-month `on_activation` billing.
+- SQL Phase P now has 16 cases plus the parallel batch-lock script, including
+  forced deferred failure/retry, no-fact chain blocking, ACL checks, Rule 1
+  resync stability, multi-month billing, and queued deferred reactivation.
+
+**Final verification:** clean database reset through `095`; all SQL suite phases
+and concurrency scripts passed; Flutter analyze clean; 888 Flutter tests passed;
+`git diff --check` clean.
+
+**Next:** Phase 7 M3 — Reminder Foundation.
 
 ---
 

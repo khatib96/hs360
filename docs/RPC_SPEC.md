@@ -68,6 +68,15 @@ list_contract_upcoming_events_json(p_contract_id uuid, p_limit int default 10) r
   30 days, max 180.
 - Internal sync runs from lifecycle RPCs, contract status trigger, and postgres
   maintenance only.
+- **M2 (`095`):** `sync_contract_calendar_events_internal` is a thin wrapper over
+  `sync_contract_calendar_events_entry_internal` (timezone gate + deferred
+  reconcile + `_core_internal`). Entry/core, refill chain, consumable
+  materialization, and batch helpers are revoked from API roles.
+- A done refill without a trusted execution fact is a hard chain stop. Failure
+  handlers pass their caught `SQLSTATE` into the internal sanitizer; they do
+  not attempt to read exception state from a nested function.
+- `schedule_contract_consumable_change` calls `apply_consumable_change_to_calendar`
+  instead of a full contract resync.
 - Generated rows use `source_kind = contract_generated` with stable `source_key`
   (billing keyed by coverage month `YYYY-MM-01`).
 - `get_contract_detail.upcoming_schedule` returns up to 10 pending generated
@@ -141,6 +150,14 @@ via `parse_calendar_work_time()` (invalid values return `validation_failed`).
 resolve_tenant_working_window(p_tenant_id uuid, p_date date) returns jsonb
 derive_calendar_event_overdue(p_event_id uuid) returns jsonb
 tenant_local_today(p_tenant_id uuid) returns date
+calendar_timezone_ready(p_tenant_id uuid) returns boolean
+try_tenant_local_today(p_tenant_id uuid) returns date
+sync_contract_calendar_events_entry_internal(p_contract_id uuid, p_horizon_days int default null) returns jsonb
+sync_contract_calendar_events_core_internal(p_contract_id uuid, p_horizon_days int default null) returns jsonb
+apply_consumable_change_to_calendar(p_oil_change_id uuid) returns jsonb
+reconcile_deferred_calendar_lifecycle_ops(p_tenant_id uuid, p_contract_id uuid default null) returns void
+run_scheduled_calendar_generation(p_horizon_days int default null) returns jsonb  -- GRANT postgres only
+sanitize_sql_error_code(p_sqlstate text) returns text  -- internal, API-revoked
 ```
 
 **Phase 7 M0 supersession (remaining planned work):**

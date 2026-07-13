@@ -87,6 +87,10 @@ begin
   on conflict (warehouse_id, product_id) do update
   set qty_available = excluded.qty_available;
 
+  update public.tenant_calendar_settings tcs
+  set timezone_name = 'Asia/Kuwait'
+  where tcs.tenant_id = v_tenant_a;
+
   return p_customers || jsonb_build_object(
     'asset_product', v_asset_product,
     'oil_a', v_oil_a,
@@ -543,7 +547,7 @@ begin
 end $$;
 rollback;
 
--- 20b. Same-day consumable change included (effective_from = current_date).
+-- 20b. Same-day consumable change queues after outstanding start-date oil event (M2 Rule 3).
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
@@ -557,7 +561,9 @@ declare
   v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
   v_contract_id uuid;
   v_line_id uuid;
-  v_count int;
+  v_outstanding_id uuid;
+  v_status text;
+  v_queued_after uuid;
 begin
   v_contract_id := pg_temp.p6m12_create_rental(v_fixture, current_date - 1);
 
@@ -565,6 +571,17 @@ begin
   from public.contract_lines cl
   where cl.contract_id = v_contract_id and cl.line_type = 'consumable'::public.contract_line_type
   limit 1;
+
+  select ce.id into v_outstanding_id
+  from public.calendar_events ce
+  where ce.contract_id = v_contract_id
+    and ce.type = 'refill_due'::public.calendar_event_type
+    and ce.status = 'pending'::public.calendar_event_status
+  limit 1;
+
+  if v_outstanding_id is null then
+    raise exception 'case20b failed: expected outstanding refill from Rule 0 materialization';
+  end if;
 
   perform public.schedule_contract_consumable_change(
     jsonb_build_object(
@@ -578,15 +595,17 @@ begin
     gen_random_uuid()
   );
 
-  select count(*) into v_count
-  from public.calendar_events ce
-  where ce.contract_id = v_contract_id
-    and ce.type = 'refill_due'::public.calendar_event_type
-    and ce.scheduled_date = current_date
-    and ce.source_metadata ->> 'action_kind' in ('consumable_change', 'refill_with_consumable_change');
+  select coc.calendar_materialization_status, coc.calendar_queued_after_event_id
+  into v_status, v_queued_after
+  from public.contract_oil_changes coc
+  where coc.contract_id = v_contract_id
+    and coc.contract_line_id = v_line_id
+    and coc.effective_from = current_date
+  limit 1;
 
-  if v_count < 1 then
-    raise exception 'case20b failed: same-day consumable event missing';
+  if v_status <> 'queued' or v_queued_after is distinct from v_outstanding_id then
+    raise exception 'case20b failed: status=% queued_after=% outstanding=%',
+      v_status, v_queued_after, v_outstanding_id;
   end if;
 end $$;
 rollback;
@@ -820,7 +839,8 @@ begin
   select ce.scheduled_date into v_before
   from public.calendar_events ce
   where ce.contract_id = v_trial_id
-    and ce.type = 'trial_ending'::public.calendar_event_type;
+    and ce.type = 'trial_ending'::public.calendar_event_type
+    and ce.status = 'pending'::public.calendar_event_status;
 
   perform public.extend_trial_contract(
     jsonb_build_object(
@@ -834,7 +854,8 @@ begin
   select ce.scheduled_date into v_after
   from public.calendar_events ce
   where ce.contract_id = v_trial_id
-    and ce.type = 'trial_ending'::public.calendar_event_type;
+    and ce.type = 'trial_ending'::public.calendar_event_type
+    and ce.status = 'pending'::public.calendar_event_status;
 
   if v_before is null or v_after <> v_new_end then
     raise exception 'case7 failed: before=% after=% expected=%', v_before, v_after, v_new_end;
@@ -1075,7 +1096,7 @@ do $$
 declare
   v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
   v_contract_id uuid;
-  v_coverage date := date_trunc('month', current_date)::date;
+  v_coverage date;
   v_billing_id uuid;
   v_status public.calendar_event_status;
   v_schedule jsonb;
@@ -1089,16 +1110,20 @@ begin
     1
   );
 
-  select ce.id, ce.status
-  into v_billing_id, v_status
+  select
+    ce.id,
+    ce.status,
+    (ce.source_metadata ->> 'coverage_month_key')::date
+  into v_billing_id, v_status, v_coverage
   from public.calendar_events ce
   where ce.contract_id = v_contract_id
     and ce.type = 'billing_due'::public.calendar_event_type
-    and (ce.source_metadata ->> 'coverage_month_key')::date = v_coverage
+    and ce.status = 'pending'::public.calendar_event_status
+  order by ce.scheduled_date, ce.id
   limit 1;
 
   if v_billing_id is null then
-    raise exception 'case15 failed: no billing event for coverage month %', v_coverage;
+    raise exception 'case15 failed: no pending billing event for contract %', v_contract_id;
   end if;
 
   perform public.collect_rental_payment(
@@ -1432,7 +1457,7 @@ begin
 end $$;
 rollback;
 
--- 20. Refill UNION merges regular refill and consumable change on same date.
+-- 20. Consumable change merges into outstanding refill on the same date (M2 Rule 1).
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
@@ -1446,32 +1471,19 @@ declare
   v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
   v_contract_id uuid;
   v_line_id uuid;
-  v_refill_day int := 15;
-  v_start date := (date_trunc('month', current_date) - interval '1 month' + interval '14 days')::date;
-  v_merge_date date;
+  v_merge_date date := current_date + 14;
+  v_outstanding_id uuid;
   v_count int;
   v_action text;
 begin
   v_contract_id := pg_temp.p6m12_create_rental(
     v_fixture,
-    v_start,
-    (v_start + interval '12 months')::date,
+    current_date,
+    (current_date + interval '12 months')::date,
     5,
-    v_refill_day,
+    extract(day from v_merge_date)::int,
     1
   );
-
-  v_merge_date := public.calendar_make_day_in_month(
-    date_trunc('month', current_date)::date,
-    v_refill_day
-  );
-
-  if v_merge_date < current_date then
-    v_merge_date := public.calendar_make_day_in_month(
-      (date_trunc('month', current_date) + interval '1 month')::date,
-      v_refill_day
-    );
-  end if;
 
   select cl.id into v_line_id
   from public.contract_lines cl
@@ -1479,6 +1491,36 @@ begin
     and cl.line_type = 'consumable'::public.contract_line_type
   limit 1;
 
+  select ce.id into v_outstanding_id
+  from public.calendar_events ce
+  where ce.contract_id = v_contract_id
+    and ce.type = 'refill_due'::public.calendar_event_type
+    and ce.status = 'pending'::public.calendar_event_status
+  limit 1;
+
+  perform set_config('test.p6m12.contract_id', v_contract_id::text, true);
+  perform set_config('test.p6m12.line_id', v_line_id::text, true);
+  perform set_config('test.p6m12.merge_date', v_merge_date::text, true);
+  perform set_config('test.p6m12.outstanding_id', v_outstanding_id::text, true);
+end $$;
+set local role postgres;
+do $$
+begin
+  update public.calendar_events
+  set scheduled_date = current_setting('test.p6m12.merge_date')::date
+  where id = current_setting('test.p6m12.outstanding_id')::uuid;
+end $$;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+do $$
+declare
+  v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
+  v_contract_id uuid := current_setting('test.p6m12.contract_id')::uuid;
+  v_line_id uuid := current_setting('test.p6m12.line_id')::uuid;
+  v_merge_date date := current_setting('test.p6m12.merge_date')::date;
+  v_count int;
+  v_action text;
+begin
   perform public.schedule_contract_consumable_change(
     jsonb_build_object(
       'contract_id', v_contract_id,
@@ -1496,7 +1538,8 @@ begin
   from public.calendar_events ce
   where ce.contract_id = v_contract_id
     and ce.type = 'refill_due'::public.calendar_event_type
-    and ce.scheduled_date = v_merge_date;
+    and ce.scheduled_date = v_merge_date
+    and ce.status = 'pending'::public.calendar_event_status;
 
   if v_count <> 1 or v_action <> 'refill_with_consumable_change' then
     raise exception 'case20 failed: count=% action=% date=%', v_count, v_action, v_merge_date;
@@ -1504,7 +1547,7 @@ begin
 end $$;
 rollback;
 
--- 21. First refill occurs after N months on refill_day (frequency 1 and 3).
+-- 21. First refill cadence anchor after Rule 0 oil is already materialized (freq 1 and 3).
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
@@ -1520,8 +1563,6 @@ declare
   v_refill_day int := 5;
   v_contract_f1 uuid;
   v_contract_f3 uuid;
-  v_first_f1 date;
-  v_first_f3 date;
 begin
   v_contract_f1 := pg_temp.p6m12_create_rental(
     v_fixture,
@@ -1542,15 +1583,60 @@ begin
     'unit_b'
   );
 
+  perform set_config('test.p6m12.contract_f1', v_contract_f1::text, true);
+  perform set_config('test.p6m12.contract_f3', v_contract_f3::text, true);
+end $$;
+set local role postgres;
+do $$
+declare
+  v_contract_id uuid;
+begin
+  foreach v_contract_id in array array[
+    current_setting('test.p6m12.contract_f1')::uuid,
+    current_setting('test.p6m12.contract_f3')::uuid
+  ] loop
+    update public.calendar_events ce
+    set status = 'cancelled'::public.calendar_event_status
+    where ce.contract_id = v_contract_id
+      and ce.type = 'refill_due'::public.calendar_event_type
+      and ce.status = 'pending'::public.calendar_event_status;
+
+    update public.contract_oil_changes coc
+    set
+      calendar_materialization_status = 'materialized',
+      calendar_event_id = (
+        select ce.id
+        from public.calendar_events ce
+        where ce.contract_id = v_contract_id
+          and ce.type = 'refill_due'::public.calendar_event_type
+        order by ce.created_at desc
+        limit 1
+      )
+    where coc.contract_id = v_contract_id;
+
+    perform public.sync_contract_calendar_events_core_internal(v_contract_id, 60);
+  end loop;
+end $$;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
+do $$
+declare
+  v_contract_f1 uuid := current_setting('test.p6m12.contract_f1')::uuid;
+  v_contract_f3 uuid := current_setting('test.p6m12.contract_f3')::uuid;
+  v_first_f1 date;
+  v_first_f3 date;
+begin
   select min(ce.scheduled_date) into v_first_f1
   from public.calendar_events ce
   where ce.contract_id = v_contract_f1
-    and ce.type = 'refill_due'::public.calendar_event_type;
+    and ce.type = 'refill_due'::public.calendar_event_type
+    and ce.status = 'pending'::public.calendar_event_status;
 
   select min(ce.scheduled_date) into v_first_f3
   from public.calendar_events ce
   where ce.contract_id = v_contract_f3
-    and ce.type = 'refill_due'::public.calendar_event_type;
+    and ce.type = 'refill_due'::public.calendar_event_type
+    and ce.status = 'pending'::public.calendar_event_status;
 
   if v_first_f1 <> date '2026-08-05' or v_first_f3 <> date '2026-10-05' then
     raise exception 'case21 failed: f1=% f3=%', v_first_f1, v_first_f3;
