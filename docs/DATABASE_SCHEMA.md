@@ -1416,6 +1416,34 @@ as audit lineage, while Rule 1 metadata survives routine regeneration. M2
 helper functions are revoked from API roles, and batch/deferred failure ledgers
 store sanitized caller-supplied SQLSTATE codes.
 
+**Phase 7 M3 (`096`):** reminder foundation uses a logical-occurrence ledger
+`calendar_reminder_plans` keyed by
+`(tenant_id, calendar_event_id, rule_key, occurrence_scheduled_date)` with
+composite FK to `calendar_events` **ON DELETE RESTRICT**. Enabled policies reuse
+M1 booleans `remind_event_workday_start` / `remind_previous_workday_start`;
+anchors derive from `scheduled_date` (not `original_due_date`) via
+`local_work_start_to_utc` multi-instant DST probe and
+`find_previous_working_day`. Recipient resolution follows
+`assigned_agent_id → employees.user_id → active tenant_users` with
+`calendar.view_assigned` visibility at delivery. Tenant-wide reconcile uses
+`calendar_reminder_reconcile_queue` cursor pagination (500 events/batch,
+`scan_after_event_id` / `scan_generation`); settings enqueue is **trigger-only**
+(no enqueue inside `update_calendar_settings`). Delivery inserts
+`notifications` with `related_entity_table = 'calendar_reminder_plans'` under
+recipient-scoped RLS (`notifications_select_own` + optional
+`notifications_select_tenant` for `notifications.view`); partial unique index
+prevents duplicate calendar-reminder notifications. Postgres-only scheduler
+`run_scheduled_calendar_reminders` uses advisory lock
+`calendar_reminders_batch`, subtransaction per plan, retry backoff, and run
+ledger `calendar_reminder_runs`. A tenant with an incomplete reconcile cursor is
+excluded from plan promotion and delivery until its current generation is fully
+processed. Delivery refreshes the event occurrence and revalidates its current
+date, assignment, employee activity, user mapping, tenant membership, and
+calendar visibility before inserting a notification. The run ledger separates
+retryable plan attempts (`plans_retried`) from terminal failures and records
+tenant-isolated reconcile failures (`tenants_failed`). Terminal plan snapshots
+(`delivered`/`expired`/`failed`) are immutability-protected.
+
 Legacy nullable `scheduled_time` and `reminder_offsets_minutes` remain for
 compatibility but are not authoritative for date-only Phase 7 events.
 

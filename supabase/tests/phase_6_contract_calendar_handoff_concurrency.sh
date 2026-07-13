@@ -261,7 +261,11 @@ begin
   where id = any (v_account_ids);
 
   update public.tenant_calendar_settings
-  set timezone_name = null
+  set
+    working_schedule_configured = false,
+    timezone_name = null,
+    configured_at = null,
+    configured_by = null
   where tenant_id = '00000000-0000-0000-0000-000000000101'::uuid;
 end;
 $cleanup$;

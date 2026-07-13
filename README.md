@@ -5,11 +5,11 @@ businesses. It is being built first for Hayat Secret and is designed around
 serialized rental assets, recurring consumables, field service, customer debt,
 and double-entry accounting.
 
-> Repository status updated: **2026-07-12**
+> Repository status updated: **2026-07-13**
 >
-> Current milestone: **Phase 7 M2 complete; next M3**
+> Current milestone: **Phase 7 M3 complete; next M4**
 >
-> Latest applied migration: **`095_phase_7_calendar_event_generation_engine.sql`**
+> Latest applied migration: **`096_phase_7_calendar_reminders.sql`**
 
 ---
 
@@ -24,14 +24,14 @@ and double-entry accounting.
 | 4 | Engineering complete | Customers, suppliers, CoA, service locations, coordinates |
 | 5 | Complete | Invoices, returns, vouchers, journal, inventory accounting, PDFs |
 | 6 | Complete | Trial/rental contracts, lifecycle, billing, PDF, calendar handoff |
-| 7 | M2 complete | Working schedule (`093`–`094`), event generation engine (`095`) |
+| 7 | M3 complete | Working schedule (`093`–`094`), generation (`095`), reminders (`096`) |
 | 8-12 | Not started | Field execution and later operational/reporting/production phases |
 
 Phase 6 closed through M13/migration `092` on 2026-07-12. Phase 7 M1 closed on
 2026-07-12 (`093`–`094`); M2 event generation engine (`095`) closed on
-2026-07-13 with SQL Phase P (16 cases + concurrency), failure-path/ACL
-hardening, and M12 handoff test updates. Main
-Calendar UI and M3 reminders remain next.
+2026-07-13; M3 reminder foundation (`096`) closed on 2026-07-13 with SQL Phase Q
+(82 cases + two concurrency scripts). Main Calendar UI and M4 read APIs remain
+next.
 
 Detailed roadmap: [BUILD_PLAN.md](docs/BUILD_PLAN.md)
 
@@ -265,7 +265,8 @@ Before implementing a milestone:
 
 ## Current Constraints
 
-- Phase 7 M3 (reminders) has not started. M2 event generation engine (`095`) is complete.
+- Phase 7 M3 (reminders) is complete via migration `096`. M4 calendar read APIs
+  are next.
 - Production Supabase/VPS deployment and external messaging credentials are not
   configured by this repository state.
 - The `resolve-google-maps-url` Edge Function has local verification but still
@@ -274,11 +275,12 @@ Before implementing a milestone:
 - Older design documents may preserve historical examples. The canonical
   decisions and active phase plan take precedence.
 
-## M2 Verification (2026-07-13)
+## M2/M3 Verification (2026-07-13)
 
-- `npx supabase db reset --no-seed` — clean through migration `095`.
+- `npx supabase db reset --no-seed` — clean through migration `096`.
 - Complete SQL suite — all phases passed, including Phase P (16 cases) and its
-  parallel batch-lock script.
+  parallel batch-lock script, plus Phase Q (82 cases) and both reminder
+  concurrency scripts.
 - `flutter analyze` — no issues.
 - `flutter test` — 888 passed.
 - `git diff --check` — clean.

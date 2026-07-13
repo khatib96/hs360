@@ -151,6 +151,11 @@ printf 'Phase P: Phase 7 M2 calendar event generation engine\n'
 run_suite "supabase/tests/phase_7_calendar_event_generation_engine.sql"
 bash "$repo_root/supabase/tests/phase_7_calendar_event_generation_engine_concurrency.sh" "$container_name"
 
+printf 'Phase Q: Phase 7 M3 calendar reminders\n'
+run_suite "supabase/tests/phase_7_calendar_reminders.sql"
+bash "$repo_root/supabase/tests/phase_7_calendar_reminders_concurrency.sh" "$container_name"
+bash "$repo_root/supabase/tests/phase_7_calendar_reminders_reconcile_concurrency.sh" "$container_name"
+
 printf 'Phase C: baseline pollution gate\n'
 for suite in "${phase_a_suites[@]}"; do
   run_suite "$suite"

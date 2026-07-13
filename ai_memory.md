@@ -1,6 +1,37 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-13 (Session: Phase 7 M2 — **closed**; migration `095`, next M3).
+> Updated 2026-07-13 (Session: Phase 7 M3 — **closed**; migration `096`, next M4).
+
+---
+
+## Session 2026-07-13 - Phase 7 M3 Reminder Foundation (closed)
+
+**Decision:** Phase 7 M3 is closed. Migration `096` applied; SQL Phase Q
+(`phase_7_calendar_reminders.sql` + two concurrency scripts) registered.
+Next: M4 calendar read APIs.
+
+**Highlights:**
+- Logical-occurrence ledger `calendar_reminder_plans` with RESTRICT FKs to events
+  and notifications; composite unique on occurrence tuple.
+- Cursor-paginated reconcile queue (`scan_after_event_id`, `scan_generation`).
+- Multi-instant DST probe (`local_work_start_to_utc`) including Lord Howe coverage.
+- Recipient-scoped notification RLS (`notifications_select_own` +
+  `notifications_select_tenant`); partial unique index on calendar reminders.
+- Postgres-only scheduler `run_scheduled_calendar_reminders` with advisory lock,
+  subtransaction delivery, retry backoff, and run ledger.
+- Trigger-only settings enqueue (no enqueue inside `update_calendar_settings` RPC).
+- Final hardening blocks stale promotion/delivery while a tenant reconcile cursor
+  is incomplete and revalidates current event/recipient facts at delivery.
+- Run observability distinguishes `plans_retried`, `plans_failed`, and isolated
+  `tenants_failed`; retrying work and tenant-local reconcile errors produce a
+  `partial` run without aborting healthy tenants.
+- SQL Phase Q: 82 cases plus parallel scheduler and reconcile concurrency scripts.
+
+**Final verification:** clean database reset through `096`; SQL Phase Q and
+both concurrency scripts passed; independent stale-plan/cancelled-state probes
+passed; full SQL suite and Flutter gates per plan §20.
+
+**Next:** Phase 7 M4 — Calendar Read APIs.
 
 ---
 

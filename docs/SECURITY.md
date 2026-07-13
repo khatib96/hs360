@@ -147,8 +147,14 @@ create policy "T_delete_with_permission" on T
 | `journal_lines` | `journal.view` | system functions only | n/a | n/a |
 | `quotations` | `quotations.view` | `quotations.create` | `quotations.edit` | `quotations.delete` |
 | `calendar_events` | `calendar.view` or `calendar.view_assigned` | `calendar.create` | `calendar.edit` | `calendar.delete` |
-| `notifications` | `notifications.view` | system functions or `notifications.create` | n/a | `notifications.delete` |
+| `notifications` | own row (`recipient_user_id = auth.uid()`) or `notifications.view` | system functions or `notifications.create` | n/a | `notifications.delete` |
 | `audit_log` | `audit_log.view` | trigger only | n/a | never |
+
+Calendar reminder delivery is additionally fail-closed: it waits for the
+tenant's reconcile cursor to finish, refreshes the event occurrence, and
+revalidates the current assignment, active employee/user mapping, tenant
+membership, and `calendar.view_assigned` visibility immediately before the
+system notification insert.
 
 ### 3.3 Cost Column Protection
 

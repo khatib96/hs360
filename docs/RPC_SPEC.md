@@ -157,8 +157,38 @@ sync_contract_calendar_events_core_internal(p_contract_id uuid, p_horizon_days i
 apply_consumable_change_to_calendar(p_oil_change_id uuid) returns jsonb
 reconcile_deferred_calendar_lifecycle_ops(p_tenant_id uuid, p_contract_id uuid default null) returns void
 run_scheduled_calendar_generation(p_horizon_days int default null) returns jsonb  -- GRANT postgres only
+run_scheduled_calendar_reminders(p_batch_size int default 100) returns jsonb  -- GRANT postgres only
+local_work_start_to_utc(p_timezone text, p_local_date date, p_local_time time) returns record  -- internal, API-revoked
+find_previous_working_day(p_tenant_id uuid, p_date date) returns date  -- internal, API-revoked
+refresh_calendar_event_reminder_plans(p_event_id uuid) returns void  -- internal, API-revoked
+reconcile_tenant_calendar_reminder_plans(p_tenant_id uuid, p_batch_size int default 500) returns void  -- internal, API-revoked
 sanitize_sql_error_code(p_sqlstate text) returns text  -- internal, API-revoked
 ```
+
+**Phase 7 M3 notification read model:** calendar reminder notifications are
+recipient-scoped at the database layer. Users always see their own in-app rows;
+managers with `notifications.view` may additionally read tenant notifications.
+No new client-facing reminder RPCs in M3 — delivery is scheduler-driven.
+`run_scheduled_calendar_reminders` does not promote or claim plans for a tenant
+whose reconcile queue generation/cursor is incomplete. Its JSON result and
+`calendar_reminder_runs` ledger distinguish `plans_retried`, terminal
+`plans_failed`, `tenants_reconciled`, and isolated `tenants_failed`; any retry or
+isolated tenant failure makes the run `partial`.
+
+**Phase 7 M3 internal helpers (API-revoked):**
+
+```sql
+user_has_permission_for_tenant_user(p_tenant_id uuid, p_user_id uuid, p_permission_id text) returns boolean
+user_has_calendar_event_visibility(p_event_id uuid, p_user_id uuid) returns boolean
+bump_reminder_reconcile_generation(p_tenant_id uuid) returns void
+deliver_calendar_reminder_plan_locked(p_plan_id uuid) returns void
+record_reminder_delivery_failure(p_plan_id uuid, p_sqlstate text, p_message text) returns void
+```
+
+`deliver_calendar_reminder_plan_locked` refreshes the logical occurrence before
+delivery and rechecks the current scheduled date, assigned employee, active user
+mapping, tenant membership, and calendar-event visibility. It leaves the plan
+pending while that tenant has an unfinished reconcile generation.
 
 **Phase 7 M0 supersession (remaining planned work):**
 

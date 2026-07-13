@@ -4,8 +4,8 @@
 > contract-generated schedule data into a clear daily planning surface for the
 > office and assigned employees.
 >
-> Status: **M0, M0.5, M1, and M2 complete (2026-07-13).** Migrations `093`–`095`
-> applied. Next milestone: **M3 — Reminder Foundation**.
+> Status: **M0, M0.5, M1, M2, and M3 complete (2026-07-13).** Migrations `093`–`096`
+> applied. Next milestone: **M4 — Calendar Read APIs**.
 >
 > Owner direction: HS360 appointments are **day-based**, not exact-time
 > appointments. An event is due on a selected calendar date and is expected to
@@ -1192,6 +1192,17 @@ Create reliable date-based reminders anchored to working schedules.
 - In-app reminder rows are permission/tenant safe.
 - External queued/sent status is not misrepresented.
 
+### M3 closure (2026-07-13)
+
+Migration `096_phase_7_calendar_reminders.sql` delivered the occurrence ledger,
+cursor-paginated reconcile queue, DST-safe anchors, recipient-scoped notification
+RLS, subtransaction delivery scheduler, and trigger-only settings enqueue. Final
+hardening prevents stale promotion/delivery while a tenant cursor is incomplete,
+revalidates event and recipient facts at delivery, preserves retry backoff during
+refresh, isolates tenant reconcile failures, and records retry/failure counters
+in the run ledger. SQL Phase Q (82 cases) plus parallel scheduler and reconcile
+concurrency scripts are registered in `run_sql_suites.sh` / `.ps1`.
+
 ---
 
 ## M4 - Calendar Read APIs
@@ -1801,5 +1812,4 @@ Do not begin route-map implementation until:
 - the map package/provider and privacy terms are accepted;
 - missing-coordinate fallback is designed.
 
-The next implementation action is M2 — Event Generation Engine, beginning with
-migration `095`.
+The next implementation action is M4 — Calendar Read APIs.
