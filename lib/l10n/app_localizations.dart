@@ -7352,6 +7352,30 @@ abstract class AppLocalizations {
   /// **'Search'**
   String get calendarFilterSearch;
 
+  /// No description provided for @calendarFilterSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search events, customers, contracts, locations, and agents'**
+  String get calendarFilterSearchHint;
+
+  /// No description provided for @calendarFilterOpenFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get calendarFilterOpenFilters;
+
+  /// No description provided for @calendarFilterReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get calendarFilterReset;
+
+  /// No description provided for @calendarFilterAnySource.
+  ///
+  /// In en, this message translates to:
+  /// **'Any source'**
+  String get calendarFilterAnySource;
+
   /// No description provided for @calendarFilterOverdueOnly.
   ///
   /// In en, this message translates to:
@@ -7363,6 +7387,258 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Working-day conflict'**
   String get calendarFilterWorkingDayConflict;
+
+  /// No description provided for @calendarFilterTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'Event types'**
+  String get calendarFilterTypes;
+
+  /// No description provided for @calendarFilterStatuses.
+  ///
+  /// In en, this message translates to:
+  /// **'Statuses'**
+  String get calendarFilterStatuses;
+
+  /// No description provided for @calendarFilterSourceKind.
+  ///
+  /// In en, this message translates to:
+  /// **'Source'**
+  String get calendarFilterSourceKind;
+
+  /// No description provided for @calendarFilterCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer'**
+  String get calendarFilterCustomer;
+
+  /// No description provided for @calendarFilterContract.
+  ///
+  /// In en, this message translates to:
+  /// **'Contract'**
+  String get calendarFilterContract;
+
+  /// No description provided for @calendarFilterServiceLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Service location'**
+  String get calendarFilterServiceLocation;
+
+  /// No description provided for @calendarFilterApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply filters'**
+  String get calendarFilterApply;
+
+  /// No description provided for @calendarFilterClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear filters'**
+  String get calendarFilterClear;
+
+  /// No description provided for @calendarFilterActiveCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} active'**
+  String calendarFilterActiveCount(int count);
+
+  /// No description provided for @calendarFilterDirty.
+  ///
+  /// In en, this message translates to:
+  /// **'Unapplied filter changes'**
+  String get calendarFilterDirty;
+
+  /// No description provided for @calendarFilterSelectCustomerFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a customer to filter by location.'**
+  String get calendarFilterSelectCustomerFirst;
+
+  /// No description provided for @calendarFilterLookupUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Lookup unavailable for your permissions.'**
+  String get calendarFilterLookupUnavailable;
+
+  /// No description provided for @calendarFilterLookupError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load lookup results.'**
+  String get calendarFilterLookupError;
+
+  /// No description provided for @calendarEventActionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Event actions'**
+  String get calendarEventActionsTitle;
+
+  /// No description provided for @calendarEventActionsClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get calendarEventActionsClose;
+
+  /// No description provided for @calendarToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get calendarToday;
+
+  /// No description provided for @calendarPreviousMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous month'**
+  String get calendarPreviousMonth;
+
+  /// No description provided for @calendarNextMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Next month'**
+  String get calendarNextMonth;
+
+  /// No description provided for @calendarSelectMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Select month'**
+  String get calendarSelectMonth;
+
+  /// No description provided for @calendarSelectYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Select year'**
+  String get calendarSelectYear;
+
+  /// No description provided for @calendarMonthYear.
+  ///
+  /// In en, this message translates to:
+  /// **'{month} {year}'**
+  String calendarMonthYear(String month, int year);
+
+  /// No description provided for @calendarCountOverflow.
+  ///
+  /// In en, this message translates to:
+  /// **'{value}+'**
+  String calendarCountOverflow(int value);
+
+  /// No description provided for @calendarDayEventCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} events'**
+  String calendarDayEventCount(int count);
+
+  /// No description provided for @calendarDayUnassignedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} unassigned'**
+  String calendarDayUnassignedCount(int count);
+
+  /// No description provided for @calendarDayOverdueCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} overdue'**
+  String calendarDayOverdueCount(int count);
+
+  /// No description provided for @calendarWorkingWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Working hours: {start}–{end}'**
+  String calendarWorkingWindow(String start, String end);
+
+  /// No description provided for @calendarAgendaFilteredEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No events match the current filters.'**
+  String get calendarAgendaFilteredEmpty;
+
+  /// No description provided for @calendarOverdueSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue outside this range'**
+  String get calendarOverdueSectionTitle;
+
+  /// No description provided for @calendarOverdueUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue items are unavailable until the working schedule is configured.'**
+  String get calendarOverdueUnavailable;
+
+  /// No description provided for @calendarOverdueEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No overdue events outside this range.'**
+  String get calendarOverdueEmpty;
+
+  /// No description provided for @calendarDirectionsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Directions available'**
+  String get calendarDirectionsAvailable;
+
+  /// No description provided for @calendarRescheduledBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Rescheduled'**
+  String get calendarRescheduledBadge;
+
+  /// No description provided for @calendarDayOffConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled on a day off'**
+  String get calendarDayOffConflict;
+
+  /// No description provided for @calendarViewCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'View customer'**
+  String get calendarViewCustomer;
+
+  /// No description provided for @calendarViewContract.
+  ///
+  /// In en, this message translates to:
+  /// **'View contract'**
+  String get calendarViewContract;
+
+  /// No description provided for @calendarSemanticsToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get calendarSemanticsToday;
+
+  /// No description provided for @calendarSemanticsSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected'**
+  String get calendarSemanticsSelected;
+
+  /// No description provided for @calendarSemanticsDayOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Day off'**
+  String get calendarSemanticsDayOff;
+
+  /// No description provided for @calendarSemanticsConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Working-day conflict'**
+  String get calendarSemanticsConflict;
+
+  /// No description provided for @calendarMonthSkeleton.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading month summary…'**
+  String get calendarMonthSkeleton;
+
+  /// No description provided for @calendarAgendaLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading agenda…'**
+  String get calendarAgendaLoading;
+
+  /// No description provided for @calendarOverdueLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading overdue…'**
+  String get calendarOverdueLoading;
 
   /// No description provided for @calendarValidationRangeSpan.
   ///

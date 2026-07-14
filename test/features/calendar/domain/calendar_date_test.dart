@@ -95,4 +95,46 @@ void main() {
       );
     });
   });
+
+  group('addCalendarDays / isNextCalendarDay', () {
+    test('preserves midnight date-only components', () {
+      final next = addCalendarDays(DateTime(2026, 7, 14), 1);
+      expect(next, DateTime(2026, 7, 15));
+      expect(next.hour, 0);
+      expect(next.minute, 0);
+    });
+
+    test('crosses month and year ends without Duration', () {
+      expect(addCalendarDays(DateTime(2026, 1, 31), 1), DateTime(2026, 2, 1));
+      expect(addCalendarDays(DateTime(2025, 12, 31), 1), DateTime(2026, 1, 1));
+      expect(addCalendarDays(DateTime(2026, 2, 28), 1), DateTime(2026, 3, 1));
+    });
+
+    test('leap-year Feb 29 arithmetic', () {
+      expect(addCalendarDays(DateTime(2024, 2, 28), 1), DateTime(2024, 2, 29));
+      expect(addCalendarDays(DateTime(2024, 2, 29), 1), DateTime(2024, 3, 1));
+      expect(addCalendarDays(DateTime(2024, 2, 29), -1), DateTime(2024, 2, 28));
+    });
+
+    test('DST spring boundary local midnight stays one calendar day', () {
+      // Component arithmetic: Mar 8 + 1 day is Mar 9 regardless of local offset.
+      expect(addCalendarDays(DateTime(2026, 3, 8), 1), DateTime(2026, 3, 9));
+      expect(
+        isNextCalendarDay(DateTime(2026, 3, 8), DateTime(2026, 3, 9)),
+        isTrue,
+      );
+      expect(
+        isNextCalendarDay(DateTime(2026, 3, 8), DateTime(2026, 3, 10)),
+        isFalse,
+      );
+    });
+
+    test('DST fall boundary local midnight stays one calendar day', () {
+      expect(addCalendarDays(DateTime(2026, 11, 1), 1), DateTime(2026, 11, 2));
+      expect(
+        isNextCalendarDay(DateTime(2026, 11, 1), DateTime(2026, 11, 2)),
+        isTrue,
+      );
+    });
+  });
 }

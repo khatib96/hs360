@@ -4,10 +4,8 @@
 > contract-generated schedule data into a clear daily planning surface for the
 > office and assigned employees.
 >
-> Status: **M0–M5 complete / accepted (2026-07-14).** Migrations `093`–`097`
-> applied (no `098`). M5 Flutter domain/repository/routes/navigation are
-> **closed**. Next is **M6 — Desktop Calendar UI**; do **not** start M6 until
-> scheduled explicitly (M5 acceptance is confirmed).
+> Status: **M0–M6 complete / accepted.** Migrations `093`–`097` applied
+> (no `098`). Next: **M7 Manual Events** (not started).
 >
 > Owner direction: HS360 appointments are **day-based**, not exact-time
 > appointments. An event is due on a selected calendar date and is expected to
@@ -1277,7 +1275,7 @@ Build the application layer and reachability before complex widgets.
 
 **Closed / accepted (2026-07-14)** — Flutter domain/mappers/repository/
 controllers/routes/navigation accepted after final acceptance correction.
-No migration `098`. M6 not started.
+No migration `098`.
 
 ### Corrective + final acceptance notes (M5)
 
@@ -1318,7 +1316,7 @@ Fixed gaps found after the initial land and final acceptance correction:
 - Verification: `dart format` clean; focused calendar/routing/nav/exception
   suites **253** passed; `flutter analyze` clean; full `flutter test` **1030**
   passed; `git diff --check` clean.
-- No migration `098`. No commit/push in the acceptance session. M6 not started.
+- No migration `098`. No commit/push in the acceptance session. M6 later closed.
 
 ### Work
 
@@ -1361,6 +1359,11 @@ Fixed gaps found after the initial land and final acceptance correction:
 
 ## M6 - Desktop Calendar UI
 
+**Status: closed / accepted (2026-07-15)** after the owner-approved visual/UX
+corrective pass. The compact search/filter toolbar, filter popover, event
+action menu, and direct month/year selectors are accepted. No migration `098`.
+Next: M7 Manual Events (not started).
+
 ### Goal
 
 Deliver the professional upper-calendar/lower-agenda desktop experience.
@@ -1396,6 +1399,41 @@ Deliver the professional upper-calendar/lower-agenda desktop experience.
 - Large event counts do not overflow the month grid or agenda.
 - Back navigation from linked detail screens is safe.
 
+**Delivered (including corrective acceptance):**
+- Collision-safe `CalendarFilters` identity via deterministic sorted JSON
+  (`canonicalQueryKey`) with adversarial delimiter/equals/Arabic tests.
+- DST-safe calendar-day arithmetic (`addCalendarDays` / UTC ordinal spans);
+  month-grid iteration and dense-summary validation no longer use
+  `Duration(days:)`.
+- Tenant-wide filter visibility from `canViewTenantCalendar(session)`;
+  assigned-only users never see agent/unassigned filters while scope is
+  loading; employee lookup requires tenant calendar + `warehouses.view`;
+  forbidden fields stripped on scope/identity change.
+- Customer-scoped service-location filter (customers.view; disabled until
+  draft customer selected; cleared on customer change).
+- Lookup lifecycle: identity resets, debounce cancel on dispose/identity
+  change, request generations, slow-old/fast-new + tenant-switch races.
+- Month-grid roving keyboard focus (arrows / Enter / Space) with gold focus
+  ring; RTL-aware Prev/Next chevrons; Semantics EN/LTR + AR/RTL tests.
+- Draft-only filters, `loadedSummaryQuery` alignment, dense summary
+  validation, scoped retries + `isLoadingOverdue`, overdue panel, EN/AR chrome.
+- Presentation split: controller / section loader / pagination / filter bar
+  chips / lookup field under the ~350-line target.
+- Clickable month and year selectors provide direct navigation while clamping
+  the selected day for shorter target months.
+
+**Prior automated verification (retained as history):**
+`dart format` + `flutter gen-l10n` clean; focused calendar **212** passed;
+routing + AppShell nav **93** passed; `flutter analyze` **0** issues; full
+`flutter test` **1091** passed; `git diff --check` clean. No `098`.
+
+**Final owner visual acceptance (2026-07-15):** compact search + funnel
+popover; lookup rows removed; exact-ID filters sanitized; clickable event
+action menu; direct month/year selection; screenshots in
+`build/screenshots/calendar_*.png`. Final verification: calendar **223**,
+screenshot harness **5**, routing/AppShell **93**, full Flutter **1102**,
+analyze 0, diff check clean. **M6 closed / accepted.** No commit/push unless
+requested.
 ---
 
 ## M7 - Manual Events

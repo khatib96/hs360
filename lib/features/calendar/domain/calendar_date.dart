@@ -43,3 +43,16 @@ int inclusiveDaySpan(DateTime from, DateTime to) {
   final end = DateTime.utc(to.year, to.month, to.day);
   return end.difference(start).inDays + 1;
 }
+
+/// Adds [days] using calendar year/month/day components (DST-safe).
+///
+/// Never uses [Duration]. Preserves date-only midnight local components.
+DateTime addCalendarDays(DateTime date, int days) {
+  final only = calendarDateOnly(date);
+  return DateTime(only.year, only.month, only.day + days);
+}
+
+/// True when [current] is exactly one calendar day after [previous].
+bool isNextCalendarDay(DateTime previous, DateTime current) {
+  return calendarDateOnly(current) == addCalendarDays(previous, 1);
+}

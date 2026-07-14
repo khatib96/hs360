@@ -42,6 +42,7 @@ void main() {
   group('CalendarState immutability', () {
     test('agendaEvents list is unmodifiable', () {
       final state = CalendarState(
+        focusedMonth: DateTime(2026, 7),
         dateFrom: DateTime(2026, 7, 1),
         dateTo: DateTime(2026, 7, 31),
         selectedDate: DateTime(2026, 7, 14),
@@ -57,6 +58,7 @@ void main() {
     test('copyWith freezes newly supplied lists', () {
       final mutable = [sampleCalendarEvent()];
       final state = CalendarState(
+        focusedMonth: DateTime(2026, 7),
         dateFrom: DateTime(2026, 7, 1),
         dateTo: DateTime(2026, 7, 31),
         selectedDate: DateTime(2026, 7, 14),

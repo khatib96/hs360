@@ -1264,8 +1264,91 @@
   "calendarFilterAssigned": "الوكيل المعيّن",
   "calendarFilterUnassigned": "غير المعيّن فقط",
   "calendarFilterSearch": "بحث",
+  "calendarFilterSearchHint": "ابحث في المواعيد والعملاء والعقود والمواقع والمندوبين",
+  "calendarFilterOpenFilters": "المرشحات",
+  "calendarFilterReset": "إعادة تعيين",
+  "calendarFilterAnySource": "أي مصدر",
   "calendarFilterOverdueOnly": "المتأخر فقط",
   "calendarFilterWorkingDayConflict": "تعارض يوم العمل",
+  "calendarFilterTypes": "أنواع المواعيد",
+  "calendarFilterStatuses": "الحالات",
+  "calendarFilterSourceKind": "المصدر",
+  "calendarFilterCustomer": "العميل",
+  "calendarFilterContract": "العقد",
+  "calendarFilterServiceLocation": "موقع الخدمة",
+  "calendarFilterApply": "تطبيق المرشحات",
+  "calendarFilterClear": "مسح المرشحات",
+  "calendarFilterActiveCount": "{count} نشط",
+  "@calendarFilterActiveCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "calendarFilterDirty": "تغييرات مرشحات غير مطبّقة",
+  "calendarFilterSelectCustomerFirst": "اختر عميلًا لتصفية المواقع.",
+  "calendarFilterLookupUnavailable": "البحث غير متاح لصلاحياتك.",
+  "calendarFilterLookupError": "تعذر تحميل نتائج البحث.",
+  "calendarEventActionsTitle": "إجراءات الموعد",
+  "calendarEventActionsClose": "إغلاق",
+  "calendarToday": "اليوم",
+  "calendarPreviousMonth": "الشهر السابق",
+  "calendarNextMonth": "الشهر التالي",
+  "calendarSelectMonth": "اختيار الشهر",
+  "calendarSelectYear": "اختيار السنة",
+  "calendarMonthYear": "{month} {year}",
+  "@calendarMonthYear": {
+    "placeholders": {
+      "month": {"type": "String"},
+      "year": {"type": "int"}
+    }
+  },
+  "calendarCountOverflow": "{value}+",
+  "@calendarCountOverflow": {
+    "placeholders": {
+      "value": {"type": "int"}
+    }
+  },
+  "calendarDayEventCount": "{count} مواعيد",
+  "@calendarDayEventCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "calendarDayUnassignedCount": "{count} غير معيّن",
+  "@calendarDayUnassignedCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "calendarDayOverdueCount": "{count} متأخر",
+  "@calendarDayOverdueCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "calendarWorkingWindow": "ساعات العمل: {start}–{end}",
+  "@calendarWorkingWindow": {
+    "placeholders": {
+      "start": {"type": "String"},
+      "end": {"type": "String"}
+    }
+  },
+  "calendarAgendaFilteredEmpty": "لا توجد مواعيد تطابق المرشحات الحالية.",
+  "calendarOverdueSectionTitle": "متأخر خارج هذا النطاق",
+  "calendarOverdueUnavailable": "العناصر المتأخرة غير متاحة حتى يتم إعداد جدول العمل.",
+  "calendarOverdueEmpty": "لا توجد مواعيد متأخرة خارج هذا النطاق.",
+  "calendarDirectionsAvailable": "الاتجاهات متاحة",
+  "calendarRescheduledBadge": "أُعيدت جدولته",
+  "calendarDayOffConflict": "مجدول في يوم إجازة",
+  "calendarViewCustomer": "عرض العميل",
+  "calendarViewContract": "عرض العقد",
+  "calendarSemanticsToday": "اليوم",
+  "calendarSemanticsSelected": "محدد",
+  "calendarSemanticsDayOff": "يوم إجازة",
+  "calendarSemanticsConflict": "تعارض يوم العمل",
+  "calendarMonthSkeleton": "جاري تحميل ملخص الشهر…",
+  "calendarAgendaLoading": "جاري تحميل الأجندة…",
+  "calendarOverdueLoading": "جاري تحميل المتأخر…",
   "calendarValidationRangeSpan": "يجب أن يكون نطاق التاريخ بين يوم واحد و62 يومًا.",
   "calendarValidationSearchTooShort": "يجب أن يكون البحث حرفين على الأقل.",
   "calendarValidationUnassignedAssignedConflict": "لا يمكن الجمع بين غير المعيّن ووكيل معيّن.",

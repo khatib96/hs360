@@ -1,14 +1,13 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../core/errors/calendar_exception.dart';
 import '../../auth/domain/app_session.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../data/calendar_repository.dart';
 import '../domain/calendar_date.dart';
-import '../domain/calendar_enums.dart';
-import '../domain/calendar_event_list_result.dart';
 import '../domain/calendar_filters.dart';
+import '../domain/calendar_month_grid.dart';
 import '../domain/calendar_permissions.dart';
+import 'calendar_section_loader.dart';
 import 'calendar_state.dart';
 
 part 'calendar_controller.g.dart';
@@ -18,56 +17,59 @@ typedef CalendarClock = DateTime Function();
 
 CalendarClock calendarClock = DateTime.now;
 
-DateTime _defaultMonthStart(DateTime today) =>
-    DateTime(today.year, today.month);
-
-DateTime _defaultMonthEnd(DateTime today) =>
-    DateTime(today.year, today.month + 1, 0);
-
 CalendarState _initialState(DateTime today) {
   final day = calendarDateOnly(today);
+  final focused = focusedMonthOnly(day);
+  final bounds = provisionalMonthBounds(focused);
   return CalendarState(
-    isLoadingSummary: true,
-    isLoadingAgenda: true,
-    dateFrom: _defaultMonthStart(day),
-    dateTo: _defaultMonthEnd(day),
+    isLoadingSummary: false,
+    isLoadingAgenda: false,
+    isLoadingOverdue: false,
+    focusedMonth: focused,
+    dateFrom: bounds.dateFrom,
+    dateTo: bounds.dateTo,
     selectedDate: day,
   );
 }
 
 @Riverpod(keepAlive: true)
 class CalendarController extends _$CalendarController {
-  int _summaryGeneration = 0;
-  int _agendaGeneration = 0;
-  int _inRangePaginationGeneration = 0;
-  int _overduePaginationGeneration = 0;
+  late CalendarSectionLoader _loader;
   bool _hasStartedInitialLoad = false;
 
   @override
   CalendarState build() {
+    _loader = CalendarSectionLoader(
+      readState: () => state,
+      writeState: (next) => state = next,
+      readSession: () => ref.read(authControllerProvider).valueOrNull,
+      readRepo: () => ref.read(calendarRepositoryProvider),
+      reloadAll: _reloadAllSections,
+    );
     ref.listen(authControllerProvider, (previous, next) {
       final previousSession = previous?.valueOrNull;
       final nextSession = next.valueOrNull;
       if (nextSession == null) {
-        _invalidateAllGenerations();
-        state = _initialState(
-          calendarClock(),
-        ).copyWith(isLoadingSummary: false, isLoadingAgenda: false);
+        _loader.invalidateAll();
+        _hasStartedInitialLoad = false;
+        state = _initialState(calendarClock());
         return;
       }
       if (_shouldReloadForSession(previousSession, nextSession)) {
         _resetForIdentityChange();
-        refresh();
-      }
-    });
-    Future.microtask(() {
-      if (!_hasStartedInitialLoad) {
-        _hasStartedInitialLoad = true;
-        refresh();
+        if (state.firstDayOfWeekIndex != null) {
+          refresh();
+        }
       }
     });
     return _initialState(calendarClock());
   }
+
+  Future<void> _reloadAllSections() => Future.wait([
+    _loader.loadSummary(),
+    _loader.loadAgenda(),
+    _loader.loadOverdueInitial(),
+  ]);
 
   AppSession? get _session => ref.read(authControllerProvider).valueOrNull;
 
@@ -79,21 +81,16 @@ class CalendarController extends _$CalendarController {
         previous.permissions != next.permissions;
   }
 
-  void _invalidateAllGenerations() {
-    _summaryGeneration++;
-    _agendaGeneration++;
-    _inRangePaginationGeneration++;
-    _overduePaginationGeneration++;
-  }
-
-  void _invalidatePaginationGenerations() {
-    _inRangePaginationGeneration++;
-    _overduePaginationGeneration++;
-  }
-
   void _resetForIdentityChange() {
-    _invalidateAllGenerations();
-    state = _initialState(calendarClock());
+    _loader.invalidateAll();
+    _hasStartedInitialLoad = false;
+    final weekStart = state.firstDayOfWeekIndex;
+    state = _initialState(
+      calendarClock(),
+    ).copyWith(firstDayOfWeekIndex: weekStart);
+    if (weekStart != null) {
+      _applyPaddedRangeForFocusedMonth(state.focusedMonth, clearSummary: true);
+    }
   }
 
   DateTime get _authoritativeToday {
@@ -102,19 +99,81 @@ class CalendarController extends _$CalendarController {
     return calendarDateOnly(calendarClock());
   }
 
+  CalendarFilters _sanitizeFiltersForSession(
+    CalendarFilters filters,
+    AppSession? session,
+  ) {
+    var next = filters.withoutExactIdFilters();
+    if (session == null || !canViewTenantCalendar(session)) {
+      next = next.withoutAssignedOnlyForbiddenFields();
+    }
+    return next;
+  }
+
+  void _applyPaddedRangeForFocusedMonth(
+    DateTime focused, {
+    required bool clearSummary,
+    DateTime? selectedDate,
+  }) {
+    final weekStart = state.firstDayOfWeekIndex;
+    if (weekStart == null) return;
+    final range = calendarPaddedMonthRange(
+      focused,
+      firstDayOfWeekIndex: weekStart,
+    );
+    state = state.copyWith(
+      focusedMonth: focusedMonthOnly(focused),
+      dateFrom: range.dateFrom,
+      dateTo: range.dateTo,
+      selectedDate: selectedDate,
+      clearLoadedSummaryQuery: clearSummary,
+      days: clearSummary ? const [] : null,
+      clearOverdueOutsideRangeSummary: clearSummary,
+    );
+  }
+
+  /// Idempotent week-start configuration from presentation (post-frame).
+  Future<void> ensureWeekStart(int firstDayOfWeekIndex) async {
+    final index = firstDayOfWeekIndex % 7;
+    final previous = state.firstDayOfWeekIndex;
+    if (previous == index) {
+      if (!_hasStartedInitialLoad) {
+        _hasStartedInitialLoad = true;
+        await refresh();
+      }
+      return;
+    }
+
+    state = state.copyWith(firstDayOfWeekIndex: index);
+    _applyPaddedRangeForFocusedMonth(
+      state.focusedMonth,
+      clearSummary: true,
+      selectedDate: clampDayOfMonth(state.selectedDate, state.focusedMonth),
+    );
+
+    _hasStartedInitialLoad = true;
+    await refresh();
+  }
+
   Future<void> refresh() async {
     final session = _session;
     if (session == null || !canAccessCalendar(session)) {
-      _invalidateAllGenerations();
+      _loader.invalidateAll();
       state = _initialState(calendarClock()).copyWith(
-        isLoadingSummary: false,
-        isLoadingAgenda: false,
+        firstDayOfWeekIndex: state.firstDayOfWeekIndex,
         permissionDenied: true,
       );
       return;
     }
+    if (state.firstDayOfWeekIndex == null) return;
 
-    _invalidatePaginationGenerations();
+    final sanitized = _sanitizeFiltersForSession(state.filters, session);
+    if (sanitized != state.filters) {
+      state = state.copyWith(filters: sanitized);
+    }
+
+    final sameQuery = state.isSummaryQueryAligned;
+    _loader.invalidatePagination();
     state = state.copyWith(
       permissionDenied: false,
       clearSummaryError: true,
@@ -130,49 +189,75 @@ class CalendarController extends _$CalendarController {
       isLoadingMoreOverdue: false,
       overdueEvents: const [],
       agendaEvents: const [],
+      clearLoadedSummaryQuery: !sameQuery,
+      days: sameQuery ? null : const [],
     );
 
-    await Future.wait([_loadSummary(), _loadAgenda(), _loadOverdueInitial()]);
+    await _reloadAllSections();
   }
 
-  Future<void> setVisibleRange(DateTime from, DateTime to) async {
-    final start = calendarDateOnly(from);
-    final end = calendarDateOnly(to);
-    final span = inclusiveDaySpan(start, end);
-    if (span < CalendarFilters.minRangeDays ||
-        span > CalendarFilters.maxRangeDays) {
-      state = state.copyWith(
-        summaryErrorCode: CalendarException.validationFailed,
-      );
-      return;
-    }
+  Future<void> goToPreviousMonth() => _navigateFocusedMonth(-1);
 
-    var selected = calendarDateOnly(state.selectedDate);
-    if (selected.isBefore(start) || selected.isAfter(end)) {
-      selected = start;
-    }
+  Future<void> goToNextMonth() => _navigateFocusedMonth(1);
 
-    _invalidatePaginationGenerations();
+  /// Jumps directly to [month] while preserving the selected day when valid.
+  ///
+  /// For shorter target months, the selected day is clamped to the final day
+  /// of that month (for example, January 31 -> February 28/29).
+  Future<void> goToMonth(DateTime month) async {
+    if (state.firstDayOfWeekIndex == null) return;
+    final target = focusedMonthOnly(month);
+    if (target == state.focusedMonth) return;
+    await _reloadAfterMonthChange(
+      target,
+      selectedDate: clampDayOfMonth(state.selectedDate, target),
+    );
+  }
+
+  Future<void> _reloadAfterMonthChange(
+    DateTime focused, {
+    required DateTime selectedDate,
+  }) async {
+    _loader.invalidatePagination();
+    _applyPaddedRangeForFocusedMonth(
+      focused,
+      clearSummary: true,
+      selectedDate: selectedDate,
+    );
     state = state.copyWith(
-      dateFrom: start,
-      dateTo: end,
-      selectedDate: selected,
+      hasExplicitSelectedDate: true,
+      overdueEvents: const [],
+      agendaEvents: const [],
       clearNextCursorInRange: true,
       clearNextCursorOverdue: true,
       hasMoreInRange: false,
       hasMoreOverdue: false,
-      isLoadingMoreInRange: false,
-      isLoadingMoreOverdue: false,
-      overdueEvents: const [],
-      agendaEvents: const [],
       clearSummaryError: true,
       clearAgendaError: true,
-      clearLoadMoreInRangeError: true,
-      clearLoadMoreOverdueError: true,
       clearOverdueError: true,
     );
+    await _reloadAllSections();
+  }
 
-    await Future.wait([_loadSummary(), _loadAgenda(), _loadOverdueInitial()]);
+  Future<void> _navigateFocusedMonth(int deltaMonths) async {
+    final current = state.focusedMonth;
+    final target = DateTime(current.year, current.month + deltaMonths);
+    await goToMonth(target);
+  }
+
+  Future<void> goToToday() async {
+    if (state.firstDayOfWeekIndex == null) return;
+    final today = _authoritativeToday;
+    await _reloadAfterMonthChange(today, selectedDate: today);
+  }
+
+  Future<void> selectGridDate(DateTime date) async {
+    final day = calendarDateOnly(date);
+    if (focusedMonthOnly(day) != state.focusedMonth) {
+      await _reloadAfterMonthChange(day, selectedDate: day);
+      return;
+    }
+    await selectDate(day);
   }
 
   Future<void> selectDate(DateTime date) async {
@@ -182,7 +267,7 @@ class CalendarController extends _$CalendarController {
         state.agendaEvents.isNotEmpty) {
       return;
     }
-    _inRangePaginationGeneration++;
+    _loader.inRangePaginationGeneration++;
     state = state.copyWith(
       selectedDate: day,
       hasExplicitSelectedDate: true,
@@ -193,13 +278,18 @@ class CalendarController extends _$CalendarController {
       clearAgendaError: true,
       clearLoadMoreInRangeError: true,
     );
-    await _loadAgenda();
+    await _loader.loadAgenda();
   }
 
   Future<void> setFilters(CalendarFilters filters) async {
-    _invalidatePaginationGenerations();
+    final session = _session;
+    final sanitized = _sanitizeFiltersForSession(filters, session);
+    if (sanitized == state.filters) return;
+    _loader.invalidatePagination();
     state = state.copyWith(
-      filters: filters,
+      filters: sanitized,
+      clearLoadedSummaryQuery: true,
+      days: const [],
       clearNextCursorInRange: true,
       clearNextCursorOverdue: true,
       hasMoreInRange: false,
@@ -214,330 +304,33 @@ class CalendarController extends _$CalendarController {
       clearLoadMoreOverdueError: true,
       clearOverdueError: true,
     );
-    await Future.wait([_loadSummary(), _loadAgenda(), _loadOverdueInitial()]);
+    await _reloadAllSections();
   }
 
   Future<void> clearFilters() => setFilters(CalendarFilters.empty);
 
-  void goToToday() {
-    selectDate(_authoritativeToday);
+  Future<void> retrySummary() async {
+    if (state.isLoadingSummary) return;
+    state = state.copyWith(clearSummaryError: true);
+    await _loader.loadSummary();
   }
 
-  Future<void> loadMoreInRange() async {
-    if (state.isLoadingAgenda ||
-        state.isLoadingMoreInRange ||
-        !state.hasMoreInRange ||
-        state.nextCursorInRange == null) {
-      return;
-    }
-
-    final session = _session;
-    if (session == null || !canAccessCalendar(session)) return;
-
-    final gen = ++_inRangePaginationGeneration;
+  Future<void> retryAgenda() async {
+    if (state.isLoadingAgenda) return;
     state = state.copyWith(
-      isLoadingMoreInRange: true,
+      clearAgendaError: true,
       clearLoadMoreInRangeError: true,
     );
-
-    try {
-      final result = await ref
-          .read(calendarRepositoryProvider)
-          .listEvents(
-            session,
-            dateFrom: state.selectedDate,
-            dateTo: state.selectedDate,
-            filters: state.filters,
-            cursorInRange: state.nextCursorInRange,
-            limit: CalendarFilters.defaultPageLimit,
-            includeOverdueOutsideRange: false,
-          );
-      if (gen != _inRangePaginationGeneration) return;
-
-      state = state.copyWith(
-        isLoadingMoreInRange: false,
-        agendaEvents: [...state.agendaEvents, ...result.inRange.rows],
-        nextCursorInRange: result.inRange.nextCursor,
-        hasMoreInRange: result.inRange.hasMore,
-        clearNextCursorInRange: result.inRange.nextCursor == null,
-      );
-    } on CalendarException catch (e) {
-      if (gen != _inRangePaginationGeneration) return;
-      state = state.copyWith(
-        isLoadingMoreInRange: false,
-        loadMoreInRangeErrorCode: e.code,
-      );
-    } catch (_) {
-      if (gen != _inRangePaginationGeneration) return;
-      state = state.copyWith(
-        isLoadingMoreInRange: false,
-        loadMoreInRangeErrorCode: CalendarException.unknown,
-      );
-    }
+    await _loader.loadAgenda();
   }
 
-  Future<void> loadMoreOverdue() async {
-    if (state.isLoadingMoreOverdue ||
-        !state.hasMoreOverdue ||
-        state.nextCursorOverdue == null) {
-      return;
-    }
-
-    final session = _session;
-    if (session == null || !canAccessCalendar(session)) return;
-
-    final gen = ++_overduePaginationGeneration;
-    state = state.copyWith(
-      isLoadingMoreOverdue: true,
-      clearLoadMoreOverdueError: true,
-    );
-
-    try {
-      final result = await ref
-          .read(calendarRepositoryProvider)
-          .listEvents(
-            session,
-            dateFrom: state.dateFrom,
-            dateTo: state.dateTo,
-            filters: state.filters,
-            cursorOverdue: state.nextCursorOverdue,
-            limit: CalendarFilters.defaultPageLimit,
-            includeOverdueOutsideRange: true,
-          );
-      if (gen != _overduePaginationGeneration) return;
-
-      state = state.copyWith(
-        isLoadingMoreOverdue: false,
-        overdueEvents: [
-          ...state.overdueEvents,
-          ...result.overdueOutsideRange.rows,
-        ],
-        nextCursorOverdue: result.overdueOutsideRange.nextCursor,
-        hasMoreOverdue: result.overdueOutsideRange.hasMore,
-        clearNextCursorOverdue: result.overdueOutsideRange.nextCursor == null,
-      );
-    } on CalendarException catch (e) {
-      if (gen != _overduePaginationGeneration) return;
-      state = state.copyWith(
-        isLoadingMoreOverdue: false,
-        loadMoreOverdueErrorCode: e.code,
-      );
-    } catch (_) {
-      if (gen != _overduePaginationGeneration) return;
-      state = state.copyWith(
-        isLoadingMoreOverdue: false,
-        loadMoreOverdueErrorCode: CalendarException.unknown,
-      );
-    }
-  }
-
-  Future<void> _loadSummary() async {
-    final session = _session;
-    if (session == null || !canAccessCalendar(session)) return;
-
-    final gen = ++_summaryGeneration;
-    final requestedFrom = state.dateFrom;
-    final requestedTo = state.dateTo;
-    state = state.copyWith(isLoadingSummary: true, clearSummaryError: true);
-
-    try {
-      final result = await ref
-          .read(calendarRepositoryProvider)
-          .getRangeSummary(
-            session,
-            dateFrom: requestedFrom,
-            dateTo: requestedTo,
-            filters: state.filters,
-          );
-      if (gen != _summaryGeneration) return;
-
-      final setupWarning =
-          !result.workingScheduleConfigured ||
-          result.overdueOutsideRange.state ==
-              CalendarOverdueOutsideRangeState.scheduleUnconfigured ||
-          result.tenantLocalToday == null;
-
-      final today = result.tenantLocalToday == null
-          ? null
-          : calendarDateOnly(result.tenantLocalToday!);
-
-      state = state.copyWith(
-        isLoadingSummary: false,
-        timezoneName: result.timezoneName,
-        workingScheduleConfigured: result.workingScheduleConfigured,
-        tenantLocalToday: today,
-        clearTenantLocalToday: today == null,
-        scope: result.scope,
-        filtersHash: result.filtersHash,
-        days: result.days,
-        overdueOutsideRangeSummary: result.overdueOutsideRange,
-        showSetupWarning: setupWarning,
-        clearSummaryError: true,
-      );
-
-      if (today != null && !state.hasExplicitSelectedDate) {
-        await _adoptTenantLocalToday(today, summaryGeneration: gen);
-      }
-    } on CalendarException catch (e) {
-      if (gen != _summaryGeneration) return;
-      state = state.copyWith(
-        isLoadingSummary: false,
-        summaryErrorCode: e.code,
-        permissionDenied: e.code == CalendarException.permissionDenied,
-      );
-    } catch (_) {
-      if (gen != _summaryGeneration) return;
-      state = state.copyWith(
-        isLoadingSummary: false,
-        summaryErrorCode: CalendarException.unknown,
-      );
-    }
-  }
-
-  /// First hydration: select tenant-local today and shift the visible range if
-  /// needed. No-ops once the user has explicitly selected a date.
-  Future<void> _adoptTenantLocalToday(
-    DateTime today, {
-    required int summaryGeneration,
-  }) async {
-    if (summaryGeneration != _summaryGeneration) return;
-    if (state.hasExplicitSelectedDate) return;
-
-    final alreadySelected = state.selectedDate == today;
-    final inRange =
-        !today.isBefore(state.dateFrom) && !today.isAfter(state.dateTo);
-
-    if (alreadySelected && inRange) return;
-
-    if (!inRange) {
-      final monthFrom = _defaultMonthStart(today);
-      final monthTo = _defaultMonthEnd(today);
-      _invalidatePaginationGenerations();
-      state = state.copyWith(
-        dateFrom: monthFrom,
-        dateTo: monthTo,
-        selectedDate: today,
-        clearNextCursorInRange: true,
-        clearNextCursorOverdue: true,
-        hasMoreInRange: false,
-        hasMoreOverdue: false,
-        isLoadingMoreInRange: false,
-        isLoadingMoreOverdue: false,
-        overdueEvents: const [],
-        agendaEvents: const [],
-      );
-      if (summaryGeneration != _summaryGeneration) return;
-      await Future.wait([_loadSummary(), _loadAgenda(), _loadOverdueInitial()]);
-      return;
-    }
-
-    state = state.copyWith(selectedDate: today);
-    await _loadAgenda();
-  }
-
-  Future<void> _loadAgenda() async {
-    final session = _session;
-    if (session == null || !canAccessCalendar(session)) return;
-
-    final gen = ++_agendaGeneration;
-    final selected = state.selectedDate;
-    state = state.copyWith(isLoadingAgenda: true, clearAgendaError: true);
-
-    try {
-      final result = await ref
-          .read(calendarRepositoryProvider)
-          .listEvents(
-            session,
-            dateFrom: selected,
-            dateTo: selected,
-            filters: state.filters,
-            limit: CalendarFilters.defaultPageLimit,
-            includeOverdueOutsideRange: false,
-          );
-      if (gen != _agendaGeneration) return;
-
-      _applyTenantTodayFromList(result);
-
-      state = state.copyWith(
-        isLoadingAgenda: false,
-        agendaEvents: result.inRange.rows,
-        nextCursorInRange: result.inRange.nextCursor,
-        hasMoreInRange: result.inRange.hasMore,
-        clearNextCursorInRange: result.inRange.nextCursor == null,
-        clearAgendaError: true,
-      );
-    } on CalendarException catch (e) {
-      if (gen != _agendaGeneration) return;
-      state = state.copyWith(
-        isLoadingAgenda: false,
-        agendaErrorCode: e.code,
-        permissionDenied: e.code == CalendarException.permissionDenied,
-      );
-    } catch (_) {
-      if (gen != _agendaGeneration) return;
-      state = state.copyWith(
-        isLoadingAgenda: false,
-        agendaErrorCode: CalendarException.unknown,
-      );
-    }
-  }
-
-  Future<void> _loadOverdueInitial() async {
-    final session = _session;
-    if (session == null || !canAccessCalendar(session)) return;
-
-    final gen = ++_overduePaginationGeneration;
+  Future<void> retryOverdue() async {
+    if (state.isLoadingOverdue || state.isLoadingMoreOverdue) return;
     state = state.copyWith(clearOverdueError: true);
-    try {
-      final result = await ref
-          .read(calendarRepositoryProvider)
-          .listEvents(
-            session,
-            dateFrom: state.dateFrom,
-            dateTo: state.dateTo,
-            filters: state.filters,
-            limit: CalendarFilters.defaultPageLimit,
-            includeOverdueOutsideRange: true,
-          );
-      if (gen != _overduePaginationGeneration) return;
-
-      _applyTenantTodayFromList(result);
-
-      state = state.copyWith(
-        overdueEvents: result.overdueOutsideRange.rows,
-        nextCursorOverdue: result.overdueOutsideRange.nextCursor,
-        hasMoreOverdue: result.overdueOutsideRange.hasMore,
-        clearNextCursorOverdue: result.overdueOutsideRange.nextCursor == null,
-        isLoadingMoreOverdue: false,
-        clearOverdueError: true,
-      );
-    } on CalendarException catch (e) {
-      if (gen != _overduePaginationGeneration) return;
-      state = state.copyWith(
-        isLoadingMoreOverdue: false,
-        overdueErrorCode: e.code,
-        overdueEvents: const [],
-        clearNextCursorOverdue: true,
-        hasMoreOverdue: false,
-      );
-    } catch (_) {
-      if (gen != _overduePaginationGeneration) return;
-      state = state.copyWith(
-        isLoadingMoreOverdue: false,
-        overdueErrorCode: CalendarException.unknown,
-        overdueEvents: const [],
-        clearNextCursorOverdue: true,
-        hasMoreOverdue: false,
-      );
-    }
+    await _loader.loadOverdueInitial();
   }
 
-  void _applyTenantTodayFromList(CalendarEventListResult result) {
-    final today = result.tenantLocalToday;
-    if (today == null) return;
-    final todayOnly = calendarDateOnly(today);
-    if (state.tenantLocalToday == null) {
-      state = state.copyWith(tenantLocalToday: todayOnly);
-    }
-  }
+  Future<void> loadMoreInRange() => _loader.loadMoreInRange();
+
+  Future<void> loadMoreOverdue() => _loader.loadMoreOverdue();
 }

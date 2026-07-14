@@ -3877,10 +3877,167 @@ class AppLocalizationsEn extends AppLocalizations {
   String get calendarFilterSearch => 'Search';
 
   @override
+  String get calendarFilterSearchHint =>
+      'Search events, customers, contracts, locations, and agents';
+
+  @override
+  String get calendarFilterOpenFilters => 'Filters';
+
+  @override
+  String get calendarFilterReset => 'Reset';
+
+  @override
+  String get calendarFilterAnySource => 'Any source';
+
+  @override
   String get calendarFilterOverdueOnly => 'Overdue only';
 
   @override
   String get calendarFilterWorkingDayConflict => 'Working-day conflict';
+
+  @override
+  String get calendarFilterTypes => 'Event types';
+
+  @override
+  String get calendarFilterStatuses => 'Statuses';
+
+  @override
+  String get calendarFilterSourceKind => 'Source';
+
+  @override
+  String get calendarFilterCustomer => 'Customer';
+
+  @override
+  String get calendarFilterContract => 'Contract';
+
+  @override
+  String get calendarFilterServiceLocation => 'Service location';
+
+  @override
+  String get calendarFilterApply => 'Apply filters';
+
+  @override
+  String get calendarFilterClear => 'Clear filters';
+
+  @override
+  String calendarFilterActiveCount(int count) {
+    return '$count active';
+  }
+
+  @override
+  String get calendarFilterDirty => 'Unapplied filter changes';
+
+  @override
+  String get calendarFilterSelectCustomerFirst =>
+      'Select a customer to filter by location.';
+
+  @override
+  String get calendarFilterLookupUnavailable =>
+      'Lookup unavailable for your permissions.';
+
+  @override
+  String get calendarFilterLookupError => 'Could not load lookup results.';
+
+  @override
+  String get calendarEventActionsTitle => 'Event actions';
+
+  @override
+  String get calendarEventActionsClose => 'Close';
+
+  @override
+  String get calendarToday => 'Today';
+
+  @override
+  String get calendarPreviousMonth => 'Previous month';
+
+  @override
+  String get calendarNextMonth => 'Next month';
+
+  @override
+  String get calendarSelectMonth => 'Select month';
+
+  @override
+  String get calendarSelectYear => 'Select year';
+
+  @override
+  String calendarMonthYear(String month, int year) {
+    return '$month $year';
+  }
+
+  @override
+  String calendarCountOverflow(int value) {
+    return '$value+';
+  }
+
+  @override
+  String calendarDayEventCount(int count) {
+    return '$count events';
+  }
+
+  @override
+  String calendarDayUnassignedCount(int count) {
+    return '$count unassigned';
+  }
+
+  @override
+  String calendarDayOverdueCount(int count) {
+    return '$count overdue';
+  }
+
+  @override
+  String calendarWorkingWindow(String start, String end) {
+    return 'Working hours: $start–$end';
+  }
+
+  @override
+  String get calendarAgendaFilteredEmpty =>
+      'No events match the current filters.';
+
+  @override
+  String get calendarOverdueSectionTitle => 'Overdue outside this range';
+
+  @override
+  String get calendarOverdueUnavailable =>
+      'Overdue items are unavailable until the working schedule is configured.';
+
+  @override
+  String get calendarOverdueEmpty => 'No overdue events outside this range.';
+
+  @override
+  String get calendarDirectionsAvailable => 'Directions available';
+
+  @override
+  String get calendarRescheduledBadge => 'Rescheduled';
+
+  @override
+  String get calendarDayOffConflict => 'Scheduled on a day off';
+
+  @override
+  String get calendarViewCustomer => 'View customer';
+
+  @override
+  String get calendarViewContract => 'View contract';
+
+  @override
+  String get calendarSemanticsToday => 'Today';
+
+  @override
+  String get calendarSemanticsSelected => 'Selected';
+
+  @override
+  String get calendarSemanticsDayOff => 'Day off';
+
+  @override
+  String get calendarSemanticsConflict => 'Working-day conflict';
+
+  @override
+  String get calendarMonthSkeleton => 'Loading month summary…';
+
+  @override
+  String get calendarAgendaLoading => 'Loading agenda…';
+
+  @override
+  String get calendarOverdueLoading => 'Loading overdue…';
 
   @override
   String get calendarValidationRangeSpan =>

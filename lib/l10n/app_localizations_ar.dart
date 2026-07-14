@@ -3834,10 +3834,165 @@ class AppLocalizationsAr extends AppLocalizations {
   String get calendarFilterSearch => 'بحث';
 
   @override
+  String get calendarFilterSearchHint =>
+      'ابحث في المواعيد والعملاء والعقود والمواقع والمندوبين';
+
+  @override
+  String get calendarFilterOpenFilters => 'المرشحات';
+
+  @override
+  String get calendarFilterReset => 'إعادة تعيين';
+
+  @override
+  String get calendarFilterAnySource => 'أي مصدر';
+
+  @override
   String get calendarFilterOverdueOnly => 'المتأخر فقط';
 
   @override
   String get calendarFilterWorkingDayConflict => 'تعارض يوم العمل';
+
+  @override
+  String get calendarFilterTypes => 'أنواع المواعيد';
+
+  @override
+  String get calendarFilterStatuses => 'الحالات';
+
+  @override
+  String get calendarFilterSourceKind => 'المصدر';
+
+  @override
+  String get calendarFilterCustomer => 'العميل';
+
+  @override
+  String get calendarFilterContract => 'العقد';
+
+  @override
+  String get calendarFilterServiceLocation => 'موقع الخدمة';
+
+  @override
+  String get calendarFilterApply => 'تطبيق المرشحات';
+
+  @override
+  String get calendarFilterClear => 'مسح المرشحات';
+
+  @override
+  String calendarFilterActiveCount(int count) {
+    return '$count نشط';
+  }
+
+  @override
+  String get calendarFilterDirty => 'تغييرات مرشحات غير مطبّقة';
+
+  @override
+  String get calendarFilterSelectCustomerFirst => 'اختر عميلًا لتصفية المواقع.';
+
+  @override
+  String get calendarFilterLookupUnavailable => 'البحث غير متاح لصلاحياتك.';
+
+  @override
+  String get calendarFilterLookupError => 'تعذر تحميل نتائج البحث.';
+
+  @override
+  String get calendarEventActionsTitle => 'إجراءات الموعد';
+
+  @override
+  String get calendarEventActionsClose => 'إغلاق';
+
+  @override
+  String get calendarToday => 'اليوم';
+
+  @override
+  String get calendarPreviousMonth => 'الشهر السابق';
+
+  @override
+  String get calendarNextMonth => 'الشهر التالي';
+
+  @override
+  String get calendarSelectMonth => 'اختيار الشهر';
+
+  @override
+  String get calendarSelectYear => 'اختيار السنة';
+
+  @override
+  String calendarMonthYear(String month, int year) {
+    return '$month $year';
+  }
+
+  @override
+  String calendarCountOverflow(int value) {
+    return '$value+';
+  }
+
+  @override
+  String calendarDayEventCount(int count) {
+    return '$count مواعيد';
+  }
+
+  @override
+  String calendarDayUnassignedCount(int count) {
+    return '$count غير معيّن';
+  }
+
+  @override
+  String calendarDayOverdueCount(int count) {
+    return '$count متأخر';
+  }
+
+  @override
+  String calendarWorkingWindow(String start, String end) {
+    return 'ساعات العمل: $start–$end';
+  }
+
+  @override
+  String get calendarAgendaFilteredEmpty =>
+      'لا توجد مواعيد تطابق المرشحات الحالية.';
+
+  @override
+  String get calendarOverdueSectionTitle => 'متأخر خارج هذا النطاق';
+
+  @override
+  String get calendarOverdueUnavailable =>
+      'العناصر المتأخرة غير متاحة حتى يتم إعداد جدول العمل.';
+
+  @override
+  String get calendarOverdueEmpty => 'لا توجد مواعيد متأخرة خارج هذا النطاق.';
+
+  @override
+  String get calendarDirectionsAvailable => 'الاتجاهات متاحة';
+
+  @override
+  String get calendarRescheduledBadge => 'أُعيدت جدولته';
+
+  @override
+  String get calendarDayOffConflict => 'مجدول في يوم إجازة';
+
+  @override
+  String get calendarViewCustomer => 'عرض العميل';
+
+  @override
+  String get calendarViewContract => 'عرض العقد';
+
+  @override
+  String get calendarSemanticsToday => 'اليوم';
+
+  @override
+  String get calendarSemanticsSelected => 'محدد';
+
+  @override
+  String get calendarSemanticsDayOff => 'يوم إجازة';
+
+  @override
+  String get calendarSemanticsConflict => 'تعارض يوم العمل';
+
+  @override
+  String get calendarMonthSkeleton => 'جاري تحميل ملخص الشهر…';
+
+  @override
+  String get calendarAgendaLoading => 'جاري تحميل الأجندة…';
+
+  @override
+  String get calendarOverdueLoading => 'جاري تحميل المتأخر…';
 
   @override
   String get calendarValidationRangeSpan =>

@@ -1,25 +1,53 @@
 import '../domain/calendar_enums.dart';
 import '../domain/calendar_event.dart';
 import '../domain/calendar_filters.dart';
+import '../domain/calendar_month_grid.dart';
 import '../domain/calendar_range_summary.dart';
 
-/// Placeholder for future M7/M8 mutation outcomes (unused in M5).
+/// Placeholder for future M7/M8 mutation outcomes (unused in M5/M6).
 enum CalendarMutationOutcome { none, success, failure }
+
+/// Immutable snapshot of the last successfully adopted summary query.
+class CalendarLoadedSummaryQuery {
+  const CalendarLoadedSummaryQuery({
+    required this.dateFrom,
+    required this.dateTo,
+    required this.filtersKey,
+  });
+
+  final DateTime dateFrom;
+  final DateTime dateTo;
+  final String filtersKey;
+
+  bool matches({
+    required DateTime dateFrom,
+    required DateTime dateTo,
+    required String filtersKey,
+  }) {
+    return this.dateFrom == dateFrom &&
+        this.dateTo == dateTo &&
+        this.filtersKey == filtersKey;
+  }
+}
 
 /// UI / orchestration state for the main Calendar surface.
 class CalendarState {
   CalendarState({
     this.isLoadingSummary = false,
     this.isLoadingAgenda = false,
+    this.isLoadingOverdue = false,
     this.isLoadingMoreInRange = false,
     this.isLoadingMoreOverdue = false,
     this.permissionDenied = false,
     this.showSetupWarning = false,
     this.hasExplicitSelectedDate = false,
+    required this.focusedMonth,
+    this.firstDayOfWeekIndex,
     required this.dateFrom,
     required this.dateTo,
     required this.selectedDate,
     CalendarFilters? filters,
+    this.loadedSummaryQuery,
     this.tenantLocalToday,
     this.timezoneName,
     this.workingScheduleConfigured = false,
@@ -48,6 +76,9 @@ class CalendarState {
 
   final bool isLoadingSummary;
   final bool isLoadingAgenda;
+
+  /// Initial overdue-bucket load (distinct from [isLoadingMoreOverdue]).
+  final bool isLoadingOverdue;
   final bool isLoadingMoreInRange;
   final bool isLoadingMoreOverdue;
   final bool permissionDenied;
@@ -59,10 +90,15 @@ class CalendarState {
   /// identity change).
   final bool hasExplicitSelectedDate;
 
+  final DateTime focusedMonth;
+  final int? firstDayOfWeekIndex;
+
   final DateTime dateFrom;
   final DateTime dateTo;
   final DateTime selectedDate;
   final CalendarFilters filters;
+
+  final CalendarLoadedSummaryQuery? loadedSummaryQuery;
 
   final DateTime? tenantLocalToday;
   final String? timezoneName;
@@ -91,24 +127,51 @@ class CalendarState {
   bool get isBusy =>
       isLoadingSummary ||
       isLoadingAgenda ||
+      isLoadingOverdue ||
       isLoadingMoreInRange ||
       isLoadingMoreOverdue;
 
   bool get hasAgenda => agendaEvents.isNotEmpty;
   bool get hasOverdue => overdueEvents.isNotEmpty;
 
+  bool get hasActiveFilters => filters != CalendarFilters.empty;
+
+  bool get isSummaryQueryAligned {
+    final loaded = loadedSummaryQuery;
+    if (loaded == null || days.isEmpty) return false;
+    return loaded.matches(
+      dateFrom: dateFrom,
+      dateTo: dateTo,
+      filtersKey: filters.canonicalQueryKey,
+    );
+  }
+
+  CalendarDaySummary? get selectedDaySummary {
+    if (!isSummaryQueryAligned) return null;
+    for (final day in days) {
+      if (day.date == selectedDate) return day;
+    }
+    return null;
+  }
+
   CalendarState copyWith({
     bool? isLoadingSummary,
     bool? isLoadingAgenda,
+    bool? isLoadingOverdue,
     bool? isLoadingMoreInRange,
     bool? isLoadingMoreOverdue,
     bool? permissionDenied,
     bool? showSetupWarning,
     bool? hasExplicitSelectedDate,
+    DateTime? focusedMonth,
+    int? firstDayOfWeekIndex,
+    bool clearFirstDayOfWeekIndex = false,
     DateTime? dateFrom,
     DateTime? dateTo,
     DateTime? selectedDate,
     CalendarFilters? filters,
+    CalendarLoadedSummaryQuery? loadedSummaryQuery,
+    bool clearLoadedSummaryQuery = false,
     DateTime? tenantLocalToday,
     bool clearTenantLocalToday = false,
     String? timezoneName,
@@ -144,16 +207,24 @@ class CalendarState {
     return CalendarState(
       isLoadingSummary: isLoadingSummary ?? this.isLoadingSummary,
       isLoadingAgenda: isLoadingAgenda ?? this.isLoadingAgenda,
+      isLoadingOverdue: isLoadingOverdue ?? this.isLoadingOverdue,
       isLoadingMoreInRange: isLoadingMoreInRange ?? this.isLoadingMoreInRange,
       isLoadingMoreOverdue: isLoadingMoreOverdue ?? this.isLoadingMoreOverdue,
       permissionDenied: permissionDenied ?? this.permissionDenied,
       showSetupWarning: showSetupWarning ?? this.showSetupWarning,
       hasExplicitSelectedDate:
           hasExplicitSelectedDate ?? this.hasExplicitSelectedDate,
+      focusedMonth: focusedMonth ?? this.focusedMonth,
+      firstDayOfWeekIndex: clearFirstDayOfWeekIndex
+          ? null
+          : (firstDayOfWeekIndex ?? this.firstDayOfWeekIndex),
       dateFrom: dateFrom ?? this.dateFrom,
       dateTo: dateTo ?? this.dateTo,
       selectedDate: selectedDate ?? this.selectedDate,
       filters: filters ?? this.filters,
+      loadedSummaryQuery: clearLoadedSummaryQuery
+          ? null
+          : (loadedSummaryQuery ?? this.loadedSummaryQuery),
       tenantLocalToday: clearTenantLocalToday
           ? null
           : (tenantLocalToday ?? this.tenantLocalToday),
@@ -196,4 +267,13 @@ class CalendarState {
       mutationOutcome: mutationOutcome ?? this.mutationOutcome,
     );
   }
+}
+
+/// Convenience: bare-month provisional bounds before week-start is known.
+({DateTime dateFrom, DateTime dateTo}) provisionalMonthBounds(DateTime month) {
+  final focused = focusedMonthOnly(month);
+  return (
+    dateFrom: focused,
+    dateTo: DateTime(focused.year, focused.month + 1, 0),
+  );
 }

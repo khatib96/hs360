@@ -1623,8 +1623,91 @@
   "calendarFilterAssigned": "Assigned agent",
   "calendarFilterUnassigned": "Unassigned only",
   "calendarFilterSearch": "Search",
+  "calendarFilterSearchHint": "Search events, customers, contracts, locations, and agents",
+  "calendarFilterOpenFilters": "Filters",
+  "calendarFilterReset": "Reset",
+  "calendarFilterAnySource": "Any source",
   "calendarFilterOverdueOnly": "Overdue only",
   "calendarFilterWorkingDayConflict": "Working-day conflict",
+  "calendarFilterTypes": "Event types",
+  "calendarFilterStatuses": "Statuses",
+  "calendarFilterSourceKind": "Source",
+  "calendarFilterCustomer": "Customer",
+  "calendarFilterContract": "Contract",
+  "calendarFilterServiceLocation": "Service location",
+  "calendarFilterApply": "Apply filters",
+  "calendarFilterClear": "Clear filters",
+  "calendarFilterActiveCount": "{count} active",
+  "@calendarFilterActiveCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "calendarFilterDirty": "Unapplied filter changes",
+  "calendarFilterSelectCustomerFirst": "Select a customer to filter by location.",
+  "calendarFilterLookupUnavailable": "Lookup unavailable for your permissions.",
+  "calendarFilterLookupError": "Could not load lookup results.",
+  "calendarEventActionsTitle": "Event actions",
+  "calendarEventActionsClose": "Close",
+  "calendarToday": "Today",
+  "calendarPreviousMonth": "Previous month",
+  "calendarNextMonth": "Next month",
+  "calendarSelectMonth": "Select month",
+  "calendarSelectYear": "Select year",
+  "calendarMonthYear": "{month} {year}",
+  "@calendarMonthYear": {
+    "placeholders": {
+      "month": {"type": "String"},
+      "year": {"type": "int"}
+    }
+  },
+  "calendarCountOverflow": "{value}+",
+  "@calendarCountOverflow": {
+    "placeholders": {
+      "value": {"type": "int"}
+    }
+  },
+  "calendarDayEventCount": "{count} events",
+  "@calendarDayEventCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "calendarDayUnassignedCount": "{count} unassigned",
+  "@calendarDayUnassignedCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "calendarDayOverdueCount": "{count} overdue",
+  "@calendarDayOverdueCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "calendarWorkingWindow": "Working hours: {start}–{end}",
+  "@calendarWorkingWindow": {
+    "placeholders": {
+      "start": {"type": "String"},
+      "end": {"type": "String"}
+    }
+  },
+  "calendarAgendaFilteredEmpty": "No events match the current filters.",
+  "calendarOverdueSectionTitle": "Overdue outside this range",
+  "calendarOverdueUnavailable": "Overdue items are unavailable until the working schedule is configured.",
+  "calendarOverdueEmpty": "No overdue events outside this range.",
+  "calendarDirectionsAvailable": "Directions available",
+  "calendarRescheduledBadge": "Rescheduled",
+  "calendarDayOffConflict": "Scheduled on a day off",
+  "calendarViewCustomer": "View customer",
+  "calendarViewContract": "View contract",
+  "calendarSemanticsToday": "Today",
+  "calendarSemanticsSelected": "Selected",
+  "calendarSemanticsDayOff": "Day off",
+  "calendarSemanticsConflict": "Working-day conflict",
+  "calendarMonthSkeleton": "Loading month summary…",
+  "calendarAgendaLoading": "Loading agenda…",
+  "calendarOverdueLoading": "Loading overdue…",
   "calendarValidationRangeSpan": "Date range must be between 1 and 62 days.",
   "calendarValidationSearchTooShort": "Search must be at least 2 characters.",
   "calendarValidationUnassignedAssignedConflict": "Cannot combine unassigned-only with an assigned agent.",

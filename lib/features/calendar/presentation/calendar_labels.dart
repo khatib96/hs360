@@ -1,7 +1,11 @@
 import 'package:hs360/l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 
 import '../domain/calendar_enums.dart';
+import '../domain/calendar_event.dart';
+import '../domain/calendar_month_grid.dart';
 import '../domain/calendar_settings.dart';
+import '../domain/calendar_working_day.dart';
 
 String calendarEventTypeLabel(AppLocalizations l10n, CalendarEventType type) {
   return switch (type) {
@@ -65,5 +69,101 @@ String calendarWorkingDayModeLabel(
     TenantWorkingDayMode.dayOff => l10n.calendarDayModeDayOff,
     TenantWorkingDayMode.workingHours => l10n.calendarDayModeWorkingHours,
     TenantWorkingDayMode.hours24 => l10n.calendarDayMode24Hours,
+  };
+}
+
+String calendarOverdueStateLabel(
+  AppLocalizations l10n,
+  CalendarOverdueState state,
+) {
+  return switch (state) {
+    CalendarOverdueState.notApplicable =>
+      l10n.calendarOverdueStateNotApplicable,
+    CalendarOverdueState.scheduleUnconfigured =>
+      l10n.calendarOverdueStateUnconfigured,
+    CalendarOverdueState.overdue => l10n.calendarOverdueStateOverdue,
+    CalendarOverdueState.notOverdue => l10n.calendarOverdueStateNotOverdue,
+  };
+}
+
+String calendarEventTitle(CalendarEvent event, String languageCode) {
+  if (languageCode == 'ar') return event.titleAr;
+  return event.titleEn ?? event.titleAr;
+}
+
+String? calendarPersonName({
+  required String languageCode,
+  String? nameAr,
+  String? nameEn,
+}) {
+  if (languageCode == 'ar') {
+    return nameAr ?? nameEn;
+  }
+  return nameEn ?? nameAr;
+}
+
+String calendarWorkingStatusText(
+  AppLocalizations l10n,
+  CalendarWorkingDay workingDay,
+) {
+  if (workingDay.isDayOff) {
+    return calendarWorkingDayModeLabel(l10n, TenantWorkingDayMode.dayOff);
+  }
+  if (workingDay.is24Hours) {
+    return calendarWorkingDayModeLabel(l10n, TenantWorkingDayMode.hours24);
+  }
+  if (workingDay.isUnreviewed || !workingDay.scheduleConfigured) {
+    return calendarWorkingDayModeLabel(l10n, TenantWorkingDayMode.unreviewed);
+  }
+  final start = workingDay.workStart;
+  final end = workingDay.workEnd;
+  if (start != null && end != null) {
+    return l10n.calendarWorkingWindow(start, end);
+  }
+  return calendarWorkingDayModeLabel(l10n, workingDay.dayMode);
+}
+
+String calendarFormatCappedCount(
+  AppLocalizations l10n,
+  CalendarCappedCount count,
+) {
+  final formatted = NumberFormat.decimalPattern().format(count.value);
+  if (count.overflow) {
+    return l10n.calendarCountOverflow(count.value);
+  }
+  return formatted;
+}
+
+String calendarWeekdayShort(AppLocalizations l10n, int materialIndex) {
+  return switch (materialIndex % 7) {
+    0 => l10n.calendarWeekdaySunday,
+    1 => l10n.calendarWeekdayMonday,
+    2 => l10n.calendarWeekdayTuesday,
+    3 => l10n.calendarWeekdayWednesday,
+    4 => l10n.calendarWeekdayThursday,
+    5 => l10n.calendarWeekdayFriday,
+    _ => l10n.calendarWeekdaySaturday,
+  };
+}
+
+String calendarMonthName(AppLocalizations l10n, int month) {
+  // Use existing weekday-style keys only for days; months via intl DateFormat.
+  return DateFormat.MMMM(l10n.localeName).format(DateTime(2026, month));
+}
+
+String calendarLocalizedDate(AppLocalizations l10n, DateTime date) {
+  return DateFormat.yMMMMEEEEd(l10n.localeName).format(date);
+}
+
+String calendarErrorMessage(AppLocalizations l10n, String code) {
+  return switch (code) {
+    'permission_denied' => l10n.calendarPermissionDenied,
+    'validation_failed' => l10n.calendarErrorValidation,
+    'invalid_cursor' => l10n.calendarErrorInvalidCursor,
+    'tenant_not_found' => l10n.calendarErrorTenantNotFound,
+    'malformed_response' => l10n.calendarErrorMalformed,
+    'not_available' => l10n.calendarErrorUnavailable,
+    'supabaseNotConfigured' => l10n.calendarErrorUnavailable,
+    _ => l10n.calendarErrorUnknown,
   };
 }

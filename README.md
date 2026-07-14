@@ -5,9 +5,10 @@ businesses. It is being built first for Hayat Secret and is designed around
 serialized rental assets, recurring consumables, field service, customer debt,
 and double-entry accounting.
 
-> Repository status updated: **2026-07-14**
+> Repository status updated: **2026-07-15**
 >
-> Current milestone: **Phase 7 M5 closed / accepted** — next is M6 (Desktop Calendar UI); no M6 work started yet
+> Current milestone: **Phase 7 M6 closed / accepted after owner visual approval**
+> — next is **M7 Manual Events** (not started)
 >
 > Latest applied migration: **`097_phase_7_calendar_read_rpc.sql`** (unchanged; no `098`)
 
@@ -24,7 +25,7 @@ and double-entry accounting.
 | 4 | Engineering complete | Customers, suppliers, CoA, service locations, coordinates |
 | 5 | Complete | Invoices, returns, vouchers, journal, inventory accounting, PDFs |
 | 6 | Complete | Trial/rental contracts, lifecycle, billing, PDF, calendar handoff |
-| 7 | M5 complete | M1–M4 SQL (`093`–`097`) + M5 Flutter domain/repository/routes (closed 2026-07-14) |
+| 7 | M6 complete | M1–M4 SQL (`093`–`097`) + M5 Flutter read layer + owner-accepted M6 Desktop Month+Agenda UI |
 | 8-12 | Not started | Field execution and later operational/reporting/production phases |
 
 Phase 6 closed through M13/migration `092` on 2026-07-12. Phase 7 M1 closed on
@@ -33,9 +34,11 @@ Phase 6 closed through M13/migration `092` on 2026-07-12. Phase 7 M1 closed on
 (82 cases + two concurrency scripts); M4 read RPCs (`097`) closed on
 2026-07-13 with SQL Phase R (68 cases). M5 Flutter domain/repository/routes
 landed on 2026-07-14, were reopened for a corrective/acceptance pass the same
-day, then **closed / accepted** after final gates (strict execution-summary
-coverage + `calculated_next_due_date`, overdue error surface, exact RPC
-param contracts). No migration `098`. M6 has not started.
+day, then **closed / accepted**. M6 Desktop Month + Agenda UI landed and passed
+automated acceptance, then was reopened for owner visual/UX correction. The
+compact search/filter toolbar, filter popover, event action menu, and direct
+month/year selectors were subsequently implemented and **accepted by the owner
+on 2026-07-15**. M6 is closed. No migration `098`. M7 has not started.
 
 Detailed roadmap: [BUILD_PLAN.md](docs/BUILD_PLAN.md)
 
@@ -66,8 +69,8 @@ Phase 7 source of truth: [PHASE_7_CALENDAR_PLAN.md](docs/PHASE_7_CALENDAR_PLAN.m
 
 ## Planned, Not Yet Implemented
 
-- Phase 7 main Calendar UI, date-based reminders, manual events,
-  assignment/rescheduling, mobile calendar, and route view.
+- Phase 7 manual events, assignment/reschedule, mobile calendar, maps/directions,
+  and Day/Week presentations (M7–M10).
 - Phase 8 field execution: GPS proof, live-camera photo, actual consumable
   delivery, coverage confirmation, stock-out, and optional payment collection.
 - Offline mobile synchronization. Drift is deliberately not a current
@@ -269,8 +272,8 @@ Before implementing a milestone:
 
 ## Current Constraints
 
-- Phase 7 M5 Flutter calendar layer is **closed / accepted**. M6 (Desktop
-  Calendar UI) is next and has not started. Migration remains `097` (no `098`).
+- Phase 7 M6 Desktop Month + Agenda UI is **closed / owner-accepted**.
+  Migration remains `097` (no `098`). Next is M7, not started.
 - Production Supabase/VPS deployment and external messaging credentials are not
   configured by this repository state.
 - The `resolve-google-maps-url` Edge Function has local verification but still
@@ -287,7 +290,18 @@ Before implementing a milestone:
 - Focused calendar/routing/nav/exception suites — **253** passed.
 - `flutter test` — **1030** passed.
 - `git diff --check` — clean.
-- M5 **closed / accepted**; M6 **not started**; no commit/push.
+- M5 **closed / accepted**; M6 was still ahead at that snapshot.
+
+## M6 Closure Verification (2026-07-15)
+
+- Latest applied migration remains `097` (no SQL change; no `098`).
+- Final focused calendar suite — **223** passed; screenshot harness — **5**
+  passed; routing/AppShell — **93** passed.
+- `flutter analyze` — 0 issues; full `flutter test` — **1102** passed;
+  `git diff --check` — clean.
+- Owner visually accepted the corrected Arabic desktop UI and direct
+  month/year navigation on 2026-07-15. **M6 closed / accepted.**
+- M7, M10 native directions, and Phase 8 execution remain not started.
 
 ---
 

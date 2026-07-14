@@ -4,6 +4,7 @@ import 'package:hs360/core/errors/calendar_exception.dart';
 import 'package:hs360/features/auth/domain/app_session.dart';
 import 'package:hs360/features/calendar/data/calendar_repository.dart';
 import 'package:hs360/features/calendar/domain/calendar_available_actions.dart';
+import 'package:hs360/features/calendar/domain/calendar_date.dart';
 import 'package:hs360/features/calendar/domain/calendar_enums.dart';
 import 'package:hs360/features/calendar/domain/calendar_event.dart';
 import 'package:hs360/features/calendar/domain/calendar_event_list_result.dart';
@@ -12,21 +13,38 @@ import 'package:hs360/features/calendar/domain/calendar_range_summary.dart';
 import 'package:hs360/features/calendar/domain/calendar_settings.dart';
 import 'package:hs360/features/calendar/domain/calendar_working_day.dart';
 
-CalendarWorkingDay sampleCalendarWorkingDay([DateTime? date]) {
+CalendarWorkingDay sampleCalendarWorkingDay({
+  DateTime? date,
+  TenantWorkingDayMode dayMode = TenantWorkingDayMode.workingHours,
+  String? workStart = '08:00',
+  String? workEnd = '17:00',
+  bool scheduleConfigured = true,
+  bool? isUnreviewed,
+  bool? isDayOff,
+  bool? is24Hours,
+  bool? isWorkingHours,
+}) {
   final d = date ?? DateTime(2026, 7, 14);
+  final unreviewed =
+      isUnreviewed ??
+      (dayMode == TenantWorkingDayMode.unreviewed || !scheduleConfigured);
+  final dayOff = isDayOff ?? dayMode == TenantWorkingDayMode.dayOff;
+  final hours24 = is24Hours ?? dayMode == TenantWorkingDayMode.hours24;
+  final working =
+      isWorkingHours ?? dayMode == TenantWorkingDayMode.workingHours;
   return CalendarWorkingDay(
     tenantId: 'tenant-1',
     date: d,
     isoWeekday: d.weekday,
-    scheduleConfigured: true,
+    scheduleConfigured: scheduleConfigured,
     timezoneName: 'Asia/Kuwait',
-    dayMode: TenantWorkingDayMode.workingHours,
-    workStart: '08:00',
-    workEnd: '17:00',
-    isUnreviewed: false,
-    isDayOff: false,
-    is24Hours: false,
-    isWorkingHours: true,
+    dayMode: dayMode,
+    workStart: hours24 || dayOff || unreviewed ? null : workStart,
+    workEnd: hours24 || dayOff || unreviewed ? null : workEnd,
+    isUnreviewed: unreviewed,
+    isDayOff: dayOff,
+    is24Hours: hours24,
+    isWorkingHours: working,
   );
 }
 
@@ -34,32 +52,59 @@ CalendarEvent sampleCalendarEvent({
   String id = 'event-1',
   DateTime? scheduledDate,
   DateTime? originalDueDate,
+  String? titleAr,
+  String? titleEn,
+  CalendarEventType type = CalendarEventType.refillDue,
+  CalendarEventStatus status = CalendarEventStatus.pending,
+  String? customerId,
+  String? customerNameAr,
+  String? customerNameEn,
+  String? contractId,
+  String? contractNumber,
+  String? serviceLocationName,
+  String? assignedAgentNameAr,
+  String? assignedAgentNameEn,
+  bool directionsAvailable = false,
+  bool isOverdue = false,
+  int overdueDays = 0,
+  CalendarOverdueState overdueState = CalendarOverdueState.notOverdue,
+  CalendarAvailableActions? availableActions,
 }) {
   final date = scheduledDate ?? DateTime(2026, 7, 14);
   return CalendarEvent(
     id: id,
-    type: CalendarEventType.refillDue,
-    status: CalendarEventStatus.pending,
+    type: type,
+    status: status,
     sourceKind: CalendarEventSourceKind.contractGenerated,
     scheduledDate: date,
     originalDueDate: originalDueDate ?? date,
-    titleAr: 'تعبئة',
-    titleEn: 'Refill',
+    titleAr: titleAr ?? 'تعبئة',
+    titleEn: titleEn ?? 'Refill',
     isRescheduled: false,
-    directionsAvailable: false,
+    assignedAgentNameAr: assignedAgentNameAr,
+    assignedAgentNameEn: assignedAgentNameEn,
+    customerId: customerId,
+    customerNameAr: customerNameAr,
+    customerNameEn: customerNameEn,
+    serviceLocationName: serviceLocationName,
+    contractId: contractId,
+    contractNumber: contractNumber,
+    directionsAvailable: directionsAvailable,
     scheduleState: CalendarScheduleState.workingDay,
-    workingDay: sampleCalendarWorkingDay(date),
-    isOverdue: false,
-    overdueDays: 0,
-    overdueState: CalendarOverdueState.notOverdue,
-    availableActions: const CalendarAvailableActions(
-      canViewCustomer: true,
-      canViewContract: true,
-      canAssign: false,
-      canReschedule: false,
-      canCreateManual: false,
-      canOpenDirections: false,
-    ),
+    workingDay: sampleCalendarWorkingDay(date: date),
+    isOverdue: isOverdue,
+    overdueDays: overdueDays,
+    overdueState: overdueState,
+    availableActions:
+        availableActions ??
+        const CalendarAvailableActions(
+          canViewCustomer: true,
+          canViewContract: true,
+          canAssign: false,
+          canReschedule: false,
+          canCreateManual: false,
+          canOpenDirections: false,
+        ),
   );
 }
 
@@ -70,27 +115,43 @@ CalendarRangeSummaryResult sampleRangeSummary({
   bool workingScheduleConfigured = true,
   CalendarOverdueOutsideRangeState overdueState =
       CalendarOverdueOutsideRangeState.available,
+  CalendarFilters filtersApplied = CalendarFilters.empty,
+  CalendarReadScope scope = CalendarReadScope.tenantWide,
+  int? unassignedCount = 0,
+  int Function(DateTime date)? eventCountForDate,
+  CalendarWorkingDay Function(DateTime date)? workingDayForDate,
 }) {
   final from = dateFrom ?? DateTime(2026, 7, 1);
   final to = dateTo ?? DateTime(2026, 7, 31);
+  final highlight = DateTime(2026, 7, 14);
+  final days = <CalendarDaySummary>[];
+  var cursor = DateTime(from.year, from.month, from.day);
+  final end = DateTime(to.year, to.month, to.day);
+  while (!cursor.isAfter(end)) {
+    final isHighlight = cursor == highlight;
+    days.add(
+      CalendarDaySummary(
+        date: cursor,
+        isoWeekday: cursor.weekday,
+        eventCount: eventCountForDate?.call(cursor) ?? (isHighlight ? 1 : 0),
+        unassignedCount: unassignedCount,
+        overdueCount: 0,
+        workingDay:
+            workingDayForDate?.call(cursor) ??
+            sampleCalendarWorkingDay(date: cursor),
+      ),
+    );
+    cursor = addCalendarDays(cursor, 1);
+  }
   return CalendarRangeSummaryResult(
     dateFrom: from,
     dateTo: to,
     timezoneName: 'Asia/Kuwait',
     workingScheduleConfigured: workingScheduleConfigured,
     tenantLocalToday: tenantLocalToday ?? DateTime(2026, 7, 14),
-    scope: CalendarReadScope.tenantWide,
+    scope: scope,
     filtersHash: 'hash-abc',
-    days: [
-      CalendarDaySummary(
-        date: DateTime(2026, 7, 14),
-        isoWeekday: 2,
-        eventCount: 1,
-        unassignedCount: 0,
-        overdueCount: 0,
-        workingDay: sampleCalendarWorkingDay(),
-      ),
-    ],
+    days: days,
     overdueOutsideRange: CalendarOverdueOutsideRangeSummary(
       state: overdueState,
       count: overdueState == CalendarOverdueOutsideRangeState.available
@@ -101,7 +162,7 @@ CalendarRangeSummaryResult sampleRangeSummary({
           ? DateTime(2026, 6, 1)
           : null,
     ),
-    filtersApplied: CalendarFilters.empty,
+    filtersApplied: filtersApplied,
   );
 }
 
@@ -153,6 +214,11 @@ class FakeCalendarRepository extends CalendarRepository {
     this.rangeError,
     this.listError,
     this.listErrorWhenIncludeOverdue,
+    this.rangeScope = CalendarReadScope.tenantWide,
+    this.rangeUnassignedCount = 0,
+    this.workingDayForDate,
+    this.eventCountForDate,
+    this.echoAgendaDate = false,
   }) : rangeResult = rangeResult ?? sampleRangeSummary(),
        listResult = listResult ?? sampleEventList(),
        super(null);
@@ -164,6 +230,14 @@ class FakeCalendarRepository extends CalendarRepository {
 
   /// When set, only list calls with includeOverdueOutsideRange=true throw.
   Object? listErrorWhenIncludeOverdue;
+
+  CalendarReadScope rangeScope;
+  int? rangeUnassignedCount;
+  CalendarWorkingDay Function(DateTime date)? workingDayForDate;
+  int Function(DateTime date)? eventCountForDate;
+
+  /// When true, agenda list rows are generated for the requested dateFrom.
+  bool echoAgendaDate;
 
   /// Gates: when non-null, the corresponding call awaits [Completer.future]
   /// before returning (lets tests switch tenant mid-flight).
@@ -230,7 +304,19 @@ class FakeCalendarRepository extends CalendarRepository {
         technicalDetail: error.toString(),
       );
     }
-    return rangeResult;
+    // Echo requested range/filters so controller contract checks pass.
+    return sampleRangeSummary(
+      dateFrom: dateFrom,
+      dateTo: dateTo,
+      tenantLocalToday: rangeResult.tenantLocalToday,
+      workingScheduleConfigured: rangeResult.workingScheduleConfigured,
+      overdueState: rangeResult.overdueOutsideRange.state,
+      filtersApplied: filters,
+      scope: rangeScope,
+      unassignedCount: rangeUnassignedCount,
+      eventCountForDate: eventCountForDate,
+      workingDayForDate: workingDayForDate,
+    );
   }
 
   @override
@@ -295,6 +381,24 @@ class FakeCalendarRepository extends CalendarRepository {
       throw CalendarException(
         code: CalendarException.unknown,
         technicalDetail: error.toString(),
+      );
+    }
+
+    if (echoAgendaDate && !includeOverdueOutsideRange) {
+      return sampleEventList(
+        dateFrom: dateFrom,
+        dateTo: dateTo,
+        tenantLocalToday: listResult.tenantLocalToday,
+        inRangeRows: [
+          sampleCalendarEvent(
+            id: 'event-${dateFrom.year}-${dateFrom.month}-${dateFrom.day}',
+            scheduledDate: dateFrom,
+          ),
+        ],
+        overdueRows: const [],
+        hasMoreInRange: listResult.inRange.hasMore,
+        nextCursorInRange: listResult.inRange.nextCursor,
+        hasMoreOverdue: false,
       );
     }
     return listResult;

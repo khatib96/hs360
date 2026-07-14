@@ -66,6 +66,7 @@ Future<void> _waitForIdle(ProviderContainer container) async {
     final state = container.read(calendarControllerProvider);
     if (!state.isLoadingSummary &&
         !state.isLoadingAgenda &&
+        !state.isLoadingOverdue &&
         !state.isLoadingMoreInRange &&
         !state.isLoadingMoreOverdue) {
       return;
@@ -74,6 +75,17 @@ Future<void> _waitForIdle(ProviderContainer container) async {
   }
   fail('CalendarController stayed busy');
 }
+
+/// Boots calendar with Sunday week start (Material index 0).
+Future<void> _boot(ProviderContainer container) async {
+  container.read(calendarControllerProvider);
+  await container.read(calendarControllerProvider.notifier).ensureWeekStart(0);
+  await _waitForIdle(container);
+}
+
+/// July 2026 padded range for Sunday week start.
+final _july2026PaddedFrom = DateTime(2026, 6, 28);
+final _july2026PaddedTo = DateTime(2026, 8, 1);
 
 void main() {
   late CalendarClock previousClock;
@@ -87,48 +99,51 @@ void main() {
     calendarClock = previousClock;
   });
 
-  test('initial load uses month range and selected-day agenda', () async {
-    final repo = FakeCalendarRepository(
-      listResult: sampleEventList(
-        inRangeRows: [sampleCalendarEvent(id: 'agenda-1')],
-        overdueRows: [
-          sampleCalendarEvent(
-            id: 'overdue-1',
-            scheduledDate: DateTime(2026, 6, 1),
-          ),
-        ],
-        hasMoreInRange: true,
-        nextCursorInRange: 'in-1',
-        hasMoreOverdue: true,
-        nextCursorOverdue: 'od-1',
-      ),
-    );
-    final container = _container(session: _session(), repo: repo);
-    addTearDown(container.dispose);
+  test(
+    'initial load uses padded month range and selected-day agenda',
+    () async {
+      final repo = FakeCalendarRepository(
+        listResult: sampleEventList(
+          inRangeRows: [sampleCalendarEvent(id: 'agenda-1')],
+          overdueRows: [
+            sampleCalendarEvent(
+              id: 'overdue-1',
+              scheduledDate: DateTime(2026, 6, 1),
+            ),
+          ],
+          hasMoreInRange: true,
+          nextCursorInRange: 'in-1',
+          hasMoreOverdue: true,
+          nextCursorOverdue: 'od-1',
+        ),
+      );
+      final container = _container(session: _session(), repo: repo);
+      addTearDown(container.dispose);
 
-    container.read(calendarControllerProvider);
-    await _waitForIdle(container);
+      await _boot(container);
 
-    expect(repo.getRangeSummaryCount, 1);
-    expect(repo.lastRangeFrom, DateTime(2026, 7, 1));
-    expect(repo.lastRangeTo, DateTime(2026, 7, 31));
-    expect(repo.listEventsCount, 2);
+      expect(repo.getRangeSummaryCount, 1);
+      expect(repo.lastRangeFrom, _july2026PaddedFrom);
+      expect(repo.lastRangeTo, _july2026PaddedTo);
+      expect(repo.listEventsCount, 2);
 
-    final state = container.read(calendarControllerProvider);
-    expect(state.selectedDate, DateTime(2026, 7, 14));
-    expect(state.agendaEvents.single.id, 'agenda-1');
-    expect(state.overdueEvents.single.id, 'overdue-1');
-    expect(state.hasMoreInRange, isTrue);
-    expect(state.hasMoreOverdue, isTrue);
-  });
+      final state = container.read(calendarControllerProvider);
+      expect(state.selectedDate, DateTime(2026, 7, 14));
+      expect(state.focusedMonth, DateTime(2026, 7));
+      expect(state.agendaEvents.single.id, 'agenda-1');
+      expect(state.overdueEvents.single.id, 'overdue-1');
+      expect(state.hasMoreInRange, isTrue);
+      expect(state.hasMoreOverdue, isTrue);
+      expect(state.isSummaryQueryAligned, isTrue);
+    },
+  );
 
   test('selectDate reloads agenda only', () async {
     final repo = FakeCalendarRepository();
     final container = _container(session: _session(), repo: repo);
     addTearDown(container.dispose);
 
-    container.read(calendarControllerProvider);
-    await _waitForIdle(container);
+    await _boot(container);
 
     final summaryBefore = repo.getRangeSummaryCount;
     final listBefore = repo.listEventsCount;
@@ -153,7 +168,7 @@ void main() {
     );
   });
 
-  test('setVisibleRange and setFilters reset cursors and reload', () async {
+  test('goToNextMonth clamps selection and setFilters reset cursors', () async {
     final repo = FakeCalendarRepository(
       listResult: sampleEventList(
         hasMoreInRange: true,
@@ -165,33 +180,29 @@ void main() {
     final container = _container(session: _session(), repo: repo);
     addTearDown(container.dispose);
 
-    container.read(calendarControllerProvider);
-    await _waitForIdle(container);
+    await _boot(container);
 
     expect(
       container.read(calendarControllerProvider).nextCursorInRange,
       'old-in',
     );
 
-    // Keep tenant today inside the new range so adoption does not snap back.
-    repo
-      ..rangeResult = sampleRangeSummary(
-        dateFrom: DateTime(2026, 8, 1),
-        dateTo: DateTime(2026, 8, 31),
-        tenantLocalToday: DateTime(2026, 8, 10),
-      )
-      ..listResult = sampleEventList(
-        tenantLocalToday: DateTime(2026, 8, 10),
-        overdueRows: const [],
-      );
+    // Select July 31 so next month clamps to Aug 31.
     await container
         .read(calendarControllerProvider.notifier)
-        .setVisibleRange(DateTime(2026, 8, 1), DateTime(2026, 8, 31));
+        .selectDate(DateTime(2026, 7, 31));
+    await _waitForIdle(container);
+
+    repo.listResult = sampleEventList(
+      tenantLocalToday: DateTime(2026, 7, 14),
+      overdueRows: const [],
+    );
+    await container.read(calendarControllerProvider.notifier).goToNextMonth();
     await _waitForIdle(container);
 
     var state = container.read(calendarControllerProvider);
-    expect(state.dateFrom, DateTime(2026, 8, 1));
-    expect(state.dateTo, DateTime(2026, 8, 31));
+    expect(state.focusedMonth, DateTime(2026, 8));
+    expect(state.selectedDate, DateTime(2026, 8, 31));
     expect(state.nextCursorInRange, isNull);
     expect(state.nextCursorOverdue, isNull);
     expect(repo.getRangeSummaryCount, greaterThanOrEqualTo(2));
@@ -207,6 +218,38 @@ void main() {
     expect(repo.lastRangeFilters?.unassignedOnly, isTrue);
   });
 
+  test('goToMonth jumps directly and clamps the selected day', () async {
+    final repo = FakeCalendarRepository(
+      listResult: sampleEventList(overdueRows: const []),
+    );
+    final container = _container(session: _session(), repo: repo);
+    addTearDown(container.dispose);
+
+    await _boot(container);
+    await container
+        .read(calendarControllerProvider.notifier)
+        .selectDate(DateTime(2026, 7, 31));
+    await _waitForIdle(container);
+
+    await container
+        .read(calendarControllerProvider.notifier)
+        .goToMonth(DateTime(2027, 2));
+    await _waitForIdle(container);
+
+    final state = container.read(calendarControllerProvider);
+    expect(state.focusedMonth, DateTime(2027, 2));
+    expect(state.selectedDate, DateTime(2027, 2, 28));
+    expect(
+      repo.listCallLog.any(
+        (call) =>
+            !call.includeOverdue &&
+            call.dateFrom == DateTime(2027, 2, 28) &&
+            call.dateTo == DateTime(2027, 2, 28),
+      ),
+      isTrue,
+    );
+  });
+
   test('loadMoreInRange is a no-op when !hasMore', () async {
     final repo = FakeCalendarRepository(
       listResult: sampleEventList(hasMoreInRange: false),
@@ -214,8 +257,7 @@ void main() {
     final container = _container(session: _session(), repo: repo);
     addTearDown(container.dispose);
 
-    container.read(calendarControllerProvider);
-    await _waitForIdle(container);
+    await _boot(container);
 
     final listBefore = repo.listEventsCount;
     await container.read(calendarControllerProvider.notifier).loadMoreInRange();
@@ -236,8 +278,7 @@ void main() {
     final container = _container(session: _session(), repo: repo);
     addTearDown(container.dispose);
 
-    container.read(calendarControllerProvider);
-    await _waitForIdle(container);
+    await _boot(container);
 
     repo.listResult = sampleEventList(
       inRangeRows: [sampleCalendarEvent(id: 'sibling-in-range')],
@@ -273,8 +314,7 @@ void main() {
     final container = _container(session: _session(), repo: repo);
     addTearDown(container.dispose);
 
-    container.read(calendarControllerProvider);
-    await _waitForIdle(container);
+    await _boot(container);
 
     final state = container.read(calendarControllerProvider);
     expect(state.showSetupWarning, isTrue);
@@ -290,8 +330,7 @@ void main() {
     );
     addTearDown(container.dispose);
 
-    container.read(calendarControllerProvider);
-    await _waitForIdle(container);
+    await _boot(container);
 
     final state = container.read(calendarControllerProvider);
     expect(state.permissionDenied, isTrue);
@@ -309,8 +348,7 @@ void main() {
     final container = _container(session: _session(), repo: repo);
     addTearDown(container.dispose);
 
-    container.read(calendarControllerProvider);
-    await _waitForIdle(container);
+    await _boot(container);
 
     final state = container.read(calendarControllerProvider);
     expect(state.summaryErrorCode, CalendarException.notAvailable);
@@ -323,8 +361,7 @@ void main() {
     final container = _container(session: _session(), repo: repo, auth: auth);
     addTearDown(container.dispose);
 
-    container.read(calendarControllerProvider);
-    await _waitForIdle(container);
+    await _boot(container);
 
     final summaryBefore = repo.getRangeSummaryCount;
     auth.setSession(_session(userId: 'user-2'));
@@ -356,9 +393,11 @@ void main() {
     );
     addTearDown(container.dispose);
 
-    container.read(calendarControllerProvider);
+    final bootFuture = container
+        .read(calendarControllerProvider.notifier)
+        .ensureWeekStart(0);
     await Future<void>.delayed(Duration.zero);
-    expect(repo.getRangeSummaryCount, 1);
+    expect(repo.getRangeSummaryCount, greaterThanOrEqualTo(1));
 
     // State updates immediately; loads remain gated on the Completers.
     final filtersFuture = container
@@ -385,6 +424,7 @@ void main() {
     holdSummary.complete();
     holdAgenda.complete();
     holdOverdue.complete();
+    await bootFuture;
     await filtersFuture;
     await _waitForIdle(container);
 
@@ -415,8 +455,7 @@ void main() {
       final container = _container(session: _session(), repo: repo);
       addTearDown(container.dispose);
 
-      container.read(calendarControllerProvider);
-      await _waitForIdle(container);
+      await _boot(container);
 
       repo
         ..holdLoadMoreInRangeUntil = holdInRange
@@ -487,8 +526,7 @@ void main() {
       addTearDown(container.dispose);
 
       // Device clock stays 2026-07-14 (setUp).
-      container.read(calendarControllerProvider);
-      await _waitForIdle(container);
+      await _boot(container);
 
       final state = container.read(calendarControllerProvider);
       expect(state.selectedDate, DateTime(2026, 7, 15));
@@ -522,13 +560,14 @@ void main() {
     final container = _container(session: _session(), repo: repo);
     addTearDown(container.dispose);
 
-    container.read(calendarControllerProvider);
-    await _waitForIdle(container);
+    await _boot(container);
 
     final state = container.read(calendarControllerProvider);
     expect(state.selectedDate, DateTime(2026, 8, 3));
-    expect(state.dateFrom, DateTime(2026, 8, 1));
-    expect(state.dateTo, DateTime(2026, 8, 31));
+    expect(state.focusedMonth, DateTime(2026, 8));
+    // Sunday-padded August 2026: Jul 26 … Sep 5
+    expect(state.dateFrom, DateTime(2026, 7, 26));
+    expect(state.dateTo, DateTime(2026, 9, 5));
   });
 
   test(
@@ -538,8 +577,7 @@ void main() {
       final container = _container(session: _session(), repo: repo);
       addTearDown(container.dispose);
 
-      container.read(calendarControllerProvider);
-      await _waitForIdle(container);
+      await _boot(container);
 
       await container
           .read(calendarControllerProvider.notifier)
@@ -567,8 +605,7 @@ void main() {
       final container = _container(session: _session(), repo: repo, auth: auth);
       addTearDown(container.dispose);
 
-      container.read(calendarControllerProvider);
-      await _waitForIdle(container);
+      await _boot(container);
 
       await container
           .read(calendarControllerProvider.notifier)
@@ -626,7 +663,7 @@ void main() {
       final container = _container(session: _session(), repo: repo);
       addTearDown(container.dispose);
 
-      await _waitForIdle(container);
+      await _boot(container);
       var state = container.read(calendarControllerProvider);
       expect(state.overdueErrorCode, CalendarException.notAvailable);
       expect(state.overdueEvents, isEmpty);
@@ -662,6 +699,9 @@ void main() {
     final container = _container(session: _session(), repo: repo);
     addTearDown(container.dispose);
 
+    final bootFuture = container
+        .read(calendarControllerProvider.notifier)
+        .ensureWeekStart(0);
     await Future<void>.delayed(Duration.zero);
     // First overdue call is gated; clear error path before completing it.
     repo.listErrorWhenIncludeOverdue = null;
@@ -673,12 +713,13 @@ void main() {
         ),
       ],
     );
-    // Invalidate by triggering a new overdue generation via refresh filters.
+    // Invalidate by triggering a new overdue generation via refresh.
     repo.holdOverdueUntil = null;
     await container.read(calendarControllerProvider.notifier).refresh();
     await _waitForIdle(container);
 
     holdOverdue.complete();
+    await bootFuture;
     await Future<void>.delayed(Duration.zero);
     await _waitForIdle(container);
 

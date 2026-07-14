@@ -1,6 +1,8 @@
 /// RPC JSON fixtures mirroring migration 097 response shapes.
 library;
 
+import 'package:hs360/features/calendar/domain/calendar_date.dart';
+
 Map<String, dynamic> validWorkingDayRpc({
   String tenantId = '11111111-1111-1111-1111-111111111111',
   String date = '2026-07-14',
@@ -270,15 +272,31 @@ Map<String, dynamic> validCalendarEventAbsentOptionalRpc() {
 }
 
 Map<String, dynamic> validRangeSummaryRpc({
-  String dateFrom = '2026-07-01',
-  String dateTo = '2026-07-31',
+  String dateFrom = '2026-07-14',
+  String dateTo = '2026-07-14',
   String scope = 'tenant_wide',
   int? unassignedCount = 2,
   bool workingScheduleConfigured = true,
   String? tenantLocalToday = '2026-07-14',
   Map<String, dynamic>? overdueOutsideRange,
   Map<String, dynamic>? workingDay,
+  List<Map<String, dynamic>>? days,
 }) {
+  final from = parseCalendarDateOnly(dateFrom);
+  final to = parseCalendarDateOnly(dateTo);
+  final resolvedDays =
+      days ??
+      denseDaySummariesRpc(
+        dateFrom: from,
+        dateTo: to,
+        highlightDate: DateTime(2026, 7, 14),
+        highlightEventCount: 3,
+        highlightUnassignedCount: unassignedCount,
+        highlightOverdueCount: 1,
+        workingDay: workingDay,
+        defaultUnassignedCount: unassignedCount,
+      );
+
   final summary = <String, dynamic>{
     'date_from': dateFrom,
     'date_to': dateTo,
@@ -286,16 +304,7 @@ Map<String, dynamic> validRangeSummaryRpc({
     'working_schedule_configured': workingScheduleConfigured,
     'scope': scope,
     'filters_hash': 'hash-abc',
-    'days': [
-      {
-        'date': '2026-07-14',
-        'iso_weekday': 2,
-        'event_count': 3,
-        'unassigned_count': unassignedCount,
-        'overdue_count': 1,
-        'working_day': workingDay ?? validWorkingDayRpc(),
-      },
-    ],
+    'days': resolvedDays,
     'overdue_outside_range':
         overdueOutsideRange ??
         {
@@ -309,6 +318,43 @@ Map<String, dynamic> validRangeSummaryRpc({
     summary['tenant_local_today'] = tenantLocalToday;
   }
   return summary;
+}
+
+List<Map<String, dynamic>> denseDaySummariesRpc({
+  required DateTime dateFrom,
+  required DateTime dateTo,
+  DateTime? highlightDate,
+  int highlightEventCount = 0,
+  int? highlightUnassignedCount = 0,
+  int highlightOverdueCount = 0,
+  Map<String, dynamic>? workingDay,
+  int? defaultUnassignedCount = 0,
+}) {
+  final days = <Map<String, dynamic>>[];
+  var cursor = DateTime(dateFrom.year, dateFrom.month, dateFrom.day);
+  final end = DateTime(dateTo.year, dateTo.month, dateTo.day);
+  final highlight = highlightDate == null
+      ? null
+      : DateTime(highlightDate.year, highlightDate.month, highlightDate.day);
+
+  while (!cursor.isAfter(end)) {
+    final isHighlight = highlight != null && cursor == highlight;
+    final dateStr = formatCalendarDateOnly(cursor);
+    days.add({
+      'date': dateStr,
+      'iso_weekday': cursor.weekday,
+      'event_count': isHighlight ? highlightEventCount : 0,
+      'unassigned_count': isHighlight
+          ? highlightUnassignedCount
+          : defaultUnassignedCount,
+      'overdue_count': isHighlight ? highlightOverdueCount : 0,
+      'working_day':
+          workingDay ??
+          validWorkingDayRpc(date: dateStr, isoWeekday: cursor.weekday),
+    });
+    cursor = addCalendarDays(cursor, 1);
+  }
+  return days;
 }
 
 /// Unconfigured days + overdue schedule_unconfigured + tenant_local_today

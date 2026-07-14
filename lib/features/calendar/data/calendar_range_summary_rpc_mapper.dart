@@ -1,3 +1,5 @@
+import '../../../core/errors/calendar_exception.dart';
+import '../domain/calendar_date.dart';
 import '../domain/calendar_enums.dart';
 import '../domain/calendar_range_summary.dart';
 import 'calendar_read_rpc_parsers.dart';
@@ -5,11 +7,16 @@ import 'calendar_read_rpc_parsers.dart';
 CalendarRangeSummaryResult mapCalendarRangeSummaryFromRpc(dynamic raw) {
   final map = requireMap(raw, 'calendar range summary root');
 
+  final dateFrom = parseRequiredCalendarDate(map['date_from']);
+  final dateTo = parseRequiredCalendarDate(map['date_to']);
+
   final daysRaw = requireList(map['days'], 'days');
   final days = daysRaw.map((item) {
     final day = requireMap(item, 'days[]');
     return _mapDaySummary(day);
   }).toList();
+
+  _assertDenseOrderedDays(days, dateFrom: dateFrom, dateTo: dateTo);
 
   final overdueRaw = requireMap(
     map['overdue_outside_range'],
@@ -17,8 +24,8 @@ CalendarRangeSummaryResult mapCalendarRangeSummaryFromRpc(dynamic raw) {
   );
 
   return CalendarRangeSummaryResult(
-    dateFrom: parseRequiredCalendarDate(map['date_from']),
-    dateTo: parseRequiredCalendarDate(map['date_to']),
+    dateFrom: dateFrom,
+    dateTo: dateTo,
     timezoneName: optionalString(map['timezone_name']),
     workingScheduleConfigured: requireBool(
       map['working_schedule_configured'],
@@ -31,6 +38,42 @@ CalendarRangeSummaryResult mapCalendarRangeSummaryFromRpc(dynamic raw) {
     overdueOutsideRange: _mapOverdueOutsideRange(overdueRaw),
     filtersApplied: mapCalendarFiltersApplied(map['filters_applied']),
   );
+}
+
+void _assertDenseOrderedDays(
+  List<CalendarDaySummary> days, {
+  required DateTime dateFrom,
+  required DateTime dateTo,
+}) {
+  final expectedSpan = inclusiveDaySpan(dateFrom, dateTo);
+  if (days.length != expectedSpan) {
+    throw const CalendarException(
+      code: CalendarException.malformedResponse,
+      technicalDetail: 'days length does not match requested range',
+    );
+  }
+  if (days.isEmpty) {
+    throw const CalendarException(
+      code: CalendarException.malformedResponse,
+      technicalDetail: 'days must be non-empty for a valid range',
+    );
+  }
+  if (days.first.date != dateFrom || days.last.date != dateTo) {
+    throw const CalendarException(
+      code: CalendarException.malformedResponse,
+      technicalDetail: 'days do not cover date_from/date_to endpoints',
+    );
+  }
+  for (var i = 1; i < days.length; i++) {
+    final prev = days[i - 1].date;
+    final current = days[i].date;
+    if (!isNextCalendarDay(prev, current)) {
+      throw const CalendarException(
+        code: CalendarException.malformedResponse,
+        technicalDetail: 'days are not strictly ascending without gaps',
+      );
+    }
+  }
 }
 
 CalendarDaySummary _mapDaySummary(Map<String, dynamic> raw) {

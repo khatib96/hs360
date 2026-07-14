@@ -1,6 +1,69 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-14 (Session: Phase 7 M5 **closed / accepted**; M6 not started; no `098`/commit/push).
+> Updated 2026-07-15 (Session: Phase 7 **M6 closed / owner-accepted**;
+> no `098`/commit/push; M7 not started).
+
+---
+
+## Session 2026-07-15 - Phase 7 M6 owner visual/UX closure
+
+**Decision:** The owner visually accepted the corrected calendar UI. M6 is
+**closed / accepted**. No migration `098`; M7 / M10 / Phase 8 remain not
+started. No commit/push unless requested.
+
+**UX corrective deliverables:**
+- Compact search + funnel toolbar (450ms debounce / Enter apply); Clear
+  resets search + facets; badge = `activePopoverGroupCount`.
+- Filter popover: multi-select checkboxes, Apply/Reset, Escape, RTL anchor;
+  draft discarded if closed without Apply.
+- Exact-ID filters sanitized (`withoutExactIdFilters`) on every apply;
+  lookup chip wall + CalendarLookupField removed.
+- Clickable agenda cards open permission-aware action dialog (view
+  customer/contract only); directions indicator stays non-clickable; no
+  Phase 8 execution actions.
+- Month and year titles are individually clickable selectors (months 1–12;
+  years 2000–2100) with direct controller navigation and shorter-month day
+  clamping.
+- Screenshots under `build/screenshots/calendar_*.png` (AR/EN/narrow/
+  popover/actions).
+
+**Final verification:** calendar **223**; screenshot harness **5**;
+routing/AppShell **93**; `flutter analyze` 0; full `flutter test` **1102**;
+`git diff --check` clean. Owner visual acceptance recorded 2026-07-15.
+
+---
+
+## Session 2026-07-14 - Phase 7 M6 corrective acceptance (superseded by visual reopen)
+
+**Decision:** M6 was **reopened**, then marked closed after automated
+corrective acceptance — **superseded** by owner visual/UX reopen on
+2026-07-15. No migration `098`. No M7. No commit/push unless requested.
+
+**Corrective acceptance fixes:**
+- Collision-safe `CalendarFilters` identity (`jsonEncode` of sorted
+  `toCanonicalPayload`) with adversarial delimiter/status-forge tests.
+- DST-safe `addCalendarDays` / `isNextCalendarDay`; month grid + dense mapper
+  + fixtures no longer use `Duration(days:)`.
+- Tenant-wide filters from `canViewTenantCalendar(session)` (not null scope);
+  employee lookup = tenant calendar + `warehouses.view`; strip forbidden
+  agent/unassigned on assigned-only capability/scope.
+- Service-location filter: customers.view, disabled until draft customer,
+  cleared on customer change; loaded via `listCalendarServiceLocations`.
+- Lookup field generations, identity resets, debounce cancel, slow-old/fast-new
+  + tenant-switch races.
+- Month grid roving focus (arrows ±1 / ±7 visual RTL/LTR, Enter/Space);
+  gold focus border; RTL Prev/Next chevrons; Semantics tests.
+- Acceptance widget matrix (day select, nav, filters, overdue, directions,
+  widths, textScale, overflow, partial failures, retries).
+- File split: `calendar_controller` / `calendar_section_loader` /
+  `calendar_section_pagination` / filter chips + lookup field under ~350 lines.
+
+**Verification:** `dart format` + `flutter gen-l10n` clean; focused calendar
+**212** passed; routing + AppShell **93** passed; `flutter analyze` 0 issues;
+full `flutter test` **1091** passed; `git diff --check` clean. No `098`.
+
+**Status:** Historical automated closure was superseded at the time; final
+owner-accepted closure is recorded in the 2026-07-15 session above.
 
 ---
 
@@ -27,8 +90,7 @@ correction. No migration `098`. No M6. No commit/push in this session.
 `flutter analyze` clean (0 issues); full `flutter test` **1030** passed;
 `git diff --check` clean. No `098`.
 
-**Status:** M5 closed / accepted. Next: Phase 7 M6 — Desktop Calendar UI
-(not started).
+**Status:** M5 closed / accepted (then M6 closed in a later session).
 
 ---
 

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'calendar_enums.dart';
 
 /// Immutable calendar read filters matching the M4 filter bundle.
@@ -69,6 +71,30 @@ class CalendarFilters {
   final bool overdueOnly;
   final String? search;
 
+  /// Collision-safe identity via deterministic JSON of [toCanonicalPayload].
+  ///
+  /// Semantic empties (null / false / blank / empty lists) collapse via the
+  /// payload. Delimiter characters inside values cannot forge other fields.
+  String get canonicalQueryKey {
+    final payload = toCanonicalPayload();
+    if (payload.isEmpty) return '{}';
+    final keys = payload.keys.toList()..sort();
+    final ordered = <String, dynamic>{
+      for (final key in keys) key: payload[key],
+    };
+    return jsonEncode(ordered);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is CalendarFilters &&
+        other.canonicalQueryKey == canonicalQueryKey;
+  }
+
+  @override
+  int get hashCode => canonicalQueryKey.hashCode;
+
   /// Canonical filter payload for RPC / hash alignment.
   ///
   /// Omits nulls, false booleans, empty enum lists, and empty search.
@@ -132,6 +158,56 @@ class CalendarFilters {
 
     return Map<String, dynamic>.unmodifiable(payload);
   }
+
+  /// Drops assigned-agent / unassigned-only when the viewer is assigned-only.
+  CalendarFilters withoutAssignedOnlyForbiddenFields() {
+    if (!unassignedOnly &&
+        (assignedAgentId == null || assignedAgentId!.trim().isEmpty)) {
+      return this;
+    }
+    return copyWith(clearAssignedAgentId: true, unassignedOnly: false);
+  }
+
+  /// Clears exact-ID lookups kept for RPC/future use; primary UI uses search.
+  CalendarFilters withoutExactIdFilters() {
+    final hasAgent =
+        assignedAgentId != null && assignedAgentId!.trim().isNotEmpty;
+    final hasCustomer = customerId != null && customerId!.trim().isNotEmpty;
+    final hasContract = contractId != null && contractId!.trim().isNotEmpty;
+    final hasLocation =
+        serviceLocationId != null && serviceLocationId!.trim().isNotEmpty;
+    if (!hasAgent && !hasCustomer && !hasContract && !hasLocation) {
+      return this;
+    }
+    return copyWith(
+      clearAssignedAgentId: true,
+      clearCustomerId: true,
+      clearContractId: true,
+      clearServiceLocationId: true,
+    );
+  }
+
+  /// Popover filter groups (excludes free-text search and exact IDs).
+  int get activePopoverGroupCount {
+    var count = 0;
+    if (eventTypes != null && eventTypes!.isNotEmpty) count++;
+    if (statuses != null && statuses!.isNotEmpty) count++;
+    if (sourceKind != null) count++;
+    if (overdueOnly) count++;
+    if (workingDayConflict) count++;
+    if (unassignedOnly) count++;
+    return count;
+  }
+
+  /// Popover facets only — search is applied via the toolbar field.
+  CalendarFilters get popoverFacetFilters => CalendarFilters(
+    eventTypes: eventTypes,
+    statuses: statuses,
+    unassignedOnly: unassignedOnly,
+    sourceKind: sourceKind,
+    workingDayConflict: workingDayConflict,
+    overdueOnly: overdueOnly,
+  );
 
   CalendarFilters copyWith({
     List<CalendarEventType>? eventTypes,
