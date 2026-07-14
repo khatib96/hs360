@@ -6,6 +6,7 @@ abstract final class AppRoutes {
   static const forgotPassword = '/forgot-password';
   static const dashboard = '/dashboard';
   static const fieldToday = '/field/today';
+  static const calendar = '/calendar';
   static const blocked = '/blocked';
   static const products = '/products';
   static const productsNew = '/products/new';
@@ -57,6 +58,7 @@ abstract final class AppRoutes {
   static const forgotPasswordName = 'forgotPassword';
   static const dashboardName = 'dashboard';
   static const fieldTodayName = 'fieldToday';
+  static const calendarName = 'calendar';
   static const blockedName = 'blocked';
   static const productsName = 'products';
   static const productsNewName = 'productsNew';

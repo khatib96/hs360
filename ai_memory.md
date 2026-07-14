@@ -1,6 +1,73 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-13 (Session: Phase 7 M4 **closed**; migration `097`; next M5).
+> Updated 2026-07-14 (Session: Phase 7 M5 **closed / accepted**; M6 not started; no `098`/commit/push).
+
+---
+
+## Session 2026-07-14 - Phase 7 M5 final acceptance (closed)
+
+**Decision:** M5 is **closed / accepted** after the final acceptance
+correction. No migration `098`. No M6. No commit/push in this session.
+
+**Final acceptance fixes:**
+- `CalendarExecutionSummary` + mapper: required non-null
+  `calculated_next_due_date`; exactly one of `coverage_months` /
+  `coverage_days` with value `> 0`; `execution_summary` wrapper stays nullable.
+- Extended execution-summary malformed-payload matrix (missing/null/invalid
+  next-due, both coverage missing/present, zero/negative coverage); preserved
+  month- and day-coverage valid fixtures.
+- `_loadOverdueInitial` failures expose independent `overdueErrorCode`; clear
+  on retry/success; preserve pagination gens + stale protection; controller
+  tests for fail + recover.
+- Repository tests for exact RPC names and parameter maps:
+  `get_calendar_range_summary`, `list_calendar_events` (dates, filters,
+  cursors, limits, `include_overdue_outside_range`).
+
+**Verification:** `dart format` clean; focused suites **253** passed;
+`flutter analyze` clean (0 issues); full `flutter test` **1030** passed;
+`git diff --check` clean. No `098`.
+
+**Status:** M5 closed / accepted. Next: Phase 7 M6 — Desktop Calendar UI
+(not started).
+
+---
+
+## Session 2026-07-14 - Phase 7 M5 corrective pass (superseded by close)
+
+**Decision:** M5 was **reopened** after review gaps, then closed in the
+session above. No migration `098`. No M6. No commit/push.
+
+**Corrective fixes (retained):**
+- Unconfigured working-day / `jsonb_strip_nulls` parsing (null mode + omitted
+  flags → unreviewed; configured modes stay strict).
+- Invalidate all request generations on logout/tenant identity change; clear
+  filters/cursors/selection; deferred-response race tests.
+- Separate in-range vs overdue pagination generations/errors; concurrency tests.
+- First `tenant_local_today` becomes selected date (shift month if needed) until
+  explicit selection; refresh preserves explicit pick.
+- DST-safe `inclusiveDaySpan` via UTC ordinal components.
+- Freeze filter/list collections; immutability regression tests.
+- Localized enum labels on CalendarScreen (EN/AR widget tests).
+- Strict present `execution_summary` required fields (later aligned to 094/097
+  coverage + calculated next due in final acceptance).
+
+**Verification (corrective snapshot):** focused **240** / full **1017** then
+superseded by final acceptance counts above.
+
+**Status:** Superseded — see M5 closed session.
+
+---
+
+## Session 2026-07-14 - Phase 7 M5 Flutter Domain/Repo/Routes (initial land; superseded)
+
+**Decision:** Initial M5 application layer landed, then corrected and
+**closed / accepted** the same day (see sessions above).
+
+**Delivered (retained):**
+- Calendar event-read Flutter layer: permissions, date-only domain,
+  filters/validators, mappers, repository, controller, `/calendar` route,
+  Field Ops nav, EN/AR ARB.
+- No migration `098`.
 
 ---
 

@@ -3697,4 +3697,175 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get navCalendarSettings => 'إعدادات التقويم';
+
+  @override
+  String get navCalendar => 'التقويم';
+
+  @override
+  String get calendarTitle => 'التقويم';
+
+  @override
+  String get calendarLoading => 'جاري تحميل التقويم…';
+
+  @override
+  String get calendarPermissionDenied => 'ليس لديك صلاحية عرض التقويم.';
+
+  @override
+  String get calendarSetupWarning =>
+      'لم يتم إعداد جدول العمل بعد. ما زال بإمكانك قراءة المواعيد، لكن قواعد التأخر وأيام العمل محدودة حتى يكتمل الإعداد.';
+
+  @override
+  String get calendarAgendaEmpty => 'لا توجد مواعيد في هذا اليوم.';
+
+  @override
+  String get calendarLoadMore => 'تحميل المزيد';
+
+  @override
+  String calendarVisibleRange(String from, String to) {
+    return 'النطاق: $from – $to';
+  }
+
+  @override
+  String calendarSelectedDate(String date) {
+    return 'المحدد: $date';
+  }
+
+  @override
+  String get calendarErrorValidation =>
+      'طلب التقويم غير صالح. تحقق من النطاق والمرشحات.';
+
+  @override
+  String get calendarErrorInvalidCursor =>
+      'انتهت صلاحية صفحة التقويم. حدّث وحاول مرة أخرى.';
+
+  @override
+  String get calendarErrorTenantNotFound => 'تعذر تحديد المستأجر للتقويم.';
+
+  @override
+  String get calendarErrorMalformed =>
+      'بيانات التقويم من الخادم غير مكتملة. أعد المحاولة.';
+
+  @override
+  String get calendarErrorUnavailable =>
+      'التقويم غير متاح مؤقتًا. حاول مرة أخرى.';
+
+  @override
+  String get calendarErrorUnknown => 'حدث خطأ أثناء تحميل التقويم.';
+
+  @override
+  String get calendarEventTypeRefillDue => 'موعد إعادة التعبئة';
+
+  @override
+  String get calendarEventTypeBillingDue => 'موعد الفوترة';
+
+  @override
+  String get calendarEventTypePaymentDue => 'موعد الدفع';
+
+  @override
+  String get calendarEventTypeMaintenanceDue => 'موعد الصيانة';
+
+  @override
+  String get calendarEventTypeFollowUp => 'متابعة';
+
+  @override
+  String get calendarEventTypeTrialEnding => 'انتهاء التجربة';
+
+  @override
+  String get calendarEventTypeContractStart => 'بدء العقد';
+
+  @override
+  String get calendarEventTypeContractEnd => 'انتهاء العقد';
+
+  @override
+  String get calendarEventTypeCustom => 'مخصص';
+
+  @override
+  String get calendarEventStatusPending => 'قيد الانتظار';
+
+  @override
+  String get calendarEventStatusDone => 'مكتمل';
+
+  @override
+  String get calendarEventStatusMissed => 'فائت';
+
+  @override
+  String get calendarEventStatusCancelled => 'ملغى';
+
+  @override
+  String get calendarEventStatusRescheduled => 'أُعيدت جدولته';
+
+  @override
+  String get calendarSourceKindManual => 'يدوي';
+
+  @override
+  String get calendarSourceKindContractGenerated => 'مولَّد من العقد';
+
+  @override
+  String get calendarScheduleStateWorkingDay => 'يوم عمل';
+
+  @override
+  String get calendarScheduleStateNonWorkingDay => 'يوم غير عمل';
+
+  @override
+  String get calendarScheduleStateUnconfigured => 'الجدول غير مُعد';
+
+  @override
+  String get calendarScheduleStateDayOffOverridden => 'إجازة مع استثناء';
+
+  @override
+  String get calendarOverdueStateNotApplicable => 'غير منطبق';
+
+  @override
+  String get calendarOverdueStateUnconfigured => 'الجدول غير مُعد';
+
+  @override
+  String get calendarOverdueStateOverdue => 'متأخر';
+
+  @override
+  String get calendarOverdueStateNotOverdue => 'غير متأخر';
+
+  @override
+  String get calendarFilterAssigned => 'الوكيل المعيّن';
+
+  @override
+  String get calendarFilterUnassigned => 'غير المعيّن فقط';
+
+  @override
+  String get calendarFilterSearch => 'بحث';
+
+  @override
+  String get calendarFilterOverdueOnly => 'المتأخر فقط';
+
+  @override
+  String get calendarFilterWorkingDayConflict => 'تعارض يوم العمل';
+
+  @override
+  String get calendarValidationRangeSpan =>
+      'يجب أن يكون نطاق التاريخ بين يوم واحد و62 يومًا.';
+
+  @override
+  String get calendarValidationSearchTooShort =>
+      'يجب أن يكون البحث حرفين على الأقل.';
+
+  @override
+  String get calendarValidationUnassignedAssignedConflict =>
+      'لا يمكن الجمع بين غير المعيّن ووكيل معيّن.';
+
+  @override
+  String get calendarValidationOverdueRequiresPending =>
+      'تصفية المتأخر تتطلب حالة قيد الانتظار.';
+
+  @override
+  String get calendarValidationAssignedOnlyAgent =>
+      'المستخدمون المعيّنون فقط لا يمكنهم التصفية حسب الوكيل.';
+
+  @override
+  String get calendarValidationAssignedOnlyUnassigned =>
+      'المستخدمون المعيّنون فقط لا يمكنهم طلب مواعيد غير معيّنة.';
+
+  @override
+  String get calendarLabelAssigned => 'معيّن';
+
+  @override
+  String get calendarLabelUnassigned => 'غير معيّن';
 }

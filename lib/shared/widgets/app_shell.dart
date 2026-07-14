@@ -80,6 +80,12 @@ class AppShell extends ConsumerWidget {
         isVisible: canAccessField,
       ),
       _NavItem(
+        titleGetter: (l) => l.navCalendar,
+        icon: Icons.calendar_today_outlined,
+        route: AppRoutes.calendar,
+        isVisible: canAccessCalendar,
+      ),
+      _NavItem(
         titleGetter: (l) => l.products,
         icon: Icons.shopping_bag_outlined,
         route: AppRoutes.products,

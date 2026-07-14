@@ -407,6 +407,66 @@ void main() {
     expect(find.text(l10n.navJournal), findsNothing);
     expect(find.text(l10n.navCashBank), findsNothing);
   });
+
+  testWidgets('calendar.view shows navCalendar', (tester) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+
+    await tester.pumpWidget(
+      buildTestApp(
+        appSession: session(permissions: {'calendar.view'}),
+        child: const AppShell(title: 'Shell', body: SizedBox.shrink()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.navCalendar), findsOneWidget);
+  });
+
+  testWidgets('calendar.view_assigned shows navCalendar', (tester) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+
+    await tester.pumpWidget(
+      buildTestApp(
+        appSession: session(permissions: {'calendar.view_assigned'}),
+        child: const AppShell(title: 'Shell', body: SizedBox.shrink()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.navCalendar), findsOneWidget);
+  });
+
+  testWidgets(
+    'settings.calendar.view alone shows settings nav but not navCalendar',
+    (tester) async {
+      final l10n = lookupAppLocalizations(const Locale('en'));
+
+      await tester.pumpWidget(
+        buildTestApp(
+          appSession: session(permissions: {'settings.calendar.view'}),
+          child: const AppShell(title: 'Shell', body: SizedBox.shrink()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(l10n.navCalendar), findsNothing);
+      expect(find.text(l10n.navCalendarSettings), findsOneWidget);
+    },
+  );
+
+  testWidgets('manager shows navCalendar', (tester) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+
+    await tester.pumpWidget(
+      buildTestApp(
+        appSession: session(accountType: 'manager'),
+        child: const AppShell(title: 'Shell', body: SizedBox.shrink()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.navCalendar), findsOneWidget);
+  });
 }
 
 class TestAuthController extends AuthController {

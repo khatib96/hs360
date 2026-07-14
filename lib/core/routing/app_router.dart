@@ -25,6 +25,7 @@ import '../../core/documents/presentation/document_preview_screen.dart';
 import '../../core/documents/presentation/document_preview_state.dart';
 import '../../features/settings/presentation/template_settings_screen.dart';
 import '../../features/settings/presentation/tax_settings_placeholder_screen.dart';
+import '../../features/calendar/presentation/calendar_screen.dart';
 import '../../features/calendar/presentation/calendar_settings_screen.dart';
 import '../../features/invoices/domain/invoice_type.dart';
 import '../../features/invoices/presentation/invoice_detail_screen.dart';
@@ -180,6 +181,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.taxSettings,
         name: AppRoutes.taxSettingsName,
         builder: (context, state) => TaxSettingsPlaceholderScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.calendar,
+        name: AppRoutes.calendarName,
+        builder: (context, state) => const CalendarScreen(),
       ),
       GoRoute(
         path: AppRoutes.calendarSettings,

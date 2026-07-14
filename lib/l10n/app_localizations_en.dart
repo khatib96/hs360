@@ -3737,4 +3737,178 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get navCalendarSettings => 'Calendar settings';
+
+  @override
+  String get navCalendar => 'Calendar';
+
+  @override
+  String get calendarTitle => 'Calendar';
+
+  @override
+  String get calendarLoading => 'Loading calendar…';
+
+  @override
+  String get calendarPermissionDenied =>
+      'You do not have permission to view the calendar.';
+
+  @override
+  String get calendarSetupWarning =>
+      'Working schedule is not configured yet. Events are still readable, but overdue and working-day rules are limited until setup is complete.';
+
+  @override
+  String get calendarAgendaEmpty => 'No events on this day.';
+
+  @override
+  String get calendarLoadMore => 'Load more';
+
+  @override
+  String calendarVisibleRange(String from, String to) {
+    return 'Range: $from – $to';
+  }
+
+  @override
+  String calendarSelectedDate(String date) {
+    return 'Selected: $date';
+  }
+
+  @override
+  String get calendarErrorValidation =>
+      'Calendar request was invalid. Check the date range and filters.';
+
+  @override
+  String get calendarErrorInvalidCursor =>
+      'Calendar page expired. Refresh and try again.';
+
+  @override
+  String get calendarErrorTenantNotFound =>
+      'Tenant could not be resolved for the calendar.';
+
+  @override
+  String get calendarErrorMalformed =>
+      'Calendar data from the server was incomplete. Please retry.';
+
+  @override
+  String get calendarErrorUnavailable =>
+      'Calendar is temporarily unavailable. Please try again.';
+
+  @override
+  String get calendarErrorUnknown =>
+      'Something went wrong loading the calendar.';
+
+  @override
+  String get calendarEventTypeRefillDue => 'Refill due';
+
+  @override
+  String get calendarEventTypeBillingDue => 'Billing due';
+
+  @override
+  String get calendarEventTypePaymentDue => 'Payment due';
+
+  @override
+  String get calendarEventTypeMaintenanceDue => 'Maintenance due';
+
+  @override
+  String get calendarEventTypeFollowUp => 'Follow-up';
+
+  @override
+  String get calendarEventTypeTrialEnding => 'Trial ending';
+
+  @override
+  String get calendarEventTypeContractStart => 'Contract start';
+
+  @override
+  String get calendarEventTypeContractEnd => 'Contract end';
+
+  @override
+  String get calendarEventTypeCustom => 'Custom';
+
+  @override
+  String get calendarEventStatusPending => 'Pending';
+
+  @override
+  String get calendarEventStatusDone => 'Done';
+
+  @override
+  String get calendarEventStatusMissed => 'Missed';
+
+  @override
+  String get calendarEventStatusCancelled => 'Cancelled';
+
+  @override
+  String get calendarEventStatusRescheduled => 'Rescheduled';
+
+  @override
+  String get calendarSourceKindManual => 'Manual';
+
+  @override
+  String get calendarSourceKindContractGenerated => 'Contract generated';
+
+  @override
+  String get calendarScheduleStateWorkingDay => 'Working day';
+
+  @override
+  String get calendarScheduleStateNonWorkingDay => 'Non-working day';
+
+  @override
+  String get calendarScheduleStateUnconfigured => 'Schedule unconfigured';
+
+  @override
+  String get calendarScheduleStateDayOffOverridden => 'Day-off overridden';
+
+  @override
+  String get calendarOverdueStateNotApplicable => 'Not applicable';
+
+  @override
+  String get calendarOverdueStateUnconfigured => 'Schedule unconfigured';
+
+  @override
+  String get calendarOverdueStateOverdue => 'Overdue';
+
+  @override
+  String get calendarOverdueStateNotOverdue => 'Not overdue';
+
+  @override
+  String get calendarFilterAssigned => 'Assigned agent';
+
+  @override
+  String get calendarFilterUnassigned => 'Unassigned only';
+
+  @override
+  String get calendarFilterSearch => 'Search';
+
+  @override
+  String get calendarFilterOverdueOnly => 'Overdue only';
+
+  @override
+  String get calendarFilterWorkingDayConflict => 'Working-day conflict';
+
+  @override
+  String get calendarValidationRangeSpan =>
+      'Date range must be between 1 and 62 days.';
+
+  @override
+  String get calendarValidationSearchTooShort =>
+      'Search must be at least 2 characters.';
+
+  @override
+  String get calendarValidationUnassignedAssignedConflict =>
+      'Cannot combine unassigned-only with an assigned agent.';
+
+  @override
+  String get calendarValidationOverdueRequiresPending =>
+      'Overdue-only requires pending status.';
+
+  @override
+  String get calendarValidationAssignedOnlyAgent =>
+      'Assigned-only users cannot filter by agent.';
+
+  @override
+  String get calendarValidationAssignedOnlyUnassigned =>
+      'Assigned-only users cannot request unassigned events.';
+
+  @override
+  String get calendarLabelAssigned => 'Assigned';
+
+  @override
+  String get calendarLabelUnassigned => 'Unassigned';
 }

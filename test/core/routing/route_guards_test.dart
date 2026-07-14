@@ -1201,5 +1201,122 @@ void main() {
         );
       }
     });
+
+    test('calendar.view resolves home to dashboard', () {
+      expect(
+        resolveHomeRoute(
+          session(accountType: 'user', permissions: {'calendar.view'}),
+        ),
+        AppRoutes.dashboard,
+      );
+    });
+
+    test('calendar.view_assigned resolves home to field today', () {
+      expect(
+        resolveHomeRoute(
+          session(accountType: 'user', permissions: {'calendar.view_assigned'}),
+        ),
+        AppRoutes.fieldToday,
+      );
+    });
+
+    test('calendar.view can access /calendar', () {
+      final viewer = session(
+        accountType: 'user',
+        permissions: {'calendar.view'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.calendar,
+          hasSupabaseSession: true,
+          authState: loaded(viewer),
+        ),
+        isNull,
+      );
+    });
+
+    test('calendar.view_assigned can access /calendar', () {
+      final assigned = session(
+        accountType: 'user',
+        permissions: {'calendar.view_assigned'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.calendar,
+          hasSupabaseSession: true,
+          authState: loaded(assigned),
+        ),
+        isNull,
+      );
+    });
+
+    test('settings.calendar.view alone cannot access /calendar', () {
+      final settingsOnly = session(
+        accountType: 'user',
+        permissions: {'settings.calendar.view'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.calendar,
+          hasSupabaseSession: true,
+          authState: loaded(settingsOnly),
+        ),
+        AppRoutes.dashboard,
+      );
+    });
+
+    test('zero perms cannot access /calendar', () {
+      final zeroUser = session(accountType: 'user');
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.calendar,
+          hasSupabaseSession: true,
+          authState: loaded(zeroUser),
+        ),
+        AppRoutes.blocked,
+      );
+    });
+
+    test('manager can access /calendar', () {
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.calendar,
+          hasSupabaseSession: true,
+          authState: loaded(session(accountType: 'manager')),
+        ),
+        isNull,
+      );
+    });
+
+    test('settings alone still can access settings calendar route', () {
+      final settingsOnly = session(
+        accountType: 'user',
+        permissions: {'settings.calendar.view'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.calendarSettings,
+          hasSupabaseSession: true,
+          authState: loaded(settingsOnly),
+        ),
+        isNull,
+      );
+    });
+
+    test('calendar.view_assigned does not grant dashboard', () {
+      final assigned = session(
+        accountType: 'user',
+        permissions: {'calendar.view_assigned'},
+      );
+      expect(canAccessDashboard(assigned), isFalse);
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.dashboard,
+          hasSupabaseSession: true,
+          authState: loaded(assigned),
+        ),
+        AppRoutes.fieldToday,
+      );
+    });
   });
 }

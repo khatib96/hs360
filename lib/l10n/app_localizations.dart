@@ -7099,6 +7099,318 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Calendar settings'**
   String get navCalendarSettings;
+
+  /// No description provided for @navCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get navCalendar;
+
+  /// No description provided for @calendarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get calendarTitle;
+
+  /// No description provided for @calendarLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading calendar…'**
+  String get calendarLoading;
+
+  /// No description provided for @calendarPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have permission to view the calendar.'**
+  String get calendarPermissionDenied;
+
+  /// No description provided for @calendarSetupWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Working schedule is not configured yet. Events are still readable, but overdue and working-day rules are limited until setup is complete.'**
+  String get calendarSetupWarning;
+
+  /// No description provided for @calendarAgendaEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No events on this day.'**
+  String get calendarAgendaEmpty;
+
+  /// No description provided for @calendarLoadMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Load more'**
+  String get calendarLoadMore;
+
+  /// No description provided for @calendarVisibleRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Range: {from} – {to}'**
+  String calendarVisibleRange(String from, String to);
+
+  /// No description provided for @calendarSelectedDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected: {date}'**
+  String calendarSelectedDate(String date);
+
+  /// No description provided for @calendarErrorValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar request was invalid. Check the date range and filters.'**
+  String get calendarErrorValidation;
+
+  /// No description provided for @calendarErrorInvalidCursor.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar page expired. Refresh and try again.'**
+  String get calendarErrorInvalidCursor;
+
+  /// No description provided for @calendarErrorTenantNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Tenant could not be resolved for the calendar.'**
+  String get calendarErrorTenantNotFound;
+
+  /// No description provided for @calendarErrorMalformed.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar data from the server was incomplete. Please retry.'**
+  String get calendarErrorMalformed;
+
+  /// No description provided for @calendarErrorUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar is temporarily unavailable. Please try again.'**
+  String get calendarErrorUnavailable;
+
+  /// No description provided for @calendarErrorUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong loading the calendar.'**
+  String get calendarErrorUnknown;
+
+  /// No description provided for @calendarEventTypeRefillDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill due'**
+  String get calendarEventTypeRefillDue;
+
+  /// No description provided for @calendarEventTypeBillingDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Billing due'**
+  String get calendarEventTypeBillingDue;
+
+  /// No description provided for @calendarEventTypePaymentDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment due'**
+  String get calendarEventTypePaymentDue;
+
+  /// No description provided for @calendarEventTypeMaintenanceDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintenance due'**
+  String get calendarEventTypeMaintenanceDue;
+
+  /// No description provided for @calendarEventTypeFollowUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow-up'**
+  String get calendarEventTypeFollowUp;
+
+  /// No description provided for @calendarEventTypeTrialEnding.
+  ///
+  /// In en, this message translates to:
+  /// **'Trial ending'**
+  String get calendarEventTypeTrialEnding;
+
+  /// No description provided for @calendarEventTypeContractStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Contract start'**
+  String get calendarEventTypeContractStart;
+
+  /// No description provided for @calendarEventTypeContractEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'Contract end'**
+  String get calendarEventTypeContractEnd;
+
+  /// No description provided for @calendarEventTypeCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get calendarEventTypeCustom;
+
+  /// No description provided for @calendarEventStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get calendarEventStatusPending;
+
+  /// No description provided for @calendarEventStatusDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get calendarEventStatusDone;
+
+  /// No description provided for @calendarEventStatusMissed.
+  ///
+  /// In en, this message translates to:
+  /// **'Missed'**
+  String get calendarEventStatusMissed;
+
+  /// No description provided for @calendarEventStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get calendarEventStatusCancelled;
+
+  /// No description provided for @calendarEventStatusRescheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'Rescheduled'**
+  String get calendarEventStatusRescheduled;
+
+  /// No description provided for @calendarSourceKindManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual'**
+  String get calendarSourceKindManual;
+
+  /// No description provided for @calendarSourceKindContractGenerated.
+  ///
+  /// In en, this message translates to:
+  /// **'Contract generated'**
+  String get calendarSourceKindContractGenerated;
+
+  /// No description provided for @calendarScheduleStateWorkingDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Working day'**
+  String get calendarScheduleStateWorkingDay;
+
+  /// No description provided for @calendarScheduleStateNonWorkingDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Non-working day'**
+  String get calendarScheduleStateNonWorkingDay;
+
+  /// No description provided for @calendarScheduleStateUnconfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule unconfigured'**
+  String get calendarScheduleStateUnconfigured;
+
+  /// No description provided for @calendarScheduleStateDayOffOverridden.
+  ///
+  /// In en, this message translates to:
+  /// **'Day-off overridden'**
+  String get calendarScheduleStateDayOffOverridden;
+
+  /// No description provided for @calendarOverdueStateNotApplicable.
+  ///
+  /// In en, this message translates to:
+  /// **'Not applicable'**
+  String get calendarOverdueStateNotApplicable;
+
+  /// No description provided for @calendarOverdueStateUnconfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule unconfigured'**
+  String get calendarOverdueStateUnconfigured;
+
+  /// No description provided for @calendarOverdueStateOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get calendarOverdueStateOverdue;
+
+  /// No description provided for @calendarOverdueStateNotOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Not overdue'**
+  String get calendarOverdueStateNotOverdue;
+
+  /// No description provided for @calendarFilterAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned agent'**
+  String get calendarFilterAssigned;
+
+  /// No description provided for @calendarFilterUnassigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Unassigned only'**
+  String get calendarFilterUnassigned;
+
+  /// No description provided for @calendarFilterSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get calendarFilterSearch;
+
+  /// No description provided for @calendarFilterOverdueOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue only'**
+  String get calendarFilterOverdueOnly;
+
+  /// No description provided for @calendarFilterWorkingDayConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Working-day conflict'**
+  String get calendarFilterWorkingDayConflict;
+
+  /// No description provided for @calendarValidationRangeSpan.
+  ///
+  /// In en, this message translates to:
+  /// **'Date range must be between 1 and 62 days.'**
+  String get calendarValidationRangeSpan;
+
+  /// No description provided for @calendarValidationSearchTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Search must be at least 2 characters.'**
+  String get calendarValidationSearchTooShort;
+
+  /// No description provided for @calendarValidationUnassignedAssignedConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot combine unassigned-only with an assigned agent.'**
+  String get calendarValidationUnassignedAssignedConflict;
+
+  /// No description provided for @calendarValidationOverdueRequiresPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue-only requires pending status.'**
+  String get calendarValidationOverdueRequiresPending;
+
+  /// No description provided for @calendarValidationAssignedOnlyAgent.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned-only users cannot filter by agent.'**
+  String get calendarValidationAssignedOnlyAgent;
+
+  /// No description provided for @calendarValidationAssignedOnlyUnassigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned-only users cannot request unassigned events.'**
+  String get calendarValidationAssignedOnlyUnassigned;
+
+  /// No description provided for @calendarLabelAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned'**
+  String get calendarLabelAssigned;
+
+  /// No description provided for @calendarLabelUnassigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Unassigned'**
+  String get calendarLabelUnassigned;
 }
 
 class _AppLocalizationsDelegate

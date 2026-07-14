@@ -19,6 +19,7 @@ const _fieldPermissionIds = [
   'visits.view_assigned',
   'visits.edit_assigned',
   'visits.complete_refill',
+  'calendar.view_assigned',
 ];
 
 const _officePermissionIds = [
@@ -48,6 +49,7 @@ const _officePermissionIds = [
   'settings.tax.edit',
   'settings.calendar.view',
   'settings.calendar.edit',
+  'calendar.view',
 ];
 
 bool isPublicRoute(String path) =>
@@ -259,6 +261,9 @@ bool _isPathAllowed(
   }
   if (path == AppRoutes.taxSettings) {
     return canViewTaxSettings(session);
+  }
+  if (path == AppRoutes.calendar) {
+    return canAccessCalendar(session);
   }
   if (path == AppRoutes.calendarSettings) {
     return canViewCalendarSettings(session);

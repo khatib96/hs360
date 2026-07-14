@@ -219,9 +219,6 @@ void main() {
     );
     notifier.updateTimezone('Asia/Dubai');
 
-    expect(
-      container.read(calendarSettingsControllerProvider).isDirty,
-      isTrue,
-    );
+    expect(container.read(calendarSettingsControllerProvider).isDirty, isTrue);
   });
 }

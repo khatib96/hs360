@@ -4,8 +4,10 @@
 > contract-generated schedule data into a clear daily planning surface for the
 > office and assigned employees.
 >
-> Status: **M0, M0.5, M1, M2, and M3 complete (2026-07-13).** Migrations `093`–`096`
-> applied. Next milestone: **M5 — Flutter Domain, Repository, Routes, and Navigation**.
+> Status: **M0–M5 complete / accepted (2026-07-14).** Migrations `093`–`097`
+> applied (no `098`). M5 Flutter domain/repository/routes/navigation are
+> **closed**. Next is **M6 — Desktop Calendar UI**; do **not** start M6 until
+> scheduled explicitly (M5 acceptance is confirmed).
 >
 > Owner direction: HS360 appointments are **day-based**, not exact-time
 > appointments. An event is due on a selected calendar date and is expected to
@@ -1270,6 +1272,53 @@ Phase R (`phase_7_calendar_read_rpc.sql`, 68 cases).
 ### Goal
 
 Build the application layer and reachability before complex widgets.
+
+### Status
+
+**Closed / accepted (2026-07-14)** — Flutter domain/mappers/repository/
+controllers/routes/navigation accepted after final acceptance correction.
+No migration `098`. M6 not started.
+
+### Corrective + final acceptance notes (M5)
+
+Fixed gaps found after the initial land and final acceptance correction:
+- Unconfigured `working_day` payloads after `jsonb_strip_nulls` (null mode /
+  omitted boolean flags) map to unreviewed without `malformedResponse`.
+- Logout/tenant identity change invalidates all request generations before reset.
+- Independent in-range vs overdue pagination generations and error state.
+- First `tenant_local_today` hydrates selected date (and month if needed) until
+  explicit user selection.
+- DST-safe inclusive day span via UTC ordinal components.
+- Frozen filter/list collections on domain and state.
+- Localized event type/status/schedule labels on the M5 shell.
+- Strict present `execution_summary` per migrations 094/097:
+  required non-null `calculated_next_due_date`; exactly one of
+  `coverage_months` / `coverage_days` with value `> 0`; wrapper remains
+  nullable.
+- Initial overdue load failures expose independent `overdueErrorCode` (cleared
+  on retry/success); pagination gens and stale-response protection preserved.
+- Repository tests assert exact RPC names and parameter maps for
+  `get_calendar_range_summary` and `list_calendar_events`.
+
+### Deliverables
+
+- Permission helpers: `canAccessCalendar`, tenant/assigned view, create/edit;
+  settings helpers remain separate.
+- Immutable date-only domain models + filters/validators matching `097`.
+- Strict RPC mappers for `get_calendar_range_summary` / `list_calendar_events`.
+- `CalendarRepository` + `CalendarException`; widgets never call Supabase.
+- KeepAlive `CalendarController` with separate stale gens; single-day agenda;
+  non-blocking setup warning; independent overdue error surface.
+- Route `/calendar`, Field Ops nav after Today; office/field home split.
+- EN/AR localization for shell, enums, filters, errors.
+
+### Closure record (M5)
+
+**Closed 2026-07-14** after final acceptance correction.
+- Verification: `dart format` clean; focused calendar/routing/nav/exception
+  suites **253** passed; `flutter analyze` clean; full `flutter test` **1030**
+  passed; `git diff --check` clean.
+- No migration `098`. No commit/push in the acceptance session. M6 not started.
 
 ### Work
 
