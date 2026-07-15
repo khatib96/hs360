@@ -1,40 +1,28 @@
+import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../auth/domain/app_session.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../data/calendar_repository.dart';
 import '../domain/calendar_date.dart';
+import '../domain/calendar_event.dart';
 import '../domain/calendar_filters.dart';
+import '../domain/calendar_manual_mutation.dart';
 import '../domain/calendar_month_grid.dart';
 import '../domain/calendar_permissions.dart';
+import 'calendar_clock.dart';
+import 'calendar_manual_mutations.dart';
 import 'calendar_section_loader.dart';
 import 'calendar_state.dart';
 
+export 'calendar_clock.dart';
+
 part 'calendar_controller.g.dart';
-
-/// Injectable clock for selectable “today”; overridden in tests.
-typedef CalendarClock = DateTime Function();
-
-CalendarClock calendarClock = DateTime.now;
-
-CalendarState _initialState(DateTime today) {
-  final day = calendarDateOnly(today);
-  final focused = focusedMonthOnly(day);
-  final bounds = provisionalMonthBounds(focused);
-  return CalendarState(
-    isLoadingSummary: false,
-    isLoadingAgenda: false,
-    isLoadingOverdue: false,
-    focusedMonth: focused,
-    dateFrom: bounds.dateFrom,
-    dateTo: bounds.dateTo,
-    selectedDate: day,
-  );
-}
 
 @Riverpod(keepAlive: true)
 class CalendarController extends _$CalendarController {
   late CalendarSectionLoader _loader;
+  late CalendarManualMutations _mutations;
   bool _hasStartedInitialLoad = false;
 
   @override
@@ -46,13 +34,18 @@ class CalendarController extends _$CalendarController {
       readRepo: () => ref.read(calendarRepositoryProvider),
       reloadAll: _reloadAllSections,
     );
+    _mutations = CalendarManualMutations(
+      readSession: () => ref.read(authControllerProvider).valueOrNull,
+      readRepo: () => ref.read(calendarRepositoryProvider),
+      refresh: refresh,
+    );
     ref.listen(authControllerProvider, (previous, next) {
       final previousSession = previous?.valueOrNull;
       final nextSession = next.valueOrNull;
       if (nextSession == null) {
         _loader.invalidateAll();
         _hasStartedInitialLoad = false;
-        state = _initialState(calendarClock());
+        state = calendarInitialState(calendarClock());
         return;
       }
       if (_shouldReloadForSession(previousSession, nextSession)) {
@@ -62,7 +55,7 @@ class CalendarController extends _$CalendarController {
         }
       }
     });
-    return _initialState(calendarClock());
+    return calendarInitialState(calendarClock());
   }
 
   Future<void> _reloadAllSections() => Future.wait([
@@ -85,7 +78,7 @@ class CalendarController extends _$CalendarController {
     _loader.invalidateAll();
     _hasStartedInitialLoad = false;
     final weekStart = state.firstDayOfWeekIndex;
-    state = _initialState(
+    state = calendarInitialState(
       calendarClock(),
     ).copyWith(firstDayOfWeekIndex: weekStart);
     if (weekStart != null) {
@@ -159,7 +152,7 @@ class CalendarController extends _$CalendarController {
     final session = _session;
     if (session == null || !canAccessCalendar(session)) {
       _loader.invalidateAll();
-      state = _initialState(calendarClock()).copyWith(
+      state = calendarInitialState(calendarClock()).copyWith(
         firstDayOfWeekIndex: state.firstDayOfWeekIndex,
         permissionDenied: true,
       );
@@ -200,10 +193,7 @@ class CalendarController extends _$CalendarController {
 
   Future<void> goToNextMonth() => _navigateFocusedMonth(1);
 
-  /// Jumps directly to [month] while preserving the selected day when valid.
-  ///
-  /// For shorter target months, the selected day is clamped to the final day
-  /// of that month (for example, January 31 -> February 28/29).
+  /// Jumps to [month], clamping the selected day when the target month is shorter.
   Future<void> goToMonth(DateTime month) async {
     if (state.firstDayOfWeekIndex == null) return;
     final target = focusedMonthOnly(month);
@@ -333,4 +323,20 @@ class CalendarController extends _$CalendarController {
   Future<void> loadMoreInRange() => _loader.loadMoreInRange();
 
   Future<void> loadMoreOverdue() => _loader.loadMoreOverdue();
+
+  Future<bool> createManualEvent(
+    BuildContext context,
+    CalendarManualEventData data,
+  ) => _mutations.createManualEvent(context, data);
+
+  Future<bool> editManualEvent(BuildContext context, CalendarEvent event) =>
+      _mutations.editManualEvent(context, event);
+
+  Future<bool> cancelManualEvent(
+    CalendarEvent event, {
+    required String reason,
+  }) => _mutations.cancelManualEvent(event, reason: reason);
+
+  Future<bool> markManualDone(CalendarEvent event) =>
+      _mutations.markManualDone(event);
 }

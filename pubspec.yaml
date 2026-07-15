@@ -28,6 +28,7 @@ dependencies:
   printing: ^5.14.3
   http: ^1.6.0
   image: ^4.8.0
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   build_runner: ^2.4.15
@@ -48,6 +49,8 @@ flutter:
   assets:
     - assets/brand/hs-logo-gold.png
     - assets/fonts/noto/
+    - assets/fonts/material/
+    - assets/fonts/lucide/
   fonts:
     - family: NotoSans
       fonts:
@@ -61,3 +64,6 @@ flutter:
           weight: 400
         - asset: assets/fonts/noto/NotoSansArabic-Bold.ttf
           weight: 700
+    - family: MaterialIcons
+      fonts:
+        - asset: assets/fonts/material/MaterialIcons-Regular.otf

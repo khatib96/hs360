@@ -389,6 +389,8 @@ end $$;
 rollback;
 
 -- 5. Rule 1 merges consumable change on the same refill date.
+-- Merge-date fixture = day 15 of next month so extract(day) is always in 1..28
+-- (valid refill_day) independently of the suite execution date.
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
@@ -402,7 +404,7 @@ declare
   v_fixture jsonb := current_setting('test.p7m2.fixture')::jsonb;
   v_contract_id uuid;
   v_line_id uuid;
-  v_merge_date date := current_date + 14;
+  v_merge_date date := (date_trunc('month', current_date) + interval '1 month' + interval '14 days')::date;
   v_outstanding_id uuid;
   v_count int;
   v_action text;
@@ -431,7 +433,7 @@ declare
   v_fixture jsonb := current_setting('test.p7m2.fixture')::jsonb;
   v_contract_id uuid;
   v_line_id uuid;
-  v_merge_date date := current_date + 14;
+  v_merge_date date := (date_trunc('month', current_date) + interval '1 month' + interval '14 days')::date;
   v_outstanding_id uuid;
   v_count int;
   v_action text;
@@ -454,7 +456,7 @@ declare
   v_fixture jsonb := current_setting('test.p7m2.fixture')::jsonb;
   v_contract_id uuid;
   v_line_id uuid;
-  v_merge_date date := current_date + 14;
+  v_merge_date date := (date_trunc('month', current_date) + interval '1 month' + interval '14 days')::date;
   v_outstanding_id uuid;
   v_count int;
   v_action text;
@@ -543,6 +545,8 @@ end $$;
 rollback;
 
 -- 6. Rule 2 replacement before outstanding cadence date.
+-- Outstanding/replacement fixtures use day 15/8 of next month so
+-- extract(day) for refill_day stays in 1..28 regardless of run date.
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
@@ -555,8 +559,8 @@ declare
   v_fixture jsonb := current_setting('test.p7m2.fixture')::jsonb;
   v_contract_id uuid;
   v_line_id uuid;
-  v_outstanding_date date := current_date + 21;
-  v_replacement_date date := current_date + 7;
+  v_outstanding_date date := (date_trunc('month', current_date) + interval '1 month' + interval '14 days')::date;
+  v_replacement_date date := (date_trunc('month', current_date) + interval '1 month' + interval '7 days')::date;
   v_outstanding_id uuid;
   v_action text;
 begin

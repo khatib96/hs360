@@ -81,11 +81,7 @@ Future<void> _ensureFilterKeyVisible(WidgetTester tester, Key key) async {
     of: find.byKey(const Key('calendar-filter-popover')),
     matching: find.byType(Scrollable),
   );
-  await tester.dragUntilVisible(
-    find.byKey(key),
-    list,
-    const Offset(0, -80),
-  );
+  await tester.dragUntilVisible(find.byKey(key), list, const Offset(0, -80));
   await tester.pumpAndSettle();
 }
 
@@ -240,10 +236,7 @@ void main() {
     await tester.pumpAndSettle();
 
     await _openFilterPopover(tester);
-    await _ensureFilterKeyVisible(
-      tester,
-      const Key('calendar-filter-overdue'),
-    );
+    await _ensureFilterKeyVisible(tester, const Key('calendar-filter-overdue'));
     await tester.tap(find.byKey(const Key('calendar-filter-overdue')));
     await tester.pump();
     await tester.tap(find.byKey(const Key('calendar-filter-apply')));
@@ -290,10 +283,7 @@ void main() {
     );
 
     await _openFilterPopover(tester);
-    await _ensureFilterKeyVisible(
-      tester,
-      const Key('calendar-filter-overdue'),
-    );
+    await _ensureFilterKeyVisible(tester, const Key('calendar-filter-overdue'));
     await tester.tap(find.byKey(const Key('calendar-filter-overdue')));
     await tester.pump();
     await _ensureFilterKeyVisible(
@@ -306,29 +296,28 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-      container.read(calendarControllerProvider).filters.activePopoverGroupCount,
+      container
+          .read(calendarControllerProvider)
+          .filters
+          .activePopoverGroupCount,
       2,
     );
     expect(
-      find.descendant(
-        of: find.byType(Badge),
-        matching: find.text('2'),
-      ),
+      find.descendant(of: find.byType(Badge), matching: find.text('2')),
       findsOneWidget,
     );
   });
 
-  testWidgets('draft popover changes are discarded until Apply', (tester) async {
+  testWidgets('draft popover changes are discarded until Apply', (
+    tester,
+  ) async {
     final repo = FakeCalendarRepository(
       listResult: sampleEventList(overdueRows: const []),
     );
     final container = await _pumpScreen(tester, repo: repo);
 
     await _openFilterPopover(tester);
-    await _ensureFilterKeyVisible(
-      tester,
-      const Key('calendar-filter-overdue'),
-    );
+    await _ensureFilterKeyVisible(tester, const Key('calendar-filter-overdue'));
     await tester.tap(find.byKey(const Key('calendar-filter-overdue')));
     await tester.pump();
     // Dismiss without Apply.
@@ -341,10 +330,7 @@ void main() {
     expect(find.byKey(const Key('calendar-filter-popover')), findsNothing);
 
     await _openFilterPopover(tester);
-    await _ensureFilterKeyVisible(
-      tester,
-      const Key('calendar-filter-overdue'),
-    );
+    await _ensureFilterKeyVisible(tester, const Key('calendar-filter-overdue'));
     await tester.tap(find.byKey(const Key('calendar-filter-overdue')));
     await tester.pump();
     await tester.tap(find.byKey(const Key('calendar-filter-apply')));
@@ -364,10 +350,7 @@ void main() {
     final container = await _pumpScreen(tester, repo: repo);
 
     await _openFilterPopover(tester);
-    await _ensureFilterKeyVisible(
-      tester,
-      const Key('calendar-filter-overdue'),
-    );
+    await _ensureFilterKeyVisible(tester, const Key('calendar-filter-overdue'));
     await tester.tap(find.byKey(const Key('calendar-filter-overdue')));
     await tester.pump();
     await tester.tap(find.byKey(const Key('calendar-filter-apply')));
@@ -451,6 +434,10 @@ void main() {
                 canReschedule: false,
                 canCreateManual: false,
                 canOpenDirections: false,
+                canEditManual: false,
+                canCancelManual: false,
+                canMarkManualDone: false,
+                canOpenMeetingLink: false,
               ),
             ),
             sampleCalendarEvent(
@@ -462,6 +449,10 @@ void main() {
                 canReschedule: false,
                 canCreateManual: false,
                 canOpenDirections: false,
+                canEditManual: false,
+                canCancelManual: false,
+                canMarkManualDone: false,
+                canOpenMeetingLink: false,
               ),
             ),
           ],
@@ -496,7 +487,9 @@ void main() {
       expect(find.widgetWithText(TextButton, 'Assign'), findsNothing);
       expect(find.widgetWithText(TextButton, 'Reschedule'), findsNothing);
 
-      await tester.tap(find.byKey(const Key('calendar-event-actions-close-nav-1')));
+      await tester.tap(
+        find.byKey(const Key('calendar-event-actions-close-nav-1')),
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.byKey(const Key('calendar-event-ink-no-actions')));

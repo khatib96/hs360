@@ -1,7 +1,213 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-15 (Session: Phase 7 **M6 closed / owner-accepted**;
-> no `098`/commit/push; M7 not started).
+> Updated 2026-07-15 (Session: Phase 7 **M7A CLOSED / ACCEPTED**; M1–M7A
+> closed; M7B/`100` not started; changes awaiting owner commit/push).
+
+---
+
+## Session 2026-07-15 - Phase 7 M7A closure / owner acceptance
+
+**Decision:** Owner accepted the corrected M7A backend and visuals. M7A is
+**CLOSED / ACCEPTED**. Do not start M7B or create migration `100` until an
+explicit owner request.
+
+**Accepted scope:**
+- `098_phase_7_manual_business_event_types.sql` — enum-only commit barrier.
+- `099_phase_7_manual_business_events.sql` — manual-event schema, typed read and
+  mutation RPC contracts, participants, lifecycle, reminders, and notices.
+- Customer visits, internal meetings, internal tasks/reminders, internal
+  activities/training, and custom events.
+- Date-only by default; optional explicit same-day tenant-timezone time window;
+  no fabricated time for generated/untimed events.
+- Tenant-safe customer/location/contract relations; participants distinct from
+  assignment; assigned-only visibility includes explicit participation.
+- Online/physical meetings, optional HTTPS join URL, organizer-owned close,
+  warning-only overlaps, non-working-day confirmation, audited cancellation,
+  optimistic concurrency, idempotency, and generated-event protection.
+- Reminder reconciliation preserves plan identity and delivered history;
+  meeting-notice fan-out is atomic and concurrency-tested.
+- Flutter create/edit/cancel/done-or-close/join flows, timed vs day-task agenda,
+  AR/EN localization, RTL/LTR, and desktop/narrow layouts.
+
+**Final gates:**
+- Screenshot harness — **24** passed
+- Focused Calendar + AppShell — **264** passed
+- Routing guards — **71** passed
+- `flutter analyze` — clean
+- Full `flutter test` — **1121** passed
+- Complete SQL suite — all phases passed
+- `git diff --check` — clean
+
+**Visual acceptance:** Owner accepted the corrected harness evidence on
+2026-07-15. Missing authenticated live AR/EN captures are a preferred
+pre-release smoke check, not an M7A blocker. One partially visible participant
+row is a non-blocking polish note if the list scrolls fully without overflow.
+
+**Boundaries:** No M7B, migration `100`, M8 assignment/reschedule, native route
+map work, or Phase 8 inventory/GPS/photo/payment execution was started.
+
+**Next:** Commit/push the accepted M7A work when requested; then plan/review M7B
+before implementation.
+
+---
+
+## Session 2026-07-15 - Phase 7 M7A visual corrective pass (OPEN)
+
+**Decision:** Backend acceptance stands. Keep M7A OPEN. Deliver visual-only
+corrective pass; do not start M7B/`100`; do not commit/push.
+
+**Visual fixes:**
+- Screenshot harness loads **MaterialIcons** + **Lucide** (`packages/flutter_lucide/lucide`)
+  — empty-square glyphs were primarily Lucide, not only Material.
+- Create/edit dialogs show read-only localized scheduled date under the title
+  (`calendarEventScheduledDate` + `calendarLocalizedDate`).
+- Event actions: vertical stacked actions; Join primary; Edit outlined;
+  mark-done/close-meeting with confirm; Cancel destructive/error; close via
+  top icon.
+- Cancel confirm submit uses theme error color; reason/audit unchanged.
+- Floating-label padding (theme + dialog scroll top padding).
+- Expanded evidence: customer visit, overlap, non-working-day, narrow actions,
+  participant selected — 24 PNGs.
+
+**Gates:**
+- Screenshot harness — **24** passed
+- Focused calendar + AppShell — **264** passed
+- Routing guards — **71** passed
+- `flutter analyze` — clean
+- Full `flutter test` — **1121** passed
+- `./scripts/test/run_sql_suites.sh` — **All SQL suite phases passed**
+- `git diff --check` — clean
+
+**Live macOS:** Authenticated live AR/EN screenshots not captured in this
+session (no owner session). Corrected harness PNGs are supporting evidence;
+prefer ≥1 AR + ≥1 EN live shots for final owner acceptance.
+
+**Status:** M7A remains **OPEN** until owner visual acceptance.
+
+---
+
+## Session 2026-07-15 - Phase 7 M7A backend accepted; visual OPEN
+
+**Decision:** Corrective backend pass accepted. Keep M7A OPEN for owner visual
+acceptance. Do not start M7B/migration `100`. Do not commit/push.
+
+**Fixture fixes (test-only; production validation unchanged):**
+- M12 case20 merge-date = day 15 of next month (refill_day always 1..28).
+- P7M2 case5/6 same date-safe pattern (needed for complete runner green).
+- Phase O restores calendar seed shape before case1 (suite re-run isolation).
+- Phase R `p7r_insert_event` delete+insert (immutable original_due_date).
+- Phase Q cancels stray due plans before scheduler observability case63.
+
+**Gates:**
+- `phase_6_contract_calendar_handoff.sql` — passed
+- `phase_6_contract_calendar_handoff_concurrency.sh` — passed
+- `./scripts/test/run_sql_suites.sh` — **All SQL suite phases passed**
+- `git diff --check` — clean
+- M7A screenshot harness — 16 PNGs under `build/screenshots/m7a_*.png`
+
+**Status:** M7A remains **OPEN** until owner visual acceptance.
+
+---
+
+## Session 2026-07-15 - Phase 7 M7A corrective backend pass (OPEN)
+
+**Decision:** Fix M3 reminder regression and related M7A backend defects before
+any visual acceptance. Do not start M7B/migration `100`. Do not mark M7A closed.
+
+**Backend corrections in `099`:**
+- Diff-based `apply_calendar_reminder_rule_plan` (no cancel-and-rebuild);
+  preserve plan identity; null→recipient convert only when destination is free;
+  preserve delivered/failed/expired; no delivery-path supersede of
+  `delivery_pending`.
+- Real scheduler/claim/delivery coverage in M7A SQL suite.
+- `emit_calendar_meeting_notice` reserves ledger first
+  (`INSERT … ON CONFLICT DO NOTHING RETURNING`); winner-only notification.
+- `update_manual_calendar_event`: resolve idempotency before mutable load;
+  hash from canonical `{operation, event_id, expected_version, normalized patch}`.
+- Audit snapshots: real `before_json`/`after_json` for update/cancel/mark_done.
+
+**Verification (this pass):**
+- `phase_7_calendar_reminders.sql` — exit 0
+- `phase_7_calendar_reminders_concurrency.sh` — passed
+- `phase_7_calendar_reminders_reconcile_concurrency.sh` — passed (queue=170|170)
+- `phase_7_manual_business_events.sql` — exit 0 (`m7a_manual_business_events_suite_complete`)
+- `phase_7_manual_meeting_notice_concurrency.sh` — passed
+- Focused calendar Flutter: **242** passed
+- Routing + AppShell: **93** passed
+- `flutter analyze` — No issues found
+- Full `flutter test`: **1121** passed
+- `git diff --check` — clean
+
+**Complete SQL runner (`./scripts/test/run_sql_suites.sh`):** **does not finish**.
+Stops at Phase M12 `phase_6_contract_calendar_handoff.sql` with
+`validation_failed` in `normalize_contract_creation_payload` (refill_day).
+
+**M12 evidence — pre-existing date flake (not M7A regression):**
+- Failer is case 20: `refill_day = extract(day from current_date + 14)`.
+- On `2026-07-15`, that is day **29**, which violates the 1–28 rule.
+- Same case20 block exists unchanged at M6 HEAD `01a90ca`
+  (`git diff 01a90ca -- supabase/tests/phase_6_contract_calendar_handoff.sql`
+  → 0 lines). Isolated worktree DB rebuild deferred; source identity + date math
+  is sufficient proof this is baseline flake on mid-month dates.
+
+**Status:** M7A **OPEN**. Owner visual acceptance only after backend acceptance.
+
+---
+
+## Session 2026-07-15 - Phase 7 M7A implementation start
+
+**Decision:** Implement accepted Corrective Plan Pass 4 for M7A. Do not mark M7A
+closed until SQL/Flutter gates and owner visual acceptance.
+
+**Migrations (split for enum commit barrier):**
+- `098_phase_7_manual_business_event_types.sql` — ADD VALUE only
+- `099_phase_7_manual_business_events.sql` — schema, participants, RPCs, reads/reminders
+- Planned next: `100` M7B, `101` M8, optional `102` closure
+
+**Verification so far (automated; owner visual still open):**
+- Focused calendar Flutter: **242** passed
+- Routing/AppShell: **93** passed
+- Full `flutter test`: **1121** passed
+- `flutter analyze` (calendar): clean
+- Screenshot harness: supporting PNGs in `build/screenshots/`
+- Calendar lib files ≤350 lines (099 SQL intentionally large)
+- **Do not mark M7A closed** until owner visual acceptance.
+
+---
+
+## Session 2026-07-15 - Phase 7 company appointment-management plan revision
+
+> Prior planning session (docs only). M6 remained closed; M7A was not started then.
+
+**Locked planning direction:**
+- Hybrid schedule: generated and untimed events are date-only; manual events
+  may optionally enable a same-day start/end time window.
+- Legacy `scheduled_time` remains null. M7A plans explicit nullable
+  `scheduled_start_at`, `scheduled_end_at`, and `scheduled_timezone_name`
+  (final names still require implementation-plan review). The server resolves
+  tenant-local input using the confirmed IANA timezone; no device-timezone
+  inference or overnight window.
+- M7 split:
+  - **M7A:** customer visits, internal meetings, tasks/reminders, internal
+    activities/training, custom events, optional time, participant relation,
+    warning-only overlaps, audited edit/cancel, no hard delete.
+  - **M7B:** official holidays, company closures, and exceptional working days
+    as working-calendar exceptions, not appointment cards.
+- Participants are separate from the assigned/responsible employee;
+  `calendar.view_assigned` includes assignment or explicit participation.
+- Structured departments/teams/meeting rooms and room conflict enforcement are
+  deferred; M7A may use optional free-text team/location.
+- Event cancellation requires reason/audit. M8 retains assignment/reassignment
+  and moving an event to another date.
+- A `task/reminder` category does not create new custom notification timing
+  without a separate accepted reminder contract.
+- Planning snapshot at that time: `098` M7A, `099` M7B, `100` M8, optional
+  `101` closure hardening. This numbering was superseded by the accepted enum
+  transaction split: `098` M7A enums, `099` M7A body, `100` M7B, `101` M8,
+  optional evidence-based `102` closure hardening.
+
+**Documents updated:** `docs/PHASE_7_CALENDAR_PLAN.md`, `docs/BUILD_PLAN.md`,
+`docs/MVP_SCOPE.md`, `docs/CANONICAL_DECISIONS.md`, `README.md`, and this memory.
 
 ---
 

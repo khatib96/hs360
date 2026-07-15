@@ -1,26 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
-import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../domain/calendar_enums.dart';
 import '../../domain/calendar_event.dart';
 import '../calendar_labels.dart';
+import 'calendar_event_actions_dialog.dart';
+
+export 'calendar_event_actions_dialog.dart' show showCalendarEventActionsDialog;
 
 /// Compact, keyboard-accessible agenda event row that opens an action menu.
-class CalendarAgendaEventCard extends StatelessWidget {
-  const CalendarAgendaEventCard({required this.event, super.key});
+class CalendarAgendaEventCard extends ConsumerWidget {
+  const CalendarAgendaEventCard({
+    required this.event,
+    this.onChanged,
+    super.key,
+  });
 
   final CalendarEvent event;
+  final VoidCallback? onChanged;
 
-  Future<void> _openActions(BuildContext context) {
-    return showCalendarEventActionsDialog(context: context, event: event);
+  Future<void> _openActions(BuildContext context, WidgetRef ref) {
+    return showCalendarEventActionsDialog(
+      context: context,
+      ref: ref,
+      event: event,
+      onChanged: onChanged,
+    );
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final locale = Localizations.localeOf(context).languageCode;
     final title = calendarEventTitle(event, locale);
@@ -36,6 +48,7 @@ class CalendarAgendaEventCard extends StatelessWidget {
     );
     final showDirections =
         event.directionsAvailable && event.availableActions.canOpenDirections;
+    final timeWindow = event.timeWindow;
 
     return Card(
       key: Key('calendar-event-${event.id}'),
@@ -45,14 +58,14 @@ class CalendarAgendaEventCard extends StatelessWidget {
         actions: <Type, Action<Intent>>{
           ActivateIntent: CallbackAction<ActivateIntent>(
             onInvoke: (_) {
-              _openActions(context);
+              _openActions(context, ref);
               return null;
             },
           ),
         },
         child: InkWell(
           key: Key('calendar-event-ink-${event.id}'),
-          onTap: () => _openActions(context),
+          onTap: () => _openActions(context, ref),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             child: Column(
@@ -75,6 +88,16 @@ class CalendarAgendaEventCard extends StatelessWidget {
                     ),
                   ],
                 ),
+                if (timeWindow != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    l10n.calendarTimeWindowLabel(
+                      timeWindow.startLocal,
+                      timeWindow.endLocal,
+                    ),
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
                 const SizedBox(height: 6),
                 Wrap(
                   spacing: 6,
@@ -163,88 +186,4 @@ class CalendarAgendaEventCard extends StatelessWidget {
       ),
     );
   }
-}
-
-Future<void> showCalendarEventActionsDialog({
-  required BuildContext context,
-  required CalendarEvent event,
-}) {
-  final l10n = AppLocalizations.of(context)!;
-  final locale = Localizations.localeOf(context).languageCode;
-  final title = calendarEventTitle(event, locale);
-  final customer = calendarPersonName(
-    languageCode: locale,
-    nameAr: event.customerNameAr,
-    nameEn: event.customerNameEn,
-  );
-  final canViewCustomer =
-      event.availableActions.canViewCustomer && event.customerId != null;
-  final canViewContract =
-      event.availableActions.canViewContract && event.contractId != null;
-
-  return showDialog<void>(
-    context: context,
-    builder: (dialogContext) {
-      return AlertDialog(
-        key: Key('calendar-event-actions-${event.id}'),
-        title: Text(l10n.calendarEventActionsTitle),
-        content: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 400),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: Theme.of(dialogContext).textTheme.titleSmall),
-              const SizedBox(height: 8),
-              Text(
-                calendarEventTypeLabel(l10n, event.type),
-                style: Theme.of(dialogContext).textTheme.bodySmall,
-              ),
-              Text(
-                calendarEventStatusLabel(l10n, event.status),
-                style: Theme.of(dialogContext).textTheme.bodySmall,
-              ),
-              if (customer != null) ...[
-                const SizedBox(height: 8),
-                Text('${l10n.calendarFilterCustomer}: $customer'),
-              ],
-              if (event.serviceLocationName != null)
-                Text(
-                  '${l10n.calendarFilterServiceLocation}: '
-                  '${event.serviceLocationName}',
-                ),
-              if (event.contractNumber != null)
-                Text('${l10n.calendarFilterContract}: ${event.contractNumber}'),
-              // M10 may add Directions here using a safe URI/coords contract.
-            ],
-          ),
-        ),
-        actions: [
-          if (canViewCustomer)
-            TextButton(
-              key: Key('calendar-view-customer-${event.id}'),
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-                context.push(AppRoutes.customerDetailPath(event.customerId!));
-              },
-              child: Text(l10n.calendarViewCustomer),
-            ),
-          if (canViewContract)
-            TextButton(
-              key: Key('calendar-view-contract-${event.id}'),
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-                context.push(AppRoutes.contractDetailPath(event.contractId!));
-              },
-              child: Text(l10n.calendarViewContract),
-            ),
-          TextButton(
-            key: Key('calendar-event-actions-close-${event.id}'),
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: Text(l10n.calendarEventActionsClose),
-          ),
-        ],
-      );
-    },
-  );
 }

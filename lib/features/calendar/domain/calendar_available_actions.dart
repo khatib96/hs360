@@ -7,6 +7,10 @@ class CalendarAvailableActions {
     required this.canReschedule,
     required this.canCreateManual,
     required this.canOpenDirections,
+    required this.canEditManual,
+    required this.canCancelManual,
+    required this.canMarkManualDone,
+    required this.canOpenMeetingLink,
   });
 
   final bool canViewCustomer;
@@ -15,4 +19,8 @@ class CalendarAvailableActions {
   final bool canReschedule;
   final bool canCreateManual;
   final bool canOpenDirections;
+  final bool canEditManual;
+  final bool canCancelManual;
+  final bool canMarkManualDone;
+  final bool canOpenMeetingLink;
 }

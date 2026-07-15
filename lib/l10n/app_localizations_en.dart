@@ -3820,6 +3820,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get calendarEventTypeContractEnd => 'Contract end';
 
   @override
+  String get calendarEventTypeCustomerVisit => 'Customer visit';
+
+  @override
+  String get calendarEventTypeInternalMeeting => 'Internal meeting';
+
+  @override
+  String get calendarEventTypeInternalTask => 'Internal task';
+
+  @override
+  String get calendarEventTypeInternalActivity => 'Internal activity';
+
+  @override
   String get calendarEventTypeCustom => 'Custom';
 
   @override
@@ -4068,4 +4080,227 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get calendarLabelUnassigned => 'Unassigned';
+
+  @override
+  String get calendarCreateEvent => 'Create event';
+
+  @override
+  String get calendarCreateEventTitle => 'Create calendar event';
+
+  @override
+  String get calendarEditEventTitle => 'Edit calendar event';
+
+  @override
+  String calendarEventScheduledDate(String date) {
+    return 'Scheduled date: $date';
+  }
+
+  @override
+  String get calendarCreateEventConfirm => 'Create';
+
+  @override
+  String get calendarSaveEvent => 'Save';
+
+  @override
+  String get calendarManualCategory => 'Category';
+
+  @override
+  String get calendarManualTitleAr => 'Title (Arabic)';
+
+  @override
+  String get calendarManualTitleEn => 'Title (English)';
+
+  @override
+  String get calendarManualNotes => 'Notes';
+
+  @override
+  String get calendarManualSetTime => 'Set time';
+
+  @override
+  String get calendarManualStartTime => 'Start';
+
+  @override
+  String get calendarManualEndTime => 'End';
+
+  @override
+  String get calendarManualTeam => 'Team (optional)';
+
+  @override
+  String get calendarManualLocation => 'Location (optional)';
+
+  @override
+  String get calendarManualNone => 'None';
+
+  @override
+  String get calendarMeetingMode => 'Meeting mode';
+
+  @override
+  String get calendarMeetingModeInPerson => 'In person';
+
+  @override
+  String get calendarMeetingModeOnline => 'Online';
+
+  @override
+  String get calendarMeetingUrl => 'Meeting URL (HTTPS)';
+
+  @override
+  String get calendarParticipants => 'Participants';
+
+  @override
+  String get calendarParticipantsSearch => 'Search employees';
+
+  @override
+  String get calendarAgendaTimedSection => 'Timed appointments';
+
+  @override
+  String get calendarAgendaDayTasksSection => 'Day tasks';
+
+  @override
+  String get calendarCancelEventTitle => 'Cancel event';
+
+  @override
+  String get calendarCancelEventBody =>
+      'Cancellation requires a reason and preserves the event for audit.';
+
+  @override
+  String get calendarCancelReasonLabel => 'Cancellation reason';
+
+  @override
+  String get calendarCancelReasonRequired =>
+      'Enter a non-empty cancellation reason.';
+
+  @override
+  String get calendarCancelEventConfirm => 'Cancel event';
+
+  @override
+  String get calendarEditManual => 'Edit';
+
+  @override
+  String get calendarCancelManual => 'Cancel event';
+
+  @override
+  String get calendarMarkManualDone => 'Mark done';
+
+  @override
+  String get calendarCloseMeeting => 'Close meeting';
+
+  @override
+  String get calendarMarkDoneConfirmTitle => 'Mark event done?';
+
+  @override
+  String get calendarMarkDoneConfirmBody =>
+      'This marks the event as completed.';
+
+  @override
+  String get calendarCloseMeetingConfirmTitle => 'Close this meeting?';
+
+  @override
+  String get calendarCloseMeetingConfirmBody =>
+      'This marks the meeting as completed.';
+
+  @override
+  String get calendarMarkDoneConfirmAction => 'Confirm';
+
+  @override
+  String get calendarJoinMeeting => 'Join meeting';
+
+  @override
+  String get calendarJoinMeetingFailed => 'Could not open the meeting link.';
+
+  @override
+  String get calendarJoinMeetingInvalid =>
+      'Meeting link is missing or invalid.';
+
+  @override
+  String get calendarConflictConfirmTitle => 'Confirm schedule conflicts';
+
+  @override
+  String get calendarConflictConfirmBody =>
+      'This event has soft conflicts. Confirm the warnings to continue.';
+
+  @override
+  String calendarConflictAckOverlap(int count) {
+    return 'Acknowledge participant/time overlap ($count)';
+  }
+
+  @override
+  String get calendarConflictAckNonWorkingDay => 'Acknowledge non-working day';
+
+  @override
+  String get calendarConflictAckUnconfigured =>
+      'Acknowledge unconfigured schedule';
+
+  @override
+  String get calendarConflictAckOutsideWindow =>
+      'Acknowledge outside working window';
+
+  @override
+  String get calendarConflictDayOffReason => 'Day-off override reason';
+
+  @override
+  String get calendarConflictConfirmContinue => 'Continue anyway';
+
+  @override
+  String get calendarMutationSuccess => 'Calendar event saved.';
+
+  @override
+  String get calendarMutationCancelled => 'Event cancelled.';
+
+  @override
+  String get calendarMutationMarkedDone => 'Event marked done.';
+
+  @override
+  String get calendarErrorStaleVersion =>
+      'This event changed on another screen. Refresh and try again.';
+
+  @override
+  String get calendarErrorLocalTimeNonexistent =>
+      'That local time does not exist on this date (DST).';
+
+  @override
+  String get calendarErrorLocalTimeAmbiguous =>
+      'That local time is ambiguous on this date (DST).';
+
+  @override
+  String get calendarErrorTimezoneUnconfigured =>
+      'Calendar timezone is not configured.';
+
+  @override
+  String get calendarErrorTimeWindowCrossDate =>
+      'Timed windows must stay on the same scheduled date.';
+
+  @override
+  String get calendarErrorIdempotencyMismatch =>
+      'A previous submit used different data. Close and try again.';
+
+  @override
+  String get calendarValidationTypeRequired => 'Select a category.';
+
+  @override
+  String get calendarValidationTitleRequired => 'Arabic title is required.';
+
+  @override
+  String get calendarValidationMeetingModeRequired =>
+      'Meeting mode is required.';
+
+  @override
+  String get calendarValidationMeetingUrlRequired =>
+      'A valid HTTPS meeting URL is required.';
+
+  @override
+  String get calendarValidationMeetingLocationRequired =>
+      'Meeting location is required.';
+
+  @override
+  String get calendarValidationTimeRequired =>
+      'Start and end times are required.';
+
+  @override
+  String get calendarValidationTimeOrder =>
+      'End time must be after start time.';
+
+  @override
+  String calendarTimeWindowLabel(String start, String end) {
+    return '$start – $end';
+  }
 }

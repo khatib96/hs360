@@ -8,7 +8,31 @@ enum CalendarEventType {
   trialEnding,
   contractStart,
   contractEnd,
+  customerVisit,
+  internalMeeting,
+  internalTask,
+  internalActivity,
   custom;
+
+  /// Manual categories creatable via M7A mutation RPCs.
+  static const List<CalendarEventType> manualCreatable = [
+    CalendarEventType.customerVisit,
+    CalendarEventType.internalMeeting,
+    CalendarEventType.internalTask,
+    CalendarEventType.internalActivity,
+    CalendarEventType.custom,
+  ];
+
+  bool get isManualCreatable => manualCreatable.contains(this);
+
+  bool get isInternalCategory =>
+      this == CalendarEventType.internalMeeting ||
+      this == CalendarEventType.internalTask ||
+      this == CalendarEventType.internalActivity;
+
+  bool get allowsCustomerLinks =>
+      this == CalendarEventType.customerVisit ||
+      this == CalendarEventType.custom;
 
   static CalendarEventType? fromRpc(String value) {
     return switch (value) {
@@ -20,6 +44,10 @@ enum CalendarEventType {
       'trial_ending' => CalendarEventType.trialEnding,
       'contract_start' => CalendarEventType.contractStart,
       'contract_end' => CalendarEventType.contractEnd,
+      'customer_visit' => CalendarEventType.customerVisit,
+      'internal_meeting' => CalendarEventType.internalMeeting,
+      'internal_task' => CalendarEventType.internalTask,
+      'internal_activity' => CalendarEventType.internalActivity,
       'custom' => CalendarEventType.custom,
       _ => null,
     };
@@ -34,6 +62,10 @@ enum CalendarEventType {
     CalendarEventType.trialEnding => 'trial_ending',
     CalendarEventType.contractStart => 'contract_start',
     CalendarEventType.contractEnd => 'contract_end',
+    CalendarEventType.customerVisit => 'customer_visit',
+    CalendarEventType.internalMeeting => 'internal_meeting',
+    CalendarEventType.internalTask => 'internal_task',
+    CalendarEventType.internalActivity => 'internal_activity',
     CalendarEventType.custom => 'custom',
   };
 }

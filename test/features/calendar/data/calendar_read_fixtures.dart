@@ -126,6 +126,10 @@ Map<String, dynamic> validAvailableActionsRpc({
   bool canReschedule = false,
   bool canCreateManual = false,
   bool canOpenDirections = false,
+  bool canEditManual = false,
+  bool canCancelManual = false,
+  bool canMarkManualDone = false,
+  bool canOpenMeetingLink = false,
 }) {
   return {
     'can_view_customer': canViewCustomer,
@@ -134,6 +138,10 @@ Map<String, dynamic> validAvailableActionsRpc({
     'can_reschedule': canReschedule,
     'can_create_manual': canCreateManual,
     'can_open_directions': canOpenDirections,
+    'can_edit_manual': canEditManual,
+    'can_cancel_manual': canCancelManual,
+    'can_mark_manual_done': canMarkManualDone,
+    'can_open_meeting_link': canOpenMeetingLink,
   };
 }
 
@@ -204,6 +212,14 @@ Map<String, dynamic> validCalendarEventRpc({
   Map<String, dynamic>? workingDay,
   String scheduleState = 'working_day',
   String overdueState = 'not_overdue',
+  Object? timeWindow,
+  List<Map<String, dynamic>>? participants,
+  int scheduleVersion = 1,
+  String? meetingMode,
+  String? meetingUrl,
+  String? notes,
+  String? freeTextTeam,
+  String? freeTextLocation,
 }) {
   final event = <String, dynamic>{
     'id': id,
@@ -226,7 +242,15 @@ Map<String, dynamic> validCalendarEventRpc({
     'qty_per_refill': qtyPerRefill,
     'qty_unit': qtyUnit,
     'operational_metadata': {'action_kind': 'refill'},
+    'time_window': timeWindow,
+    'participants': participants ?? const <Map<String, dynamic>>[],
+    'schedule_version': scheduleVersion,
   };
+  if (notes != null) event['notes'] = notes;
+  if (meetingMode != null) event['meeting_mode'] = meetingMode;
+  if (meetingUrl != null) event['meeting_url'] = meetingUrl;
+  if (freeTextTeam != null) event['free_text_team'] = freeTextTeam;
+  if (freeTextLocation != null) event['free_text_location'] = freeTextLocation;
 
   if (!omitOptionalLinkedEntities) {
     event.addAll({

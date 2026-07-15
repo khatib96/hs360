@@ -3777,6 +3777,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get calendarEventTypeContractEnd => 'انتهاء العقد';
 
   @override
+  String get calendarEventTypeCustomerVisit => 'زيارة عميل';
+
+  @override
+  String get calendarEventTypeInternalMeeting => 'اجتماع داخلي';
+
+  @override
+  String get calendarEventTypeInternalTask => 'مهمة داخلية';
+
+  @override
+  String get calendarEventTypeInternalActivity => 'نشاط داخلي';
+
+  @override
   String get calendarEventTypeCustom => 'مخصص';
 
   @override
@@ -4023,4 +4035,219 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get calendarLabelUnassigned => 'غير معيّن';
+
+  @override
+  String get calendarCreateEvent => 'إنشاء موعد';
+
+  @override
+  String get calendarCreateEventTitle => 'إنشاء موعد في التقويم';
+
+  @override
+  String get calendarEditEventTitle => 'تعديل موعد التقويم';
+
+  @override
+  String calendarEventScheduledDate(String date) {
+    return 'تاريخ الموعد: $date';
+  }
+
+  @override
+  String get calendarCreateEventConfirm => 'إنشاء';
+
+  @override
+  String get calendarSaveEvent => 'حفظ';
+
+  @override
+  String get calendarManualCategory => 'الفئة';
+
+  @override
+  String get calendarManualTitleAr => 'العنوان (عربي)';
+
+  @override
+  String get calendarManualTitleEn => 'العنوان (إنجليزي)';
+
+  @override
+  String get calendarManualNotes => 'ملاحظات';
+
+  @override
+  String get calendarManualSetTime => 'تحديد وقت';
+
+  @override
+  String get calendarManualStartTime => 'البداية';
+
+  @override
+  String get calendarManualEndTime => 'النهاية';
+
+  @override
+  String get calendarManualTeam => 'الفريق (اختياري)';
+
+  @override
+  String get calendarManualLocation => 'الموقع (اختياري)';
+
+  @override
+  String get calendarManualNone => 'لا شيء';
+
+  @override
+  String get calendarMeetingMode => 'طريقة الاجتماع';
+
+  @override
+  String get calendarMeetingModeInPerson => 'حضوري';
+
+  @override
+  String get calendarMeetingModeOnline => 'عبر الإنترنت';
+
+  @override
+  String get calendarMeetingUrl => 'رابط الاجتماع (HTTPS)';
+
+  @override
+  String get calendarParticipants => 'المشاركون';
+
+  @override
+  String get calendarParticipantsSearch => 'بحث عن موظفين';
+
+  @override
+  String get calendarAgendaTimedSection => 'مواعيد موقوتة';
+
+  @override
+  String get calendarAgendaDayTasksSection => 'مهام اليوم';
+
+  @override
+  String get calendarCancelEventTitle => 'إلغاء الموعد';
+
+  @override
+  String get calendarCancelEventBody =>
+      'الإلغاء يتطلب سببًا ويحتفظ بالموعد للتدقيق.';
+
+  @override
+  String get calendarCancelReasonLabel => 'سبب الإلغاء';
+
+  @override
+  String get calendarCancelReasonRequired => 'أدخل سبب إلغاء غير فارغ.';
+
+  @override
+  String get calendarCancelEventConfirm => 'إلغاء الموعد';
+
+  @override
+  String get calendarEditManual => 'تعديل';
+
+  @override
+  String get calendarCancelManual => 'إلغاء الموعد';
+
+  @override
+  String get calendarMarkManualDone => 'وضع كمكتمل';
+
+  @override
+  String get calendarCloseMeeting => 'إغلاق الاجتماع';
+
+  @override
+  String get calendarMarkDoneConfirmTitle => 'وضع الموعد كمكتمل؟';
+
+  @override
+  String get calendarMarkDoneConfirmBody => 'سيُعلَّم هذا الموعد كمكتمل.';
+
+  @override
+  String get calendarCloseMeetingConfirmTitle => 'إغلاق هذا الاجتماع؟';
+
+  @override
+  String get calendarCloseMeetingConfirmBody => 'سيُعلَّم هذا الاجتماع كمكتمل.';
+
+  @override
+  String get calendarMarkDoneConfirmAction => 'تأكيد';
+
+  @override
+  String get calendarJoinMeeting => 'الانضمام للاجتماع';
+
+  @override
+  String get calendarJoinMeetingFailed => 'تعذر فتح رابط الاجتماع.';
+
+  @override
+  String get calendarJoinMeetingInvalid => 'رابط الاجتماع مفقود أو غير صالح.';
+
+  @override
+  String get calendarConflictConfirmTitle => 'تأكيد تعارضات الجدول';
+
+  @override
+  String get calendarConflictConfirmBody =>
+      'هذا الموعد فيه تعارضات مرنة. أكّد التحذيرات للمتابعة.';
+
+  @override
+  String calendarConflictAckOverlap(int count) {
+    return 'تأكيد تداخل المشاركين/الوقت ($count)';
+  }
+
+  @override
+  String get calendarConflictAckNonWorkingDay => 'تأكيد يوم غير عمل';
+
+  @override
+  String get calendarConflictAckUnconfigured => 'تأكيد جدول غير معدّ';
+
+  @override
+  String get calendarConflictAckOutsideWindow => 'تأكيد خارج نافذة العمل';
+
+  @override
+  String get calendarConflictDayOffReason => 'سبب تجاوز يوم الإجازة';
+
+  @override
+  String get calendarConflictConfirmContinue => 'المتابعة على أي حال';
+
+  @override
+  String get calendarMutationSuccess => 'تم حفظ موعد التقويم.';
+
+  @override
+  String get calendarMutationCancelled => 'تم إلغاء الموعد.';
+
+  @override
+  String get calendarMutationMarkedDone => 'تم وضع الموعد كمكتمل.';
+
+  @override
+  String get calendarErrorStaleVersion =>
+      'تغير هذا الموعد في شاشة أخرى. حدّث وحاول مجددًا.';
+
+  @override
+  String get calendarErrorLocalTimeNonexistent =>
+      'هذا الوقت المحلي غير موجود في هذا التاريخ (توقيت صيفي).';
+
+  @override
+  String get calendarErrorLocalTimeAmbiguous =>
+      'هذا الوقت المحلي غامض في هذا التاريخ (توقيت صيفي).';
+
+  @override
+  String get calendarErrorTimezoneUnconfigured =>
+      'منطقة زمنية للتقويم غير معدّة.';
+
+  @override
+  String get calendarErrorTimeWindowCrossDate =>
+      'يجب أن تبقى النافذة الزمنية في نفس تاريخ الموعد.';
+
+  @override
+  String get calendarErrorIdempotencyMismatch =>
+      'إرسال سابق استخدم بيانات مختلفة. أغلق وحاول مجددًا.';
+
+  @override
+  String get calendarValidationTypeRequired => 'اختر فئة.';
+
+  @override
+  String get calendarValidationTitleRequired => 'العنوان العربي مطلوب.';
+
+  @override
+  String get calendarValidationMeetingModeRequired => 'طريقة الاجتماع مطلوبة.';
+
+  @override
+  String get calendarValidationMeetingUrlRequired =>
+      'مطلوب رابط اجتماع HTTPS صالح.';
+
+  @override
+  String get calendarValidationMeetingLocationRequired =>
+      'موقع الاجتماع مطلوب.';
+
+  @override
+  String get calendarValidationTimeRequired => 'وقت البداية والنهاية مطلوبان.';
+
+  @override
+  String get calendarValidationTimeOrder =>
+      'يجب أن يكون وقت النهاية بعد البداية.';
+
+  @override
+  String calendarTimeWindowLabel(String start, String end) {
+    return '$start – $end';
+  }
 }

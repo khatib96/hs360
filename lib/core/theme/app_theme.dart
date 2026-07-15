@@ -71,6 +71,9 @@ abstract final class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.offWhite,
+        // Extra vertical padding keeps floating labels fully visible.
+        contentPadding: const EdgeInsets.fromLTRB(12, 18, 12, 14),
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(color: AppColors.neutral200),

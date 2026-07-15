@@ -64,11 +64,7 @@ Future<void> _ensureFilterKeyVisible(WidgetTester tester, Key key) async {
     of: find.byKey(const Key('calendar-filter-popover')),
     matching: find.byType(Scrollable),
   );
-  await tester.dragUntilVisible(
-    find.byKey(key),
-    list,
-    const Offset(0, -80),
-  );
+  await tester.dragUntilVisible(find.byKey(key), list, const Offset(0, -80));
   await tester.pumpAndSettle();
 }
 

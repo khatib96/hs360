@@ -1,255 +1,17 @@
-import 'package:decimal/decimal.dart';
-
-import '../../../core/errors/calendar_exception.dart';
-import '../../../core/utils/decimal_parser.dart';
-import '../domain/calendar_available_actions.dart';
-import '../domain/calendar_date.dart';
 import '../domain/calendar_enums.dart';
 import '../domain/calendar_event.dart';
-import '../domain/calendar_execution_summary.dart';
 import '../domain/calendar_filters.dart';
+import '../domain/calendar_meeting_mode.dart';
 import '../domain/calendar_operational_metadata.dart';
-import '../domain/calendar_settings.dart';
-import '../domain/calendar_working_day.dart';
+import 'calendar_execution_summary_rpc_parsers.dart';
+import 'calendar_m7a_read_parsers.dart';
+import 'calendar_read_rpc_primitives.dart';
+import 'calendar_working_day_rpc_parsers.dart';
 
-Never _malformed(String detail) {
-  throw CalendarException(
-    code: CalendarException.malformedResponse,
-    technicalDetail: detail,
-  );
-}
-
-Map<String, dynamic> requireMap(dynamic value, String detail) {
-  if (value is Map<String, dynamic>) return value;
-  if (value is Map) return Map<String, dynamic>.from(value);
-  return _malformed(detail);
-}
-
-List<dynamic> requireList(dynamic value, String detail) {
-  if (value is List) return value;
-  return _malformed(detail);
-}
-
-String? optionalString(dynamic value) {
-  if (value == null) return null;
-  if (value is String) return value;
-  return _malformed('expected string or null, got ${value.runtimeType}');
-}
-
-String requireString(dynamic value, String detail) {
-  if (value is String) return value;
-  return _malformed(detail);
-}
-
-bool requireBool(dynamic value, String detail) {
-  if (value is bool) return value;
-  return _malformed(detail);
-}
-
-/// Nullable/absent bool → null (does not reject).
-bool? optionalBool(dynamic value, String detail) {
-  if (value == null) return null;
-  if (value is bool) return value;
-  return _malformed(detail);
-}
-
-int requireInt(dynamic value, String detail) {
-  if (value is int) return value;
-  if (value is num) {
-    final asInt = value.toInt();
-    if (asInt == value) return asInt;
-  }
-  if (value is String) {
-    final parsed = int.tryParse(value);
-    if (parsed != null) return parsed;
-  }
-  return _malformed(detail);
-}
-
-int? parseNullableInt(dynamic value, String detail) {
-  if (value == null) return null;
-  return requireInt(value, detail);
-}
-
-DateTime parseRequiredCalendarDate(dynamic value) {
-  if (value is! String) {
-    return _malformed('expected YYYY-MM-DD string, got ${value.runtimeType}');
-  }
-  try {
-    return parseCalendarDateOnly(value);
-  } on FormatException catch (e) {
-    return _malformed(e.message);
-  }
-}
-
-DateTime? parseOptionalCalendarDate(dynamic value) {
-  if (value == null) return null;
-  return parseRequiredCalendarDate(value);
-}
-
-T requireEnum<T>(dynamic value, T? Function(String) fromRpc, String detail) {
-  final raw = requireString(value, detail);
-  final parsed = fromRpc(raw);
-  if (parsed == null) return _malformed('$detail: unknown value "$raw"');
-  return parsed;
-}
-
-T? optionalEnum<T>(dynamic value, T? Function(String) fromRpc, String detail) {
-  if (value == null) return null;
-  return requireEnum(value, fromRpc, detail);
-}
-
-/// Maps `resolve_tenant_working_window` JSON, including post-`jsonb_strip_nulls`
-/// shapes for unconfigured days (null mode flags omitted).
-CalendarWorkingDay mapCalendarWorkingDay(Map<String, dynamic> raw) {
-  final dayMode = _parseWorkingDayMode(raw);
-  final scheduleConfigured = requireBool(
-    raw['schedule_configured'],
-    'working_day.schedule_configured',
-  );
-
-  if (dayMode == TenantWorkingDayMode.unreviewed) {
-    return _mapUnreviewedWorkingDay(
-      raw,
-      scheduleConfigured: scheduleConfigured,
-    );
-  }
-
-  return _mapConfiguredWorkingDay(
-    raw,
-    dayMode: dayMode,
-    scheduleConfigured: scheduleConfigured,
-  );
-}
-
-CalendarWorkingDay _mapUnreviewedWorkingDay(
-  Map<String, dynamic> raw, {
-  required bool scheduleConfigured,
-}) {
-  // SQL: NULL = enum yields NULL flags; strip_nulls removes them.
-  final isUnreviewed = optionalBool(
-    raw['is_unreviewed'],
-    'working_day.is_unreviewed',
-  );
-  if (isUnreviewed == false) {
-    return _malformed(
-      'working_day: day_mode unreviewed but is_unreviewed is false',
-    );
-  }
-  for (final key in ['is_day_off', 'is_24_hours', 'is_working_hours']) {
-    final flag = optionalBool(raw[key], 'working_day.$key');
-    if (flag == true) {
-      return _malformed(
-        'working_day: unreviewed day_mode cannot have $key=true',
-      );
-    }
-  }
-  if (raw['work_start'] != null || raw['work_end'] != null) {
-    return _malformed(
-      'working_day: unreviewed day_mode cannot include work window',
-    );
-  }
-
-  return CalendarWorkingDay(
-    tenantId: requireString(raw['tenant_id'], 'working_day.tenant_id'),
-    date: parseRequiredCalendarDate(raw['date']),
-    isoWeekday: requireInt(raw['iso_weekday'], 'working_day.iso_weekday'),
-    scheduleConfigured: scheduleConfigured,
-    timezoneName: optionalString(raw['timezone_name']),
-    dayMode: TenantWorkingDayMode.unreviewed,
-    workStart: null,
-    workEnd: null,
-    isUnreviewed: true,
-    isDayOff: false,
-    is24Hours: false,
-    isWorkingHours: false,
-  );
-}
-
-CalendarWorkingDay _mapConfiguredWorkingDay(
-  Map<String, dynamic> raw, {
-  required TenantWorkingDayMode dayMode,
-  required bool scheduleConfigured,
-}) {
-  final isUnreviewed = requireBool(
-    raw['is_unreviewed'],
-    'working_day.is_unreviewed',
-  );
-  final isDayOff = requireBool(raw['is_day_off'], 'working_day.is_day_off');
-  final is24Hours = requireBool(raw['is_24_hours'], 'working_day.is_24_hours');
-  final isWorkingHours = requireBool(
-    raw['is_working_hours'],
-    'working_day.is_working_hours',
-  );
-  final workStart = optionalString(raw['work_start']);
-  final workEnd = optionalString(raw['work_end']);
-
-  if (isUnreviewed) {
-    return _malformed(
-      'working_day: configured day_mode cannot have is_unreviewed=true',
-    );
-  }
-
-  switch (dayMode) {
-    case TenantWorkingDayMode.dayOff:
-      if (!isDayOff || is24Hours || isWorkingHours) {
-        return _malformed('working_day: day_off flags inconsistent');
-      }
-      if (workStart != null || workEnd != null) {
-        return _malformed('working_day: day_off cannot include work window');
-      }
-    case TenantWorkingDayMode.hours24:
-      if (!is24Hours || isDayOff || isWorkingHours) {
-        return _malformed('working_day: 24_hours flags inconsistent');
-      }
-      if (workStart != null || workEnd != null) {
-        return _malformed('working_day: 24_hours cannot include work window');
-      }
-    case TenantWorkingDayMode.workingHours:
-      if (!isWorkingHours || isDayOff || is24Hours) {
-        return _malformed('working_day: working_hours flags inconsistent');
-      }
-      if (workStart == null || workEnd == null) {
-        return _malformed(
-          'working_day: working_hours requires work_start and work_end',
-        );
-      }
-    case TenantWorkingDayMode.unreviewed:
-      break;
-  }
-
-  return CalendarWorkingDay(
-    tenantId: requireString(raw['tenant_id'], 'working_day.tenant_id'),
-    date: parseRequiredCalendarDate(raw['date']),
-    isoWeekday: requireInt(raw['iso_weekday'], 'working_day.iso_weekday'),
-    scheduleConfigured: scheduleConfigured,
-    timezoneName: optionalString(raw['timezone_name']),
-    dayMode: dayMode,
-    workStart: workStart,
-    workEnd: workEnd,
-    isUnreviewed: false,
-    isDayOff: isDayOff,
-    is24Hours: is24Hours,
-    isWorkingHours: isWorkingHours,
-  );
-}
-
-TenantWorkingDayMode _parseWorkingDayMode(Map<String, dynamic> raw) {
-  if (!raw.containsKey('day_mode') || raw['day_mode'] == null) {
-    return TenantWorkingDayMode.unreviewed;
-  }
-  final value = raw['day_mode'];
-  if (value is! String) {
-    return _malformed(
-      'working_day.day_mode: expected string or null, got ${value.runtimeType}',
-    );
-  }
-  final mode = TenantWorkingDayMode.fromRpc(value);
-  if (mode == null) {
-    return _malformed('working_day.day_mode: unknown value "$value"');
-  }
-  return mode;
-}
+export 'calendar_execution_summary_rpc_parsers.dart';
+export 'calendar_m7a_read_parsers.dart';
+export 'calendar_read_rpc_primitives.dart';
+export 'calendar_working_day_rpc_parsers.dart';
 
 CalendarFilters mapCalendarFiltersApplied(dynamic raw) {
   final map = requireMap(raw, 'filters_applied');
@@ -310,32 +72,6 @@ CalendarFilters mapCalendarFiltersApplied(dynamic raw) {
   );
 }
 
-CalendarAvailableActions mapCalendarAvailableActions(Map<String, dynamic> raw) {
-  return CalendarAvailableActions(
-    canViewCustomer: requireBool(
-      raw['can_view_customer'],
-      'available_actions.can_view_customer',
-    ),
-    canViewContract: requireBool(
-      raw['can_view_contract'],
-      'available_actions.can_view_contract',
-    ),
-    canAssign: requireBool(raw['can_assign'], 'available_actions.can_assign'),
-    canReschedule: requireBool(
-      raw['can_reschedule'],
-      'available_actions.can_reschedule',
-    ),
-    canCreateManual: requireBool(
-      raw['can_create_manual'],
-      'available_actions.can_create_manual',
-    ),
-    canOpenDirections: requireBool(
-      raw['can_open_directions'],
-      'available_actions.can_open_directions',
-    ),
-  );
-}
-
 CalendarOperationalMetadata? mapOperationalMetadata(dynamic value) {
   if (value == null) return null;
   final map = requireMap(value, 'operational_metadata');
@@ -345,76 +81,18 @@ CalendarOperationalMetadata? mapOperationalMetadata(dynamic value) {
   );
 }
 
-/// Maps an execution summary. Null remains null.
-///
-/// When present (migrations 094/097), required non-null fields are:
-/// `actual_completion_date`, `actual_quantity_delivered`, `quantity_unit`,
-/// `contracted_quantity_per_cycle`, `calculated_next_due_date`,
-/// `confirmed_next_due_date`, `next_due_overridden`, and exactly one of
-/// `coverage_months` / `coverage_days` with a positive value.
-CalendarExecutionSummary? mapExecutionSummary(dynamic value) {
-  if (value == null) return null;
-  final map = requireMap(value, 'execution_summary');
-
-  final quantityUnit = optionalString(map['quantity_unit']);
-  if (quantityUnit == null || quantityUnit.isEmpty) {
-    return _malformed('execution_summary.quantity_unit required');
-  }
-
-  final coverageMonths = parseNullableInt(
-    map['coverage_months'],
-    'execution_summary.coverage_months',
-  );
-  final coverageDays = parseNullableInt(
-    map['coverage_days'],
-    'execution_summary.coverage_days',
-  );
-
-  final hasMonths = coverageMonths != null;
-  final hasDays = coverageDays != null;
-  if (hasMonths == hasDays) {
-    return _malformed(
-      'execution_summary: exactly one of coverage_months or coverage_days',
-    );
-  }
-  if (hasMonths && coverageMonths <= 0) {
-    return _malformed('execution_summary.coverage_months must be > 0');
-  }
-  if (hasDays && coverageDays <= 0) {
-    return _malformed('execution_summary.coverage_days must be > 0');
-  }
-
-  return CalendarExecutionSummary(
-    actualCompletionDate: parseRequiredCalendarDate(
-      map['actual_completion_date'],
-    ),
-    actualQuantityDelivered: _requireDecimal(
-      map['actual_quantity_delivered'],
-      'execution_summary.actual_quantity_delivered',
-    ),
-    quantityUnit: quantityUnit,
-    contractedQuantityPerCycle: _requireDecimal(
-      map['contracted_quantity_per_cycle'],
-      'execution_summary.contracted_quantity_per_cycle',
-    ),
-    coverageMonths: coverageMonths,
-    coverageDays: coverageDays,
-    calculatedNextDueDate: parseRequiredCalendarDate(
-      map['calculated_next_due_date'],
-    ),
-    confirmedNextDueDate: parseRequiredCalendarDate(
-      map['confirmed_next_due_date'],
-    ),
-    nextDueOverridden: requireBool(
-      map['next_due_overridden'],
-      'execution_summary.next_due_overridden',
-    ),
-  );
-}
-
 CalendarEvent mapCalendarEvent(Map<String, dynamic> raw) {
   if (!raw.containsKey('execution_summary')) {
-    return _malformed('event.execution_summary key required');
+    return malformedCalendarResponse('event.execution_summary key required');
+  }
+  if (!raw.containsKey('time_window')) {
+    return malformedCalendarResponse('event.time_window key required');
+  }
+  if (!raw.containsKey('participants')) {
+    return malformedCalendarResponse('event.participants key required');
+  }
+  if (!raw.containsKey('schedule_version')) {
+    return malformedCalendarResponse('event.schedule_version key required');
   }
 
   final workingDayRaw = requireMap(raw['working_day'], 'event.working_day');
@@ -440,6 +118,7 @@ CalendarEvent mapCalendarEvent(Map<String, dynamic> raw) {
     originalDueDate: parseRequiredCalendarDate(raw['original_due_date']),
     titleAr: requireString(raw['title_ar'], 'event.title_ar'),
     titleEn: optionalString(raw['title_en']),
+    notes: optionalString(raw['notes']),
     isRescheduled: requireBool(raw['is_rescheduled'], 'event.is_rescheduled'),
     assignedAgentId: optionalString(raw['assigned_agent_id']),
     assignedAgentNameAr: optionalString(raw['assigned_agent_name_ar']),
@@ -456,7 +135,7 @@ CalendarEvent mapCalendarEvent(Map<String, dynamic> raw) {
     contractLineId: optionalString(raw['contract_line_id']),
     productNameAr: optionalString(raw['product_name_ar']),
     productNameEn: optionalString(raw['product_name_en']),
-    qtyPerRefill: _optionalDecimal(
+    qtyPerRefill: optionalDecimal(
       raw['qty_per_refill'],
       'event.qty_per_refill',
     ),
@@ -481,21 +160,23 @@ CalendarEvent mapCalendarEvent(Map<String, dynamic> raw) {
     ),
     availableActions: mapCalendarAvailableActions(actionsRaw),
     executionSummary: mapExecutionSummary(raw['execution_summary']),
+    scheduleVersion: requireInt(
+      raw['schedule_version'],
+      'event.schedule_version',
+    ),
+    timeWindow: mapCalendarTimeWindow(raw['time_window'], 'event.time_window'),
+    participants: mapCalendarParticipants(
+      raw['participants'],
+      'event.participants',
+    ),
+    meetingMode: optionalEnum(
+      raw['meeting_mode'],
+      CalendarMeetingMode.fromRpc,
+      'event.meeting_mode',
+    ),
+    meetingUrl: optionalString(raw['meeting_url']),
+    freeTextTeam: optionalString(raw['free_text_team']),
+    freeTextLocation: optionalString(raw['free_text_location']),
+    cancellationReason: optionalString(raw['cancellation_reason']),
   );
-}
-
-Decimal? _optionalDecimal(dynamic value, String detail) {
-  if (value == null) return null;
-  return _requireDecimal(value, detail);
-}
-
-Decimal _requireDecimal(dynamic value, String detail) {
-  if (value == null) return _malformed('$detail required');
-  try {
-    final parsed = tryParseDecimal(value);
-    if (parsed == null) return _malformed(detail);
-    return parsed;
-  } on FormatException catch (e) {
-    return _malformed('$detail: ${e.message}');
-  }
 }

@@ -82,14 +82,25 @@
 - Optional receipt voucher if payment is collected.
 - No offline sync in v1.
 
-### Calendar
+### Calendar and Company Appointments
 
-- Date-based calendar with an upper calendar and lower selected-day agenda.
+> Implementation status (2026-07-15): the desktop calendar and M7A manual
+> company appointments are closed / accepted through migrations `098`/`099`.
+> Working-date exceptions, assignment/reschedule, and mobile/route work remain.
+
+- Hybrid company calendar with an upper calendar and lower selected-day agenda:
+  contract-generated/untimed events are date-based, while manual appointments
+  may optionally have an explicit same-day time window.
 - Owner-configured seven-day working schedule and IANA timezone; no inferred
   weekend, hours, or timezone.
-- Generated refill events, overdue visibility, and basic manual events.
+- Generated refill events, overdue visibility, customer visits, internal
+  meetings, tasks/reminders, activities/training, and custom manual events.
 - Calendar events carry service location when generated from contracts.
-- Assignment and date-only rescheduling through permission-gated RPCs.
+- Manual meeting/activity participants remain separate from the assigned or
+  responsible employee.
+- Holidays, company closures, and exceptional working days are managed as
+  date-specific working-calendar exceptions.
+- Assignment and audited date rescheduling through permission-gated RPCs.
 - In-app reminder foundations anchored to enabled working-day policies.
 - Assigned mobile calendar plus display-only route view/native directions.
 - Actual refill completion, delivered quantity, coverage, stock, GPS/photo, and

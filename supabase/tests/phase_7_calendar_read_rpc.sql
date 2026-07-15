@@ -51,6 +51,12 @@ create or replace function pg_temp.p7r_insert_event(
   p_day_off_override timestamptz default null
 ) returns void language plpgsql as $$
 begin
+  -- Seed helpers are re-run across days; replace marker rows without mutating
+  -- immutable original_due_date via ON CONFLICT UPDATE.
+  delete from public.calendar_reminder_plans where calendar_event_id = p_id;
+  delete from public.calendar_event_participants where event_id = p_id;
+  delete from public.calendar_meeting_notices where calendar_event_id = p_id;
+  delete from public.calendar_events where id = p_id;
   insert into public.calendar_events (
     id, tenant_id, type, status, source_kind, scheduled_date, original_due_date,
     title_ar, title_en, assigned_agent_id, customer_id, contract_id, service_location_id,
@@ -58,21 +64,7 @@ begin
   ) values (
     p_id, p_tenant, p_type, p_status, p_source, p_date, coalesce(p_original, p_date),
     p_title, p_title, p_agent, p_customer, p_contract, p_location, p_day_off_override
-  )
-  on conflict (id) do update set
-    tenant_id = excluded.tenant_id,
-    type = excluded.type,
-    status = excluded.status,
-    source_kind = excluded.source_kind,
-    scheduled_date = excluded.scheduled_date,
-    original_due_date = excluded.original_due_date,
-    title_ar = excluded.title_ar,
-    title_en = excluded.title_en,
-    assigned_agent_id = excluded.assigned_agent_id,
-    customer_id = excluded.customer_id,
-    contract_id = excluded.contract_id,
-    service_location_id = excluded.service_location_id,
-    day_off_override_at = excluded.day_off_override_at;
+  );
 end; $$;
 
 create or replace function pg_temp.p7r_expect_error(p_sql text, p_code text)

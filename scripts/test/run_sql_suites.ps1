@@ -137,6 +137,10 @@ Invoke-SqlSuite -SuitePath "supabase/tests/phase_7_calendar_reminders.sql"
 Write-Host "Phase R: Phase 7 M4 calendar read RPCs"
 Invoke-SqlSuite -SuitePath "supabase/tests/phase_7_calendar_read_rpc.sql"
 
+Write-Host "Phase S: Phase 7 M7A manual business events"
+Invoke-SqlSuite -SuitePath "supabase/tests/phase_7_manual_business_events.sql"
+& "$repoRoot/supabase/tests/phase_7_manual_meeting_notice_concurrency.sh" $ContainerName
+
 Write-Host "Phase C: baseline regression (pollution gate)"
 foreach ($suite in $phaseAAllowlist) {
   Invoke-SqlSuite -SuitePath $suite

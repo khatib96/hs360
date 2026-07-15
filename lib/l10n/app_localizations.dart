@@ -7238,6 +7238,30 @@ abstract class AppLocalizations {
   /// **'Contract end'**
   String get calendarEventTypeContractEnd;
 
+  /// No description provided for @calendarEventTypeCustomerVisit.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer visit'**
+  String get calendarEventTypeCustomerVisit;
+
+  /// No description provided for @calendarEventTypeInternalMeeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Internal meeting'**
+  String get calendarEventTypeInternalMeeting;
+
+  /// No description provided for @calendarEventTypeInternalTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Internal task'**
+  String get calendarEventTypeInternalTask;
+
+  /// No description provided for @calendarEventTypeInternalActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Internal activity'**
+  String get calendarEventTypeInternalActivity;
+
   /// No description provided for @calendarEventTypeCustom.
   ///
   /// In en, this message translates to:
@@ -7687,6 +7711,402 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unassigned'**
   String get calendarLabelUnassigned;
+
+  /// No description provided for @calendarCreateEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Create event'**
+  String get calendarCreateEvent;
+
+  /// No description provided for @calendarCreateEventTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create calendar event'**
+  String get calendarCreateEventTitle;
+
+  /// No description provided for @calendarEditEventTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit calendar event'**
+  String get calendarEditEventTitle;
+
+  /// No description provided for @calendarEventScheduledDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled date: {date}'**
+  String calendarEventScheduledDate(String date);
+
+  /// No description provided for @calendarCreateEventConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get calendarCreateEventConfirm;
+
+  /// No description provided for @calendarSaveEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get calendarSaveEvent;
+
+  /// No description provided for @calendarManualCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get calendarManualCategory;
+
+  /// No description provided for @calendarManualTitleAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Title (Arabic)'**
+  String get calendarManualTitleAr;
+
+  /// No description provided for @calendarManualTitleEn.
+  ///
+  /// In en, this message translates to:
+  /// **'Title (English)'**
+  String get calendarManualTitleEn;
+
+  /// No description provided for @calendarManualNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get calendarManualNotes;
+
+  /// No description provided for @calendarManualSetTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Set time'**
+  String get calendarManualSetTime;
+
+  /// No description provided for @calendarManualStartTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get calendarManualStartTime;
+
+  /// No description provided for @calendarManualEndTime.
+  ///
+  /// In en, this message translates to:
+  /// **'End'**
+  String get calendarManualEndTime;
+
+  /// No description provided for @calendarManualTeam.
+  ///
+  /// In en, this message translates to:
+  /// **'Team (optional)'**
+  String get calendarManualTeam;
+
+  /// No description provided for @calendarManualLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location (optional)'**
+  String get calendarManualLocation;
+
+  /// No description provided for @calendarManualNone.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get calendarManualNone;
+
+  /// No description provided for @calendarMeetingMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Meeting mode'**
+  String get calendarMeetingMode;
+
+  /// No description provided for @calendarMeetingModeInPerson.
+  ///
+  /// In en, this message translates to:
+  /// **'In person'**
+  String get calendarMeetingModeInPerson;
+
+  /// No description provided for @calendarMeetingModeOnline.
+  ///
+  /// In en, this message translates to:
+  /// **'Online'**
+  String get calendarMeetingModeOnline;
+
+  /// No description provided for @calendarMeetingUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Meeting URL (HTTPS)'**
+  String get calendarMeetingUrl;
+
+  /// No description provided for @calendarParticipants.
+  ///
+  /// In en, this message translates to:
+  /// **'Participants'**
+  String get calendarParticipants;
+
+  /// No description provided for @calendarParticipantsSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search employees'**
+  String get calendarParticipantsSearch;
+
+  /// No description provided for @calendarAgendaTimedSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Timed appointments'**
+  String get calendarAgendaTimedSection;
+
+  /// No description provided for @calendarAgendaDayTasksSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Day tasks'**
+  String get calendarAgendaDayTasksSection;
+
+  /// No description provided for @calendarCancelEventTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel event'**
+  String get calendarCancelEventTitle;
+
+  /// No description provided for @calendarCancelEventBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation requires a reason and preserves the event for audit.'**
+  String get calendarCancelEventBody;
+
+  /// No description provided for @calendarCancelReasonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation reason'**
+  String get calendarCancelReasonLabel;
+
+  /// No description provided for @calendarCancelReasonRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a non-empty cancellation reason.'**
+  String get calendarCancelReasonRequired;
+
+  /// No description provided for @calendarCancelEventConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel event'**
+  String get calendarCancelEventConfirm;
+
+  /// No description provided for @calendarEditManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get calendarEditManual;
+
+  /// No description provided for @calendarCancelManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel event'**
+  String get calendarCancelManual;
+
+  /// No description provided for @calendarMarkManualDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark done'**
+  String get calendarMarkManualDone;
+
+  /// No description provided for @calendarCloseMeeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Close meeting'**
+  String get calendarCloseMeeting;
+
+  /// No description provided for @calendarMarkDoneConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark event done?'**
+  String get calendarMarkDoneConfirmTitle;
+
+  /// No description provided for @calendarMarkDoneConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This marks the event as completed.'**
+  String get calendarMarkDoneConfirmBody;
+
+  /// No description provided for @calendarCloseMeetingConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Close this meeting?'**
+  String get calendarCloseMeetingConfirmTitle;
+
+  /// No description provided for @calendarCloseMeetingConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This marks the meeting as completed.'**
+  String get calendarCloseMeetingConfirmBody;
+
+  /// No description provided for @calendarMarkDoneConfirmAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get calendarMarkDoneConfirmAction;
+
+  /// No description provided for @calendarJoinMeeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Join meeting'**
+  String get calendarJoinMeeting;
+
+  /// No description provided for @calendarJoinMeetingFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the meeting link.'**
+  String get calendarJoinMeetingFailed;
+
+  /// No description provided for @calendarJoinMeetingInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Meeting link is missing or invalid.'**
+  String get calendarJoinMeetingInvalid;
+
+  /// No description provided for @calendarConflictConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm schedule conflicts'**
+  String get calendarConflictConfirmTitle;
+
+  /// No description provided for @calendarConflictConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This event has soft conflicts. Confirm the warnings to continue.'**
+  String get calendarConflictConfirmBody;
+
+  /// No description provided for @calendarConflictAckOverlap.
+  ///
+  /// In en, this message translates to:
+  /// **'Acknowledge participant/time overlap ({count})'**
+  String calendarConflictAckOverlap(int count);
+
+  /// No description provided for @calendarConflictAckNonWorkingDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Acknowledge non-working day'**
+  String get calendarConflictAckNonWorkingDay;
+
+  /// No description provided for @calendarConflictAckUnconfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'Acknowledge unconfigured schedule'**
+  String get calendarConflictAckUnconfigured;
+
+  /// No description provided for @calendarConflictAckOutsideWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Acknowledge outside working window'**
+  String get calendarConflictAckOutsideWindow;
+
+  /// No description provided for @calendarConflictDayOffReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Day-off override reason'**
+  String get calendarConflictDayOffReason;
+
+  /// No description provided for @calendarConflictConfirmContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue anyway'**
+  String get calendarConflictConfirmContinue;
+
+  /// No description provided for @calendarMutationSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar event saved.'**
+  String get calendarMutationSuccess;
+
+  /// No description provided for @calendarMutationCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Event cancelled.'**
+  String get calendarMutationCancelled;
+
+  /// No description provided for @calendarMutationMarkedDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Event marked done.'**
+  String get calendarMutationMarkedDone;
+
+  /// No description provided for @calendarErrorStaleVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'This event changed on another screen. Refresh and try again.'**
+  String get calendarErrorStaleVersion;
+
+  /// No description provided for @calendarErrorLocalTimeNonexistent.
+  ///
+  /// In en, this message translates to:
+  /// **'That local time does not exist on this date (DST).'**
+  String get calendarErrorLocalTimeNonexistent;
+
+  /// No description provided for @calendarErrorLocalTimeAmbiguous.
+  ///
+  /// In en, this message translates to:
+  /// **'That local time is ambiguous on this date (DST).'**
+  String get calendarErrorLocalTimeAmbiguous;
+
+  /// No description provided for @calendarErrorTimezoneUnconfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar timezone is not configured.'**
+  String get calendarErrorTimezoneUnconfigured;
+
+  /// No description provided for @calendarErrorTimeWindowCrossDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Timed windows must stay on the same scheduled date.'**
+  String get calendarErrorTimeWindowCrossDate;
+
+  /// No description provided for @calendarErrorIdempotencyMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'A previous submit used different data. Close and try again.'**
+  String get calendarErrorIdempotencyMismatch;
+
+  /// No description provided for @calendarValidationTypeRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a category.'**
+  String get calendarValidationTypeRequired;
+
+  /// No description provided for @calendarValidationTitleRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic title is required.'**
+  String get calendarValidationTitleRequired;
+
+  /// No description provided for @calendarValidationMeetingModeRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Meeting mode is required.'**
+  String get calendarValidationMeetingModeRequired;
+
+  /// No description provided for @calendarValidationMeetingUrlRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'A valid HTTPS meeting URL is required.'**
+  String get calendarValidationMeetingUrlRequired;
+
+  /// No description provided for @calendarValidationMeetingLocationRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Meeting location is required.'**
+  String get calendarValidationMeetingLocationRequired;
+
+  /// No description provided for @calendarValidationTimeRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Start and end times are required.'**
+  String get calendarValidationTimeRequired;
+
+  /// No description provided for @calendarValidationTimeOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'End time must be after start time.'**
+  String get calendarValidationTimeOrder;
+
+  /// No description provided for @calendarTimeWindowLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{start} – {end}'**
+  String calendarTimeWindowLabel(String start, String end);
 }
 
 class _AppLocalizationsDelegate

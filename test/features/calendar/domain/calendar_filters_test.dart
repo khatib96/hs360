@@ -51,40 +51,40 @@ void main() {
   });
 
   group('CalendarFilters.withoutExactIdFilters', () {
-    test('clears agent/customer/contract/location ids and preserves facets', () {
-      final filters = CalendarFilters(
-        eventTypes: const [CalendarEventType.refillDue],
-        statuses: const [CalendarEventStatus.pending],
-        assignedAgentId: 'agent-1',
-        unassignedOnly: true,
-        customerId: 'cust-1',
-        contractId: 'contract-1',
-        serviceLocationId: 'loc-1',
-        sourceKind: CalendarEventSourceKind.manual,
-        workingDayConflict: true,
-        overdueOnly: true,
-        search: 'refill',
-      );
+    test(
+      'clears agent/customer/contract/location ids and preserves facets',
+      () {
+        final filters = CalendarFilters(
+          eventTypes: const [CalendarEventType.refillDue],
+          statuses: const [CalendarEventStatus.pending],
+          assignedAgentId: 'agent-1',
+          unassignedOnly: true,
+          customerId: 'cust-1',
+          contractId: 'contract-1',
+          serviceLocationId: 'loc-1',
+          sourceKind: CalendarEventSourceKind.manual,
+          workingDayConflict: true,
+          overdueOnly: true,
+          search: 'refill',
+        );
 
-      final cleaned = filters.withoutExactIdFilters();
-      expect(cleaned.assignedAgentId, isNull);
-      expect(cleaned.customerId, isNull);
-      expect(cleaned.contractId, isNull);
-      expect(cleaned.serviceLocationId, isNull);
-      expect(cleaned.eventTypes, [CalendarEventType.refillDue]);
-      expect(cleaned.statuses, [CalendarEventStatus.pending]);
-      expect(cleaned.unassignedOnly, isTrue);
-      expect(cleaned.sourceKind, CalendarEventSourceKind.manual);
-      expect(cleaned.workingDayConflict, isTrue);
-      expect(cleaned.overdueOnly, isTrue);
-      expect(cleaned.search, 'refill');
-    });
+        final cleaned = filters.withoutExactIdFilters();
+        expect(cleaned.assignedAgentId, isNull);
+        expect(cleaned.customerId, isNull);
+        expect(cleaned.contractId, isNull);
+        expect(cleaned.serviceLocationId, isNull);
+        expect(cleaned.eventTypes, [CalendarEventType.refillDue]);
+        expect(cleaned.statuses, [CalendarEventStatus.pending]);
+        expect(cleaned.unassignedOnly, isTrue);
+        expect(cleaned.sourceKind, CalendarEventSourceKind.manual);
+        expect(cleaned.workingDayConflict, isTrue);
+        expect(cleaned.overdueOnly, isTrue);
+        expect(cleaned.search, 'refill');
+      },
+    );
 
     test('returns same instance when no exact ids present', () {
-      final filters = CalendarFilters(
-        overdueOnly: true,
-        search: 'ab',
-      );
+      final filters = CalendarFilters(overdueOnly: true, search: 'ab');
       expect(identical(filters.withoutExactIdFilters(), filters), isTrue);
     });
   });
@@ -93,8 +93,10 @@ void main() {
     test('counts popover facet groups and ignores search/exact ids', () {
       expect(CalendarFilters.empty.activePopoverGroupCount, 0);
       expect(
-        CalendarFilters(search: 'refill', customerId: 'c1')
-            .activePopoverGroupCount,
+        CalendarFilters(
+          search: 'refill',
+          customerId: 'c1',
+        ).activePopoverGroupCount,
         0,
       );
       expect(

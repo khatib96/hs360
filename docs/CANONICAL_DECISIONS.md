@@ -231,12 +231,25 @@ Operational coordinates live on `customer_service_locations.latitude` and `custo
 
 ---
 
-## 4.9 Phase 7 Date-Based Calendar and Actual Refill Cadence
+## 4.9 Phase 7 Hybrid Company Calendar and Actual Refill Cadence
 
-Phase 7 appointments are date-based, not exact-time appointments.
+Phase 7 is the company-wide appointment-management surface. Contract-generated
+events and untimed manual events are date-based; an explicitly timed manual
+event may optionally carry a same-day start/end window.
 
-- `scheduled_date` is canonical; Phase 7 does not require or display
-  `scheduled_time`.
+M7A implemented and owner-accepted this manual company-event contract on
+2026-07-15 through migrations `098`/`099` and the typed Flutter calendar layer.
+M7B working-date exceptions remain next and unimplemented.
+
+- `scheduled_date` remains canonical for every event. Legacy `scheduled_time`
+  remains null/compatibility-only. M7A uses a reviewed optional start/end/
+  timezone contract and never invents a time for generated or untimed events.
+- Manual categories initially cover customer visits, internal meetings,
+  tasks/reminders, internal activities/training, and custom events.
+- Participants are separate from assignment/responsibility. Assigned-only
+  visibility includes an employee's assignments or explicit participation.
+- Holidays, company closures, and exceptional working days are date-specific
+  working-calendar exceptions, not ordinary appointment events.
 - Working days, working windows, and IANA timezone are configured explicitly by
   the owner/manager. No country, locale, weekend, timezone, or working-hours
   default is inferred.

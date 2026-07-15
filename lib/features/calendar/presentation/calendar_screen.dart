@@ -5,7 +5,9 @@ import 'package:hs360/l10n/app_localizations.dart';
 import '../../../core/routing/app_routes.dart';
 import '../../../shared/widgets/app_shell.dart';
 import '../../../shared/widgets/message_banner.dart';
+import '../../auth/presentation/auth_controller.dart';
 import '../domain/calendar_date.dart';
+import '../domain/calendar_permissions.dart';
 import '../domain/calendar_range_summary.dart';
 import 'calendar_controller.dart';
 import 'calendar_desktop_layout.dart';
@@ -13,6 +15,7 @@ import 'calendar_labels.dart';
 import 'calendar_state.dart';
 import 'widgets/calendar_agenda_list.dart';
 import 'widgets/calendar_filter_bar.dart';
+import 'widgets/calendar_manual_event_dialog.dart';
 import 'widgets/calendar_month_grid.dart';
 import 'widgets/calendar_month_toolbar.dart';
 import 'widgets/calendar_overdue_panel.dart';
@@ -49,6 +52,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(calendarControllerProvider);
     final notifier = ref.read(calendarControllerProvider.notifier);
+    final session = ref.watch(authControllerProvider).valueOrNull;
+    final canCreate = session != null && canCreateCalendarEvent(session);
     final narrow =
         MediaQuery.sizeOf(context).width <
         CalendarDesktopLayout.narrowBreakpoint;
@@ -56,6 +61,22 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     return AppShell(
       title: l10n.calendarTitle,
       currentRoute: AppRoutes.calendar,
+      actions: [
+        if (canCreate && !state.permissionDenied)
+          TextButton.icon(
+            key: const Key('calendar-create-event'),
+            onPressed: () async {
+              final form = await showCalendarManualEventDialog(
+                context: context,
+                scheduledDate: state.selectedDate,
+              );
+              if (form == null || !context.mounted) return;
+              await notifier.createManualEvent(context, form.data);
+            },
+            icon: const Icon(Icons.add),
+            label: Text(l10n.calendarCreateEvent),
+          ),
+      ],
       body: _buildBody(context, l10n, state, notifier, narrow),
     );
   }

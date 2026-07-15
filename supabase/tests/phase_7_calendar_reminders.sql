@@ -399,6 +399,26 @@ begin
   return v_plan.id;
 end; $$;
 
+-- Prior Phase R/S committed fixtures can leave due reminder plans that pollute
+-- scheduler observability counts in this suite. Cancel open tenant-A plans first.
+do $$
+begin
+  update public.calendar_reminder_plans
+  set
+    status = 'cancelled_superseded'::public.calendar_reminder_plan_status,
+    cancelled_at = now(),
+    next_attempt_at = null,
+    suppressed_reason = null,
+    resolution_code = null,
+    updated_at = now()
+  where tenant_id = '00000000-0000-0000-0000-000000000101'::uuid
+    and status in (
+      'planned'::public.calendar_reminder_plan_status,
+      'delivery_pending'::public.calendar_reminder_plan_status,
+      'suppressed'::public.calendar_reminder_plan_status
+    );
+end $$;
+
 -- Case 1: Normal working day — exact anchor_utc
 begin;
 set local role authenticated;
@@ -1702,6 +1722,22 @@ begin
   v_bad := pg_temp.p7m3_setup_delivery_case();
   perform pg_temp.p7m3_deliver_plan(v_ok);
   perform pg_temp.p7m3_force_delivery_ready(v_bad);
+  -- Isolate from due plans belonging to committed fixtures (e.g. Phase R seeds).
+  update public.calendar_reminder_plans
+  set
+    status = 'cancelled_superseded'::public.calendar_reminder_plan_status,
+    cancelled_at = now(),
+    next_attempt_at = null,
+    suppressed_reason = null,
+    resolution_code = null,
+    updated_at = now()
+  where tenant_id = '00000000-0000-0000-0000-000000000101'::uuid
+    and status in (
+      'planned'::public.calendar_reminder_plan_status,
+      'delivery_pending'::public.calendar_reminder_plan_status,
+      'suppressed'::public.calendar_reminder_plan_status
+    )
+    and id not in (v_ok, v_bad);
   perform pg_temp.p7m3_install_notification_fail_trigger();
   v_result := pg_temp.p7m3_run_scheduler();
   if not exists (select 1 from public.calendar_reminder_plans where id = v_ok and status = 'delivered') then

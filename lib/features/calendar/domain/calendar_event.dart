@@ -2,8 +2,11 @@ import 'package:decimal/decimal.dart';
 
 import 'calendar_available_actions.dart';
 import 'calendar_enums.dart';
+import 'calendar_event_participant.dart';
 import 'calendar_execution_summary.dart';
+import 'calendar_meeting_mode.dart';
 import 'calendar_operational_metadata.dart';
+import 'calendar_time_window.dart';
 import 'calendar_working_day.dart';
 
 /// Calendar event summary row from list/range read RPCs.
@@ -19,6 +22,7 @@ class CalendarEvent {
     required this.originalDueDate,
     required this.titleAr,
     this.titleEn,
+    this.notes,
     required this.isRescheduled,
     this.assignedAgentId,
     this.assignedAgentNameAr,
@@ -46,6 +50,14 @@ class CalendarEvent {
     required this.overdueState,
     required this.availableActions,
     this.executionSummary,
+    required this.scheduleVersion,
+    this.timeWindow,
+    required this.participants,
+    this.meetingMode,
+    this.meetingUrl,
+    this.freeTextTeam,
+    this.freeTextLocation,
+    this.cancellationReason,
   });
 
   final String id;
@@ -56,6 +68,7 @@ class CalendarEvent {
   final DateTime originalDueDate;
   final String titleAr;
   final String? titleEn;
+  final String? notes;
   final bool isRescheduled;
   final String? assignedAgentId;
   final String? assignedAgentNameAr;
@@ -83,4 +96,14 @@ class CalendarEvent {
   final CalendarOverdueState overdueState;
   final CalendarAvailableActions availableActions;
   final CalendarExecutionSummary? executionSummary;
+  final int scheduleVersion;
+  final CalendarTimeWindow? timeWindow;
+  final List<CalendarEventParticipant> participants;
+  final CalendarMeetingMode? meetingMode;
+  final String? meetingUrl;
+  final String? freeTextTeam;
+  final String? freeTextLocation;
+  final String? cancellationReason;
+
+  bool get isTimed => timeWindow != null;
 }

@@ -105,7 +105,9 @@ void main() {
     },
   );
 
-  testWidgets('narrow desktop still shows compact filter toolbar', (tester) async {
+  testWidgets('narrow desktop still shows compact filter toolbar', (
+    tester,
+  ) async {
     final repo = FakeCalendarRepository(
       listResult: sampleEventList(overdueRows: const []),
     );

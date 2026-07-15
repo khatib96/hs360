@@ -159,6 +159,10 @@ bash "$repo_root/supabase/tests/phase_7_calendar_reminders_reconcile_concurrency
 printf 'Phase R: Phase 7 M4 calendar read RPCs\n'
 run_suite "supabase/tests/phase_7_calendar_read_rpc.sql"
 
+printf 'Phase S: Phase 7 M7A manual business events\n'
+run_suite "supabase/tests/phase_7_manual_business_events.sql"
+bash "$repo_root/supabase/tests/phase_7_manual_meeting_notice_concurrency.sh" "$container_name"
+
 printf 'Phase C: baseline pollution gate\n'
 for suite in "${phase_a_suites[@]}"; do
   run_suite "$suite"

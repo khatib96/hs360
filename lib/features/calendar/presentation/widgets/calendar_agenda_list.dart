@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
 import '../../../../shared/widgets/message_banner.dart';
+import '../../domain/calendar_agenda_grouping.dart';
 import '../../domain/calendar_event.dart';
 import '../../domain/calendar_range_summary.dart';
 import '../../domain/calendar_working_day.dart';
@@ -24,6 +25,7 @@ class CalendarAgendaList extends StatelessWidget {
     required this.onRetry,
     required this.onLoadMore,
     required this.onClearFilters,
+    this.onEventChanged,
     super.key,
   });
 
@@ -40,10 +42,12 @@ class CalendarAgendaList extends StatelessWidget {
   final VoidCallback onRetry;
   final VoidCallback onLoadMore;
   final VoidCallback onClearFilters;
+  final VoidCallback? onEventChanged;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final groups = groupCalendarAgendaEvents(events);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -102,8 +106,26 @@ class CalendarAgendaList extends StatelessWidget {
               ],
             ),
           )
-        else
-          ...events.map((e) => CalendarAgendaEventCard(event: e)),
+        else ...[
+          if (groups.timedAppointments.isNotEmpty) ...[
+            _sectionHeader(
+              context,
+              key: const Key('calendar-agenda-timed-header'),
+              label: l10n.calendarAgendaTimedSection,
+            ),
+            for (final e in groups.timedAppointments)
+              CalendarAgendaEventCard(event: e, onChanged: onEventChanged),
+          ],
+          if (groups.dayTasks.isNotEmpty) ...[
+            _sectionHeader(
+              context,
+              key: const Key('calendar-agenda-day-tasks-header'),
+              label: l10n.calendarAgendaDayTasksSection,
+            ),
+            for (final e in groups.dayTasks)
+              CalendarAgendaEventCard(event: e, onChanged: onEventChanged),
+          ],
+        ],
         if (loadMoreErrorCode != null)
           MessageBanner(
             variant: MessageBannerVariant.error,
@@ -116,6 +138,18 @@ class CalendarAgendaList extends StatelessWidget {
             child: Text(l10n.calendarLoadMore),
           ),
       ],
+    );
+  }
+
+  Widget _sectionHeader(
+    BuildContext context, {
+    required Key key,
+    required String label,
+  }) {
+    return Padding(
+      key: key,
+      padding: const EdgeInsets.only(top: 4, bottom: 8),
+      child: Text(label, style: Theme.of(context).textTheme.titleSmall),
     );
   }
 }

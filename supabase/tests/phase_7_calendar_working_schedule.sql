@@ -481,6 +481,29 @@ begin
 end;
 $$;
 
+-- Full-suite re-runs can leave tenant A calendar configured (later Phase R/S
+-- fixtures commit settings). Restore the migration seed shape so case 1 remains
+-- meaningful independently of prior suite pollution.
+do $$
+declare
+  v_tenant_a uuid := '00000000-0000-0000-0000-000000000101';
+begin
+  update public.tenant_working_days
+  set day_mode = null, work_start = null, work_end = null
+  where tenant_id = v_tenant_a;
+
+  update public.tenant_calendar_settings
+  set
+    timezone_name = null,
+    working_schedule_configured = false,
+    configured_at = null,
+    configured_by = null,
+    remind_event_workday_start = true,
+    remind_previous_workday_start = true,
+    updated_at = now()
+  where tenant_id = v_tenant_a;
+end $$;
+
 -- 1. Provisioning: seven unreviewed rows, not configured.
 begin;
 do $$

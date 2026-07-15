@@ -1920,6 +1920,8 @@ end $$;
 rollback;
 
 -- 20. Consumable change merges into outstanding refill on the same date (M2 Rule 1).
+-- Merge-date fixture = day 15 of next month so extract(day) is always in 1..28
+-- (valid refill_day) independently of the suite execution date.
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
@@ -1933,7 +1935,7 @@ declare
   v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
   v_contract_id uuid;
   v_line_id uuid;
-  v_merge_date date := current_date + 14;
+  v_merge_date date := (date_trunc('month', current_date) + interval '1 month' + interval '14 days')::date;
   v_outstanding_id uuid;
   v_count int;
   v_action text;
@@ -1964,7 +1966,7 @@ declare
   v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
   v_contract_id uuid;
   v_line_id uuid;
-  v_merge_date date := current_date + 14;
+  v_merge_date date := (date_trunc('month', current_date) + interval '1 month' + interval '14 days')::date;
   v_outstanding_id uuid;
   v_count int;
   v_action text;
@@ -1987,7 +1989,7 @@ declare
   v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
   v_contract_id uuid;
   v_line_id uuid;
-  v_merge_date date := current_date + 14;
+  v_merge_date date := (date_trunc('month', current_date) + interval '1 month' + interval '14 days')::date;
   v_outstanding_id uuid;
   v_count int;
   v_action text;

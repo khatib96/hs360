@@ -7,10 +7,11 @@ and double-entry accounting.
 
 > Repository status updated: **2026-07-15**
 >
-> Current milestone: **Phase 7 M6 closed / accepted after owner visual approval**
-> — next is **M7 Manual Events** (not started)
+> Current milestone: **Phase 7 M7A CLOSED / ACCEPTED**
+> — M1–M7A are closed; M7B/`100` is next and has not started
 >
-> Latest applied migration: **`097_phase_7_calendar_read_rpc.sql`** (unchanged; no `098`)
+> Latest migrations on disk: **`098`** (enum types) + **`099`** (manual events body);
+> prior read migration **`097`** remains the last pre-M7A baseline.
 
 ---
 
@@ -25,7 +26,7 @@ and double-entry accounting.
 | 4 | Engineering complete | Customers, suppliers, CoA, service locations, coordinates |
 | 5 | Complete | Invoices, returns, vouchers, journal, inventory accounting, PDFs |
 | 6 | Complete | Trial/rental contracts, lifecycle, billing, PDF, calendar handoff |
-| 7 | M6 complete | M1–M4 SQL (`093`–`097`) + M5 Flutter read layer + owner-accepted M6 Desktop Month+Agenda UI |
+| 7 | M7A complete | M1–M7A closed; migrations `093`–`099`, desktop calendar, and manual company appointments accepted |
 | 8-12 | Not started | Field execution and later operational/reporting/production phases |
 
 Phase 6 closed through M13/migration `092` on 2026-07-12. Phase 7 M1 closed on
@@ -38,7 +39,11 @@ day, then **closed / accepted**. M6 Desktop Month + Agenda UI landed and passed
 automated acceptance, then was reopened for owner visual/UX correction. The
 compact search/filter toolbar, filter popover, event action menu, and direct
 month/year selectors were subsequently implemented and **accepted by the owner
-on 2026-07-15**. M6 is closed. No migration `098`. M7 has not started.
+on 2026-07-15**. M6 is closed. M7A Manual Business Events implementation landed
+with migrations `098`/`099` and Flutter create/edit/cancel/done/join flows.
+The backend corrective pass, full regression gates, and corrected AR/EN visual
+evidence were accepted by the owner on 2026-07-15. **M7A is closed / accepted.**
+M7B Working Calendar Holidays & Exceptions is next and has not started.
 
 Detailed roadmap: [BUILD_PLAN.md](docs/BUILD_PLAN.md)
 
@@ -69,8 +74,8 @@ Phase 7 source of truth: [PHASE_7_CALENDAR_PLAN.md](docs/PHASE_7_CALENDAR_PLAN.m
 
 ## Planned, Not Yet Implemented
 
-- Phase 7 manual events, assignment/reschedule, mobile calendar, maps/directions,
-  and Day/Week presentations (M7–M10).
+- Remaining Phase 7 work: working-date exceptions, assignment/reschedule,
+  mobile calendar, maps/directions, and Day/Week presentations (M7B–M10).
 - Phase 8 field execution: GPS proof, live-camera photo, actual consumable
   delivery, coverage confirmation, stock-out, and optional payment collection.
 - Offline mobile synchronization. Drift is deliberately not a current
@@ -84,7 +89,13 @@ Phase 7 source of truth: [PHASE_7_CALENDAR_PLAN.md](docs/PHASE_7_CALENDAR_PLAN.m
 
 ## Phase 7 Decisions Already Locked
 
-- Calendar appointments are date-based, not exact-time appointments.
+- Contract-generated and untimed events are date-based. Manual company events
+  may optionally have an explicitly entered same-day time window in the
+  tenant's confirmed IANA timezone; the system never invents a time.
+- Calendar is the shared company appointment-management surface, not only a
+  contract follow-up calendar.
+- Holidays, company closures, and exceptional working days are working-calendar
+  exceptions, not ordinary appointment cards.
 - The owner configures all seven working days and an IANA timezone; no weekend,
   hours, or timezone is inferred.
 - No working-hours reminder is created before Calendar Settings are reviewed.
@@ -273,7 +284,11 @@ Before implementing a milestone:
 ## Current Constraints
 
 - Phase 7 M6 Desktop Month + Agenda UI is **closed / owner-accepted**.
-  Migration remains `097` (no `098`). Next is M7, not started.
+- Phase 7 M7A Manual Business Events is **closed / owner-accepted** with
+  migrations `098`/`099`, typed Flutter mutations, meeting/participant flows,
+  reminder reconciliation, and AR/EN desktop UI.
+- M7B Working Calendar Holidays & Exceptions and migration `100` have not
+  started.
 - Production Supabase/VPS deployment and external messaging credentials are not
   configured by this repository state.
 - The `resolve-google-maps-url` Edge Function has local verification but still
@@ -301,7 +316,29 @@ Before implementing a milestone:
   `git diff --check` — clean.
 - Owner visually accepted the corrected Arabic desktop UI and direct
   month/year navigation on 2026-07-15. **M6 closed / accepted.**
-- M7, M10 native directions, and Phase 8 execution remain not started.
+
+## M7A Closure Verification (2026-07-15)
+
+- Migrations on disk: `098_phase_7_manual_business_event_types.sql`,
+  `099_phase_7_manual_business_events.sql` (+ SQL test
+  `supabase/tests/phase_7_manual_business_events.sql`).
+- Visual corrective pass (icons/Lucide+Material, scheduled-date line, event
+  actions vertical stack, destructive cancel, floating-label padding,
+  expanded evidence): screenshot harness — **24** passed; paths under
+  `build/screenshots/m7a_*.png`.
+- Focused calendar + AppShell — **264** passed; routing guards — **71**
+  passed; `flutter analyze` — 0 issues; full `flutter test` — **1121**
+  passed; `./scripts/test/run_sql_suites.sh` — all phases passed;
+  `git diff --check` — clean.
+- Calendar lib sources kept under 350 lines after M7A extraction passes.
+- Owner visually accepted the corrected 24-image AR/EN, RTL/LTR, desktop/narrow
+  evidence on 2026-07-15. Live authenticated screenshots remain a preferred
+  pre-release smoke check, not an M7A closure blocker.
+- The partially visible last participant row in a supporting harness image is a
+  non-blocking polish note, provided the list remains fully scrollable without
+  overflow.
+- **M7A closed / accepted.**
+- M7B, M8–M10, and Phase 8 execution remain not started.
 
 ---
 

@@ -1,9 +1,10 @@
-// Supporting (NOT live-app) screenshot harness for the Phase 7 M6 calendar
-// redesign. Renders CalendarScreen through AppShell with bundled Noto fonts
-// and FakeCalendarRepository sample data, then writes PNGs to build/screenshots/.
+// Supporting (NOT live-app) screenshot harness for Phase 7 M6/M7A calendar UI.
+// Renders CalendarScreen with FakeCalendarRepository sample data (including a
+// timed internal meeting for Timed vs Day-tasks agenda headers), then writes
+// PNGs to build/screenshots/.
 //
 // These are supporting renders only. Visual acceptance still requires live
-// macOS app screenshots in Arabic from an authenticated session.
+// macOS app screenshots from an authenticated session when the owner prefers.
 //
 // Run: flutter test test/screenshots/calendar_m6_screenshots.dart
 import 'dart:async';
@@ -22,15 +23,28 @@ import 'package:hs360/features/auth/presentation/auth_controller.dart';
 import 'package:hs360/features/calendar/data/calendar_repository.dart';
 import 'package:hs360/features/calendar/domain/calendar_available_actions.dart';
 import 'package:hs360/features/calendar/domain/calendar_enums.dart';
+import 'package:hs360/features/calendar/domain/calendar_event_participant.dart';
+import 'package:hs360/features/calendar/domain/calendar_manual_mutation.dart';
+import 'package:hs360/features/calendar/domain/calendar_meeting_mode.dart';
+import 'package:hs360/features/calendar/domain/calendar_time_window.dart';
 import 'package:hs360/features/calendar/presentation/calendar_controller.dart';
 import 'package:hs360/features/calendar/presentation/calendar_screen.dart';
+import 'package:hs360/features/calendar/presentation/widgets/calendar_conflict_confirm_dialog.dart';
+import 'package:hs360/features/contracts/data/contract_repository.dart';
+import 'package:hs360/features/customers/data/customer_repository.dart';
+import 'package:hs360/features/customers/data/customer_service_location_repository.dart';
+import 'package:hs360/features/customers/domain/customer.dart';
+import 'package:hs360/features/customers/domain/customer_service_location.dart';
+import 'package:hs360/features/customers/domain/customer_type.dart';
+import 'package:hs360/features/customers/domain/service_location_type.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
 import '../features/calendar/fake_calendar_repository.dart';
+import '../features/contracts/fake_contract_repository.dart';
+import '../features/customers/fake_customer_repository.dart';
+import '../features/customers/fake_customer_service_location_repository.dart';
 
-final _rootKey = GlobalKey();
-const _desktop = Size(1280, 900);
-const _narrow = Size(1000, 900);
+part 'calendar_m6_screenshot_support.dart';
 
 void main() {
   setUpAll(_loadFonts);
@@ -44,54 +58,7 @@ void main() {
 
   tearDown(() => calendarClock = previous);
 
-  testWidgets('calendar desktop (AR RTL)', (tester) async {
-    await _pump(
-      tester,
-      size: _desktop,
-      locale: const Locale('ar'),
-      repo: _richRepo(),
-    );
-    expect(tester.takeException(), isNull);
-    await _capture(tester, 'calendar_desktop_ar_rtl');
-  });
-
-  testWidgets('calendar desktop (EN LTR)', (tester) async {
-    await _pump(
-      tester,
-      size: _desktop,
-      locale: const Locale('en'),
-      repo: _richRepo(),
-    );
-    expect(tester.takeException(), isNull);
-    await _capture(tester, 'calendar_desktop_en_ltr');
-  });
-
-  testWidgets('calendar narrow (AR)', (tester) async {
-    await _pump(
-      tester,
-      size: _narrow,
-      locale: const Locale('ar'),
-      repo: _richRepo(),
-    );
-    expect(tester.takeException(), isNull);
-    await _capture(tester, 'calendar_narrow_ar');
-  });
-
-  testWidgets('calendar filter popover (AR)', (tester) async {
-    await _pump(
-      tester,
-      size: _desktop,
-      locale: const Locale('ar'),
-      repo: _richRepo(),
-    );
-    await tester.tap(find.byKey(const Key('calendar-filter-funnel')));
-    await tester.pumpAndSettle();
-    expect(find.byKey(const Key('calendar-filter-popover')), findsOneWidget);
-    expect(tester.takeException(), isNull);
-    await _capture(tester, 'calendar_filter_popover_ar');
-  });
-
-  testWidgets('calendar event actions (AR)', (tester) async {
+  testWidgets('calendar mixed timed/date-only (AR RTL)', (tester) async {
     await _pump(
       tester,
       size: _desktop,
@@ -99,206 +66,388 @@ void main() {
       repo: _richRepo(),
     );
     await _revealAgenda(tester);
-    await tester.tap(find.byKey(const Key('calendar-event-ink-evt-1')));
+    expect(tester.takeException(), isNull);
+    await _capture(tester, 'm7a_calendar_mixed_ar_rtl');
+  });
+
+  testWidgets('calendar mixed timed/date-only (EN LTR)', (tester) async {
+    await _pump(
+      tester,
+      size: _desktop,
+      locale: const Locale('en'),
+      repo: _richRepo(),
+    );
+    await _revealAgenda(tester);
+    expect(tester.takeException(), isNull);
+    await _capture(tester, 'm7a_calendar_mixed_en_ltr');
+  });
+
+  testWidgets('create manual event dialog (AR RTL)', (tester) async {
+    await _pump(
+      tester,
+      size: _desktop,
+      locale: const Locale('ar'),
+      repo: _richRepo(),
+    );
+    await tester.tap(find.byKey(const Key('calendar-create-event')));
     await tester.pumpAndSettle();
+    expect(find.byKey(const Key('calendar-create-event-dialog')), findsOneWidget);
     expect(
-      find.byKey(const Key('calendar-event-actions-evt-1')),
+      find.byKey(const Key('calendar-manual-scheduled-date')),
       findsOneWidget,
     );
     expect(tester.takeException(), isNull);
-    await _capture(tester, 'calendar_event_actions_ar');
+    await _capture(tester, 'm7a_create_manual_dialog_ar_rtl');
   });
-}
 
-FakeCalendarRepository _richRepo() {
-  final events = [
-    sampleCalendarEvent(
-      id: 'evt-1',
-      titleAr: 'تعبئة زيت المحرك - موعد دوري',
-      titleEn: 'Engine oil refill — scheduled visit',
-      customerId: 'cust-1',
-      customerNameAr: 'مؤسسة النخبة لقطع غيار السيارات',
-      customerNameEn: 'Elite Auto Parts',
-      contractId: 'ct-1',
-      contractNumber: 'CT-2026-014',
-      serviceLocationName: 'ورشة الشويخ الصناعية',
-      assignedAgentNameAr: 'أحمد الكندري',
-      assignedAgentNameEn: 'Ahmad Al-Kandari',
-      directionsAvailable: true,
-      availableActions: const CalendarAvailableActions(
-        canViewCustomer: true,
-        canViewContract: true,
-        canAssign: false,
-        canReschedule: false,
-        canCreateManual: false,
-        canOpenDirections: true,
-      ),
-    ),
-    sampleCalendarEvent(
-      id: 'evt-2',
-      type: CalendarEventType.billingDue,
-      status: CalendarEventStatus.pending,
-      titleAr: 'فاتورة صيانة دورية',
-      titleEn: 'Periodic maintenance invoice',
-      customerId: 'cust-2',
-      customerNameAr: 'ورشة الفهد للصيانة',
-      customerNameEn: 'Al-Fahad Workshop',
-      assignedAgentNameAr: 'سارة العتيبي',
-      assignedAgentNameEn: 'Sara Al-Otaibi',
-    ),
-    sampleCalendarEvent(
-      id: 'evt-3',
-      type: CalendarEventType.custom,
-      status: CalendarEventStatus.pending,
-      titleAr: 'زيارة تفتيش غير مجدولة',
-      titleEn: 'Unscheduled inspection visit',
-      customerNameAr: 'شركة المسار للنقل',
-      customerNameEn: 'Al-Masar Transport',
-    ),
-  ];
-
-  return FakeCalendarRepository(
-    listResult: sampleEventList(
-      inRangeRows: events,
-      overdueRows: [
-        sampleCalendarEvent(
-          id: 'od-1',
-          scheduledDate: DateTime(2026, 6, 20),
-          originalDueDate: DateTime(2026, 6, 20),
-          titleAr: 'تعبئة متأخرة — محطة الواحة',
-          titleEn: 'Overdue refill — Al-Waha Station',
-          customerNameAr: 'محطة الواحة',
-          customerNameEn: 'Al-Waha Station',
-          isOverdue: true,
-          overdueDays: 24,
-          overdueState: CalendarOverdueState.overdue,
-        ),
-      ],
-    ),
-    eventCountForDate: (d) {
-      if (d.day == 14) return 3;
-      if (d.day == 15) return 1;
-      if (d.day == 20) return 2;
-      return 0;
-    },
-  );
-}
-
-Future<void> _revealAgenda(WidgetTester tester) async {
-  for (var i = 0; i < 30; i++) {
-    if (find.byKey(const Key('calendar-agenda-date')).evaluate().isNotEmpty) {
-      return;
-    }
-    final list = find.byType(Scrollable).first;
-    await tester.drag(list, const Offset(0, -500));
+  testWidgets('create manual event dialog (EN LTR)', (tester) async {
+    await _pump(
+      tester,
+      size: _desktop,
+      locale: const Locale('en'),
+      repo: _richRepo(),
+    );
+    await tester.tap(find.byKey(const Key('calendar-create-event')));
     await tester.pumpAndSettle();
-  }
-}
-
-Future<void> _pump(
-  WidgetTester tester, {
-  required Size size,
-  required Locale locale,
-  required FakeCalendarRepository repo,
-}) async {
-  tester.view.devicePixelRatio = 1.0;
-  tester.view.physicalSize = size;
-  addTearDown(tester.view.resetPhysicalSize);
-  addTearDown(tester.view.resetDevicePixelRatio);
-  await tester.binding.setSurfaceSize(size);
-  addTearDown(() => tester.binding.setSurfaceSize(null));
-
-  final base = AppTheme.light();
-  final theme = base.copyWith(
-    textTheme: base.textTheme.apply(
-      fontFamily: 'NotoSans',
-      fontFamilyFallback: const ['NotoSansArabic'],
-    ),
-    primaryTextTheme: base.primaryTextTheme.apply(
-      fontFamily: 'NotoSans',
-      fontFamilyFallback: const ['NotoSansArabic'],
-    ),
-  );
-
-  await tester.pumpWidget(
-    RepaintBoundary(
-      key: _rootKey,
-      child: ProviderScope(
-        overrides: [
-          authControllerProvider.overrideWith(
-            () => _TestAuth(
-              _session({
-                'calendar.view',
-                'customers.view',
-                'contracts.view',
-              }),
-            ),
-          ),
-          calendarRepositoryProvider.overrideWith((ref) => repo),
-        ],
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          locale: locale,
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          theme: theme,
-          home: const CalendarScreen(),
-        ),
-      ),
-    ),
-  );
-  await tester.pump();
-  await tester.pumpAndSettle();
-}
-
-Future<void> _capture(WidgetTester tester, String name) async {
-  final boundary =
-      _rootKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
-  await tester.runAsync(() async {
-    final image = await boundary.toImage(pixelRatio: 2.0);
-    final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
-    final dir = Directory('build/screenshots')..createSync(recursive: true);
-    File('${dir.path}/$name.png').writeAsBytesSync(bytes!.buffer.asUint8List());
-    image.dispose();
+    expect(find.byKey(const Key('calendar-create-event-dialog')), findsOneWidget);
+    expect(
+      find.byKey(const Key('calendar-manual-scheduled-date')),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+    await _capture(tester, 'm7a_create_manual_dialog_en_ltr');
   });
-}
 
-Future<void> _loadFonts() async {
-  const families = {
-    'NotoSans': [
-      'assets/fonts/noto/NotoSans-Regular.ttf',
-      'assets/fonts/noto/NotoSans-Bold.ttf',
-    ],
-    'NotoSansArabic': [
-      'assets/fonts/noto/NotoSansArabic-Regular.ttf',
-      'assets/fonts/noto/NotoSansArabic-Bold.ttf',
-    ],
-  };
-  for (final entry in families.entries) {
-    final loader = FontLoader(entry.key);
-    for (final asset in entry.value) {
-      loader.addFont(rootBundle.load(asset));
-    }
-    await loader.load();
-  }
-}
+  testWidgets('internal meeting online mode/link (AR RTL)', (tester) async {
+    await _pump(
+      tester,
+      size: _desktop,
+      locale: const Locale('ar'),
+      repo: _richRepo(),
+    );
+    await tester.tap(find.byKey(const Key('calendar-create-event')));
+    await tester.pumpAndSettle();
+    await _selectManualType(tester, CalendarEventType.internalMeeting);
+    await _selectMeetingModeOnline(tester);
+    await tester.enterText(
+      find.byKey(const Key('calendar-manual-meeting-url')),
+      'https://meet.example.com/hs360-standup',
+    );
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('calendar-manual-meeting-url')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await _capture(tester, 'm7a_meeting_online_ar_rtl');
+  });
 
-class _TestAuth extends AuthController {
-  _TestAuth(this.session);
-  final AppSession? session;
-  @override
-  FutureOr<AppSession?> build() => session;
-}
+  testWidgets('internal meeting online mode/link (EN LTR)', (tester) async {
+    await _pump(
+      tester,
+      size: _desktop,
+      locale: const Locale('en'),
+      repo: _richRepo(),
+    );
+    await tester.tap(find.byKey(const Key('calendar-create-event')));
+    await tester.pumpAndSettle();
+    await _selectManualType(tester, CalendarEventType.internalMeeting);
+    await _selectMeetingModeOnline(tester);
+    await tester.enterText(
+      find.byKey(const Key('calendar-manual-meeting-url')),
+      'https://meet.example.com/hs360-standup',
+    );
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    await _capture(tester, 'm7a_meeting_online_en_ltr');
+  });
 
-AppSession _session(Set<String> permissions) {
-  return AppSession(
-    userId: 'u',
-    email: 'e@test.com',
-    tenantId: 't',
-    tenantUserId: 'tu',
-    accountType: 'user',
-    displayName: 'مستخدم تجريبي',
-    preferredLocale: 'ar',
-    permissions: AppPermissions(isManager: false, permissions: permissions),
-  );
+  testWidgets('participant selection with selected (AR RTL)', (tester) async {
+    await _pump(
+      tester,
+      size: _desktop,
+      locale: const Locale('ar'),
+      repo: _richRepo(),
+    );
+    await tester.tap(find.byKey(const Key('calendar-create-event')));
+    await tester.pumpAndSettle();
+    await _scrollDialogTo(tester, const Key('calendar-manual-participant-search'));
+    final search = find.byKey(const Key('calendar-manual-participant-search'));
+    await tester.enterText(search, 'أحمد');
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pumpAndSettle();
+    expect(find.byType(CheckboxListTile), findsWidgets);
+    await tester.tap(find.byType(CheckboxListTile).first);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    await _capture(tester, 'm7a_participant_selection_ar_rtl');
+  });
+
+  testWidgets('participant selection with selected (EN LTR)', (tester) async {
+    await _pump(
+      tester,
+      size: _desktop,
+      locale: const Locale('en'),
+      repo: _richRepo(),
+    );
+    await tester.tap(find.byKey(const Key('calendar-create-event')));
+    await tester.pumpAndSettle();
+    await _scrollDialogTo(tester, const Key('calendar-manual-participant-search'));
+    final search = find.byKey(const Key('calendar-manual-participant-search'));
+    await tester.enterText(search, 'Ahmad');
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pumpAndSettle();
+    expect(find.byType(CheckboxListTile), findsWidgets);
+    await tester.tap(find.byType(CheckboxListTile).first);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    await _capture(tester, 'm7a_participant_selection_en_ltr');
+  });
+
+  testWidgets('customer visit with customer/location/contract (AR RTL)', (
+    tester,
+  ) async {
+    await _pumpCustomerVisitDialog(tester, locale: const Locale('ar'));
+    expect(find.byKey(const Key('calendar-manual-location')), findsOneWidget);
+    expect(find.byKey(const Key('calendar-manual-contract')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await _capture(tester, 'm7a_customer_visit_ar_rtl');
+  });
+
+  testWidgets('customer visit with customer/location/contract (EN LTR)', (
+    tester,
+  ) async {
+    await _pumpCustomerVisitDialog(tester, locale: const Locale('en'));
+    expect(find.byKey(const Key('calendar-manual-location')), findsOneWidget);
+    expect(find.byKey(const Key('calendar-manual-contract')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await _capture(tester, 'm7a_customer_visit_en_ltr');
+  });
+
+  testWidgets('edit dialog (AR RTL)', (tester) async {
+    await _pump(
+      tester,
+      size: _desktop,
+      locale: const Locale('ar'),
+      repo: _richRepo(),
+    );
+    await _openMeetingActions(tester);
+    await tester.tap(find.byKey(const Key('calendar-edit-manual-evt-meeting')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('calendar-edit-event-dialog')), findsOneWidget);
+    expect(
+      find.byKey(const Key('calendar-manual-scheduled-date')),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+    await _capture(tester, 'm7a_edit_dialog_ar_rtl');
+  });
+
+  testWidgets('edit dialog (EN LTR)', (tester) async {
+    await _pump(
+      tester,
+      size: _desktop,
+      locale: const Locale('en'),
+      repo: _richRepo(),
+    );
+    await _openMeetingActions(tester);
+    await tester.tap(find.byKey(const Key('calendar-edit-manual-evt-meeting')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('calendar-edit-event-dialog')), findsOneWidget);
+    expect(
+      find.byKey(const Key('calendar-manual-scheduled-date')),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+    await _capture(tester, 'm7a_edit_dialog_en_ltr');
+  });
+
+  testWidgets('event action dialog (AR RTL)', (tester) async {
+    await _pump(
+      tester,
+      size: _desktop,
+      locale: const Locale('ar'),
+      repo: _richRepo(),
+    );
+    await _openMeetingActions(tester);
+    expect(
+      find.byKey(const Key('calendar-event-actions-evt-meeting')),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+    await _capture(tester, 'm7a_event_actions_ar_rtl');
+  });
+
+  testWidgets('event action dialog (EN LTR)', (tester) async {
+    await _pump(
+      tester,
+      size: _desktop,
+      locale: const Locale('en'),
+      repo: _richRepo(),
+    );
+    await _openMeetingActions(tester);
+    expect(
+      find.byKey(const Key('calendar-event-actions-evt-meeting')),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+    await _capture(tester, 'm7a_event_actions_en_ltr');
+  });
+
+  testWidgets('event action dialog narrow (AR RTL)', (tester) async {
+    await _pump(
+      tester,
+      size: _narrow,
+      locale: const Locale('ar'),
+      repo: _richRepo(),
+    );
+    await _openMeetingActions(tester);
+    expect(
+      find.byKey(const Key('calendar-event-actions-evt-meeting')),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+    await _capture(tester, 'm7a_event_actions_narrow_ar_rtl');
+  });
+
+  testWidgets('event action dialog narrow (EN LTR)', (tester) async {
+    await _pump(
+      tester,
+      size: _narrow,
+      locale: const Locale('en'),
+      repo: _richRepo(),
+    );
+    await _openMeetingActions(tester);
+    expect(
+      find.byKey(const Key('calendar-event-actions-evt-meeting')),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+    await _capture(tester, 'm7a_event_actions_narrow_en_ltr');
+  });
+
+  testWidgets('cancellation confirmation (AR RTL)', (tester) async {
+    await _pump(
+      tester,
+      size: _desktop,
+      locale: const Locale('ar'),
+      repo: _richRepo(),
+    );
+    await _openMeetingActions(tester);
+    await tester.tap(find.byKey(const Key('calendar-cancel-manual-evt-meeting')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('calendar-cancel-event-dialog')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await _capture(tester, 'm7a_cancel_confirm_ar_rtl');
+  });
+
+  testWidgets('cancellation confirmation (EN LTR)', (tester) async {
+    await _pump(
+      tester,
+      size: _desktop,
+      locale: const Locale('en'),
+      repo: _richRepo(),
+    );
+    await _openMeetingActions(tester);
+    await tester.tap(find.byKey(const Key('calendar-cancel-manual-evt-meeting')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('calendar-cancel-event-dialog')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await _capture(tester, 'm7a_cancel_confirm_en_ltr');
+  });
+
+  testWidgets('participant overlap confirmation (AR RTL)', (tester) async {
+    await _pumpConflictDialog(
+      tester,
+      locale: const Locale('ar'),
+      conflicts: const CalendarManualConflictInfo(
+        scheduleWarnings: [],
+        overlapWarnings: [
+          {'code': 'participant_overlap', 'employee_id': 'emp-1'},
+        ],
+        overlapTotalCount: 2,
+      ),
+    );
+    expect(find.byKey(const Key('calendar-ack-overlap')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await _capture(tester, 'm7a_overlap_confirm_ar_rtl');
+  });
+
+  testWidgets('participant overlap confirmation (EN LTR)', (tester) async {
+    await _pumpConflictDialog(
+      tester,
+      locale: const Locale('en'),
+      conflicts: const CalendarManualConflictInfo(
+        scheduleWarnings: [],
+        overlapWarnings: [
+          {'code': 'participant_overlap', 'employee_id': 'emp-1'},
+        ],
+        overlapTotalCount: 2,
+      ),
+    );
+    expect(find.byKey(const Key('calendar-ack-overlap')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await _capture(tester, 'm7a_overlap_confirm_en_ltr');
+  });
+
+  testWidgets('non-working-day override confirmation (AR RTL)', (tester) async {
+    await _pumpConflictDialog(
+      tester,
+      locale: const Locale('ar'),
+      conflicts: const CalendarManualConflictInfo(
+        scheduleWarnings: [
+          {'code': 'non_working_day'},
+        ],
+        overlapWarnings: [],
+        overlapTotalCount: 0,
+      ),
+    );
+    expect(find.byKey(const Key('calendar-ack-non-working')), findsOneWidget);
+    expect(
+      find.byKey(const Key('calendar-day-off-override-reason')),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+    await _capture(tester, 'm7a_non_working_day_confirm_ar_rtl');
+  });
+
+  testWidgets('non-working-day override confirmation (EN LTR)', (tester) async {
+    await _pumpConflictDialog(
+      tester,
+      locale: const Locale('en'),
+      conflicts: const CalendarManualConflictInfo(
+        scheduleWarnings: [
+          {'code': 'non_working_day'},
+        ],
+        overlapWarnings: [],
+        overlapTotalCount: 0,
+      ),
+    );
+    expect(find.byKey(const Key('calendar-ack-non-working')), findsOneWidget);
+    expect(
+      find.byKey(const Key('calendar-day-off-override-reason')),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+    await _capture(tester, 'm7a_non_working_day_confirm_en_ltr');
+  });
+
+  testWidgets('narrow-window layout (AR RTL)', (tester) async {
+    await _pump(
+      tester,
+      size: _narrow,
+      locale: const Locale('ar'),
+      repo: _richRepo(),
+    );
+    expect(tester.takeException(), isNull);
+    await _capture(tester, 'm7a_narrow_ar_rtl');
+  });
+
+  testWidgets('narrow-window layout (EN LTR)', (tester) async {
+    await _pump(
+      tester,
+      size: _narrow,
+      locale: const Locale('en'),
+      repo: _richRepo(),
+    );
+    expect(tester.takeException(), isNull);
+    await _capture(tester, 'm7a_narrow_en_ltr');
+  });
 }

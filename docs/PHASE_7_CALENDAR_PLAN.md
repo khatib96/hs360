@@ -1,16 +1,19 @@
-# Phase 7 - Calendar and Scheduling Plan
+# Phase 7 - Calendar and Company Appointment Management Plan
 
-> Purpose: build a professional, tenant-safe operational calendar that turns
-> contract-generated schedule data into a clear daily planning surface for the
-> office and assigned employees.
+> Purpose: build a professional, tenant-safe company appointment-management
+> system that combines contract-generated due items with internal meetings,
+> customer visits, tasks, reminders, activities, and other controlled manual
+> business appointments in one operational calendar.
 >
-> Status: **M0–M6 complete / accepted.** Migrations `093`–`097` applied
-> (no `098`). Next: **M7 Manual Events** (not started).
+> Status: **M0–M7A complete / accepted.** Migrations `093`–`099` exist;
+> M7A backend, Flutter UI, and owner visual acceptance closed on 2026-07-15.
+> Next: **M7B Working Calendar Holidays & Exceptions** (not started; no `100`).
 >
-> Owner direction: HS360 appointments are **day-based**, not exact-time
-> appointments. An event is due on a selected calendar date and is expected to
-> happen within that tenant's configured working window for that weekday. The UI
-> must never invent or display a precise appointment time when none exists.
+> Owner direction (revised 2026-07-15): HS360 Calendar is the company's shared
+> appointment-management surface, not only a contract-follow-up calendar. The
+> model is hybrid: generated due items and untimed manual items remain day-based;
+> an explicitly timed manual event may optionally have a same-day start/end
+> window. The UI must never invent a precise time when none was entered.
 >
 > Canonical sources: `CANONICAL_DECISIONS.md`, `MVP_SCOPE.md`,
 > `CONTRACTS_LOGIC.md`, `DATABASE_SCHEMA.md`, `PERMISSIONS.md`,
@@ -22,20 +25,22 @@
 
 ## Executive Summary
 
-Phase 7 is the scheduling and planning layer between contracts and field
-execution.
+Phase 7 is the company-wide scheduling and planning layer. It connects
+contract obligations, office appointments, internal coordination, customer
+visits, and later field execution without confusing plans with completed work.
 
 Phase 6 already creates canonical, idempotent contract-generated calendar rows
 for billing, refills, trial endings, and contract endings. Phase 7 must expose
 those rows through safe read APIs and a professional Arabic/English calendar,
-then add controlled manual scheduling, assignment, date-only rescheduling,
-reminder generation, mobile viewing, and route/directions support.
+then add controlled company appointment management, participants, assignment,
+audited rescheduling, working-date exceptions, reminder generation, mobile
+viewing, and route/directions support.
 
 The phase must preserve one critical boundary:
 
 ```text
-contract or manual planning
-        -> calendar event on a date
+contract or company planning
+        -> date-only due item or optional-time manual appointment
         -> assignment and daily planning
         -> Phase 8 visit execution
         -> GPS/photo/actual stock/payment effects
@@ -67,17 +72,28 @@ At the end of Phase 7:
   - a full working day;
   - a 24-hour working day.
 - Each tenant can configure every weekday independently.
-- Calendar events are scheduled by date, not by exact time.
+- Contract-generated events remain scheduled by date and never receive an
+  invented time.
+- Manual company events may be date-only or may carry an explicitly entered,
+  same-day start/end time window in the tenant's confirmed IANA timezone.
 - Contract-generated events appear without duplication.
 - Users can filter events by date, type, status, employee, customer, contract,
   and service location.
-- Managers or permitted office users can create manual follow-up/custom events.
+- Managers or permitted users can create customer visits, internal meetings,
+  tasks/reminders, internal activities/training, and custom manual events.
+- Meeting/activity participants are modeled separately from the single
+  employee responsible for/assigned to an operational event.
+- Authorized settings users can manage official holidays, company closures,
+  and exceptional working days as working-calendar exceptions rather than
+  pretending they are ordinary appointment cards.
 - Authorized users can assign or reassign employees.
 - Authorized users can reschedule events to another date.
 - Assigned employees see only their own events when they have
   `calendar.view_assigned` rather than global calendar access.
-- Reminders are derived from the event date and the tenant working schedule,
-  not from a fabricated appointment time.
+- Date-only reminders are derived from the event date and tenant working
+  schedule. Timed-manual reminder behavior must use the accepted explicit time
+  contract and cannot silently turn a calendar category into a new notification
+  policy.
 - Mobile users can view their selected-day agenda and open native directions to
   the event's service location.
 - A display-only route view helps the office inspect the geographic distribution
@@ -158,17 +174,24 @@ At the end of Phase 7:
 
 ## Owner Decisions Locked For Phase 7
 
-These decisions come from the 2026-07-12 Phase 7 planning discussion and are
-canonical for this phase.
+These decisions come from the 2026-07-12 Phase 7 planning discussion plus the
+owner's 2026-07-15 company-wide appointment-management expansion. The newer
+manual-event decisions supersede the earlier all-events-date-only wording while
+preserving the accepted behavior of generated events.
 
-1. Calendar appointments are day-based.
-2. A user chooses the event date, not an exact appointment hour.
-3. The event is expected to occur within the configured working window for that
-   date's weekday.
-4. `scheduled_time` is not shown or required in Phase 7 UI.
-5. Phase 7 does not delete the legacy nullable `scheduled_time` column; it keeps
-   future compatibility while all Phase 7 create/reschedule paths write it as
-   `null`.
+1. Contract-generated events and untimed manual events are day-based.
+2. A manual company event always has a date and may optionally enable
+   `Set time` / `تحديد وقت` to capture a same-day start and end.
+3. A date-only event is expected to occur within the configured working window
+   for that date. A timed manual event is validated against the same calendar
+   and may show a warning when it conflicts, but it is not silently moved.
+4. The legacy nullable `scheduled_time` column remains compatibility-only and
+   all new Phase 7 write paths keep it `null`.
+5. M7A should introduce an explicit optional timed-event contract using
+   `scheduled_start_at timestamptz`, `scheduled_end_at timestamptz`, and
+   `scheduled_timezone_name text` (or an equivalently reviewed schema). The
+   three values are either all null or all non-null; end must be after start;
+   overnight manual appointments are outside v1.
 6. Every weekday is configured independently.
 7. Each weekday supports exactly one of these v1 modes:
    - non-working/day off;
@@ -239,34 +262,74 @@ canonical for this phase.
     - at the start of the event working day;
     - at the start of the previous working day.
 34. Both reminder policies are individually configurable in Calendar Settings.
+35. Calendar is company-wide appointment management, not only contract due-date
+    tracking.
+36. Initial manual categories are:
+    - customer visit;
+    - internal meeting;
+    - internal task/reminder;
+    - internal activity/training;
+    - custom.
+37. Official holidays, company closures, and exceptional working days are
+    working-calendar exceptions, not ordinary event types or agenda cards.
+38. Meeting/activity participants use a dedicated participant relation and are
+    distinct from the event's assigned/responsible employee.
+39. An identity with `calendar.view_assigned` may read an event when they are
+    the assigned employee or an explicit participant; the server enforces this
+    scope for rows and counts.
+40. M7A may use optional free-text team/location text. Structured departments,
+    teams, meeting rooms, capacity, and room-conflict enforcement are deferred.
+41. Overlap handling is warning-only in M7A. It must not hard-block valid
+    business scheduling, and date-only events may coexist freely.
+42. Manual events use cancel-with-reason and audit history; M7 does not expose
+    hard delete. `calendar.delete` remains reserved for a later explicit policy.
+43. A manual `task/reminder` category does not by itself create a new custom
+    notification schedule. Notification timing requires a separately accepted
+    reminder contract.
+44. M7 is split into M7A (manual business events/internal appointments) and M7B
+    (working-calendar holidays/exceptions). M8 remains responsible for
+    assignment/reassignment and moving an event to another date.
 
 ---
 
-## Date-Only Scheduling Semantics
+## Hybrid Date and Optional-Time Scheduling Semantics
 
 ### Canonical Event Date
 
-`calendar_events.scheduled_date` is the only appointment date used by Phase 7.
+`calendar_events.scheduled_date` remains the canonical tenant-local calendar
+date for every event.
 
 Phase 7 APIs and UI must:
 
 - require `scheduled_date`;
-- return `scheduled_time = null` or omit it from public DTOs;
+- keep legacy `scheduled_time = null` or omit it from public DTOs;
+- return a nullable typed `time_window` only for explicitly timed manual events;
+- expose canonical tenant-local `HH:mm` start/end display values plus the IANA
+  timezone name in that typed wrapper;
+- resolve submitted local date/time on the server using the tenant's confirmed
+  IANA timezone, never the device or database-server timezone;
+- preserve the IANA timezone snapshot used for the appointment;
+- reject incomplete time triples, end-before-start, cross-date, and overnight
+  windows in v1;
 - never sort a day's events by a made-up time;
-- use stable operational ordering instead;
+- sort explicitly timed manual events by their start time and use stable
+  operational ordering for date-only items;
 - display wording such as `خلال ساعات العمل` / `During working hours`;
 - show the resolved work window separately from the event itself.
 
 ### Stable Daily Ordering
 
-Within one selected date, default ordering should be:
+Within one selected date, the agenda should present:
 
-1. urgent/overdue indicators if present;
-2. event-type operational priority;
-3. assigned employee name;
-4. customer name;
-5. service-location name;
-6. stable event id as the final tie-breaker.
+1. `Timed appointments` / `مواعيد محددة الوقت`, ordered by start time then
+   stable event id;
+2. `Day tasks and due items` / `مهام واستحقاقات اليوم`, using:
+   - urgent/overdue indicators;
+   - event-type operational priority;
+   - assigned employee name;
+   - customer name;
+   - service-location name;
+   - stable event id as the final tie-breaker.
 
 Do not use row creation time as a business priority.
 
@@ -288,7 +351,9 @@ result.
 
 ### Rescheduling
 
-Rescheduling means changing `scheduled_date` only.
+M8 rescheduling means changing `scheduled_date`. Editing an optional manual
+time window without changing the date belongs to M7A and must use the same
+version/audit protections.
 
 - Generated provenance and `source_key` remain immutable.
 - The original generated contractual date must remain recoverable in audit or
@@ -546,24 +611,29 @@ Saturday   24 hours
 The word `Half day` is a presentation summary inferred from the duration. The
 stored truth remains the configured start/end window.
 
-### Future Date Exceptions
+### Working-Date Exceptions (M7B)
 
-Public holidays, temporary closures, Ramadan hours, and one-off extended days
-will eventually need date-specific overrides. Phase 7 v1 does not require the
-full UI, but M1 must avoid a schema design that blocks a later table such as:
+Public holidays, temporary company closures, Ramadan/special hours, and one-off
+working days require date-specific overrides. M7B must add a dedicated model
+such as `tenant_working_date_exceptions`; it must not overload weekly rows or
+create fake calendar-event cards.
 
-```text
-tenant_working_day_overrides
-  tenant_id
-  calendar_date
-  is_working_day
-  is_24_hours
-  work_start
-  work_end
-  reason
-```
+Required concepts:
 
-Do not overload weekly rows to represent one-off holidays.
+- tenant and inclusive date range;
+- localized title (`title_ar` / `title_en` with accepted fallback rules);
+- exception kind: `official_holiday`, `company_closure`, or
+  `exceptional_working_day`;
+- optional notes;
+- active/cancelled lifecycle, version, actor/timestamps, and audit;
+- for exceptional working days only: working-hours/24-hours mode and validated
+  same-day start/end when applicable.
+
+Date-specific exceptions override the weekly schedule for affected dates.
+Active overlapping exceptions are rejected deterministically. A closure never
+silently deletes or moves an event; existing events are shown as conflicts and
+authorized users decide whether to reschedule them. Changes recalculate only
+pending date/working-day reminder anchors and preserve sent history.
 
 ---
 
@@ -624,28 +694,33 @@ external message was delivered.
 2. Weekly tenant working-day/hour foundation.
 3. Tenant timezone foundation if missing.
 4. Focused working-schedule settings read/edit surface.
-5. Date-only calendar event invariants.
+5. Hybrid calendar invariants: generated/date-only items plus optional-time
+   manual company appointments.
 6. Contract-generated event hardening and scheduled batch synchronization.
 7. Reminder idempotency foundation and in-app reminders.
 8. Calendar read RPCs with bounded ranges and filters.
 9. Flutter models, validators, mappers, repositories, controllers, and errors.
 10. Guarded routes, navigation, Arabic/English localization, RTL/LTR.
 11. Desktop upper-calendar/lower-agenda UI.
-12. Manual follow-up/custom events.
-13. Assignment/reassignment.
-14. Date-only rescheduling with audit reason.
-15. Event cancellation and completion only where semantically allowed.
-16. Mobile responsive calendar and assigned-agenda view.
-17. Display-only route map.
-18. Native directions to service-location coordinates/link.
-19. SQL, Dart, widget, integration, permission, performance, and manual
+12. Company-wide manual event categories: customer visit, internal meeting,
+    task/reminder, activity/training, and custom.
+13. Optional manual time windows and participant management.
+14. Official holidays, closures, and exceptional working days.
+15. Assignment/reassignment.
+16. Audited date rescheduling.
+17. Manual cancellation with reason; no hard delete in M7.
+18. Mobile responsive calendar and assigned-agenda view.
+19. Display-only route map.
+20. Native directions to service-location coordinates/link.
+21. SQL, Dart, widget, integration, permission, performance, and manual
     acceptance tests.
-20. Documentation updates and Phase 7 closure record.
+22. Documentation updates and Phase 7 closure record.
 
 ### Out Of Scope
 
-- Exact appointment time booking.
+- Exact-time contract-generated events or fabricated times.
 - Customer-facing appointment-slot selection.
+- Overnight or multi-day timed appointments in M7A.
 - Multiple shifts per weekday.
 - Overnight shifts.
 - Automatic route optimization.
@@ -662,6 +737,9 @@ external message was delivered.
 - WhatsApp/email delivery without separately accepted credentials and worker
   behavior.
 - A complete redesign of every Settings module.
+- Structured departments/teams, meeting-room inventory, room capacity, and
+  hard room-conflict enforcement.
+- Custom per-event notification timing unless separately designed and accepted.
 
 ---
 
@@ -672,12 +750,12 @@ Calendar event and Calendar Settings permissions are deliberately separate:
 | Permission | Intended Phase 7 behavior |
 |------------|---------------------------|
 | `calendar.view` | View all tenant calendar events allowed by read API |
-| `calendar.view_assigned` | View only events assigned to current employee |
-| `calendar.create` | Create manual events only |
-| `calendar.edit` | Assign, reschedule, edit/cancel allowed events, and call approved sync |
-| `calendar.delete` | Delete manual events only when policy accepts deletion |
-| `settings.calendar.view` | View weekly working schedule, selected IANA timezone, and reminder policies |
-| `settings.calendar.edit` | Atomically configure/edit working days, timezone, and reminder policies |
+| `calendar.view_assigned` | View events assigned to the current employee or listing them as an explicit participant |
+| `calendar.create` | Create ordinary manual company events only |
+| `calendar.edit` | Edit/cancel manual events, manage participants, assign/reschedule where their milestone permits, and call approved sync |
+| `calendar.delete` | Reserved; no M7 hard-delete endpoint |
+| `settings.calendar.view` | View weekly working schedule, selected IANA timezone, reminder policies, and working-date exceptions |
+| `settings.calendar.edit` | Atomically configure/edit working days, timezone, reminder policies, holidays, closures, and exceptional working days |
 
 Granting `calendar.view` or `calendar.view_assigned` does not grant Calendar
 Settings access. Grant/revoke administration remains restricted to the manager
@@ -706,9 +784,9 @@ Every public RPC must:
 | Edit title/notes | Allowed with permission | System title/provenance protected; limited operational note may be separate |
 | Assign/reassign | Allowed | Allowed through audited RPC |
 | Reschedule date | Allowed with reason | Allowed operationally with reason while preserving original due provenance |
-| Mark done | Allowed when appropriate | Allowed only when it does not fake financial/field completion |
+| Mark done / close | Allowed through the audited manual lifecycle RPC as an informational appointment state only; it must not claim Phase 8 visit/service execution | Allowed only through the trusted execution/lifecycle path |
 | Cancel | Allowed with reason | Controlled; must not corrupt contract generation/lifecycle semantics |
-| Delete | Limited/audited | Forbidden |
+| Delete | No hard delete in M7; cancel with reason | Forbidden |
 | Change source kind/key | Forbidden | Forbidden |
 
 M1/M2 must settle whether operational reschedule state is stored directly on
@@ -732,6 +810,8 @@ should include:
 
 - event identity, type, status, and provenance;
 - scheduled date;
+- nullable explicit manual-event `time_window` with canonical display values
+  and timezone name;
 - localized/server-provided titles;
 - assignment identity and display name;
 - customer identity and display name;
@@ -761,6 +841,7 @@ should include:
 - event type;
 - event status;
 - assigned employee;
+- participant employee;
 - unassigned only;
 - customer;
 - contract;
@@ -811,7 +892,8 @@ Required behavior:
 - A day off displays `يوم إجازة` / `Day off` clearly.
 - A 24-hour day displays `24 ساعة` / `24 hours`.
 - A limited day displays the configured window.
-- Events do not display an appointment clock time.
+- Month cells never display clock times. The agenda displays a time range only
+  for an explicitly timed manual event.
 - Empty days have a useful empty state and permission-aware create action.
 - Loading, retry, partial failure, and permission-denied states are explicit.
 
@@ -833,6 +915,7 @@ Each agenda item should show only operationally useful information:
 
 - type/status;
 - title;
+- optional manual-event time range;
 - customer;
 - service location;
 - contract number when linked;
@@ -846,7 +929,7 @@ Do not show internal source keys or raw UUIDs.
 
 ### Mobile Calendar
 
-Mobile uses the same date-only domain contract.
+Mobile uses the same hybrid domain contract.
 
 - stacked compact month/date strip above agenda;
 - selected-day agenda optimized for touch;
@@ -864,13 +947,14 @@ Mobile uses the same date-only domain contract.
 |-----------|------|--------|
 | M0 | Decisions, Scope Lock, and Reconciliation | Phase 7 rules are canonical and conflicts are resolved |
 | M0.5 | Safety Snapshot and Rollback | Verified Phase 6 baseline and rollback evidence |
-| M1 | Calendar and Working-Schedule Data Model | Date-only events and per-weekday working windows are safely represented |
+| M1 | Calendar and Working-Schedule Data Model | Generated/date-only events and per-weekday working windows are safely represented |
 | M2 | Event Generation Engine | Contract events stay complete, idempotent, and operationally stable |
 | M3 | Reminder Foundation | Date/working-day reminders are idempotent and timezone-safe |
 | M4 | Calendar Read APIs | Bounded, filtered, permission-safe calendar data is available |
 | M5 | Flutter Domain, Repository, Routes, and Navigation | Application layer is ready without widget-level database access |
 | M6 | Desktop Calendar UI | Upper calendar and lower selected-day agenda work professionally |
-| M7 | Manual Events | Follow-up/custom events can be created and managed safely |
+| M7A | Manual Business Events & Internal Appointments | Company visits, meetings, tasks, activities, custom items, optional time, and participants are managed safely |
+| M7B | Working Calendar Holidays & Exceptions | Holidays, closures, and exceptional working days override the weekly calendar safely |
 | M8 | Assignment and Rescheduling | Employees can be assigned and dates moved through audited RPCs |
 | M9 | Mobile Calendar | Touch-friendly assigned calendar works in Arabic and English |
 | M10 | Route View and Directions | Daily geography is visible and native maps can open locations |
@@ -899,7 +983,8 @@ Make this file the canonical Phase 7 execution plan before schema or UI work.
    - `DATABASE_SCHEMA.md`;
    - `MVP_SCOPE.md` if owner-approved scope exceeds view-only;
    - `RPC_SPEC.md` once RPC signatures are accepted.
-4. Lock date-only semantics and the working-day rules in this file.
+4. Lock the original generated/date-only semantics and working-day rules in
+   this file. The later 2026-07-15 owner revision extends manual events only.
 5. Lock that tenant timezone is an owner-selected IANA setting with no inferred
    default.
 6. Lock unconfigured seven-row schedule backfill with
@@ -923,7 +1008,9 @@ Make this file the canonical Phase 7 execution plan before schema or UI work.
 
 ### Acceptance
 
-- No exact-time appointment requirement remains in Phase 7.
+- At M0 closure, no exact-time requirement existed. This historical acceptance
+  is superseded only for explicitly timed manual events by the 2026-07-15 M7A
+  expansion; generated events remain date-only.
 - Working-day behavior and day-off override behavior are explicit.
 - Reminder rules no longer depend on a fabricated event time.
 - Phase 7 versus Phase 8 boundaries are explicit.
@@ -1045,9 +1132,10 @@ future operational overrides safely.
    - 24-hour state;
    - tenant-local label inputs.
 9. Define the future date-override extension point without prematurely building
-   holiday management UI.
+   holiday management UI. M7B later adopts that extension point.
 10. Preserve `calendar_events.scheduled_time` as nullable legacy compatibility,
-    but make all new Phase 7 write paths date-only.
+    and keep the M1-M6 paths date-only. M7A must use the separate optional
+    start/end/timezone contract rather than repurposing this legacy field.
 11. Add any schema needed to preserve original contractual date versus human
     operational reschedule.
 12. Add `original_due_date` as required schedule provenance and prepare a
@@ -1362,7 +1450,8 @@ Fixed gaps found after the initial land and final acceptance correction:
 **Status: closed / accepted (2026-07-15)** after the owner-approved visual/UX
 corrective pass. The compact search/filter toolbar, filter popover, event
 action menu, and direct month/year selectors are accepted. No migration `098`.
-Next: M7 Manual Events (not started).
+Next: M7A Manual Business Events & Internal Appointments (subsequently closed /
+accepted on 2026-07-15 through migrations `098`/`099`).
 
 ### Goal
 
@@ -1393,7 +1482,8 @@ Deliver the professional upper-calendar/lower-agenda desktop experience.
 
 - Clicking a calendar day updates the lower agenda in place.
 - The page clearly shows day off, limited hours, full-day hours, and 24 hours.
-- No exact appointment time appears.
+- No fabricated appointment time appears; M6 predates optional-time manual
+  creation and therefore continues to show only the accepted date-only data.
 - Month navigation does not lose filters unexpectedly.
 - Arabic and English layouts remain readable.
 - Large event counts do not overflow the month grid or agenda.
@@ -1436,40 +1526,167 @@ analyze 0, diff check clean. **M6 closed / accepted.** No commit/push unless
 requested.
 ---
 
-## M7 - Manual Events
+## M7A - Manual Business Events and Internal Appointments
+
+**Status: closed / accepted (2026-07-15).** Migration `098` is the enum-only
+barrier; migration `099` contains the manual-event body, RPC/read/reminder
+extensions, and lifecycle contracts. Flutter implementation, complete SQL and
+Flutter regressions, and owner AR/EN visual acceptance are complete.
 
 ### Goal
 
-Allow authorized users to create and manage non-generated planning events.
+Expand Calendar from contract due-date viewing into controlled company-wide
+appointment management without weakening generated-event provenance or pulling
+Phase 8 execution into Phase 7.
 
 ### Work
 
-1. Add atomic manual-event create RPC.
-2. Limit manual types initially to accepted operational values such as:
-   - `follow_up`;
-   - `custom`.
-3. Require date and bilingual/fallback title rules.
-4. Support optional customer, service location, contract, and assignee with
-   strict tenant/alignment validation.
-5. Write `scheduled_time = null`.
-6. Warn/require override confirmation for a day off.
-7. Add idempotency for retry/double-submit.
-8. Add controlled edit/cancel/delete behavior.
-9. Preserve audit history; prefer cancellation over destructive deletion once
-   the event has operational history/reminders.
-10. Build desktop create/edit dialog or form consistent with existing document
-    UI patterns.
-11. Add validation, permission, tenant, idempotency, widget, and controller
-    tests.
+1. Add atomic, idempotent manual-event create/edit/cancel RPCs.
+2. Support the initial categories:
+   - customer visit;
+   - internal meeting;
+   - internal task/reminder;
+   - internal activity/training;
+   - custom.
+3. Require `scheduled_date`, category, and bilingual/fallback title rules;
+   support optional notes and optional free-text team/location.
+4. Support optional customer, service location, and contract relationships with
+   strict same-tenant and parent/child alignment validation. Reading linked
+   customer/contract detail still requires that module's own view permission.
+5. Add optional `Set time` / `تحديد وقت` behavior for manual events only:
+   - date-only: start/end/timezone are all null;
+   - timed: start/end/timezone are all non-null;
+   - resolve local input on the server using the tenant-confirmed IANA timezone;
+   - require end after start and the same local `scheduled_date`;
+   - reject overnight windows in v1;
+   - keep legacy `scheduled_time = null`.
+6. Return nullable typed `time_window` data; do not leak raw device-local time or
+   make Flutter infer timezone conversions independently.
+7. Add `calendar_event_participants` (or reviewed equivalent) for meetings and
+   activities. Participants are not the event's assigned/responsible employee.
+8. Provide a permission-safe active-employee participant lookup owned by
+   Calendar; do not reuse unrelated `warehouses.view` as appointment authority.
+9. Extend assigned-only reads so an employee sees events assigned to them or
+   explicitly listing them as a participant, including counts and pagination.
+10. Detect participant/time overlaps and return a warning requiring explicit
+    confirmation; do not hard-block. Do not implement room conflict checks.
+11. Warn/require explicit recorded override for creation on a resolved closure
+    or non-working day.
+12. Protect lifecycle and provenance:
+    - only `source_kind = manual` is mutable through these RPCs;
+    - generated rows cannot use manual mutation paths;
+    - cancel requires a non-empty reason;
+    - no hard delete in M7;
+    - category is immutable after creation unless a separately reviewed safe
+      transition matrix is accepted;
+    - version/optimistic-concurrency and audit are mandatory.
+13. Editing time within the same date belongs to M7A. Moving the event to a
+    different date and assignment/reassignment remain M8.
+14. Build desktop create/edit/detail/action UI with date-only as the default and
+    optional-time/participants shown only when enabled and permitted.
+15. Update the agenda to separate timed appointments from date-only tasks/due
+    items. Month cells continue to show counts only.
+16. Treat `task/reminder` as an event category only; do not add custom
+    notification timing without a separate accepted reminder design.
+17. Add SQL/Dart/widget tests covering tenant isolation, permissions,
+    idempotency, DST/timezone boundaries, malformed time triples, overlap
+    warnings, participant visibility, lifecycle, generated-row protection, and
+    absence of financial/stock/visit side effects.
 
 ### Acceptance
 
-- A manual event appears immediately on the selected date.
-- It has `source_kind = manual` and no generated source key.
-- A cross-tenant/customer/location/employee combination is rejected.
-- Double-submit does not duplicate the event.
-- Day-off creation requires an explicit recorded override.
-- Manual mutations create no financial, stock, or visit effects.
+- Each accepted company event category can be created as a date-only item.
+- A manual event may optionally carry a valid same-day tenant-timezone time
+  window; disabling time clears the complete time triple atomically.
+- A timed item is ordered/shown only in the agenda, never as clock text in a
+  month cell.
+- Participant and assigned-employee concepts remain separate and tenant-safe.
+- Assigned-only visibility includes assignment or explicit participation and
+  leaks no counts for unrelated employees.
+- Cross-tenant or misaligned customer/location/contract/employee combinations
+  are rejected.
+- Retry/double-submit does not duplicate the event.
+- Conflict warnings require explicit confirmation but do not become a hard
+  scheduling engine.
+- Cancellation preserves audit history; no M7 hard delete exists.
+- Manual mutations create no financial, stock, GPS, photo, payment, or visit
+  completion effects.
+
+### Delivered and closure evidence
+
+- Accepted categories: customer visit, internal meeting, internal task/reminder,
+  internal activity/training, and custom event.
+- Manual events support date-only scheduling or an explicit same-day time
+  window; generated events never receive fabricated clock times.
+- Customer/location/contract alignment, participant lookup/visibility,
+  assigned-only participation, warning-only overlap confirmation, and
+  non-working-day confirmation are permission- and tenant-safe.
+- Internal meetings support physical/online modes, optional HTTPS join link,
+  organizer-controlled lifecycle, participant notices, and idempotent retries.
+- Create/update/cancel/mark-done or close flows use optimistic concurrency,
+  cancellation reasons, immutable audit snapshots, and generated-row
+  protection. No hard delete or Phase 8 execution side effects were added.
+- Reminder reconciliation preserves plan identity and immutable delivery
+  history; meeting-notice emission is atomic and concurrency-tested.
+- Desktop UI includes create/edit forms, customer-visit relations, participant
+  selection, timed/date-only agenda grouping, permission-aware event actions,
+  join meeting, close/done confirmation, destructive cancellation, and AR/EN
+  RTL/LTR plus narrow-layout support.
+- Final gates: screenshot harness **24** passed; focused Calendar + AppShell
+  **264** passed; routing guards **71** passed; full Flutter **1121** passed;
+  `flutter analyze` clean; complete SQL suite passed; `git diff --check` clean.
+- The owner accepted the corrected visual evidence on 2026-07-15. Live
+  authenticated AR/EN captures remain a preferred pre-release smoke check, not
+  a milestone blocker. A partially visible participant row in one harness image
+  is retained only as non-blocking polish if scrolling has no overflow.
+- M7B, migration `100`, M8 mutations, and Phase 8 execution were not started.
+
+---
+
+## M7B - Working Calendar Holidays and Exceptions
+
+**Status:** not started. M7A is now accepted; M7B begins only after an explicit
+owner request. Expected migration `100` remains uncreated.
+
+### Goal
+
+Let authorized settings users represent real company non-working and exceptional
+working dates without misclassifying them as ordinary appointments.
+
+### Work
+
+1. Add a tenant-safe `tenant_working_date_exceptions` model with RLS/ACL,
+   versioning, audit, and active/cancelled lifecycle.
+2. Support inclusive date ranges, localized title/fallback, optional notes, and
+   these kinds:
+   - official holiday;
+   - company closure;
+   - exceptional working day.
+3. For exceptional working days, support validated working-hours or 24-hour
+   mode; reject split and overnight windows in v1.
+4. Make a date exception override the tenant weekly schedule for date
+   resolution, calendar labels, conflicts, and reminder anchors.
+5. Reject active overlapping exceptions deterministically.
+6. Keep event facts unchanged: adding a holiday/closure never deletes, cancels,
+   or silently reschedules an event; affected events display conflicts.
+7. Recalculate pending reminders only; sent history remains immutable.
+8. Require `settings.calendar.view/edit` rather than event-view permissions.
+9. Build a focused settings UI to list, create, edit, cancel, and inspect
+   exception ranges in Arabic/English.
+10. Add SQL/Flutter tests for range boundaries, precedence, overlaps,
+    timezone/DST behavior, permission separation, reminder recalculation,
+    conflicts, audit, and tenant isolation.
+
+### Acceptance
+
+- A holiday or company closure overrides the weekly schedule and is visibly
+  distinct from an ordinary day off.
+- An exceptional working day can reopen a weekly day off with accepted hours.
+- Exceptions never appear as fake appointment cards.
+- Active overlaps are rejected; cancellation restores deterministic resolution.
+- Existing events remain in place and show conflicts until an authorized user
+  chooses a later M8 reschedule action.
+- Only Calendar Settings permissions can manage exceptions.
 
 ---
 
@@ -1482,7 +1699,8 @@ Support professional office dispatch while preserving event provenance.
 ### Work
 
 1. Add assign/reassign RPC with tenant-safe active employee validation.
-2. Add date-only reschedule RPC with mandatory reason.
+2. Add audited date-reschedule RPC with mandatory reason; preserve or validate
+   an existing manual time window against the target tenant-local date.
 3. Add day-off override behavior.
 4. Preserve original contractual/generated due date.
 5. Protect source kind/key and generated metadata.
@@ -1520,7 +1738,8 @@ Phase 8 execution into Phase 7.
 2. Build compact mobile month/date navigation above the agenda.
 3. Default field users to assigned events and today.
 4. Show customer, service location, contract, status, and directions action.
-5. Show working-day label/window without exact appointment time.
+5. Show working-day label/window and show a clock range only for explicitly
+   timed manual events.
 6. Provide filters appropriate to permission and screen width.
 7. Hide office mutations from users without permission.
 8. Support refresh/retry and session/permission changes.
@@ -1625,7 +1844,7 @@ acceptance, then close the phase.
 - unconfigured seven-row schedule, absent timezone, and zero reminder creation;
 - dedicated Calendar Settings permissions independent from event viewing;
 - timezone resolution;
-- date-only event enforcement;
+- generated/date-only enforcement and optional manual-time invariants;
 - tenant isolation;
 - global versus assigned-only reads;
 - contract generation idempotency;
@@ -1637,7 +1856,10 @@ acceptance, then close the phase.
 - manual next-date override permission/reason/audit contract;
 - generation/reschedule coexistence;
 - day-off conflict behavior;
-- manual event idempotency and alignment;
+- company manual-event category, idempotency, alignment, time-window,
+  participant, lifecycle, and conflict-warning behavior;
+- holiday/closure/exceptional-working-day precedence, overlap rejection, and
+  settings-permission separation;
 - assignment/reassignment;
 - reschedule audit and optimistic concurrency;
 - reminder deduplication and recalculation;
@@ -1660,7 +1882,9 @@ acceptance, then close the phase.
 - month navigation and filters;
 - selected-day agenda;
 - day-off/half-day/full-day/24-hour labels;
-- manual event form;
+- manual company-event form, optional time window, participant picker, and
+  cancel-with-reason lifecycle;
+- working-date exception settings and precedence states;
 - assignment/reschedule flows;
 - mobile assigned agenda;
 - directions availability and URI behavior;
@@ -1682,25 +1906,33 @@ Run the same core story in English and Arabic:
 3. Open Calendar and verify the split upper/lower layout.
 4. Select multiple dates and verify the lower agenda changes.
 5. Create/activate a contract and observe generated events.
-6. Verify no exact time is shown.
+6. Verify generated and untimed events show no fabricated time; create one
+   explicitly timed manual event and verify its range appears only in the
+   selected-day agenda.
 7. Verify selected-day working labels.
-8. Create a manual follow-up.
-9. Attempt a day-off event and confirm the warning/override trail.
-10. Assign and reassign an employee.
-11. Reschedule a generated event with a reason.
-12. Re-run generation and verify the reschedule/assignment is preserved.
-13. Let a refill due date pass; verify it stays pending/overdue with the original
+8. Create examples of the accepted company event categories, including an
+   internal meeting with participants and a date-only task/reminder.
+9. Create/cancel a holiday or closure and verify it overrides weekly resolution
+   without becoming an appointment card.
+10. Attempt an event on the exception date and confirm the conflict/override
+    trail.
+11. Verify participant overlap is warning-only and assigned-only visibility
+    includes assignment or participation.
+12. Assign and reassign an employee.
+13. Reschedule a generated event with a reason.
+14. Re-run generation and verify the reschedule/assignment is preserved.
+15. Let a refill due date pass; verify it stays pending/overdue with the original
     due date and delay count, and verify no later refill is generated.
-14. Simulate the trusted Phase 8 handoff contract with 500 ml per cycle, 1500 ml
+16. Simulate the trusted Phase 8 handoff contract with 500 ml per cycle, 1500 ml
     delivered, completion on 2026-08-04, and confirmed three-month coverage;
     verify the next due proposal/confirmed date is 2026-11-04 without Phase 7
     stock mutation.
-15. Verify the assigned employee's mobile view.
-16. Verify enabled reminder creation without duplicates and disabled policies
+17. Verify the assigned employee's mobile view.
+18. Verify enabled reminder creation without duplicates and disabled policies
     create none.
-17. Open native directions for a resolved service location.
-18. Verify missing coordinates degrade safely.
-19. Verify calendar actions did not alter stock, invoices, vouchers, journals,
+19. Open native directions for a resolved service location.
+20. Verify missing coordinates degrade safely.
+21. Verify calendar actions did not alter stock, invoices, vouchers, journals,
     or visit completion.
 
 ### Closure Gates
@@ -1723,8 +1955,9 @@ Run the same core story in English and Arabic:
 - The owner accepts the desktop split calendar and selected-day agenda.
 - The phase is not marked complete with skipped reminder, permission, timezone,
   or bilingual gates.
-- Phase 8 receives reliable assigned date-based schedule data without inheriting
-  hidden Phase 7 inconsistencies.
+- Phase 8 receives reliable assigned/participating schedule data, including
+  explicit manual time windows where present, without inheriting hidden Phase 7
+  inconsistencies.
 
 ---
 
@@ -1740,9 +1973,11 @@ after Phase 6 migration `092`:
 | `095_phase_7_calendar_event_generation_engine.sql` | M2 | Confirmed-execution refill chain, deferred lifecycle reconcile, batch ledger |
 | `096_phase_7_calendar_reminders.sql` | M3 | Reminder rules/ledger/job foundation |
 | `097_phase_7_calendar_read_rpc.sql` | M4 | Range/day/filter read contracts |
-| `098_phase_7_calendar_manual_event_rpc.sql` | M7 | Manual create/edit/cancel behavior |
-| `099_phase_7_calendar_assignment_rpc.sql` | M8 | Assignment/reschedule/concurrency behavior |
-| `100_phase_7_calendar_closure_hardening.sql` | M11/M12 | Only evidence-backed closure fixes |
+| `098_phase_7_manual_business_event_types.sql` | M7A | Enum ADD VALUE only (`customer_visit`, `internal_meeting`, `internal_task`, `internal_activity`) |
+| `099_phase_7_manual_business_events.sql` | M7A | Optional time windows, participants, lifecycle RPCs, read/reminder extensions |
+| `100_phase_7_working_date_exceptions.sql` | M7B | Holidays, company closures, exceptional working days, resolution precedence |
+| `101_phase_7_calendar_assignment_rpc.sql` | M8 | Assignment/reschedule/concurrency behavior |
+| `102_phase_7_calendar_closure_hardening.sql` | M11/M12 | Only evidence-backed closure fixes; create only if required |
 
 Do not reserve empty migrations merely to preserve this table. If one milestone
 needs multiple transaction boundaries or enum commits, update the plan before
@@ -1752,14 +1987,17 @@ implementation.
 
 ## Risk Register
 
-### Risk 1 - Fabricated Exact Times
+### Risk 1 - Time Ambiguity or Fabricated Generated Times
 
 Mitigation:
 
 - `scheduled_date` is canonical;
-- Phase 7 write paths set `scheduled_time = null`;
-- UI displays the working window, not an appointment time;
-- reminders use working-day anchors.
+- generated and untimed events keep all optional time fields null;
+- legacy `scheduled_time` remains null;
+- timed manual events require an explicit start/end/timezone triple resolved by
+  the server from the tenant's confirmed IANA timezone;
+- no device-timezone inference, overnight windows, or time text in month cells;
+- date-only reminders continue to use working-day anchors.
 
 ### Risk 2 - Working-Hour Settings Become Hard-Coded
 
@@ -1828,9 +2066,9 @@ Mitigation:
 
 Mitigation:
 
-- build only working days/hours and required timezone surface;
+- build only working days/hours, required timezone, and M7B date exceptions;
 - keep broader company settings redesign out of Phase 7;
-- document future date exceptions without building full holiday management.
+- keep leave management, room inventory, and general HR scheduling out.
 
 ### Risk 10 - Date/Timezone Drift
 
@@ -1876,14 +2114,15 @@ Approximate focused effort after M0 decisions are accepted:
 | M4 | 3-5 days |
 | M5 | 2-4 days |
 | M6 | 4-7 days |
-| M7 | 2-4 days |
+| M7A | 5-8 days |
+| M7B | 3-5 days |
 | M8 | 3-5 days |
 | M9 | 3-5 days |
 | M10 | 3-6 days |
 | M11 | 3-5 days |
 | M12 | 3-5 days |
 
-Total: approximately **36-63 focused development days** before contingency.
+Total: approximately **42-70 focused development days** before contingency.
 
 This is larger than the older two-week roadmap estimate because professional
 delivery includes working schedules, timezone-safe reminders, permission-scoped
@@ -1895,16 +2134,13 @@ Phase 6 foundation can be reused without corrective work.
 
 ## Starting Point For Implementation
 
-M0 and M0.5 are closed. The next milestone is M1, but it must begin only after
-an explicit implementation start.
+M0-M7A are closed/accepted. The next implementation milestone is M7B, but it
+must begin only after the owner explicitly requests implementation. Migration
+`100` does not exist at this closure checkpoint.
 
-Do not begin the calendar UI until:
-
-- date-only semantics are reflected in the schema/RPC plan;
-- working-day and timezone behavior are accepted;
-- generated-event reschedule preservation is proven;
-- global versus assigned read APIs pass SQL tests;
-- Flutter domain/repository/controller layers exist.
+The earlier read/UI prerequisites were satisfied by M1-M6. M7A preserved and
+extended those contracts through forward migrations `098`/`099` and typed
+repository/controller changes rather than rewriting applied migrations.
 
 Do not begin external reminder delivery until:
 
@@ -1918,4 +2154,10 @@ Do not begin route-map implementation until:
 - the map package/provider and privacy terms are accepted;
 - missing-coordinate fallback is designed.
 
-The next implementation action is M4 — Calendar Read APIs.
+The M7A enum/key names, time schema, participant lookup contract, and lifecycle
+RPC shapes are now implemented and accepted. Before M7B implementation, lock
+exception range precedence and the settings UI contract; then create migration
+`100` only as part of the explicitly approved M7B implementation.
+
+The next implementation action is M7B — Working Calendar Holidays &
+Exceptions, only after an explicit owner request.

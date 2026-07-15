@@ -14,6 +14,15 @@ class CalendarException extends AppException {
   static const malformedResponse = 'malformed_response';
   static const supabaseNotConfigured = 'supabaseNotConfigured';
   static const unknown = 'unknown';
+  static const staleVersion = 'stale_version';
+  static const confirmationRequired = 'confirmation_required';
+  static const idempotencyPayloadMismatch = 'idempotency_payload_mismatch';
+  static const localTimeNonexistent = 'calendar_local_time_nonexistent';
+  static const localTimeAmbiguous = 'calendar_local_time_ambiguous';
+  static const timezoneUnconfigured = 'calendar_timezone_unconfigured';
+  static const timeWindowCrossDate = 'calendar_time_window_cross_date';
+  static const conflictConfirmationRequired =
+      'calendar_conflict_confirmation_required';
 
   factory CalendarException.fromSupabase(
     Object error, {
@@ -42,6 +51,46 @@ class CalendarException extends AppException {
     if (message.contains('malformed_response')) {
       return CalendarException(
         code: malformedResponse,
+        technicalDetail: message,
+      );
+    }
+    if (message.contains('stale_version')) {
+      return CalendarException(code: staleVersion, technicalDetail: message);
+    }
+    if (message.contains('idempotency_payload_mismatch')) {
+      return CalendarException(
+        code: idempotencyPayloadMismatch,
+        technicalDetail: message,
+      );
+    }
+    if (message.contains('calendar_local_time_nonexistent')) {
+      return CalendarException(
+        code: localTimeNonexistent,
+        technicalDetail: message,
+      );
+    }
+    if (message.contains('calendar_local_time_ambiguous')) {
+      return CalendarException(
+        code: localTimeAmbiguous,
+        technicalDetail: message,
+      );
+    }
+    if (message.contains('calendar_timezone_unconfigured')) {
+      return CalendarException(
+        code: timezoneUnconfigured,
+        technicalDetail: message,
+      );
+    }
+    if (message.contains('calendar_time_window_cross_date')) {
+      return CalendarException(
+        code: timeWindowCrossDate,
+        technicalDetail: message,
+      );
+    }
+    if (message.contains('calendar_conflict_confirmation_required') ||
+        message.contains('confirmation_required')) {
+      return CalendarException(
+        code: confirmationRequired,
         technicalDetail: message,
       );
     }

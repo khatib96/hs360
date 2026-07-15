@@ -8,9 +8,12 @@ import 'package:hs360/features/calendar/domain/calendar_date.dart';
 import 'package:hs360/features/calendar/domain/calendar_enums.dart';
 import 'package:hs360/features/calendar/domain/calendar_event.dart';
 import 'package:hs360/features/calendar/domain/calendar_event_list_result.dart';
+import 'package:hs360/features/calendar/domain/calendar_event_participant.dart';
 import 'package:hs360/features/calendar/domain/calendar_filters.dart';
+import 'package:hs360/features/calendar/domain/calendar_meeting_mode.dart';
 import 'package:hs360/features/calendar/domain/calendar_range_summary.dart';
 import 'package:hs360/features/calendar/domain/calendar_settings.dart';
+import 'package:hs360/features/calendar/domain/calendar_time_window.dart';
 import 'package:hs360/features/calendar/domain/calendar_working_day.dart';
 
 CalendarWorkingDay sampleCalendarWorkingDay({
@@ -56,6 +59,8 @@ CalendarEvent sampleCalendarEvent({
   String? titleEn,
   CalendarEventType type = CalendarEventType.refillDue,
   CalendarEventStatus status = CalendarEventStatus.pending,
+  CalendarEventSourceKind sourceKind =
+      CalendarEventSourceKind.contractGenerated,
   String? customerId,
   String? customerNameAr,
   String? customerNameEn,
@@ -69,13 +74,18 @@ CalendarEvent sampleCalendarEvent({
   int overdueDays = 0,
   CalendarOverdueState overdueState = CalendarOverdueState.notOverdue,
   CalendarAvailableActions? availableActions,
+  int scheduleVersion = 1,
+  CalendarTimeWindow? timeWindow,
+  List<CalendarEventParticipant> participants = const [],
+  CalendarMeetingMode? meetingMode,
+  String? meetingUrl,
 }) {
   final date = scheduledDate ?? DateTime(2026, 7, 14);
   return CalendarEvent(
     id: id,
     type: type,
     status: status,
-    sourceKind: CalendarEventSourceKind.contractGenerated,
+    sourceKind: sourceKind,
     scheduledDate: date,
     originalDueDate: originalDueDate ?? date,
     titleAr: titleAr ?? 'تعبئة',
@@ -104,7 +114,16 @@ CalendarEvent sampleCalendarEvent({
           canReschedule: false,
           canCreateManual: false,
           canOpenDirections: false,
+          canEditManual: false,
+          canCancelManual: false,
+          canMarkManualDone: false,
+          canOpenMeetingLink: false,
         ),
+    scheduleVersion: scheduleVersion,
+    timeWindow: timeWindow,
+    participants: participants,
+    meetingMode: meetingMode,
+    meetingUrl: meetingUrl,
   );
 }
 
@@ -219,6 +238,7 @@ class FakeCalendarRepository extends CalendarRepository {
     this.workingDayForDate,
     this.eventCountForDate,
     this.echoAgendaDate = false,
+    this.participantCandidates = const [],
   }) : rangeResult = rangeResult ?? sampleRangeSummary(),
        listResult = listResult ?? sampleEventList(),
        super(null);
@@ -238,6 +258,9 @@ class FakeCalendarRepository extends CalendarRepository {
 
   /// When true, agenda list rows are generated for the requested dateFrom.
   bool echoAgendaDate;
+
+  /// Optional participant-candidate list for M7A create/edit dialogs.
+  List<CalendarEventParticipant> participantCandidates;
 
   /// Gates: when non-null, the corresponding call awaits [Completer.future]
   /// before returning (lets tests switch tenant mid-flight).
@@ -402,5 +425,22 @@ class FakeCalendarRepository extends CalendarRepository {
       );
     }
     return listResult;
+  }
+
+  @override
+  Future<List<CalendarEventParticipant>> listParticipantCandidates(
+    AppSession session, {
+    String? search,
+    int limit = 50,
+  }) async {
+    final q = search?.trim().toLowerCase() ?? '';
+    final filtered = q.isEmpty
+        ? participantCandidates
+        : participantCandidates.where((p) {
+            final ar = p.nameAr.toLowerCase();
+            final en = (p.nameEn ?? '').toLowerCase();
+            return ar.contains(q) || en.contains(q);
+          }).toList();
+    return filtered.take(limit.clamp(1, 100)).toList();
   }
 }

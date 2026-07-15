@@ -19,7 +19,7 @@
 | **4 - Customers, Suppliers & CoA** | Engineering complete | 2026-06-06 |
 | **5 - Invoices, Vouchers & Journal** | Done | M1–M10 closed through migration `076` |
 | **6 - Contracts** | Complete | M0–M13 closed (2026-07-12) |
-| **7 - Calendar** | M1 complete | Working-schedule model + settings UI closed 2026-07-12 (`093`–`094`); next M2 |
+| **7 - Calendar & Company Appointments** | M7A complete | M1–M7A closed through migrations `098`/`099` (2026-07-15); M7B next |
 | **8 - Mobile Field Ops** | Not started | - |
 | **9 - POS, Maintenance & HR** | Not started | - |
 | **10 - Reports & Close** | Not started | - |
@@ -644,19 +644,23 @@ The core of the system: contracts can be created, billed, refilled, and closed.
 
 ---
 
-## Phase 7 — Calendar & Scheduling (≈ 2 weeks)
+## Phase 7 — Calendar & Company Appointment Management
 
 > Detailed execution plan: `docs/PHASE_7_CALENDAR_PLAN.md`. Its M0-M12
-> milestone order and owner-locked date-only scheduling semantics supersede the
-> older high-level ordering below where they conflict. The estimate above is a
-> legacy roadmap estimate; use the detailed plan for professional delivery
-> sizing.
+> milestone order, M7A/M7B split, and owner-locked hybrid scheduling semantics
+> supersede older high-level ordering where they conflict. The former two-week
+> estimate is a legacy roadmap estimate; use the detailed plan for professional
+> delivery sizing.
+>
+> Current status: **M1–M7A closed / accepted.** M7B Working Calendar Holidays
+> & Exceptions is next; migration `100` has not been created.
 
 ### Goal
-A unified date-based calendar showing all scheduled operational events and the
-selected day's agenda. Events occur during the tenant's configured working
-window for that weekday; Phase 7 does not require or display an exact
-appointment time.
+A unified company appointment-management calendar showing contract-generated
+due items, customer visits, internal meetings, tasks/reminders, activities, and
+the selected day's agenda. Generated and untimed events remain day-based;
+manual events may optionally have an explicitly entered same-day time window in
+the tenant's confirmed IANA timezone.
 
 ### Tasks
 1. Harden the existing `calendar_events` table, RLS, and Phase 6 M12 provenance
@@ -669,17 +673,27 @@ appointment time.
 4. Add date/working-day reminder foundations without fabricating event times
 5. Calendar screen (desktop): upper calendar + lower selected-day agenda, with
    Day / Week / Month presentation as accepted in the detailed plan
-6. Calendar screen (mobile): the same date-only model, touch-optimized
-7. Manual event creation (follow-ups, custom)
-8. Date-only rescheduling; optional desktop drag-and-drop uses the same audited RPC
-9. Agent assignment / reassignment
-10. Route View: map of a user's selected-day events by service location and
+6. Calendar screen (mobile): the same hybrid model, touch-optimized
+7. M7A company manual events: customer visits, internal meetings,
+   tasks/reminders, activities/training, custom items, optional same-day time,
+   and participants distinct from assignment
+8. M7B working-date exceptions: official holidays, company closures, and
+   exceptional working days
+9. Audited date rescheduling; optional desktop drag-and-drop uses the same RPC
+10. Agent assignment / reassignment
+11. Route View: map of a user's selected-day events by service location and
     area, display-only in v1 planning
-11. Filters
-12. Native "Directions" action opens the selected service location in the phone's map app via `url_launcher`
+12. Filters
+13. Native "Directions" action opens the selected service location in the phone's map app via `url_launcher`
 
 ### Deliverables
 - Calendar shows real upcoming events
+- Calendar supports company-wide manual appointments without changing
+  generated-event provenance
+- Timed manual appointments and date-only tasks/due items remain visibly
+  distinct; month cells show counts, not clock times
+- Holidays/closures override the weekly work calendar without becoming fake
+  event cards
 - Reminders fire on schedule
 - Agents see their assignments
 - Daily route map helps the office review workload geographically
@@ -690,7 +704,7 @@ appointment time.
 - Selecting a date shows that day's agenda and configured working window
 - Day-off, limited-hours, and 24-hour weekdays resolve independently
 - Reminder creation uses the event date and tenant working-day anchors, not an
-  invented exact appointment time
+  invented time for generated/date-only events
 - No working-hours reminder is created until the manager configures all seven
   weekdays and selects an IANA timezone
 - A missed refill stays pending/overdue with its original due date and does not
@@ -953,14 +967,16 @@ These are out of v1 scope but worth noting for the roadmap:
 | 4 — Customers | 1 wk | 7 wk |
 | 5 — Invoices & Vouchers | 10-14 wk | 17-21 wk |
 | 6 — Contracts | 4 wk | 21-25 wk |
-| 7 — Calendar | 2 wk | 23-27 wk |
-| 8 — Mobile | 4 wk | 27-31 wk |
-| 9 — POS + Maint + HR | 3 wk | 30-34 wk |
-| 10 — Reports & Close | 3-4 wk | 33-38 wk |
-| 11 — Comms | 2 wk | 35-40 wk |
-| 12 — Polish & Launch | 3 wk | **38-43 wk** |
+| 7 — Calendar & Company Appointments | 6-10 wk | 27-35 wk |
+| 8 — Mobile | 4 wk | 31-39 wk |
+| 9 — POS + Maint + HR | 3 wk | 34-42 wk |
+| 10 — Reports & Close | 3-4 wk | 37-46 wk |
+| 11 — Comms | 2 wk | 39-48 wk |
+| 12 — Polish & Launch | 3 wk | **42-51 wk** |
 
-**Total: ~38-43 weeks (~9-10 months)** of focused work. Realistic for solo+AI; faster if you skip non-essential features in v1 (POS, advanced HR, full notifications).
+**Total: ~42-51 weeks (~10-12 months)** of focused work. The Phase 7 range now
+includes the owner-approved company appointment-management expansion; delivery
+can be faster if non-essential later-phase features are deferred.
 
 ---
 

@@ -6,12 +6,17 @@ import '../../../core/errors/calendar_exception.dart';
 import '../../../core/network/supabase_providers.dart';
 import '../../auth/domain/app_session.dart';
 import '../domain/calendar_date.dart';
+import '../domain/calendar_event.dart';
 import '../domain/calendar_event_list_result.dart';
+import '../domain/calendar_event_participant.dart';
 import '../domain/calendar_filter_validator.dart';
 import '../domain/calendar_filters.dart';
+import '../domain/calendar_manual_mutation.dart';
+import '../domain/calendar_mutation_validators.dart';
 import '../domain/calendar_permissions.dart';
 import '../domain/calendar_range_summary.dart';
 import 'calendar_event_list_rpc_mapper.dart';
+import 'calendar_manual_mutation_mapper.dart';
 import 'calendar_range_summary_rpc_mapper.dart';
 
 part 'calendar_repository.g.dart';
@@ -47,6 +52,18 @@ class CalendarRepository {
 
   void _assertCanAccess(AppSession session) {
     if (!canAccessCalendar(session)) {
+      throw const CalendarException(code: CalendarException.permissionDenied);
+    }
+  }
+
+  void _assertCanCreate(AppSession session) {
+    if (!canCreateCalendarEvent(session)) {
+      throw const CalendarException(code: CalendarException.permissionDenied);
+    }
+  }
+
+  void _assertCanEdit(AppSession session) {
+    if (!canEditCalendarEvent(session)) {
       throw const CalendarException(code: CalendarException.permissionDenied);
     }
   }
@@ -143,6 +160,115 @@ class CalendarRepository {
         stackTrace: st,
         cursorSupplied: cursorSupplied,
       );
+    }
+  }
+
+  Future<CalendarManualMutationResult> createManualEvent(
+    AppSession session, {
+    required CalendarManualEventData data,
+    required String idempotencyKey,
+  }) async {
+    _assertCanCreate(session);
+    try {
+      final result = await _invokeRpc('create_manual_calendar_event', {
+        'p_data': data.toCreateRpcPayload(),
+        'p_idempotency_key': idempotencyKey,
+      });
+      return mapCalendarManualMutationResult(result);
+    } catch (e, st) {
+      if (e is CalendarException) rethrow;
+      throw CalendarException.fromSupabase(e, stackTrace: st);
+    }
+  }
+
+  Future<CalendarManualMutationResult> updateManualEvent(
+    AppSession session, {
+    required String eventId,
+    required int expectedVersion,
+    required CalendarManualEventData data,
+    required String idempotencyKey,
+  }) async {
+    _assertCanEdit(session);
+    try {
+      final result = await _invokeRpc('update_manual_calendar_event', {
+        'p_event_id': eventId,
+        'p_expected_version': expectedVersion,
+        'p_data': data.toUpdateRpcPayload(),
+        'p_idempotency_key': idempotencyKey,
+      });
+      return mapCalendarManualMutationResult(result);
+    } catch (e, st) {
+      if (e is CalendarException) rethrow;
+      throw CalendarException.fromSupabase(e, stackTrace: st);
+    }
+  }
+
+  Future<CalendarEvent> cancelManualEvent(
+    AppSession session, {
+    required String eventId,
+    required int expectedVersion,
+    required String reason,
+    required String idempotencyKey,
+  }) async {
+    _assertCanEdit(session);
+    final validation = CalendarMutationValidators.validateCancelReason(reason);
+    if (!validation.isValid) {
+      throw CalendarException(
+        code: CalendarException.validationFailed,
+        technicalDetail: validation.codes.join(','),
+      );
+    }
+    try {
+      final result = await _invokeRpc('cancel_manual_calendar_event', {
+        'p_event_id': eventId,
+        'p_expected_version': expectedVersion,
+        'p_reason': reason.trim(),
+        'p_idempotency_key': idempotencyKey,
+      });
+      return mapCalendarManualOkEvent(result);
+    } catch (e, st) {
+      if (e is CalendarException) rethrow;
+      throw CalendarException.fromSupabase(e, stackTrace: st);
+    }
+  }
+
+  Future<CalendarEvent> markManualEventDone(
+    AppSession session, {
+    required String eventId,
+    required int expectedVersion,
+    required String idempotencyKey,
+  }) async {
+    _assertCanEdit(session);
+    try {
+      final result = await _invokeRpc('mark_manual_event_done', {
+        'p_event_id': eventId,
+        'p_expected_version': expectedVersion,
+        'p_idempotency_key': idempotencyKey,
+      });
+      return mapCalendarManualOkEvent(result);
+    } catch (e, st) {
+      if (e is CalendarException) rethrow;
+      throw CalendarException.fromSupabase(e, stackTrace: st);
+    }
+  }
+
+  Future<List<CalendarEventParticipant>> listParticipantCandidates(
+    AppSession session, {
+    String? search,
+    int limit = 50,
+  }) async {
+    if (!canCreateCalendarEvent(session) && !canEditCalendarEvent(session)) {
+      throw const CalendarException(code: CalendarException.permissionDenied);
+    }
+    try {
+      final result = await _invokeRpc('list_calendar_participant_candidates', {
+        'p_search': search,
+        'p_limit': limit.clamp(1, 100),
+      });
+      return mapParticipantCandidates(result);
+    } catch (e, st) {
+      if (e is CalendarException) rethrow;
+      throw CalendarException.fromSupabase(e, stackTrace: st);
     }
   }
 }

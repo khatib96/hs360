@@ -17,6 +17,11 @@ String calendarEventTypeLabel(AppLocalizations l10n, CalendarEventType type) {
     CalendarEventType.trialEnding => l10n.calendarEventTypeTrialEnding,
     CalendarEventType.contractStart => l10n.calendarEventTypeContractStart,
     CalendarEventType.contractEnd => l10n.calendarEventTypeContractEnd,
+    CalendarEventType.customerVisit => l10n.calendarEventTypeCustomerVisit,
+    CalendarEventType.internalMeeting => l10n.calendarEventTypeInternalMeeting,
+    CalendarEventType.internalTask => l10n.calendarEventTypeInternalTask,
+    CalendarEventType.internalActivity =>
+      l10n.calendarEventTypeInternalActivity,
     CalendarEventType.custom => l10n.calendarEventTypeCustom,
   };
 }
@@ -164,6 +169,30 @@ String calendarErrorMessage(AppLocalizations l10n, String code) {
     'malformed_response' => l10n.calendarErrorMalformed,
     'not_available' => l10n.calendarErrorUnavailable,
     'supabaseNotConfigured' => l10n.calendarErrorUnavailable,
+    'stale_version' => l10n.calendarErrorStaleVersion,
+    'calendar_local_time_nonexistent' => l10n.calendarErrorLocalTimeNonexistent,
+    'calendar_local_time_ambiguous' => l10n.calendarErrorLocalTimeAmbiguous,
+    'calendar_timezone_unconfigured' => l10n.calendarErrorTimezoneUnconfigured,
+    'calendar_time_window_cross_date' => l10n.calendarErrorTimeWindowCrossDate,
+    'idempotency_payload_mismatch' => l10n.calendarErrorIdempotencyMismatch,
     _ => l10n.calendarErrorUnknown,
+  };
+}
+
+String calendarManualValidationMessage(AppLocalizations l10n, String code) {
+  return switch (code) {
+    'type_required' || 'type_not_manual' => l10n.calendarValidationTypeRequired,
+    'title_ar_required' => l10n.calendarValidationTitleRequired,
+    'meeting_mode_required' => l10n.calendarValidationMeetingModeRequired,
+    'meeting_url_required' ||
+    'meeting_url_invalid' => l10n.calendarValidationMeetingUrlRequired,
+    'meeting_location_required' =>
+      l10n.calendarValidationMeetingLocationRequired,
+    'time_start_required' ||
+    'time_end_required' ||
+    'time_invalid' => l10n.calendarValidationTimeRequired,
+    'time_end_not_after_start' => l10n.calendarValidationTimeOrder,
+    'cancel_reason_required' => l10n.calendarCancelReasonRequired,
+    _ => l10n.calendarErrorValidation,
   };
 }
