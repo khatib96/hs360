@@ -1,4 +1,5 @@
 import 'calendar_settings.dart';
+import 'calendar_working_date_exception.dart';
 
 /// Resolved working-day window for a single tenant-local date.
 class CalendarWorkingDay {
@@ -15,6 +16,7 @@ class CalendarWorkingDay {
     required this.isDayOff,
     required this.is24Hours,
     required this.isWorkingHours,
+    this.dateException,
   });
 
   final String tenantId;
@@ -29,4 +31,10 @@ class CalendarWorkingDay {
   final bool isDayOff;
   final bool is24Hours;
   final bool isWorkingHours;
+
+  /// M7B: the active `official_holiday`/`company_closure`/
+  /// `exceptional_working_day` override for [date], if any. When present,
+  /// this date's [dayMode]/window already reflects the exception (the
+  /// weekly schedule was overridden server-side).
+  final CalendarDateExceptionRef? dateException;
 }

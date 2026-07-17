@@ -5,9 +5,9 @@
 > customer visits, tasks, reminders, activities, and other controlled manual
 > business appointments in one operational calendar.
 >
-> Status: **M0–M7A complete / accepted.** Migrations `093`–`099` exist;
-> M7A backend, Flutter UI, and owner visual acceptance closed on 2026-07-15.
-> Next: **M7B Working Calendar Holidays & Exceptions** (not started; no `100`).
+> Status: **M0–M7B complete / accepted.** Migrations `093`–`100` exist. M7A
+> closed on 2026-07-15; M7B automated gates and owner visual acceptance closed
+> on 2026-07-17. Next milestone: **M8 Assignment & Rescheduling** (`101`).
 >
 > Owner direction (revised 2026-07-15): HS360 Calendar is the company's shared
 > appointment-management surface, not only a contract-follow-up calendar. The
@@ -1645,8 +1645,17 @@ Phase 8 execution into Phase 7.
 
 ## M7B - Working Calendar Holidays and Exceptions
 
-**Status:** not started. M7A is now accepted; M7B begins only after an explicit
-owner request. Expected migration `100` remains uncreated.
+**Status:** **CLOSED / ACCEPTED (2026-07-17).** Migration
+`100_phase_7_working_date_exceptions.sql`, automated SQL/Flutter gates, the
+12-frame screenshot harness, and owner visual acceptance are complete.
+
+**Corrective pass (2026-07-17):** revoked all five public RPCs from
+`PUBLIC`/`anon`; made unconfigured schedules retain date-exception warnings;
+aligned server validation with table limits and strict JSON/date/cursor
+contracts; made kind editable under the same versioned update RPC; added an
+explicit year selector; froze first-page bounds/limit for pagination; added
+load/pagination/mutation generations so stale tenant/logout requests cannot
+overwrite current state; froze state collections and expanded regression tests.
 
 ### Goal
 
@@ -2134,9 +2143,13 @@ Phase 6 foundation can be reused without corrective work.
 
 ## Starting Point For Implementation
 
-M0-M7A are closed/accepted. The next implementation milestone is M7B, but it
-must begin only after the owner explicitly requests implementation. Migration
-`100` does not exist at this closure checkpoint.
+M0-M7B are closed/accepted. Migration
+`100_phase_7_working_date_exceptions.sql` is implemented with SQL/Flutter
+coverage and a 12-frame screenshot harness accepted by the owner on 2026-07-17.
+Historical migrations `093`–`099` remain byte-unchanged
+(verify with `git diff -- supabase/migrations/093* … 099*`).
+
+Next: M8 Assignment & Rescheduling (migration `101`).
 
 The earlier read/UI prerequisites were satisfied by M1-M6. M7A preserved and
 extended those contracts through forward migrations `098`/`099` and typed
@@ -2155,9 +2168,8 @@ Do not begin route-map implementation until:
 - missing-coordinate fallback is designed.
 
 The M7A enum/key names, time schema, participant lookup contract, and lifecycle
-RPC shapes are now implemented and accepted. Before M7B implementation, lock
-exception range precedence and the settings UI contract; then create migration
-`100` only as part of the explicitly approved M7B implementation.
+RPC shapes are implemented and accepted. M7B migration `100` (working-date
+exceptions) and its owner visual acceptance are also **CLOSED / ACCEPTED**.
 
-The next implementation action is M7B — Working Calendar Holidays &
-Exceptions, only after an explicit owner request.
+The next implementation action is M8 — Assignment and Rescheduling (migration
+`101`).

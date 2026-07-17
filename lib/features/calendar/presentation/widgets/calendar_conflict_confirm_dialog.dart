@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
+import '../../data/calendar_working_date_exception_rpc_mapper.dart';
 import '../../domain/calendar_manual_mutation.dart';
+import '../../domain/calendar_working_date_exception.dart';
+import '../calendar_labels.dart';
 
 /// Asks the user to explicitly acknowledge soft schedule/overlap conflicts.
 Future<CalendarManualAcknowledgements?> showCalendarConflictConfirmDialog({
@@ -60,6 +63,19 @@ class _ConflictConfirmBodyState extends State<_ConflictConfirmBody> {
 
   bool get _needsOverlapAck => widget.conflicts.overlapTotalCount > 0;
 
+  /// Safe kind+title projection from the `non_working_day` warning's
+  /// `date_exception`, when the day off is caused by an active holiday,
+  /// company closure, or exceptional working day override. Never reads
+  /// `notes` or any other non-safe field.
+  CalendarDateExceptionRef? get _nonWorkingDayExceptionRef {
+    for (final warning in widget.conflicts.scheduleWarnings) {
+      if (warning['code'] != 'non_working_day') continue;
+      if (!warning.containsKey('date_exception')) return null;
+      return mapCalendarDateExceptionRef(warning['date_exception']);
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -96,6 +112,20 @@ class _ConflictConfirmBodyState extends State<_ConflictConfirmBody> {
                   key: const Key('calendar-ack-non-working'),
                   contentPadding: EdgeInsets.zero,
                   title: Text(l10n.calendarConflictAckNonWorkingDay),
+                  subtitle: _nonWorkingDayExceptionRef == null
+                      ? null
+                      : Text(
+                          l10n.calendarConflictNonWorkingDayExceptionLabel(
+                            calendarDateExceptionKindTitleText(
+                              l10n,
+                              kind: _nonWorkingDayExceptionRef!.kind,
+                              title: _nonWorkingDayExceptionRef!.titleFallback(
+                                l10n.localeName,
+                              ),
+                            ),
+                          ),
+                          key: const Key('calendar-conflict-exception-label'),
+                        ),
                   value: _acks.acknowledgeNonWorkingDay,
                   onChanged: (v) => setState(() {
                     _acks = _acks.copyWith(

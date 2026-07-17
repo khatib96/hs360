@@ -2,8 +2,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hs360/core/errors/calendar_exception.dart';
 import 'package:hs360/features/calendar/data/calendar_read_rpc_parsers.dart';
 import 'package:hs360/features/calendar/domain/calendar_settings.dart';
+import 'package:hs360/features/calendar/domain/calendar_working_date_exception.dart';
 
 import 'calendar_read_fixtures.dart';
+import 'calendar_working_date_exception_fixtures.dart';
 
 Matcher _malformed() => isA<CalendarException>().having(
   (e) => e.code,
@@ -68,6 +70,97 @@ void main() {
 
     test('day_off with is_working_hours true is malformed', () {
       final raw = dayOffWorkingDayRpc()..['is_working_hours'] = true;
+      expect(() => mapCalendarWorkingDay(raw), throwsA(_malformed()));
+    });
+  });
+
+  group('mapCalendarWorkingDay — M7B date_exception', () {
+    test('absent date_exception key maps to null (no override)', () {
+      final day = mapCalendarWorkingDay(workingHoursWorkingDayRpc());
+      expect(day.dateException, isNull);
+    });
+
+    test('null date_exception value maps to null', () {
+      final raw = workingHoursWorkingDayRpc()..['date_exception'] = null;
+      final day = mapCalendarWorkingDay(raw);
+      expect(day.dateException, isNull);
+    });
+
+    test('day_off resolved by an official_holiday exception', () {
+      final raw = dayOffWorkingDayRpc()
+        ..['date_exception'] = validDateExceptionRefRpc(
+          kind: 'official_holiday',
+          titleAr: 'عيد',
+          titleEn: 'Holiday',
+        );
+      final day = mapCalendarWorkingDay(raw);
+      expect(day.isDayOff, isTrue);
+      expect(
+        day.dateException!.kind,
+        CalendarWorkingDateExceptionKind.officialHoliday,
+      );
+      expect(day.dateException!.titleEn, 'Holiday');
+    });
+
+    test('working_hours resolved by an exceptional_working_day exception', () {
+      final raw =
+          workingHoursWorkingDayRpc(workStart: '09:00', workEnd: '13:00')
+            ..['date_exception'] = validDateExceptionRefRpc(
+              kind: 'exceptional_working_day',
+            );
+      final day = mapCalendarWorkingDay(raw);
+      expect(day.isWorkingHours, isTrue);
+      expect(day.workStart, '09:00');
+      expect(
+        day.dateException!.kind,
+        CalendarWorkingDateExceptionKind.exceptionalWorkingDay,
+      );
+    });
+
+    test('24_hours resolved by an exceptional_working_day exception', () {
+      final raw = hours24WorkingDayRpc()
+        ..['date_exception'] = validDateExceptionRefRpc(
+          kind: 'exceptional_working_day',
+        );
+      final day = mapCalendarWorkingDay(raw);
+      expect(day.is24Hours, isTrue);
+      expect(
+        day.dateException!.kind,
+        CalendarWorkingDateExceptionKind.exceptionalWorkingDay,
+      );
+    });
+
+    test('unreviewed day_mode cannot carry an active date_exception', () {
+      final raw = unconfiguredWorkingDayRpc()
+        ..['date_exception'] = validDateExceptionRefRpc();
+      expect(() => mapCalendarWorkingDay(raw), throwsA(_malformed()));
+    });
+
+    test(
+      'company_closure exception resolving to working_hours is malformed',
+      () {
+        final raw = workingHoursWorkingDayRpc()
+          ..['date_exception'] = validDateExceptionRefRpc(
+            kind: 'company_closure',
+          );
+        expect(() => mapCalendarWorkingDay(raw), throwsA(_malformed()));
+      },
+    );
+
+    test(
+      'exceptional_working_day exception resolving to day_off is malformed',
+      () {
+        final raw = dayOffWorkingDayRpc()
+          ..['date_exception'] = validDateExceptionRefRpc(
+            kind: 'exceptional_working_day',
+          );
+        expect(() => mapCalendarWorkingDay(raw), throwsA(_malformed()));
+      },
+    );
+
+    test('date_exception with a non-safe id key is malformed', () {
+      final raw = dayOffWorkingDayRpc()
+        ..['date_exception'] = (validDateExceptionRefRpc()..['id'] = 'x');
       expect(() => mapCalendarWorkingDay(raw), throwsA(_malformed()));
     });
   });

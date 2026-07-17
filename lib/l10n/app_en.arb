@@ -1801,5 +1801,86 @@
       "start": {"type": "String"},
       "end": {"type": "String"}
     }
+  },
+  "calendarWorkingDateExceptionsSectionTitle": "Holidays & date exceptions",
+  "calendarWorkingDateExceptionsEmpty": "No date exceptions found.",
+  "calendarWorkingDateExceptionsAdd": "Add exception",
+  "calendarWorkingDateExceptionsFilterStatusLabel": "Status",
+  "calendarWorkingDateExceptionsFilterActive": "Active",
+  "calendarWorkingDateExceptionsFilterCancelled": "Cancelled",
+  "calendarWorkingDateExceptionsFilterAll": "All",
+  "calendarWorkingDateExceptionsPermissionDenied": "You do not have permission to view date exceptions.",
+  "calendarWorkingDateExceptionKindOfficialHoliday": "Official holiday",
+  "calendarWorkingDateExceptionKindCompanyClosure": "Company closure",
+  "calendarWorkingDateExceptionKindExceptionalWorkingDay": "Exceptional working day",
+  "calendarWorkingDateExceptionStatusActive": "Active",
+  "calendarWorkingDateExceptionStatusCancelled": "Cancelled",
+  "calendarWorkingDateExceptionDateRange": "{start} – {end}",
+  "@calendarWorkingDateExceptionDateRange": {
+    "placeholders": {
+      "start": {"type": "String"},
+      "end": {"type": "String"}
+    }
+  },
+  "calendarWorkingDateExceptionCreateTitle": "Add date exception",
+  "calendarWorkingDateExceptionEditTitle": "Edit date exception",
+  "calendarWorkingDateExceptionKindLabel": "Kind",
+  "calendarWorkingDateExceptionStartDate": "Start date",
+  "calendarWorkingDateExceptionEndDate": "End date",
+  "calendarWorkingDateExceptionTitleAr": "Title (Arabic)",
+  "calendarWorkingDateExceptionTitleEn": "Title (English)",
+  "calendarWorkingDateExceptionNotes": "Notes (optional)",
+  "calendarWorkingDateExceptionDayModeLabel": "Working hours for this day",
+  "calendarWorkingDateExceptionDayMode24Hours": "24 hours",
+  "calendarWorkingDateExceptionDayModeLimitedHours": "Limited working hours",
+  "calendarWorkingDateExceptionCreateConfirm": "Create",
+  "calendarWorkingDateExceptionSaveConfirm": "Save",
+  "calendarWorkingDateExceptionEditAction": "Edit",
+  "calendarWorkingDateExceptionCancelAction": "Cancel",
+  "calendarWorkingDateExceptionCancelTitle": "Cancel date exception",
+  "calendarWorkingDateExceptionCancelBody": "Cancelling requires a reason and preserves the exception for audit.",
+  "calendarWorkingDateExceptionCancelConfirm": "Cancel exception",
+  "calendarWorkingDateExceptionCreated": "Date exception created.",
+  "calendarWorkingDateExceptionUpdated": "Date exception updated.",
+  "calendarWorkingDateExceptionCancelSuccess": "Date exception cancelled.",
+  "calendarErrorWorkingDateExceptionOverlap": "This date range overlaps an existing active date exception.",
+  "calendarWorkingDateExceptionValidationKindRequired": "Select a kind.",
+  "calendarWorkingDateExceptionValidationDateRequired": "Start and end dates are required.",
+  "calendarWorkingDateExceptionValidationDateInvalid": "Enter valid dates.",
+  "calendarWorkingDateExceptionValidationDateRangeInvalid": "End date must not be before the start date.",
+  "calendarWorkingDateExceptionValidationDateRangeTooLong": "Date range cannot exceed 366 days.",
+  "calendarWorkingDateExceptionValidationTitleRequired": "Enter a title in Arabic or English.",
+  "calendarWorkingDateExceptionValidationTitleTooLong": "Title is too long.",
+  "calendarWorkingDateExceptionValidationNotesTooLong": "Notes are too long.",
+  "calendarWorkingDateExceptionValidationDayModeRequired": "Select 24-hour or limited working hours.",
+  "calendarWorkingDateExceptionValidationDayModeNotAllowed": "Working hours only apply to an exceptional working day.",
+  "calendarWorkingDateExceptionValidationWorkWindowRequired": "Enter start and end working hours.",
+  "calendarWorkingDateExceptionValidationWorkWindowNotAllowed": "Working hours are not allowed for this selection.",
+  "calendarWorkingDateExceptionValidationWorkWindowInvalid": "Enter valid HH:mm working hours.",
+  "calendarWorkingDateExceptionValidationWorkWindowOrder": "End time must be after start time.",
+  "calendarDateExceptionKindTitle": "{kind} – {title}",
+  "@calendarDateExceptionKindTitle": {
+    "placeholders": {
+      "kind": {"type": "String"},
+      "title": {"type": "String"}
+    }
+  },
+  "calendarAgendaExceptionLabel": "Exception: {kindTitle}",
+  "@calendarAgendaExceptionLabel": {
+    "placeholders": {
+      "kindTitle": {"type": "String"}
+    }
+  },
+  "calendarConflictNonWorkingDayExceptionLabel": "Non-working day: {kindTitle}",
+  "@calendarConflictNonWorkingDayExceptionLabel": {
+    "placeholders": {
+      "kindTitle": {"type": "String"}
+    }
+  },
+  "calendarMonthExceptionMarkerSemantics": "Date exception: {kindTitle}",
+  "@calendarMonthExceptionMarkerSemantics": {
+    "placeholders": {
+      "kindTitle": {"type": "String"}
+    }
   }
 }

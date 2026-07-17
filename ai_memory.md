@@ -1,7 +1,100 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-15 (Session: Phase 7 **M7A CLOSED / ACCEPTED**; M1–M7A
-> closed; M7B/`100` not started; changes awaiting owner commit/push).
+> Updated 2026-07-17 (Session: Phase 7 **M7B CLOSED / ACCEPTED** after owner
+> visual acceptance; migration `100` corrective hardening and all automated
+> gates passed; M8/`101` not started; commit/push requested next).
+
+---
+
+## Session 2026-07-17 - Phase 7 M7B closure / owner acceptance
+
+**Decision:** The owner accepted the corrected M7B visuals. Phase 7 M7B is now
+**CLOSED / ACCEPTED**. Migration `100_phase_7_working_date_exceptions.sql`, its
+typed Flutter settings/calendar layer, and the corrective security/concurrency
+pass are the accepted baseline. Do not reopen or rewrite migrations `093`–`100`
+without an explicit corrective request. M8 / migration `101` has not started.
+
+**Accepted scope:**
+- Tenant working-date exceptions for official holidays, company closures, and
+  exceptional working days, including limited-hours and 24-hour exceptions.
+- Versioned/idempotent create, edit (including kind), cancel, get, and paginated
+  selected-year list RPCs with tenant isolation, audit history, strict payload
+  validation, and authenticated-only execution.
+- Date-exception precedence over weekly schedules, safe unconfigured-schedule
+  warnings, conditional reminder reconciliation, and no mutation of events that
+  fall on closures.
+- Permission-gated Flutter Settings CRUD, year selection, stable pagination,
+  stale-request protection across logout/tenant changes, immutable state, month
+  markers, selected-day conflict titles, and AR/EN desktop/narrow layouts.
+
+**Final acceptance gates:**
+- Complete SQL runner — all phases passed.
+- M7B SQL suite — 22 cases passed.
+- Overlap and idempotency concurrency scripts — passed.
+- Full Flutter tests — **1218 passed**; focused M7B tests — **84 passed**.
+- Screenshot harness — **12 passed** and visually accepted by the owner.
+- `flutter analyze` — no issues; `git diff --check` — clean.
+- Historical migrations `093`–`099` unchanged; no migration `101`, no M8.
+
+**Next:** Commit and push the accepted M7B work when requested, then plan M8 —
+Assignment & Rescheduling — as a separate milestone using migration `101`.
+
+---
+
+## Session 2026-07-16 - Phase 7 M7B implementation (historical OPEN state)
+
+### Corrective pass 2026-07-17
+
+- Explicitly revoked the five public M7B RPCs from `PUBLIC`/`anon`; verified
+  `anon=false`, `authenticated=true` for each against the local database.
+- Unconfigured schedules now return `schedule_unconfigured` while preserving a
+  resolved closure/holiday `non_working_day` warning and safe exception title.
+- Server validation now matches table limits, rejects non-string JSON scalars,
+  enforces canonical dates/ranges, strict limits/filters, and safe cursor casts.
+- Exception kind is editable in the versioned/idempotent update RPC and Flutter
+  dialog; schedule-affecting changes continue to trigger reminder reconciliation.
+- Flutter list requests always use the selected calendar year, freeze echoed
+  bounds/limit across pagination, keep add available after list errors, freeze
+  collections, and discard stale load/page/mutation results on identity change.
+- Focused Flutter tests, M7B SQL suite, both concurrency scripts, analysis, and
+  the regenerated 12-frame screenshot harness passed. At this point M7B
+  remained OPEN only for owner visual acceptance; it was later accepted and
+  closed on 2026-07-17. M8/`101` was not started.
+
+**Decision:** Owner authorized M7B implementation. Migration
+`100_phase_7_working_date_exceptions.sql` and Flutter Settings/Calendar UI are
+in place. At this historical checkpoint M7B stayed OPEN until automated gates
+and owner visual acceptance; the owner accepted it on 2026-07-17. Do not start
+M8 / migration `101` without a separate request.
+
+**Scope delivered:**
+- `tenant_working_date_exceptions` with kinds official_holiday / company_closure /
+  exceptional_working_day; active/cancelled; versioning; audit; idempotency.
+- Partial GiST exclusion `excl_tenant_working_date_exceptions_active_range`.
+- `CREATE OR REPLACE` of `resolve_tenant_working_window` and schedule warnings
+  (safe `date_exception` projection only on calendar paths).
+- Settings RPCs: list (paginated, bound cursor), get, create, update, cancel.
+- Conditional reminder reconcile bumps (schedule-affecting fields only).
+- Settings UI + month/selected-day markers + enriched non_working_day conflict UI.
+- SQL suite + overlap + idempotency concurrency scripts; 12-frame screenshot harness.
+
+**Hard rules preserved:** migrations `093`–`099` byte-unchanged
+(`git diff -- supabase/migrations/093* … 099*` empty); events on closures never
+mutated; no M8.
+
+**Visual acceptance screenshots (accepted by owner on 2026-07-17):**
+1. Exception list
+2. Create official holiday
+3. Create company closure range
+4. Exceptional working day with limited hours
+5. Exceptional 24-hour day
+6. Edit dialog
+7. Cancel confirmation
+8. Overlap validation
+9. Month calendar holiday marker
+10. Selected-day closure conflict
+11. Narrow Arabic
+12. Narrow English
 
 ---
 

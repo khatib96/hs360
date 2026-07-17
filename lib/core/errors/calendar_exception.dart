@@ -23,6 +23,7 @@ class CalendarException extends AppException {
   static const timeWindowCrossDate = 'calendar_time_window_cross_date';
   static const conflictConfirmationRequired =
       'calendar_conflict_confirmation_required';
+  static const workingDateExceptionOverlap = 'working_date_exception_overlap';
 
   factory CalendarException.fromSupabase(
     Object error, {
@@ -46,6 +47,9 @@ class CalendarException extends AppException {
       return CalendarException(code: invalidCursor, technicalDetail: message);
     }
     if (message.contains('not_available')) {
+      return CalendarException(code: notAvailable, technicalDetail: message);
+    }
+    if (message.contains('not_found')) {
       return CalendarException(code: notAvailable, technicalDetail: message);
     }
     if (message.contains('malformed_response')) {
@@ -91,6 +95,12 @@ class CalendarException extends AppException {
         message.contains('confirmation_required')) {
       return CalendarException(
         code: confirmationRequired,
+        technicalDetail: message,
+      );
+    }
+    if (message.contains('working_date_exception_overlap')) {
+      return CalendarException(
+        code: workingDateExceptionOverlap,
         technicalDetail: message,
       );
     }

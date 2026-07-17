@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../domain/calendar_working_date_exception.dart';
 
 class CalendarMonthDayCell extends StatelessWidget {
   const CalendarMonthDayCell({
@@ -17,6 +18,7 @@ class CalendarMonthDayCell extends StatelessWidget {
     required this.semanticsLabel,
     required this.onTap,
     this.isKeyboardFocused = false,
+    this.dateExceptionKind,
     super.key,
   });
 
@@ -27,6 +29,11 @@ class CalendarMonthDayCell extends StatelessWidget {
   final bool isKeyboardFocused;
   final bool isDayOff;
   final bool hasConflict;
+
+  /// M7B: active holiday/closure/exceptional-working-day override for this
+  /// date, if any. Shown as a compact glyph in the same corner slot as the
+  /// plain day-off marker (never both), so it never crowds event counts.
+  final CalendarWorkingDateExceptionKind? dateExceptionKind;
   final String? eventCountLabel;
   final String? overdueCountLabel;
   final String? unassignedCountLabel;
@@ -99,6 +106,12 @@ class CalendarMonthDayCell extends StatelessWidget {
                       size: 12,
                       color: AppColors.warning,
                     )
+                  else if (dateExceptionKind != null)
+                    Icon(
+                      _dateExceptionIcon(dateExceptionKind!),
+                      size: 12,
+                      color: AppColors.goldDeep,
+                    )
                   else if (isDayOff)
                     Icon(
                       LucideIcons.moon,
@@ -141,5 +154,16 @@ class CalendarMonthDayCell extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  IconData _dateExceptionIcon(CalendarWorkingDateExceptionKind kind) {
+    return switch (kind) {
+      CalendarWorkingDateExceptionKind.officialHoliday =>
+        LucideIcons.calendar_off,
+      CalendarWorkingDateExceptionKind.companyClosure =>
+        LucideIcons.calendar_off,
+      CalendarWorkingDateExceptionKind.exceptionalWorkingDay =>
+        LucideIcons.calendar_clock,
+    };
   }
 }

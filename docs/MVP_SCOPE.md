@@ -84,9 +84,10 @@
 
 ### Calendar and Company Appointments
 
-> Implementation status (2026-07-15): the desktop calendar and M7A manual
-> company appointments are closed / accepted through migrations `098`/`099`.
-> Working-date exceptions, assignment/reschedule, and mobile/route work remain.
+> Implementation status (2026-07-17): the desktop calendar, M7A manual company
+> appointments (`098`/`099`), and M7B working-date exceptions (`100`) are closed
+> / accepted after automated and owner visual acceptance. Assignment/reschedule
+> (M8) and mobile/route work remain deferred.
 
 - Hybrid company calendar with an upper calendar and lower selected-day agenda:
   contract-generated/untimed events are date-based, while manual appointments

@@ -5,6 +5,8 @@ import '../domain/calendar_enums.dart';
 import '../domain/calendar_event.dart';
 import '../domain/calendar_month_grid.dart';
 import '../domain/calendar_settings.dart';
+import '../domain/calendar_working_date_exception.dart';
+import '../domain/calendar_working_date_exception_validators.dart';
 import '../domain/calendar_working_day.dart';
 
 String calendarEventTypeLabel(AppLocalizations l10n, CalendarEventType type) {
@@ -175,6 +177,8 @@ String calendarErrorMessage(AppLocalizations l10n, String code) {
     'calendar_timezone_unconfigured' => l10n.calendarErrorTimezoneUnconfigured,
     'calendar_time_window_cross_date' => l10n.calendarErrorTimeWindowCrossDate,
     'idempotency_payload_mismatch' => l10n.calendarErrorIdempotencyMismatch,
+    'working_date_exception_overlap' =>
+      l10n.calendarErrorWorkingDateExceptionOverlap,
     _ => l10n.calendarErrorUnknown,
   };
 }
@@ -192,6 +196,99 @@ String calendarManualValidationMessage(AppLocalizations l10n, String code) {
     'time_end_required' ||
     'time_invalid' => l10n.calendarValidationTimeRequired,
     'time_end_not_after_start' => l10n.calendarValidationTimeOrder,
+    'cancel_reason_required' => l10n.calendarCancelReasonRequired,
+    _ => l10n.calendarErrorValidation,
+  };
+}
+
+String calendarWorkingDateExceptionKindLabel(
+  AppLocalizations l10n,
+  CalendarWorkingDateExceptionKind kind,
+) {
+  return switch (kind) {
+    CalendarWorkingDateExceptionKind.officialHoliday =>
+      l10n.calendarWorkingDateExceptionKindOfficialHoliday,
+    CalendarWorkingDateExceptionKind.companyClosure =>
+      l10n.calendarWorkingDateExceptionKindCompanyClosure,
+    CalendarWorkingDateExceptionKind.exceptionalWorkingDay =>
+      l10n.calendarWorkingDateExceptionKindExceptionalWorkingDay,
+  };
+}
+
+String calendarWorkingDateExceptionStatusLabel(
+  AppLocalizations l10n,
+  CalendarWorkingDateExceptionStatus status,
+) {
+  return switch (status) {
+    CalendarWorkingDateExceptionStatus.active =>
+      l10n.calendarWorkingDateExceptionStatusActive,
+    CalendarWorkingDateExceptionStatus.cancelled =>
+      l10n.calendarWorkingDateExceptionStatusCancelled,
+  };
+}
+
+String calendarWorkingDateExceptionStatusFilterLabel(
+  AppLocalizations l10n,
+  CalendarWorkingDateExceptionStatusFilter filter,
+) {
+  return switch (filter) {
+    CalendarWorkingDateExceptionStatusFilter.active =>
+      l10n.calendarWorkingDateExceptionsFilterActive,
+    CalendarWorkingDateExceptionStatusFilter.cancelled =>
+      l10n.calendarWorkingDateExceptionsFilterCancelled,
+    CalendarWorkingDateExceptionStatusFilter.all =>
+      l10n.calendarWorkingDateExceptionsFilterAll,
+  };
+}
+
+/// Combined "kind – title" text used wherever a safe exception projection
+/// (list row, agenda header, month marker, conflict dialog) is displayed.
+String calendarDateExceptionKindTitleText(
+  AppLocalizations l10n, {
+  required CalendarWorkingDateExceptionKind kind,
+  required String title,
+}) {
+  return l10n.calendarDateExceptionKindTitle(
+    calendarWorkingDateExceptionKindLabel(l10n, kind),
+    title,
+  );
+}
+
+String calendarWorkingDateExceptionValidationMessage(
+  AppLocalizations l10n,
+  String code,
+) {
+  return switch (code) {
+    CalendarWorkingDateExceptionValidators.kindRequired =>
+      l10n.calendarWorkingDateExceptionValidationKindRequired,
+    CalendarWorkingDateExceptionValidators.dateFromRequired ||
+    CalendarWorkingDateExceptionValidators.dateToRequired =>
+      l10n.calendarWorkingDateExceptionValidationDateRequired,
+    CalendarWorkingDateExceptionValidators.dateInvalid =>
+      l10n.calendarWorkingDateExceptionValidationDateInvalid,
+    CalendarWorkingDateExceptionValidators.dateRangeInvalid =>
+      l10n.calendarWorkingDateExceptionValidationDateRangeInvalid,
+    CalendarWorkingDateExceptionValidators.dateRangeTooLong =>
+      l10n.calendarWorkingDateExceptionValidationDateRangeTooLong,
+    CalendarWorkingDateExceptionValidators.titleRequired =>
+      l10n.calendarWorkingDateExceptionValidationTitleRequired,
+    CalendarWorkingDateExceptionValidators.titleArTooLong ||
+    CalendarWorkingDateExceptionValidators.titleEnTooLong =>
+      l10n.calendarWorkingDateExceptionValidationTitleTooLong,
+    CalendarWorkingDateExceptionValidators.notesTooLong =>
+      l10n.calendarWorkingDateExceptionValidationNotesTooLong,
+    CalendarWorkingDateExceptionValidators.dayModeRequired =>
+      l10n.calendarWorkingDateExceptionValidationDayModeRequired,
+    CalendarWorkingDateExceptionValidators.dayModeNotAllowed =>
+      l10n.calendarWorkingDateExceptionValidationDayModeNotAllowed,
+    CalendarWorkingDateExceptionValidators.workWindowRequired =>
+      l10n.calendarWorkingDateExceptionValidationWorkWindowRequired,
+    CalendarWorkingDateExceptionValidators.workWindowNotAllowed =>
+      l10n.calendarWorkingDateExceptionValidationWorkWindowNotAllowed,
+    CalendarWorkingDateExceptionValidators.workWindowInvalid =>
+      l10n.calendarWorkingDateExceptionValidationWorkWindowInvalid,
+    CalendarWorkingDateExceptionValidators.workWindowEndNotAfterStart =>
+      l10n.calendarWorkingDateExceptionValidationWorkWindowOrder,
     'cancel_reason_required' => l10n.calendarCancelReasonRequired,
     _ => l10n.calendarErrorValidation,
   };

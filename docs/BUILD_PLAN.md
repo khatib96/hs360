@@ -19,7 +19,7 @@
 | **4 - Customers, Suppliers & CoA** | Engineering complete | 2026-06-06 |
 | **5 - Invoices, Vouchers & Journal** | Done | M1–M10 closed through migration `076` |
 | **6 - Contracts** | Complete | M0–M13 closed (2026-07-12) |
-| **7 - Calendar & Company Appointments** | M7A complete | M1–M7A closed through migrations `098`/`099` (2026-07-15); M7B next |
+| **7 - Calendar & Company Appointments** | M7B closed / accepted | M1–M7A closed (2026-07-15); M7B (`100`) closed (2026-07-17) |
 | **8 - Mobile Field Ops** | Not started | - |
 | **9 - POS, Maintenance & HR** | Not started | - |
 | **10 - Reports & Close** | Not started | - |
@@ -652,8 +652,9 @@ The core of the system: contracts can be created, billed, refilled, and closed.
 > estimate is a legacy roadmap estimate; use the detailed plan for professional
 > delivery sizing.
 >
-> Current status: **M1–M7A closed / accepted.** M7B Working Calendar Holidays
-> & Exceptions is next; migration `100` has not been created.
+> Current status: **M7B CLOSED / ACCEPTED.** M1–M7B are closed. Migration
+> `100_phase_7_working_date_exceptions.sql`, automated gates, and owner visual
+> acceptance completed on 2026-07-17. Next is M8 / migration `101`.
 
 ### Goal
 A unified company appointment-management calendar showing contract-generated

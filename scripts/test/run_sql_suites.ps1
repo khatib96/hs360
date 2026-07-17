@@ -141,6 +141,11 @@ Write-Host "Phase S: Phase 7 M7A manual business events"
 Invoke-SqlSuite -SuitePath "supabase/tests/phase_7_manual_business_events.sql"
 & "$repoRoot/supabase/tests/phase_7_manual_meeting_notice_concurrency.sh" $ContainerName
 
+Write-Host "Phase T: Phase 7 M7B working-date exceptions"
+Invoke-SqlSuite -SuitePath "supabase/tests/phase_7_working_date_exceptions.sql"
+& "$repoRoot/supabase/tests/phase_7_working_date_exceptions_concurrency.sh" $ContainerName
+& "$repoRoot/supabase/tests/phase_7_working_date_exceptions_idempotency_concurrency.sh" $ContainerName
+
 Write-Host "Phase C: baseline regression (pollution gate)"
 foreach ($suite in $phaseAAllowlist) {
   Invoke-SqlSuite -SuitePath $suite

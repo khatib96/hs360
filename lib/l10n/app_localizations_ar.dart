@@ -4250,4 +4250,198 @@ class AppLocalizationsAr extends AppLocalizations {
   String calendarTimeWindowLabel(String start, String end) {
     return '$start – $end';
   }
+
+  @override
+  String get calendarWorkingDateExceptionsSectionTitle =>
+      'العطلات واستثناءات التاريخ';
+
+  @override
+  String get calendarWorkingDateExceptionsEmpty => 'لا توجد استثناءات تاريخ.';
+
+  @override
+  String get calendarWorkingDateExceptionsAdd => 'إضافة استثناء';
+
+  @override
+  String get calendarWorkingDateExceptionsFilterStatusLabel => 'الحالة';
+
+  @override
+  String get calendarWorkingDateExceptionsFilterActive => 'نشط';
+
+  @override
+  String get calendarWorkingDateExceptionsFilterCancelled => 'ملغى';
+
+  @override
+  String get calendarWorkingDateExceptionsFilterAll => 'الكل';
+
+  @override
+  String get calendarWorkingDateExceptionsPermissionDenied =>
+      'لا تملك صلاحية عرض استثناءات التاريخ.';
+
+  @override
+  String get calendarWorkingDateExceptionKindOfficialHoliday => 'عطلة رسمية';
+
+  @override
+  String get calendarWorkingDateExceptionKindCompanyClosure => 'إغلاق الشركة';
+
+  @override
+  String get calendarWorkingDateExceptionKindExceptionalWorkingDay =>
+      'يوم عمل استثنائي';
+
+  @override
+  String get calendarWorkingDateExceptionStatusActive => 'نشط';
+
+  @override
+  String get calendarWorkingDateExceptionStatusCancelled => 'ملغى';
+
+  @override
+  String calendarWorkingDateExceptionDateRange(String start, String end) {
+    return '$start – $end';
+  }
+
+  @override
+  String get calendarWorkingDateExceptionCreateTitle => 'إضافة استثناء تاريخ';
+
+  @override
+  String get calendarWorkingDateExceptionEditTitle => 'تعديل استثناء التاريخ';
+
+  @override
+  String get calendarWorkingDateExceptionKindLabel => 'النوع';
+
+  @override
+  String get calendarWorkingDateExceptionStartDate => 'تاريخ البداية';
+
+  @override
+  String get calendarWorkingDateExceptionEndDate => 'تاريخ النهاية';
+
+  @override
+  String get calendarWorkingDateExceptionTitleAr => 'العنوان (عربي)';
+
+  @override
+  String get calendarWorkingDateExceptionTitleEn => 'العنوان (إنجليزي)';
+
+  @override
+  String get calendarWorkingDateExceptionNotes => 'ملاحظات (اختياري)';
+
+  @override
+  String get calendarWorkingDateExceptionDayModeLabel =>
+      'ساعات العمل لهذا اليوم';
+
+  @override
+  String get calendarWorkingDateExceptionDayMode24Hours => '24 ساعة';
+
+  @override
+  String get calendarWorkingDateExceptionDayModeLimitedHours =>
+      'ساعات عمل محدودة';
+
+  @override
+  String get calendarWorkingDateExceptionCreateConfirm => 'إنشاء';
+
+  @override
+  String get calendarWorkingDateExceptionSaveConfirm => 'حفظ';
+
+  @override
+  String get calendarWorkingDateExceptionEditAction => 'تعديل';
+
+  @override
+  String get calendarWorkingDateExceptionCancelAction => 'إلغاء';
+
+  @override
+  String get calendarWorkingDateExceptionCancelTitle => 'إلغاء استثناء التاريخ';
+
+  @override
+  String get calendarWorkingDateExceptionCancelBody =>
+      'يتطلب الإلغاء سببًا ويحتفظ بالاستثناء لأغراض التدقيق.';
+
+  @override
+  String get calendarWorkingDateExceptionCancelConfirm => 'إلغاء الاستثناء';
+
+  @override
+  String get calendarWorkingDateExceptionCreated => 'تم إنشاء استثناء التاريخ.';
+
+  @override
+  String get calendarWorkingDateExceptionUpdated => 'تم تحديث استثناء التاريخ.';
+
+  @override
+  String get calendarWorkingDateExceptionCancelSuccess =>
+      'تم إلغاء استثناء التاريخ.';
+
+  @override
+  String get calendarErrorWorkingDateExceptionOverlap =>
+      'يتداخل هذا النطاق الزمني مع استثناء تاريخ نشط آخر.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationKindRequired =>
+      'اختر نوع الاستثناء.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationDateRequired =>
+      'تاريخا البداية والنهاية مطلوبان.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationDateInvalid =>
+      'أدخل تواريخ صالحة.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationDateRangeInvalid =>
+      'يجب ألا يكون تاريخ النهاية قبل تاريخ البداية.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationDateRangeTooLong =>
+      'لا يمكن أن يتجاوز نطاق التاريخ 366 يومًا.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationTitleRequired =>
+      'أدخل عنوانًا بالعربية أو الإنجليزية.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationTitleTooLong =>
+      'العنوان طويل جدًا.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationNotesTooLong =>
+      'الملاحظات طويلة جدًا.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationDayModeRequired =>
+      'اختر 24 ساعة أو ساعات عمل محدودة.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationDayModeNotAllowed =>
+      'ساعات العمل تنطبق فقط على يوم العمل الاستثنائي.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationWorkWindowRequired =>
+      'أدخل وقت بداية ونهاية ساعات العمل.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationWorkWindowNotAllowed =>
+      'ساعات العمل غير مسموحة لهذا الاختيار.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationWorkWindowInvalid =>
+      'أدخل ساعات عمل صحيحة بصيغة HH:mm.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationWorkWindowOrder =>
+      'يجب أن يكون وقت النهاية بعد وقت البداية.';
+
+  @override
+  String calendarDateExceptionKindTitle(String kind, String title) {
+    return '$kind – $title';
+  }
+
+  @override
+  String calendarAgendaExceptionLabel(String kindTitle) {
+    return 'استثناء: $kindTitle';
+  }
+
+  @override
+  String calendarConflictNonWorkingDayExceptionLabel(String kindTitle) {
+    return 'يوم غير عمل: $kindTitle';
+  }
+
+  @override
+  String calendarMonthExceptionMarkerSemantics(String kindTitle) {
+    return 'استثناء تاريخ: $kindTitle';
+  }
 }

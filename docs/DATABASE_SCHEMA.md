@@ -1389,6 +1389,17 @@ DELETE guard); tenant cascade delete remains valid. Post-fact BEFORE UPDATE
 guards block terminal changes to linked event/visit status fields after a fact
 exists; full terminal immutability is documented for Phase 8 write order.
 
+**Phase 7 M7B (`100`):** `tenant_working_date_exceptions` stores inclusive
+tenant-local date ranges for `official_holiday`, `company_closure`, and
+`exceptional_working_day`, with active/cancelled lifecycle, versioning, audit,
+and an idempotency ledger (`working_date_exception_operations`). Partial GiST
+exclusion `excl_tenant_working_date_exceptions_active_range` rejects overlapping
+active ranges. `resolve_tenant_working_window` applies active exceptions over the
+weekly schedule (including when the weekly schedule is still unconfigured) and
+embeds a safe `{kind,title_ar,title_en}` projection. Reminder reconcile generation
+bumps only when schedule-affecting fields change. Events on closures are never
+mutated by exception CRUD.
+
 **Phase 7 M2 (`095`):** generation is timezone-gated via `calendar_timezone_ready`
 (valid IANA `timezone_name` only). `try_tenant_local_today` is used for
 generation/suspend/reinstate paths; deferred lifecycle reconcile uses

@@ -5,13 +5,14 @@ businesses. It is being built first for Hayat Secret and is designed around
 serialized rental assets, recurring consumables, field service, customer debt,
 and double-entry accounting.
 
-> Repository status updated: **2026-07-15**
+> Repository status updated: **2026-07-17**
 >
-> Current milestone: **Phase 7 M7A CLOSED / ACCEPTED**
-> — M1–M7A are closed; M7B/`100` is next and has not started
+> Current milestone: **Phase 7 M7B CLOSED / ACCEPTED**
+> — M1–M7B closed/accepted; migration `100`, corrective hardening, Flutter
+> settings UI, automated gates, and owner visual acceptance are complete
 >
-> Latest migrations on disk: **`098`** (enum types) + **`099`** (manual events body);
-> prior read migration **`097`** remains the last pre-M7A baseline.
+> Latest migrations on disk: **`100`** (working-date exceptions); prior M7A
+> **`098`**/**`099`** unchanged.
 
 ---
 
@@ -26,7 +27,7 @@ and double-entry accounting.
 | 4 | Engineering complete | Customers, suppliers, CoA, service locations, coordinates |
 | 5 | Complete | Invoices, returns, vouchers, journal, inventory accounting, PDFs |
 | 6 | Complete | Trial/rental contracts, lifecycle, billing, PDF, calendar handoff |
-| 7 | M7A complete | M1–M7A closed; migrations `093`–`099`, desktop calendar, and manual company appointments accepted |
+| 7 | M7B closed / accepted | M1–M7B closed; working-date exceptions (`100`) passed automated and owner visual acceptance |
 | 8-12 | Not started | Field execution and later operational/reporting/production phases |
 
 Phase 6 closed through M13/migration `092` on 2026-07-12. Phase 7 M1 closed on
@@ -43,7 +44,11 @@ on 2026-07-15**. M6 is closed. M7A Manual Business Events implementation landed
 with migrations `098`/`099` and Flutter create/edit/cancel/done/join flows.
 The backend corrective pass, full regression gates, and corrected AR/EN visual
 evidence were accepted by the owner on 2026-07-15. **M7A is closed / accepted.**
-M7B Working Calendar Holidays & Exceptions is next and has not started.
+M7B Working Calendar Holidays & Exceptions is implemented and has completed a
+corrective pass covering RPC ACLs, strict validation, unconfigured-schedule
+warnings, explicit year windows, tenant-switch race protection, and stable
+pagination. The owner accepted the corrected visuals on 2026-07-17, so **M7B
+is closed / accepted**. M8 / migration `101` has not started.
 
 Detailed roadmap: [BUILD_PLAN.md](docs/BUILD_PLAN.md)
 
@@ -74,8 +79,8 @@ Phase 7 source of truth: [PHASE_7_CALENDAR_PLAN.md](docs/PHASE_7_CALENDAR_PLAN.m
 
 ## Planned, Not Yet Implemented
 
-- Remaining Phase 7 work: working-date exceptions, assignment/reschedule,
-  mobile calendar, maps/directions, and Day/Week presentations (M7B–M10).
+- Remaining Phase 7 work after M7B closure: assignment/reschedule,
+  mobile calendar, maps/directions, and Day/Week presentations (M8–M10).
 - Phase 8 field execution: GPS proof, live-camera photo, actual consumable
   delivery, coverage confirmation, stock-out, and optional payment collection.
 - Offline mobile synchronization. Drift is deliberately not a current

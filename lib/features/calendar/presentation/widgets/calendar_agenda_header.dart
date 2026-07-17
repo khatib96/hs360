@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
+import '../../../../core/theme/app_theme.dart';
 import '../../domain/calendar_range_summary.dart';
 import '../../domain/calendar_working_day.dart';
 import '../calendar_labels.dart';
@@ -24,6 +25,7 @@ class CalendarAgendaHeader extends StatelessWidget {
     final status = workingDay == null
         ? l10n.calendarDayModeUnreviewed
         : calendarWorkingStatusText(l10n, workingDay!);
+    final dateException = workingDay?.dateException;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,6 +35,25 @@ class CalendarAgendaHeader extends StatelessWidget {
           key: const Key('calendar-agenda-date'),
           style: theme.textTheme.titleMedium,
         ),
+        if (dateException != null) ...[
+          const SizedBox(height: 4),
+          Text(
+            l10n.calendarAgendaExceptionLabel(
+              calendarDateExceptionKindTitleText(
+                l10n,
+                kind: dateException.kind,
+                title: dateException.titleFallback(
+                  Localizations.localeOf(context).languageCode,
+                ),
+              ),
+            ),
+            key: const Key('calendar-agenda-exception-title'),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: AppColors.goldDeep,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
         const SizedBox(height: 4),
         Text(
           status,

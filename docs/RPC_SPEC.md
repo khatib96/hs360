@@ -121,6 +121,37 @@ list_calendar_timezones(p_search text default null) returns table (timezone_name
 }
 ```
 
+**Phase 7 M7B working-date exception RPCs (`100`):**
+
+```sql
+list_working_date_exceptions(p_filters jsonb default '{}', p_cursor text default null, p_limit int default null) returns jsonb
+get_working_date_exception(p_exception_id uuid) returns jsonb
+create_working_date_exception(p_data jsonb, p_idempotency_key uuid) returns jsonb
+update_working_date_exception(p_exception_id uuid, p_expected_version int, p_data jsonb, p_idempotency_key uuid) returns jsonb
+cancel_working_date_exception(p_exception_id uuid, p_expected_version int, p_reason text, p_idempotency_key uuid) returns jsonb
+```
+
+- Require `settings.calendar.view` (list/get) or `settings.calendar.edit` (mutations).
+- RPC execute is granted only to `authenticated`; `PUBLIC`/`anon` execute and
+  all direct table access are revoked and postflight-tested.
+- List is paginated (default limit 50, max 100) with a query-bound opaque cursor;
+  `date_from`/`date_to` are both-or-neither; default window uses `tenant_local_today`
+  when available (`−30..+366`), otherwise the client must supply bounds. The
+  Flutter settings controller always supplies the selected calendar year and
+  reuses the server-echoed bounds/limit for later pages.
+- Unknown filters, non-canonical dates, malformed cursors, non-string scalar
+  JSON fields, limits outside `1..100`, titles over 200, notes over 2000, and
+  exception spans over 366 inclusive days return `validation_failed`.
+- Update may change the exception kind together with the matching day-mode/time
+  matrix under optimistic version and idempotency protection.
+- Mutations follow lock → normalize → hash → idempotent replay → then row load;
+  overlap maps SQLSTATE `23P01` to `working_date_exception_overlap`.
+- Calendar read paths expose only a safe `date_exception` projection
+  `{kind, title_ar, title_en}` via `resolve_tenant_working_window`; full rows
+  (notes, cancel reason, audit) stay on settings RPCs.
+- Direct table access on `tenant_working_date_exceptions` and
+  `working_date_exception_operations` is revoked from API roles.
+
 **`update_calendar_settings` payload:**
 
 ```json

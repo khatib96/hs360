@@ -4303,4 +4303,200 @@ class AppLocalizationsEn extends AppLocalizations {
   String calendarTimeWindowLabel(String start, String end) {
     return '$start – $end';
   }
+
+  @override
+  String get calendarWorkingDateExceptionsSectionTitle =>
+      'Holidays & date exceptions';
+
+  @override
+  String get calendarWorkingDateExceptionsEmpty => 'No date exceptions found.';
+
+  @override
+  String get calendarWorkingDateExceptionsAdd => 'Add exception';
+
+  @override
+  String get calendarWorkingDateExceptionsFilterStatusLabel => 'Status';
+
+  @override
+  String get calendarWorkingDateExceptionsFilterActive => 'Active';
+
+  @override
+  String get calendarWorkingDateExceptionsFilterCancelled => 'Cancelled';
+
+  @override
+  String get calendarWorkingDateExceptionsFilterAll => 'All';
+
+  @override
+  String get calendarWorkingDateExceptionsPermissionDenied =>
+      'You do not have permission to view date exceptions.';
+
+  @override
+  String get calendarWorkingDateExceptionKindOfficialHoliday =>
+      'Official holiday';
+
+  @override
+  String get calendarWorkingDateExceptionKindCompanyClosure =>
+      'Company closure';
+
+  @override
+  String get calendarWorkingDateExceptionKindExceptionalWorkingDay =>
+      'Exceptional working day';
+
+  @override
+  String get calendarWorkingDateExceptionStatusActive => 'Active';
+
+  @override
+  String get calendarWorkingDateExceptionStatusCancelled => 'Cancelled';
+
+  @override
+  String calendarWorkingDateExceptionDateRange(String start, String end) {
+    return '$start – $end';
+  }
+
+  @override
+  String get calendarWorkingDateExceptionCreateTitle => 'Add date exception';
+
+  @override
+  String get calendarWorkingDateExceptionEditTitle => 'Edit date exception';
+
+  @override
+  String get calendarWorkingDateExceptionKindLabel => 'Kind';
+
+  @override
+  String get calendarWorkingDateExceptionStartDate => 'Start date';
+
+  @override
+  String get calendarWorkingDateExceptionEndDate => 'End date';
+
+  @override
+  String get calendarWorkingDateExceptionTitleAr => 'Title (Arabic)';
+
+  @override
+  String get calendarWorkingDateExceptionTitleEn => 'Title (English)';
+
+  @override
+  String get calendarWorkingDateExceptionNotes => 'Notes (optional)';
+
+  @override
+  String get calendarWorkingDateExceptionDayModeLabel =>
+      'Working hours for this day';
+
+  @override
+  String get calendarWorkingDateExceptionDayMode24Hours => '24 hours';
+
+  @override
+  String get calendarWorkingDateExceptionDayModeLimitedHours =>
+      'Limited working hours';
+
+  @override
+  String get calendarWorkingDateExceptionCreateConfirm => 'Create';
+
+  @override
+  String get calendarWorkingDateExceptionSaveConfirm => 'Save';
+
+  @override
+  String get calendarWorkingDateExceptionEditAction => 'Edit';
+
+  @override
+  String get calendarWorkingDateExceptionCancelAction => 'Cancel';
+
+  @override
+  String get calendarWorkingDateExceptionCancelTitle => 'Cancel date exception';
+
+  @override
+  String get calendarWorkingDateExceptionCancelBody =>
+      'Cancelling requires a reason and preserves the exception for audit.';
+
+  @override
+  String get calendarWorkingDateExceptionCancelConfirm => 'Cancel exception';
+
+  @override
+  String get calendarWorkingDateExceptionCreated => 'Date exception created.';
+
+  @override
+  String get calendarWorkingDateExceptionUpdated => 'Date exception updated.';
+
+  @override
+  String get calendarWorkingDateExceptionCancelSuccess =>
+      'Date exception cancelled.';
+
+  @override
+  String get calendarErrorWorkingDateExceptionOverlap =>
+      'This date range overlaps an existing active date exception.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationKindRequired =>
+      'Select a kind.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationDateRequired =>
+      'Start and end dates are required.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationDateInvalid =>
+      'Enter valid dates.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationDateRangeInvalid =>
+      'End date must not be before the start date.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationDateRangeTooLong =>
+      'Date range cannot exceed 366 days.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationTitleRequired =>
+      'Enter a title in Arabic or English.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationTitleTooLong =>
+      'Title is too long.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationNotesTooLong =>
+      'Notes are too long.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationDayModeRequired =>
+      'Select 24-hour or limited working hours.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationDayModeNotAllowed =>
+      'Working hours only apply to an exceptional working day.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationWorkWindowRequired =>
+      'Enter start and end working hours.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationWorkWindowNotAllowed =>
+      'Working hours are not allowed for this selection.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationWorkWindowInvalid =>
+      'Enter valid HH:mm working hours.';
+
+  @override
+  String get calendarWorkingDateExceptionValidationWorkWindowOrder =>
+      'End time must be after start time.';
+
+  @override
+  String calendarDateExceptionKindTitle(String kind, String title) {
+    return '$kind – $title';
+  }
+
+  @override
+  String calendarAgendaExceptionLabel(String kindTitle) {
+    return 'Exception: $kindTitle';
+  }
+
+  @override
+  String calendarConflictNonWorkingDayExceptionLabel(String kindTitle) {
+    return 'Non-working day: $kindTitle';
+  }
+
+  @override
+  String calendarMonthExceptionMarkerSemantics(String kindTitle) {
+    return 'Date exception: $kindTitle';
+  }
 }

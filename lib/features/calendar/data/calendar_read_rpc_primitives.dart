@@ -83,6 +83,25 @@ DateTime? parseOptionalCalendarDate(dynamic value) {
   return parseRequiredCalendarDate(value);
 }
 
+/// Parses a required `timestamptz` ISO-8601 string (e.g. audit timestamps).
+DateTime requireDateTime(dynamic value, String detail) {
+  if (value is! String) {
+    return malformedCalendarResponse(
+      '$detail: expected ISO8601 string, got ${value.runtimeType}',
+    );
+  }
+  try {
+    return DateTime.parse(value);
+  } on FormatException catch (e) {
+    return malformedCalendarResponse('$detail: ${e.message}');
+  }
+}
+
+DateTime? parseOptionalDateTime(dynamic value, String detail) {
+  if (value == null) return null;
+  return requireDateTime(value, detail);
+}
+
 T requireEnum<T>(dynamic value, T? Function(String) fromRpc, String detail) {
   final raw = requireString(value, detail);
   final parsed = fromRpc(raw);

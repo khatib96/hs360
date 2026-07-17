@@ -1442,5 +1442,86 @@
       "start": {"type": "String"},
       "end": {"type": "String"}
     }
+  },
+  "calendarWorkingDateExceptionsSectionTitle": "العطلات واستثناءات التاريخ",
+  "calendarWorkingDateExceptionsEmpty": "لا توجد استثناءات تاريخ.",
+  "calendarWorkingDateExceptionsAdd": "إضافة استثناء",
+  "calendarWorkingDateExceptionsFilterStatusLabel": "الحالة",
+  "calendarWorkingDateExceptionsFilterActive": "نشط",
+  "calendarWorkingDateExceptionsFilterCancelled": "ملغى",
+  "calendarWorkingDateExceptionsFilterAll": "الكل",
+  "calendarWorkingDateExceptionsPermissionDenied": "لا تملك صلاحية عرض استثناءات التاريخ.",
+  "calendarWorkingDateExceptionKindOfficialHoliday": "عطلة رسمية",
+  "calendarWorkingDateExceptionKindCompanyClosure": "إغلاق الشركة",
+  "calendarWorkingDateExceptionKindExceptionalWorkingDay": "يوم عمل استثنائي",
+  "calendarWorkingDateExceptionStatusActive": "نشط",
+  "calendarWorkingDateExceptionStatusCancelled": "ملغى",
+  "calendarWorkingDateExceptionDateRange": "{start} – {end}",
+  "@calendarWorkingDateExceptionDateRange": {
+    "placeholders": {
+      "start": {"type": "String"},
+      "end": {"type": "String"}
+    }
+  },
+  "calendarWorkingDateExceptionCreateTitle": "إضافة استثناء تاريخ",
+  "calendarWorkingDateExceptionEditTitle": "تعديل استثناء التاريخ",
+  "calendarWorkingDateExceptionKindLabel": "النوع",
+  "calendarWorkingDateExceptionStartDate": "تاريخ البداية",
+  "calendarWorkingDateExceptionEndDate": "تاريخ النهاية",
+  "calendarWorkingDateExceptionTitleAr": "العنوان (عربي)",
+  "calendarWorkingDateExceptionTitleEn": "العنوان (إنجليزي)",
+  "calendarWorkingDateExceptionNotes": "ملاحظات (اختياري)",
+  "calendarWorkingDateExceptionDayModeLabel": "ساعات العمل لهذا اليوم",
+  "calendarWorkingDateExceptionDayMode24Hours": "24 ساعة",
+  "calendarWorkingDateExceptionDayModeLimitedHours": "ساعات عمل محدودة",
+  "calendarWorkingDateExceptionCreateConfirm": "إنشاء",
+  "calendarWorkingDateExceptionSaveConfirm": "حفظ",
+  "calendarWorkingDateExceptionEditAction": "تعديل",
+  "calendarWorkingDateExceptionCancelAction": "إلغاء",
+  "calendarWorkingDateExceptionCancelTitle": "إلغاء استثناء التاريخ",
+  "calendarWorkingDateExceptionCancelBody": "يتطلب الإلغاء سببًا ويحتفظ بالاستثناء لأغراض التدقيق.",
+  "calendarWorkingDateExceptionCancelConfirm": "إلغاء الاستثناء",
+  "calendarWorkingDateExceptionCreated": "تم إنشاء استثناء التاريخ.",
+  "calendarWorkingDateExceptionUpdated": "تم تحديث استثناء التاريخ.",
+  "calendarWorkingDateExceptionCancelSuccess": "تم إلغاء استثناء التاريخ.",
+  "calendarErrorWorkingDateExceptionOverlap": "يتداخل هذا النطاق الزمني مع استثناء تاريخ نشط آخر.",
+  "calendarWorkingDateExceptionValidationKindRequired": "اختر نوع الاستثناء.",
+  "calendarWorkingDateExceptionValidationDateRequired": "تاريخا البداية والنهاية مطلوبان.",
+  "calendarWorkingDateExceptionValidationDateInvalid": "أدخل تواريخ صالحة.",
+  "calendarWorkingDateExceptionValidationDateRangeInvalid": "يجب ألا يكون تاريخ النهاية قبل تاريخ البداية.",
+  "calendarWorkingDateExceptionValidationDateRangeTooLong": "لا يمكن أن يتجاوز نطاق التاريخ 366 يومًا.",
+  "calendarWorkingDateExceptionValidationTitleRequired": "أدخل عنوانًا بالعربية أو الإنجليزية.",
+  "calendarWorkingDateExceptionValidationTitleTooLong": "العنوان طويل جدًا.",
+  "calendarWorkingDateExceptionValidationNotesTooLong": "الملاحظات طويلة جدًا.",
+  "calendarWorkingDateExceptionValidationDayModeRequired": "اختر 24 ساعة أو ساعات عمل محدودة.",
+  "calendarWorkingDateExceptionValidationDayModeNotAllowed": "ساعات العمل تنطبق فقط على يوم العمل الاستثنائي.",
+  "calendarWorkingDateExceptionValidationWorkWindowRequired": "أدخل وقت بداية ونهاية ساعات العمل.",
+  "calendarWorkingDateExceptionValidationWorkWindowNotAllowed": "ساعات العمل غير مسموحة لهذا الاختيار.",
+  "calendarWorkingDateExceptionValidationWorkWindowInvalid": "أدخل ساعات عمل صحيحة بصيغة HH:mm.",
+  "calendarWorkingDateExceptionValidationWorkWindowOrder": "يجب أن يكون وقت النهاية بعد وقت البداية.",
+  "calendarDateExceptionKindTitle": "{kind} – {title}",
+  "@calendarDateExceptionKindTitle": {
+    "placeholders": {
+      "kind": {"type": "String"},
+      "title": {"type": "String"}
+    }
+  },
+  "calendarAgendaExceptionLabel": "استثناء: {kindTitle}",
+  "@calendarAgendaExceptionLabel": {
+    "placeholders": {
+      "kindTitle": {"type": "String"}
+    }
+  },
+  "calendarConflictNonWorkingDayExceptionLabel": "يوم غير عمل: {kindTitle}",
+  "@calendarConflictNonWorkingDayExceptionLabel": {
+    "placeholders": {
+      "kindTitle": {"type": "String"}
+    }
+  },
+  "calendarMonthExceptionMarkerSemantics": "استثناء تاريخ: {kindTitle}",
+  "@calendarMonthExceptionMarkerSemantics": {
+    "placeholders": {
+      "kindTitle": {"type": "String"}
+    }
   }
 }

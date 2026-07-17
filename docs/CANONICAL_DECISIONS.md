@@ -239,7 +239,17 @@ event may optionally carry a same-day start/end window.
 
 M7A implemented and owner-accepted this manual company-event contract on
 2026-07-15 through migrations `098`/`099` and the typed Flutter calendar layer.
-M7B working-date exceptions remain next and unimplemented.
+M7B working-date exceptions are implemented through migration `100` and are
+**CLOSED / ACCEPTED** as of 2026-07-17 after automated and owner visual
+acceptance (safe calendar projection of kind+titles only; settings-gated full
+CRUD; exceptions override weekly resolve; events on closures are never
+mutated).
+
+The M7B settings list uses an explicit selected-year window, including while the
+weekly schedule/timezone is unconfigured. Date exceptions remain authoritative
+for the selected date in that state. Public M7B RPC execution is authenticated-
+only, pagination reuses server-echoed bounds, and an active exception's kind is
+editable through the versioned/idempotent update contract.
 
 - `scheduled_date` remains canonical for every event. Legacy `scheduled_time`
   remains null/compatibility-only. M7A uses a reviewed optional start/end/

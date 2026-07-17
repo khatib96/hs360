@@ -208,6 +208,7 @@ class _CalendarMonthGridState extends State<CalendarMonthGrid> {
     final hasConflict = isDayOff && eventCount > 0;
     final overdue = summary?.overdueCount ?? 0;
     final unassigned = summary?.unassignedCount;
+    final dateException = summary?.workingDay.dateException;
 
     String? eventLabel;
     if (eventCount > 0) {
@@ -229,7 +230,16 @@ class _CalendarMonthGridState extends State<CalendarMonthGrid> {
       calendarLocalizedDate(l10n, date),
       if (isSelected) l10n.calendarSemanticsSelected,
       if (isToday) l10n.calendarSemanticsToday,
-      if (isDayOff) l10n.calendarSemanticsDayOff,
+      if (dateException != null)
+        l10n.calendarMonthExceptionMarkerSemantics(
+          calendarDateExceptionKindTitleText(
+            l10n,
+            kind: dateException.kind,
+            title: dateException.titleFallback(l10n.localeName),
+          ),
+        )
+      else if (isDayOff)
+        l10n.calendarSemanticsDayOff,
       if (hasConflict) l10n.calendarSemanticsConflict,
       if (eventCount > 0) l10n.calendarDayEventCount(eventCount),
       if (overdue > 0) l10n.calendarDayOverdueCount(overdue),
@@ -245,6 +255,7 @@ class _CalendarMonthGridState extends State<CalendarMonthGrid> {
       isKeyboardFocused: isFocused,
       isDayOff: isDayOff,
       hasConflict: hasConflict,
+      dateExceptionKind: dateException?.kind,
       eventCountLabel: eventLabel,
       overdueCountLabel: overdueLabel,
       unassignedCountLabel: unassignedLabel,

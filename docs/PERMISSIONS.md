@@ -162,13 +162,20 @@ Phase 7 adds dedicated Calendar Settings permissions (seeded in migration
 `093`, `sort_order` 181–182):
 
 - `settings.calendar.view` — view the seven-day working schedule, selected IANA
-  timezone, and reminder policies.
-- `settings.calendar.edit` — atomically configure/edit those settings.
+  timezone, reminder policies, and working-date exceptions (holidays, closures,
+  exceptional working days).
+- `settings.calendar.edit` — atomically configure/edit those settings and manage
+  working-date exceptions (create/update/cancel).
 
 These permissions are independent from `calendar.view` and
-`calendar.view_assigned`. Viewing events never grants settings access. Granting
-or revoking Calendar Settings permissions remains restricted to the Manager or
-the accepted user/permission-management authority.
+`calendar.view_assigned`. Viewing events never grants settings access. Calendar
+read RPCs may expose only a safe exception projection (kind + titles + effective
+working state), never notes, cancel reasons, or audit fields.
+
+M7B RPC ACL rule: the five working-date-exception RPCs are executable only by
+`authenticated`. `PUBLIC` and `anon` execute are explicitly revoked; full table
+access remains revoked from API roles. Every RPC still derives tenant identity
+server-side and asserts the corresponding Calendar Settings permission.
 
 Phase 5 M10 note: voucher create permissions allow the workflow, but the
 posting RPCs still reject protected direct-voucher accounts such as cash/bank

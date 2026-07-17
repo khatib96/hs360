@@ -10,6 +10,7 @@ import '../domain/calendar_settings.dart';
 import 'calendar_settings_controller.dart';
 import 'calendar_settings_state.dart';
 import 'widgets/calendar_setup_banner.dart';
+import 'widgets/calendar_working_date_exceptions_section.dart';
 import 'widgets/calendar_working_day_editor.dart';
 
 class CalendarSettingsScreen extends ConsumerStatefulWidget {
@@ -233,6 +234,8 @@ class _CalendarSettingsScreenState
                   )
                 : Text(l10n.calendarSettingsSave),
           ),
+        const SizedBox(height: 24),
+        const CalendarWorkingDateExceptionsSection(),
       ],
     );
   }

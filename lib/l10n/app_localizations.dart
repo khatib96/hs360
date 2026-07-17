@@ -8107,6 +8107,330 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{start} – {end}'**
   String calendarTimeWindowLabel(String start, String end);
+
+  /// No description provided for @calendarWorkingDateExceptionsSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Holidays & date exceptions'**
+  String get calendarWorkingDateExceptionsSectionTitle;
+
+  /// No description provided for @calendarWorkingDateExceptionsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No date exceptions found.'**
+  String get calendarWorkingDateExceptionsEmpty;
+
+  /// No description provided for @calendarWorkingDateExceptionsAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add exception'**
+  String get calendarWorkingDateExceptionsAdd;
+
+  /// No description provided for @calendarWorkingDateExceptionsFilterStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get calendarWorkingDateExceptionsFilterStatusLabel;
+
+  /// No description provided for @calendarWorkingDateExceptionsFilterActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get calendarWorkingDateExceptionsFilterActive;
+
+  /// No description provided for @calendarWorkingDateExceptionsFilterCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get calendarWorkingDateExceptionsFilterCancelled;
+
+  /// No description provided for @calendarWorkingDateExceptionsFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get calendarWorkingDateExceptionsFilterAll;
+
+  /// No description provided for @calendarWorkingDateExceptionsPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have permission to view date exceptions.'**
+  String get calendarWorkingDateExceptionsPermissionDenied;
+
+  /// No description provided for @calendarWorkingDateExceptionKindOfficialHoliday.
+  ///
+  /// In en, this message translates to:
+  /// **'Official holiday'**
+  String get calendarWorkingDateExceptionKindOfficialHoliday;
+
+  /// No description provided for @calendarWorkingDateExceptionKindCompanyClosure.
+  ///
+  /// In en, this message translates to:
+  /// **'Company closure'**
+  String get calendarWorkingDateExceptionKindCompanyClosure;
+
+  /// No description provided for @calendarWorkingDateExceptionKindExceptionalWorkingDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Exceptional working day'**
+  String get calendarWorkingDateExceptionKindExceptionalWorkingDay;
+
+  /// No description provided for @calendarWorkingDateExceptionStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get calendarWorkingDateExceptionStatusActive;
+
+  /// No description provided for @calendarWorkingDateExceptionStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get calendarWorkingDateExceptionStatusCancelled;
+
+  /// No description provided for @calendarWorkingDateExceptionDateRange.
+  ///
+  /// In en, this message translates to:
+  /// **'{start} – {end}'**
+  String calendarWorkingDateExceptionDateRange(String start, String end);
+
+  /// No description provided for @calendarWorkingDateExceptionCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add date exception'**
+  String get calendarWorkingDateExceptionCreateTitle;
+
+  /// No description provided for @calendarWorkingDateExceptionEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit date exception'**
+  String get calendarWorkingDateExceptionEditTitle;
+
+  /// No description provided for @calendarWorkingDateExceptionKindLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Kind'**
+  String get calendarWorkingDateExceptionKindLabel;
+
+  /// No description provided for @calendarWorkingDateExceptionStartDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Start date'**
+  String get calendarWorkingDateExceptionStartDate;
+
+  /// No description provided for @calendarWorkingDateExceptionEndDate.
+  ///
+  /// In en, this message translates to:
+  /// **'End date'**
+  String get calendarWorkingDateExceptionEndDate;
+
+  /// No description provided for @calendarWorkingDateExceptionTitleAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Title (Arabic)'**
+  String get calendarWorkingDateExceptionTitleAr;
+
+  /// No description provided for @calendarWorkingDateExceptionTitleEn.
+  ///
+  /// In en, this message translates to:
+  /// **'Title (English)'**
+  String get calendarWorkingDateExceptionTitleEn;
+
+  /// No description provided for @calendarWorkingDateExceptionNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (optional)'**
+  String get calendarWorkingDateExceptionNotes;
+
+  /// No description provided for @calendarWorkingDateExceptionDayModeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Working hours for this day'**
+  String get calendarWorkingDateExceptionDayModeLabel;
+
+  /// No description provided for @calendarWorkingDateExceptionDayMode24Hours.
+  ///
+  /// In en, this message translates to:
+  /// **'24 hours'**
+  String get calendarWorkingDateExceptionDayMode24Hours;
+
+  /// No description provided for @calendarWorkingDateExceptionDayModeLimitedHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Limited working hours'**
+  String get calendarWorkingDateExceptionDayModeLimitedHours;
+
+  /// No description provided for @calendarWorkingDateExceptionCreateConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get calendarWorkingDateExceptionCreateConfirm;
+
+  /// No description provided for @calendarWorkingDateExceptionSaveConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get calendarWorkingDateExceptionSaveConfirm;
+
+  /// No description provided for @calendarWorkingDateExceptionEditAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get calendarWorkingDateExceptionEditAction;
+
+  /// No description provided for @calendarWorkingDateExceptionCancelAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get calendarWorkingDateExceptionCancelAction;
+
+  /// No description provided for @calendarWorkingDateExceptionCancelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel date exception'**
+  String get calendarWorkingDateExceptionCancelTitle;
+
+  /// No description provided for @calendarWorkingDateExceptionCancelBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelling requires a reason and preserves the exception for audit.'**
+  String get calendarWorkingDateExceptionCancelBody;
+
+  /// No description provided for @calendarWorkingDateExceptionCancelConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel exception'**
+  String get calendarWorkingDateExceptionCancelConfirm;
+
+  /// No description provided for @calendarWorkingDateExceptionCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Date exception created.'**
+  String get calendarWorkingDateExceptionCreated;
+
+  /// No description provided for @calendarWorkingDateExceptionUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Date exception updated.'**
+  String get calendarWorkingDateExceptionUpdated;
+
+  /// No description provided for @calendarWorkingDateExceptionCancelSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Date exception cancelled.'**
+  String get calendarWorkingDateExceptionCancelSuccess;
+
+  /// No description provided for @calendarErrorWorkingDateExceptionOverlap.
+  ///
+  /// In en, this message translates to:
+  /// **'This date range overlaps an existing active date exception.'**
+  String get calendarErrorWorkingDateExceptionOverlap;
+
+  /// No description provided for @calendarWorkingDateExceptionValidationKindRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a kind.'**
+  String get calendarWorkingDateExceptionValidationKindRequired;
+
+  /// No description provided for @calendarWorkingDateExceptionValidationDateRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Start and end dates are required.'**
+  String get calendarWorkingDateExceptionValidationDateRequired;
+
+  /// No description provided for @calendarWorkingDateExceptionValidationDateInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter valid dates.'**
+  String get calendarWorkingDateExceptionValidationDateInvalid;
+
+  /// No description provided for @calendarWorkingDateExceptionValidationDateRangeInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'End date must not be before the start date.'**
+  String get calendarWorkingDateExceptionValidationDateRangeInvalid;
+
+  /// No description provided for @calendarWorkingDateExceptionValidationDateRangeTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Date range cannot exceed 366 days.'**
+  String get calendarWorkingDateExceptionValidationDateRangeTooLong;
+
+  /// No description provided for @calendarWorkingDateExceptionValidationTitleRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a title in Arabic or English.'**
+  String get calendarWorkingDateExceptionValidationTitleRequired;
+
+  /// No description provided for @calendarWorkingDateExceptionValidationTitleTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Title is too long.'**
+  String get calendarWorkingDateExceptionValidationTitleTooLong;
+
+  /// No description provided for @calendarWorkingDateExceptionValidationNotesTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes are too long.'**
+  String get calendarWorkingDateExceptionValidationNotesTooLong;
+
+  /// No description provided for @calendarWorkingDateExceptionValidationDayModeRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select 24-hour or limited working hours.'**
+  String get calendarWorkingDateExceptionValidationDayModeRequired;
+
+  /// No description provided for @calendarWorkingDateExceptionValidationDayModeNotAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Working hours only apply to an exceptional working day.'**
+  String get calendarWorkingDateExceptionValidationDayModeNotAllowed;
+
+  /// No description provided for @calendarWorkingDateExceptionValidationWorkWindowRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter start and end working hours.'**
+  String get calendarWorkingDateExceptionValidationWorkWindowRequired;
+
+  /// No description provided for @calendarWorkingDateExceptionValidationWorkWindowNotAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Working hours are not allowed for this selection.'**
+  String get calendarWorkingDateExceptionValidationWorkWindowNotAllowed;
+
+  /// No description provided for @calendarWorkingDateExceptionValidationWorkWindowInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter valid HH:mm working hours.'**
+  String get calendarWorkingDateExceptionValidationWorkWindowInvalid;
+
+  /// No description provided for @calendarWorkingDateExceptionValidationWorkWindowOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'End time must be after start time.'**
+  String get calendarWorkingDateExceptionValidationWorkWindowOrder;
+
+  /// No description provided for @calendarDateExceptionKindTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind} – {title}'**
+  String calendarDateExceptionKindTitle(String kind, String title);
+
+  /// No description provided for @calendarAgendaExceptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Exception: {kindTitle}'**
+  String calendarAgendaExceptionLabel(String kindTitle);
+
+  /// No description provided for @calendarConflictNonWorkingDayExceptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Non-working day: {kindTitle}'**
+  String calendarConflictNonWorkingDayExceptionLabel(String kindTitle);
+
+  /// No description provided for @calendarMonthExceptionMarkerSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Date exception: {kindTitle}'**
+  String calendarMonthExceptionMarkerSemantics(String kindTitle);
 }
 
 class _AppLocalizationsDelegate
