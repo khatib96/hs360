@@ -1312,7 +1312,7 @@
       "value": {"type": "int"}
     }
   },
-  "calendarDayEventCount": "{count} مواعيد",
+  "calendarDayEventCount": "{count, plural, =0{لا مواعيد} =1{موعد واحد} =2{موعدان} few{{count} مواعيد} many{{count} موعدًا} other{{count} موعد}}",
   "@calendarDayEventCount": {
     "placeholders": {
       "count": {"type": "int"}
@@ -1523,5 +1523,58 @@
     "placeholders": {
       "kindTitle": {"type": "String"}
     }
-  }
+  },
+  "calendarAssignAction": "إسناد",
+  "calendarRescheduleAction": "إعادة جدولة",
+  "calendarAssignDialogTitle": "إسناد الحدث",
+  "calendarAssignCurrentAssignee": "المسند إليه الحالي: {name}",
+  "@calendarAssignCurrentAssignee": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "calendarAssignCurrentlyUnassigned": "غير مسند حاليًا.",
+  "calendarAssignCurrentUnavailable": "المسند إليه الحالي — غير متاح (غير نشط)",
+  "calendarAssignUnassignOption": "بدون إسناد",
+  "calendarAssignSearchHint": "ابحث عن الموظفين النشطين",
+  "calendarAssignNoResults": "لا يوجد موظفون نشطون مطابقون.",
+  "calendarAssignRetry": "إعادة المحاولة",
+  "calendarAssignWarningNoCalendarAccess": "لا يملك صلاحية التقويم — لن تظهر له الأحداث المسندة.",
+  "calendarAssignWarningNoActiveAccount": "حسابه غير نشط في هذه الشركة.",
+  "calendarAssignWarningNoAppAccount": "لا يملك حساب تطبيق — لا يمكنه تسجيل الدخول.",
+  "calendarAssignSubmit": "إسناد",
+  "calendarAssignSuccess": "تم حفظ الإسناد.",
+  "calendarAssignedEventHidden": "تم حفظ الإسناد. لم يعد هذا الحدث ظاهرًا في عرضك.",
+  "calendarRescheduleDialogTitle": "إعادة جدولة الحدث",
+  "calendarRescheduleCurrentDate": "التاريخ الحالي: {date}",
+  "@calendarRescheduleCurrentDate": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "calendarRescheduleTargetDate": "التاريخ الجديد: {date}",
+  "@calendarRescheduleTargetDate": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "calendarRescheduleDateUnchanged": "اختر تاريخًا مختلفًا لتفعيل إعادة الجدولة.",
+  "calendarRescheduleTimedWindow": "سيتم الاحتفاظ بالفترة الزمنية {start}–{end} في التاريخ الجديد.",
+  "@calendarRescheduleTimedWindow": {
+    "placeholders": {
+      "start": {"type": "String"},
+      "end": {"type": "String"}
+    }
+  },
+  "calendarRescheduleReasonLabel": "سبب إعادة الجدولة",
+  "calendarRescheduleReasonRequired": "أدخل سببًا غير فارغ لإعادة الجدولة.",
+  "calendarRescheduleSubmit": "إعادة جدولة",
+  "calendarRescheduleSuccess": "تمت إعادة جدولة الحدث.",
+  "calendarErrorAssignmentNotApplicable": "لا يمكن إسناد هذا الحدث.",
+  "calendarPreviousWeek": "الأسبوع السابق",
+  "calendarNextWeek": "الأسبوع التالي",
+  "calendarMobileDaySelected": "محدد",
+  "calendarOverdueSectionExpand": "إظهار المتأخر خارج النطاق",
+  "calendarOverdueSectionCollapse": "إخفاء المتأخر خارج النطاق",
+  "calendarDirectionsUnavailable": "الاتجاهات غير متوفرة"
 }

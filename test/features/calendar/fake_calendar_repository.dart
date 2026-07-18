@@ -12,9 +12,11 @@ import 'package:hs360/features/calendar/domain/calendar_event_participant.dart';
 import 'package:hs360/features/calendar/domain/calendar_filters.dart';
 import 'package:hs360/features/calendar/domain/calendar_meeting_mode.dart';
 import 'package:hs360/features/calendar/domain/calendar_range_summary.dart';
+import 'package:hs360/features/calendar/domain/calendar_schedule_mutation.dart';
 import 'package:hs360/features/calendar/domain/calendar_settings.dart';
 import 'package:hs360/features/calendar/domain/calendar_time_window.dart';
 import 'package:hs360/features/calendar/domain/calendar_working_day.dart';
+import 'package:hs360/features/calendar/domain/calendar_working_date_exception.dart';
 
 CalendarWorkingDay sampleCalendarWorkingDay({
   DateTime? date,
@@ -26,6 +28,7 @@ CalendarWorkingDay sampleCalendarWorkingDay({
   bool? isDayOff,
   bool? is24Hours,
   bool? isWorkingHours,
+  CalendarDateExceptionRef? dateException,
 }) {
   final d = date ?? DateTime(2026, 7, 14);
   final unreviewed =
@@ -48,6 +51,27 @@ CalendarWorkingDay sampleCalendarWorkingDay({
     isDayOff: dayOff,
     is24Hours: hours24,
     isWorkingHours: working,
+    dateException: dateException,
+  );
+}
+
+CalendarParticipantCandidate sampleParticipantCandidate({
+  String employeeId = 'emp-1',
+  String nameAr = 'موظف',
+  String? nameEn = 'Employee',
+  bool isActive = true,
+  bool hasAppAccount = true,
+  bool hasActiveTenantAccount = true,
+  bool hasCalendarAccess = true,
+}) {
+  return CalendarParticipantCandidate(
+    employeeId: employeeId,
+    nameAr: nameAr,
+    nameEn: nameEn,
+    isActive: isActive,
+    hasAppAccount: hasAppAccount,
+    hasActiveTenantAccount: hasActiveTenantAccount,
+    hasCalendarAccess: hasCalendarAccess,
   );
 }
 
@@ -67,6 +91,7 @@ CalendarEvent sampleCalendarEvent({
   String? contractId,
   String? contractNumber,
   String? serviceLocationName,
+  String? assignedAgentId,
   String? assignedAgentNameAr,
   String? assignedAgentNameEn,
   bool directionsAvailable = false,
@@ -76,6 +101,8 @@ CalendarEvent sampleCalendarEvent({
   CalendarAvailableActions? availableActions,
   int scheduleVersion = 1,
   CalendarTimeWindow? timeWindow,
+  CalendarScheduleState scheduleState = CalendarScheduleState.workingDay,
+  CalendarWorkingDay? workingDay,
   List<CalendarEventParticipant> participants = const [],
   CalendarMeetingMode? meetingMode,
   String? meetingUrl,
@@ -91,6 +118,7 @@ CalendarEvent sampleCalendarEvent({
     titleAr: titleAr ?? 'تعبئة',
     titleEn: titleEn ?? 'Refill',
     isRescheduled: false,
+    assignedAgentId: assignedAgentId,
     assignedAgentNameAr: assignedAgentNameAr,
     assignedAgentNameEn: assignedAgentNameEn,
     customerId: customerId,
@@ -100,8 +128,8 @@ CalendarEvent sampleCalendarEvent({
     contractId: contractId,
     contractNumber: contractNumber,
     directionsAvailable: directionsAvailable,
-    scheduleState: CalendarScheduleState.workingDay,
-    workingDay: sampleCalendarWorkingDay(date: date),
+    scheduleState: scheduleState,
+    workingDay: workingDay ?? sampleCalendarWorkingDay(date: date),
     isOverdue: isOverdue,
     overdueDays: overdueDays,
     overdueState: overdueState,
@@ -134,6 +162,7 @@ CalendarRangeSummaryResult sampleRangeSummary({
   bool workingScheduleConfigured = true,
   CalendarOverdueOutsideRangeState overdueState =
       CalendarOverdueOutsideRangeState.available,
+  int? overdueOutsideCount,
   CalendarFilters filtersApplied = CalendarFilters.empty,
   CalendarReadScope scope = CalendarReadScope.tenantWide,
   int? unassignedCount = 0,
@@ -162,6 +191,9 @@ CalendarRangeSummaryResult sampleRangeSummary({
     );
     cursor = addCalendarDays(cursor, 1);
   }
+  final resolvedOverdueCount =
+      overdueOutsideCount ??
+      (overdueState == CalendarOverdueOutsideRangeState.available ? 1 : null);
   return CalendarRangeSummaryResult(
     dateFrom: from,
     dateTo: to,
@@ -173,11 +205,10 @@ CalendarRangeSummaryResult sampleRangeSummary({
     days: days,
     overdueOutsideRange: CalendarOverdueOutsideRangeSummary(
       state: overdueState,
-      count: overdueState == CalendarOverdueOutsideRangeState.available
-          ? 1
-          : null,
+      count: resolvedOverdueCount,
       oldestOriginalDueDate:
-          overdueState == CalendarOverdueOutsideRangeState.available
+          overdueState == CalendarOverdueOutsideRangeState.available &&
+              (resolvedOverdueCount ?? 0) > 0
           ? DateTime(2026, 6, 1)
           : null,
     ),
@@ -238,6 +269,7 @@ class FakeCalendarRepository extends CalendarRepository {
     this.workingDayForDate,
     this.eventCountForDate,
     this.echoAgendaDate = false,
+    this.filterAgendaToRequestedDate = false,
     this.participantCandidates = const [],
   }) : rangeResult = rangeResult ?? sampleRangeSummary(),
        listResult = listResult ?? sampleEventList(),
@@ -259,8 +291,46 @@ class FakeCalendarRepository extends CalendarRepository {
   /// When true, agenda list rows are generated for the requested dateFrom.
   bool echoAgendaDate;
 
-  /// Optional participant-candidate list for M7A create/edit dialogs.
-  List<CalendarEventParticipant> participantCandidates;
+  /// When true (and [echoAgendaDate] is false), in-range rows are filtered to
+  /// the requested agenda date so selected-day screenshots stay consistent.
+  bool filterAgendaToRequestedDate;
+
+  /// Optional participant-candidate list for M7A create/edit dialogs and the
+  /// M8 assignment dialog.
+  List<CalendarParticipantCandidate> participantCandidates;
+
+  /// When non-null, assign/reschedule (or candidate lookups) throw.
+  Object? assignError;
+  Object? rescheduleError;
+  Object? candidatesError;
+
+  /// Queue of reschedule results (lets tests drive confirmation loops).
+  /// Falls back to an ok/changed echo of the request when empty.
+  final List<CalendarScheduleMutationResult> rescheduleResultsQueue = [];
+
+  /// Optional fixed assign result; defaults to an ok/changed echo.
+  CalendarScheduleMutationResult? assignResult;
+
+  Completer<void>? holdAssignUntil;
+  Completer<void>? holdRescheduleUntil;
+
+  int assignCount = 0;
+  int rescheduleCount = 0;
+  int candidatesCount = 0;
+
+  String? lastAssignEventId;
+  int? lastAssignExpectedVersion;
+  CalendarAssignmentData? lastAssignData;
+  String? lastAssignIdempotencyKey;
+
+  String? lastRescheduleEventId;
+  int? lastRescheduleExpectedVersion;
+  CalendarRescheduleData? lastRescheduleData;
+  String? lastRescheduleIdempotencyKey;
+  final List<String> assignKeyLog = [];
+  final List<String> rescheduleKeyLog = [];
+
+  String? lastCandidatesSearch;
 
   /// Gates: when non-null, the corresponding call awaits [Completer.future]
   /// before returning (lets tests switch tenant mid-flight).
@@ -334,6 +404,7 @@ class FakeCalendarRepository extends CalendarRepository {
       tenantLocalToday: rangeResult.tenantLocalToday,
       workingScheduleConfigured: rangeResult.workingScheduleConfigured,
       overdueState: rangeResult.overdueOutsideRange.state,
+      overdueOutsideCount: rangeResult.overdueOutsideRange.count,
       filtersApplied: filters,
       scope: rangeScope,
       unassignedCount: rangeUnassignedCount,
@@ -424,15 +495,43 @@ class FakeCalendarRepository extends CalendarRepository {
         hasMoreOverdue: false,
       );
     }
+    if (filterAgendaToRequestedDate && !includeOverdueOutsideRange) {
+      final day = DateTime(dateFrom.year, dateFrom.month, dateFrom.day);
+      final rows = listResult.inRange.rows
+          .where(
+            (e) =>
+                e.scheduledDate.year == day.year &&
+                e.scheduledDate.month == day.month &&
+                e.scheduledDate.day == day.day,
+          )
+          .toList(growable: false);
+      return CalendarEventListResult(
+        dateFrom: dateFrom,
+        dateTo: dateTo,
+        limit: listResult.limit,
+        scope: listResult.scope,
+        tenantLocalToday: listResult.tenantLocalToday,
+        filtersHash: listResult.filtersHash,
+        inRange: CalendarEventBucket(
+          rows: rows,
+          nextCursor: listResult.inRange.nextCursor,
+          hasMore: listResult.inRange.hasMore,
+        ),
+        overdueOutsideRange: listResult.overdueOutsideRange,
+      );
+    }
     return listResult;
   }
 
   @override
-  Future<List<CalendarEventParticipant>> listParticipantCandidates(
+  Future<List<CalendarParticipantCandidate>> listParticipantCandidates(
     AppSession session, {
     String? search,
     int limit = 50,
   }) async {
+    candidatesCount++;
+    lastCandidatesSearch = search;
+    _maybeThrow(candidatesError);
     final q = search?.trim().toLowerCase() ?? '';
     final filtered = q.isEmpty
         ? participantCandidates
@@ -441,6 +540,70 @@ class FakeCalendarRepository extends CalendarRepository {
             final en = (p.nameEn ?? '').toLowerCase();
             return ar.contains(q) || en.contains(q);
           }).toList();
-    return filtered.take(limit.clamp(1, 100)).toList();
+    // Mirrors the real mapper: candidate collections are frozen.
+    return List.unmodifiable(filtered.take(limit.clamp(1, 100)));
+  }
+
+  @override
+  Future<CalendarScheduleMutationResult> assignCalendarEvent(
+    AppSession session, {
+    required String eventId,
+    required int expectedVersion,
+    required CalendarAssignmentData data,
+    required String idempotencyKey,
+  }) async {
+    assignCount++;
+    lastAssignEventId = eventId;
+    lastAssignExpectedVersion = expectedVersion;
+    lastAssignData = data;
+    lastAssignIdempotencyKey = idempotencyKey;
+    assignKeyLog.add(idempotencyKey);
+
+    final gate = holdAssignUntil;
+    if (gate != null) await gate.future;
+
+    _maybeThrow(assignError);
+    return assignResult ??
+        CalendarScheduleMutationOk(
+          sampleCalendarEvent(id: eventId),
+          changed: true,
+        );
+  }
+
+  @override
+  Future<CalendarScheduleMutationResult> rescheduleCalendarEvent(
+    AppSession session, {
+    required String eventId,
+    required int expectedVersion,
+    required CalendarRescheduleData data,
+    required String idempotencyKey,
+  }) async {
+    rescheduleCount++;
+    lastRescheduleEventId = eventId;
+    lastRescheduleExpectedVersion = expectedVersion;
+    lastRescheduleData = data;
+    lastRescheduleIdempotencyKey = idempotencyKey;
+    rescheduleKeyLog.add(idempotencyKey);
+
+    final gate = holdRescheduleUntil;
+    if (gate != null) await gate.future;
+
+    _maybeThrow(rescheduleError);
+    if (rescheduleResultsQueue.isNotEmpty) {
+      return rescheduleResultsQueue.removeAt(0);
+    }
+    return CalendarScheduleMutationOk(
+      sampleCalendarEvent(id: eventId, scheduledDate: data.scheduledDate),
+      changed: true,
+    );
+  }
+
+  void _maybeThrow(Object? error) {
+    if (error == null) return;
+    if (error is CalendarException) throw error;
+    throw CalendarException(
+      code: CalendarException.unknown,
+      technicalDetail: error.toString(),
+    );
   }
 }

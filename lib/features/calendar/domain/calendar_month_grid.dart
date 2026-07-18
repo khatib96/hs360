@@ -87,6 +87,19 @@ DateTime _alignToWeekStart(DateTime date, int firstDayOfWeekIndex) {
   return addCalendarDays(calendarDateOnly(date), -delta);
 }
 
+/// Public week-start alignment for mobile week strips and grids.
+DateTime calendarAlignToWeekStart(DateTime date, int firstDayOfWeekIndex) =>
+    _alignToWeekStart(date, firstDayOfWeekIndex);
+
+/// Seven date-only days for the week containing [selectedDate].
+List<DateTime> calendarWeekDaysContaining(
+  DateTime selectedDate, {
+  required int firstDayOfWeekIndex,
+}) {
+  final start = calendarAlignToWeekStart(selectedDate, firstDayOfWeekIndex);
+  return [for (var i = 0; i < 7; i++) addCalendarDays(start, i)];
+}
+
 DateTime _alignToWeekEnd(DateTime date, int firstDayOfWeekIndex) {
   final normalized = firstDayOfWeekIndex % 7;
   final lastDayIndex = (normalized + 6) % 7;

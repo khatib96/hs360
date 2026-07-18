@@ -5,9 +5,12 @@
 > customer visits, tasks, reminders, activities, and other controlled manual
 > business appointments in one operational calendar.
 >
-> Status: **M0–M7B complete / accepted.** Migrations `093`–`100` exist. M7A
-> closed on 2026-07-15; M7B automated gates and owner visual acceptance closed
-> on 2026-07-17. Next milestone: **M8 Assignment & Rescheduling** (`101`).
+> Status: **M0–M7B complete / accepted.** Migrations `093`–`101` exist. M7A
+> closed on 2026-07-15; M7B closed on 2026-07-17; M8 SQL/`101` accepted with
+> Flutter corrective pass on 2026-07-18
+> (`M8 FLUTTER CORRECTED — OWNER RE-ACCEPTANCE PENDING`). **M9 Mobile Calendar
+> CLOSED / ACCEPTED on 2026-07-19.** The next milestone is **M10 Route View and
+> Directions** (not started).
 >
 > Owner direction (revised 2026-07-15): HS360 Calendar is the company's shared
 > appointment-management surface, not only a contract-follow-up calendar. The
@@ -1764,6 +1767,11 @@ Phase 8 execution into Phase 7.
 - Day-off conflicts are visible.
 - No Phase 8 action is implied or accidentally available.
 
+**Closure (2026-07-19):** final automated and owner visual gates passed after
+the content-width responsive correction, non-overlapping mobile create control,
+assigned-only evidence correction, and regenerated 12-frame M9 screenshot set.
+M9 is **CLOSED / ACCEPTED**. M10 remains not started.
+
 ---
 
 ## M10 - Route View and Directions
@@ -2143,17 +2151,15 @@ Phase 6 foundation can be reused without corrective work.
 
 ## Starting Point For Implementation
 
-M0-M7B are closed/accepted. Migration
-`100_phase_7_working_date_exceptions.sql` is implemented with SQL/Flutter
-coverage and a 12-frame screenshot harness accepted by the owner on 2026-07-17.
-Historical migrations `093`–`099` remain byte-unchanged
-(verify with `git diff -- supabase/migrations/093* … 099*`).
+M0–M7B are closed/accepted. M8 SQL/`101` is accepted historically; Flutter
+corrective is green (`M8 FLUTTER CORRECTED — OWNER RE-ACCEPTANCE PENDING`).
+M9 Mobile Calendar passed its final automated and owner visual gates on
+2026-07-19 (`M9 CLOSED / ACCEPTED`). Migrations `093`–`101` remain
+byte-unchanged for this corrective/mobile phase (verify with
+`git diff -- supabase/migrations/093* … 101*`).
 
-Next: M8 Assignment & Rescheduling (migration `101`).
-
-The earlier read/UI prerequisites were satisfied by M1-M6. M7A preserved and
-extended those contracts through forward migrations `098`/`099` and typed
-repository/controller changes rather than rewriting applied migrations.
+Next milestone: **M10 Route View and Directions**.
+Do not start M10 or Phase 8 until explicitly requested.
 
 Do not begin external reminder delivery until:
 
@@ -2168,8 +2174,6 @@ Do not begin route-map implementation until:
 - missing-coordinate fallback is designed.
 
 The M7A enum/key names, time schema, participant lookup contract, and lifecycle
-RPC shapes are implemented and accepted. M7B migration `100` (working-date
-exceptions) and its owner visual acceptance are also **CLOSED / ACCEPTED**.
-
-The next implementation action is M8 — Assignment and Rescheduling (migration
-`101`).
+RPC shapes are implemented and accepted. M7B migration `100` and M8 migration
+`101` are on disk with SQL/Flutter coverage. M9 adds the mobile calendar
+surface without new SQL.

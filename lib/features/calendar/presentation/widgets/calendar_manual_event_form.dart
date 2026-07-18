@@ -99,7 +99,7 @@ class CalendarManualEventFormBody extends StatelessWidget {
   final ValueChanged<String?> onContractChanged;
   final TextEditingController participantSearch;
   final Map<String, CalendarEventParticipant> selectedParticipants;
-  final List<CalendarEventParticipant> participantCandidates;
+  final List<CalendarParticipantCandidate> participantCandidates;
   final ValueChanged<String> onParticipantSearch;
   final void Function(CalendarEventParticipant participant, bool selected)
   onToggleParticipant;

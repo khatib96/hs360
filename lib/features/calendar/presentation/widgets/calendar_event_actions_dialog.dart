@@ -9,7 +9,9 @@ import '../../domain/calendar_event.dart';
 import '../calendar_controller.dart';
 import '../calendar_join_meeting.dart';
 import '../calendar_labels.dart';
+import 'calendar_assignment_dialog.dart';
 import 'calendar_cancel_event_dialog.dart';
+import 'calendar_reschedule_dialog.dart';
 
 Future<void> showCalendarEventActionsDialog({
   required BuildContext context,
@@ -39,6 +41,8 @@ Future<void> showCalendarEventActionsDialog({
       final scheme = Theme.of(dialogContext).colorScheme;
       final hasPrimaryActions =
           actions.canOpenMeetingLink ||
+          actions.canAssign ||
+          actions.canReschedule ||
           actions.canEditManual ||
           actions.canMarkManualDone ||
           actions.canCancelManual;
@@ -147,6 +151,55 @@ Future<void> showCalendarEventActionsDialog({
                       icon: const Icon(Icons.videocam_outlined),
                       label: Text(l10n.calendarJoinMeeting),
                     ),
+                  if (actions.canAssign) ...[
+                    const SizedBox(height: 8),
+                    OutlinedButton.icon(
+                      key: Key('calendar-assign-${event.id}'),
+                      onPressed: () async {
+                        Navigator.of(dialogContext).pop();
+                        final choice = await showCalendarAssignmentDialog(
+                          context: context,
+                          event: event,
+                        );
+                        if (choice == null || !context.mounted) return;
+                        final ok = await ref
+                            .read(calendarControllerProvider.notifier)
+                            .assignCalendarEvent(
+                              context,
+                              event,
+                              assignedAgentId: choice.agentId,
+                            );
+                        if (ok) onChanged?.call();
+                      },
+                      icon: const Icon(Icons.person_add_alt_outlined),
+                      label: Text(l10n.calendarAssignAction),
+                    ),
+                  ],
+                  if (actions.canReschedule) ...[
+                    const SizedBox(height: 8),
+                    OutlinedButton.icon(
+                      key: Key('calendar-reschedule-${event.id}'),
+                      onPressed: () async {
+                        Navigator.of(dialogContext).pop();
+                        final input = await showCalendarRescheduleDialog(
+                          context: context,
+                          event: event,
+                        );
+                        if (input == null || !context.mounted) return;
+                        final ok = await ref
+                            .read(calendarControllerProvider.notifier)
+                            .rescheduleCalendarEvent(
+                              context,
+                              event,
+                              targetDate: input.targetDate,
+                              reason: input.reason,
+                            );
+                        if (ok) onChanged?.call();
+                      },
+                      icon: const Icon(Icons.edit_calendar_outlined),
+                      label: Text(l10n.calendarRescheduleAction),
+                    ),
+                  ],
                   if (actions.canEditManual) ...[
                     const SizedBox(height: 8),
                     OutlinedButton(

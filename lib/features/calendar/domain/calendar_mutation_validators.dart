@@ -40,6 +40,8 @@ class CalendarMutationValidators {
   static const timeEndNotAfterStart = 'time_end_not_after_start';
   static const cancelReasonRequired = 'cancel_reason_required';
   static const cancelReasonTooLong = 'cancel_reason_too_long';
+  static const rescheduleReasonRequired = 'reschedule_reason_required';
+  static const rescheduleReasonTooLong = 'reschedule_reason_too_long';
   static const freeTextTooLong = 'free_text_too_long';
   static const uuidInvalid = 'uuid_invalid';
 
@@ -78,6 +80,24 @@ class CalendarMutationValidators {
     final trimmed = agentId.trim();
     if (trimmed.isEmpty || !_uuidPattern.hasMatch(trimmed)) {
       return const CalendarMutationValidationResult(codes: [agentIdInvalid]);
+    }
+    return const CalendarMutationValidationResult.valid();
+  }
+
+  /// Reschedule reason is mandatory (audited) and capped at 1000 characters.
+  static CalendarMutationValidationResult validateRescheduleReason(
+    String? reason,
+  ) {
+    final trimmed = reason?.trim() ?? '';
+    if (trimmed.isEmpty) {
+      return const CalendarMutationValidationResult(
+        codes: [rescheduleReasonRequired],
+      );
+    }
+    if (trimmed.length > 1000) {
+      return const CalendarMutationValidationResult(
+        codes: [rescheduleReasonTooLong],
+      );
     }
     return const CalendarMutationValidationResult.valid();
   }

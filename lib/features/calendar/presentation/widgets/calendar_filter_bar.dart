@@ -21,6 +21,7 @@ class CalendarFilterBar extends ConsumerStatefulWidget {
     required this.onApply,
     required this.onClear,
     this.collapsed = false,
+    this.useSheet = false,
     super.key,
   });
 
@@ -33,6 +34,9 @@ class CalendarFilterBar extends ConsumerStatefulWidget {
 
   /// Unused; kept for call-site compatibility. Toolbar is always compact.
   final bool collapsed;
+
+  /// When true, opens filters in a bottom sheet instead of a popover.
+  final bool useSheet;
 
   @override
   ConsumerState<CalendarFilterBar> createState() => _CalendarFilterBarState();
@@ -124,14 +128,23 @@ class _CalendarFilterBarState extends ConsumerState<CalendarFilterBar> {
   Future<void> _openFilters() async {
     final session = ref.read(authControllerProvider).valueOrNull;
     if (session == null) return;
-    final result = await showCalendarFilterPopover(
-      context: context,
-      anchorKey: _filterButtonKey,
-      appliedFacets: widget.applied.popoverFacetFilters,
-      dateFrom: widget.dateFrom,
-      dateTo: widget.dateTo,
-      session: session,
-    );
+    final facets = widget.applied.popoverFacetFilters;
+    final result = widget.useSheet
+        ? await showCalendarFilterSheet(
+            context: context,
+            appliedFacets: facets,
+            dateFrom: widget.dateFrom,
+            dateTo: widget.dateTo,
+            session: session,
+          )
+        : await showCalendarFilterPopover(
+            context: context,
+            anchorKey: _filterButtonKey,
+            appliedFacets: facets,
+            dateFrom: widget.dateFrom,
+            dateTo: widget.dateTo,
+            session: session,
+          );
     if (!mounted || result == null) return;
     widget.onApply(_withSearchPreserved(result));
   }
@@ -166,29 +179,37 @@ class _CalendarFilterBarState extends ConsumerState<CalendarFilterBar> {
     return Semantics(
       container: true,
       label: l10n.calendarFilterOpenFilters,
-      child: Row(
+      child: Wrap(
         key: const Key('calendar-filter-toolbar'),
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 8,
+        runSpacing: 8,
         children: [
-          Expanded(
-            child: TextField(
-              key: const Key('calendar-filter-search'),
-              controller: _searchController,
-              textInputAction: TextInputAction.search,
-              decoration: InputDecoration(
-                hintText: l10n.calendarFilterSearchHint,
-                isDense: true,
-                prefixIcon: const Icon(LucideIcons.search, size: 18),
-                border: const OutlineInputBorder(),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 10,
+          SizedBox(
+            width: MediaQuery.sizeOf(context).width < 400
+                ? MediaQuery.sizeOf(context).width - 32
+                : null,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minWidth: 160, maxWidth: 480),
+              child: TextField(
+                key: const Key('calendar-filter-search'),
+                controller: _searchController,
+                textInputAction: TextInputAction.search,
+                decoration: InputDecoration(
+                  hintText: l10n.calendarFilterSearchHint,
+                  isDense: true,
+                  prefixIcon: const Icon(LucideIcons.search, size: 18),
+                  border: const OutlineInputBorder(),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
                 ),
+                onChanged: _scheduleSearch,
+                onSubmitted: (_) => _applySearchNow(),
               ),
-              onChanged: _scheduleSearch,
-              onSubmitted: (_) => _applySearchNow(),
             ),
           ),
-          const SizedBox(width: 8),
           Badge(
             isLabelVisible: badgeCount > 0,
             label: Text('$badgeCount'),

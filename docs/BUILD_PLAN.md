@@ -652,9 +652,12 @@ The core of the system: contracts can be created, billed, refilled, and closed.
 > estimate is a legacy roadmap estimate; use the detailed plan for professional
 > delivery sizing.
 >
-> Current status: **M7B CLOSED / ACCEPTED.** M1–M7B are closed. Migration
-> `100_phase_7_working_date_exceptions.sql`, automated gates, and owner visual
-> acceptance completed on 2026-07-17. Next is M8 / migration `101`.
+> Current status: **M9 CLOSED / ACCEPTED.** M1–M7B
+> are closed/accepted. M8 migration `101` exists; Flutter live assignment UI was
+> correctively closed for automation on 2026-07-18
+> (`M8 FLUTTER CORRECTED — OWNER RE-ACCEPTANCE PENDING`). M9 mobile calendar
+> passed its final automated and owner visual gates on 2026-07-19. M10 has not
+> started.
 
 ### Goal
 A unified company appointment-management calendar showing contract-generated

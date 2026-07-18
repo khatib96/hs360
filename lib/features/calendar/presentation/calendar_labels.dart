@@ -179,6 +179,8 @@ String calendarErrorMessage(AppLocalizations l10n, String code) {
     'idempotency_payload_mismatch' => l10n.calendarErrorIdempotencyMismatch,
     'working_date_exception_overlap' =>
       l10n.calendarErrorWorkingDateExceptionOverlap,
+    'calendar_assignment_not_applicable' =>
+      l10n.calendarErrorAssignmentNotApplicable,
     _ => l10n.calendarErrorUnknown,
   };
 }
@@ -197,6 +199,8 @@ String calendarManualValidationMessage(AppLocalizations l10n, String code) {
     'time_invalid' => l10n.calendarValidationTimeRequired,
     'time_end_not_after_start' => l10n.calendarValidationTimeOrder,
     'cancel_reason_required' => l10n.calendarCancelReasonRequired,
+    'reschedule_reason_required' ||
+    'reschedule_reason_too_long' => l10n.calendarRescheduleReasonRequired,
     _ => l10n.calendarErrorValidation,
   };
 }

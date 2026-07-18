@@ -7547,7 +7547,7 @@ abstract class AppLocalizations {
   /// No description provided for @calendarDayEventCount.
   ///
   /// In en, this message translates to:
-  /// **'{count} events'**
+  /// **'{count, plural, =1{1 event} other{{count} events}}'**
   String calendarDayEventCount(int count);
 
   /// No description provided for @calendarDayUnassignedCount.
@@ -8431,6 +8431,198 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Date exception: {kindTitle}'**
   String calendarMonthExceptionMarkerSemantics(String kindTitle);
+
+  /// No description provided for @calendarAssignAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign'**
+  String get calendarAssignAction;
+
+  /// No description provided for @calendarRescheduleAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Reschedule'**
+  String get calendarRescheduleAction;
+
+  /// No description provided for @calendarAssignDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign event'**
+  String get calendarAssignDialogTitle;
+
+  /// No description provided for @calendarAssignCurrentAssignee.
+  ///
+  /// In en, this message translates to:
+  /// **'Current assignee: {name}'**
+  String calendarAssignCurrentAssignee(String name);
+
+  /// No description provided for @calendarAssignCurrentlyUnassigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Currently unassigned.'**
+  String get calendarAssignCurrentlyUnassigned;
+
+  /// No description provided for @calendarAssignCurrentUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Current assignee — unavailable (inactive)'**
+  String get calendarAssignCurrentUnavailable;
+
+  /// No description provided for @calendarAssignUnassignOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Unassigned'**
+  String get calendarAssignUnassignOption;
+
+  /// No description provided for @calendarAssignSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search active employees'**
+  String get calendarAssignSearchHint;
+
+  /// No description provided for @calendarAssignNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching active employees.'**
+  String get calendarAssignNoResults;
+
+  /// No description provided for @calendarAssignRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get calendarAssignRetry;
+
+  /// No description provided for @calendarAssignWarningNoCalendarAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'No calendar access — assigned events will not be visible to them.'**
+  String get calendarAssignWarningNoCalendarAccess;
+
+  /// No description provided for @calendarAssignWarningNoActiveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account is inactive for this company.'**
+  String get calendarAssignWarningNoActiveAccount;
+
+  /// No description provided for @calendarAssignWarningNoAppAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'No app account — they cannot sign in.'**
+  String get calendarAssignWarningNoAppAccount;
+
+  /// No description provided for @calendarAssignSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign'**
+  String get calendarAssignSubmit;
+
+  /// No description provided for @calendarAssignSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment saved.'**
+  String get calendarAssignSuccess;
+
+  /// No description provided for @calendarAssignedEventHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment saved. This event is no longer visible in your view.'**
+  String get calendarAssignedEventHidden;
+
+  /// No description provided for @calendarRescheduleDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reschedule event'**
+  String get calendarRescheduleDialogTitle;
+
+  /// No description provided for @calendarRescheduleCurrentDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Current date: {date}'**
+  String calendarRescheduleCurrentDate(String date);
+
+  /// No description provided for @calendarRescheduleTargetDate.
+  ///
+  /// In en, this message translates to:
+  /// **'New date: {date}'**
+  String calendarRescheduleTargetDate(String date);
+
+  /// No description provided for @calendarRescheduleDateUnchanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a different date to enable rescheduling.'**
+  String get calendarRescheduleDateUnchanged;
+
+  /// No description provided for @calendarRescheduleTimedWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Time window {start}–{end} is kept on the new date.'**
+  String calendarRescheduleTimedWindow(String start, String end);
+
+  /// No description provided for @calendarRescheduleReasonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reschedule reason'**
+  String get calendarRescheduleReasonLabel;
+
+  /// No description provided for @calendarRescheduleReasonRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a non-empty reschedule reason.'**
+  String get calendarRescheduleReasonRequired;
+
+  /// No description provided for @calendarRescheduleSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Reschedule'**
+  String get calendarRescheduleSubmit;
+
+  /// No description provided for @calendarRescheduleSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Event rescheduled.'**
+  String get calendarRescheduleSuccess;
+
+  /// No description provided for @calendarErrorAssignmentNotApplicable.
+  ///
+  /// In en, this message translates to:
+  /// **'This event cannot be assigned.'**
+  String get calendarErrorAssignmentNotApplicable;
+
+  /// No description provided for @calendarPreviousWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous week'**
+  String get calendarPreviousWeek;
+
+  /// No description provided for @calendarNextWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Next week'**
+  String get calendarNextWeek;
+
+  /// No description provided for @calendarMobileDaySelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected'**
+  String get calendarMobileDaySelected;
+
+  /// No description provided for @calendarOverdueSectionExpand.
+  ///
+  /// In en, this message translates to:
+  /// **'Show overdue outside range'**
+  String get calendarOverdueSectionExpand;
+
+  /// No description provided for @calendarOverdueSectionCollapse.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide overdue outside range'**
+  String get calendarOverdueSectionCollapse;
+
+  /// No description provided for @calendarDirectionsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Directions not available'**
+  String get calendarDirectionsUnavailable;
 }
 
 class _AppLocalizationsDelegate

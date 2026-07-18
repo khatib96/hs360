@@ -15,9 +15,11 @@ import '../domain/calendar_manual_mutation.dart';
 import '../domain/calendar_mutation_validators.dart';
 import '../domain/calendar_permissions.dart';
 import '../domain/calendar_range_summary.dart';
+import '../domain/calendar_schedule_mutation.dart';
 import 'calendar_event_list_rpc_mapper.dart';
 import 'calendar_manual_mutation_mapper.dart';
 import 'calendar_range_summary_rpc_mapper.dart';
+import 'calendar_schedule_mutation_mapper.dart';
 
 part 'calendar_repository.g.dart';
 
@@ -252,7 +254,74 @@ class CalendarRepository {
     }
   }
 
-  Future<List<CalendarEventParticipant>> listParticipantCandidates(
+  /// Assigns (or unassigns, via null agent) a pending non-meeting event.
+  Future<CalendarScheduleMutationResult> assignCalendarEvent(
+    AppSession session, {
+    required String eventId,
+    required int expectedVersion,
+    required CalendarAssignmentData data,
+    required String idempotencyKey,
+  }) async {
+    _assertCanEdit(session);
+    final validation = CalendarMutationValidators.validateAssignmentAgentId(
+      data.assignedAgentId,
+    );
+    if (!validation.isValid) {
+      throw CalendarException(
+        code: CalendarException.validationFailed,
+        technicalDetail: validation.codes.join(','),
+      );
+    }
+    try {
+      final result = await _invokeRpc('assign_calendar_event', {
+        'p_event_id': eventId,
+        'p_expected_version': expectedVersion,
+        'p_data': data.toRpcPayload(),
+        'p_idempotency_key': idempotencyKey,
+      });
+      return mapCalendarScheduleMutationResult(result);
+    } catch (e, st) {
+      if (e is CalendarException) rethrow;
+      throw CalendarException.fromSupabase(e, stackTrace: st);
+    }
+  }
+
+  /// Moves a pending event to a new date with a mandatory audited reason.
+  Future<CalendarScheduleMutationResult> rescheduleCalendarEvent(
+    AppSession session, {
+    required String eventId,
+    required int expectedVersion,
+    required CalendarRescheduleData data,
+    required String idempotencyKey,
+  }) async {
+    _assertCanEdit(session);
+    final codes = <String>[
+      ...CalendarMutationValidators.validateRescheduleTargetDate(
+        formatCalendarDateOnly(data.scheduledDate),
+      ).codes,
+      ...CalendarMutationValidators.validateRescheduleReason(data.reason).codes,
+    ];
+    if (codes.isNotEmpty) {
+      throw CalendarException(
+        code: CalendarException.validationFailed,
+        technicalDetail: codes.join(','),
+      );
+    }
+    try {
+      final result = await _invokeRpc('reschedule_calendar_event', {
+        'p_event_id': eventId,
+        'p_expected_version': expectedVersion,
+        'p_data': data.toRpcPayload(),
+        'p_idempotency_key': idempotencyKey,
+      });
+      return mapCalendarScheduleMutationResult(result);
+    } catch (e, st) {
+      if (e is CalendarException) rethrow;
+      throw CalendarException.fromSupabase(e, stackTrace: st);
+    }
+  }
+
+  Future<List<CalendarParticipantCandidate>> listParticipantCandidates(
     AppSession session, {
     String? search,
     int limit = 50,

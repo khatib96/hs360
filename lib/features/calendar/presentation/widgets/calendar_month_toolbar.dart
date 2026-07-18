@@ -27,6 +27,7 @@ class CalendarMonthToolbar extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final rtl = Directionality.of(context) == TextDirection.rtl;
+    final compact = MediaQuery.sizeOf(context).width < 400;
     final firstYear = focusedMonth.year < firstSelectableYear
         ? focusedMonth.year
         : firstSelectableYear;
@@ -71,6 +72,7 @@ class CalendarMonthToolbar extends StatelessWidget {
                 ],
                 child: _SelectorLabel(
                   label: calendarMonthName(l10n, focusedMonth.month),
+                  compact: compact,
                 ),
               ),
               PopupMenuButton<int>(
@@ -91,16 +93,27 @@ class CalendarMonthToolbar extends StatelessWidget {
                       child: Text('$year'),
                     ),
                 ],
-                child: _SelectorLabel(label: '${focusedMonth.year}'),
+                child: _SelectorLabel(
+                  label: '${focusedMonth.year}',
+                  compact: compact,
+                ),
               ),
             ],
           ),
         ),
-        TextButton(
-          key: const Key('calendar-today'),
-          onPressed: onToday,
-          child: Text(l10n.calendarToday),
-        ),
+        if (compact)
+          IconButton(
+            key: const Key('calendar-today'),
+            tooltip: l10n.calendarToday,
+            onPressed: onToday,
+            icon: const Icon(Icons.today_outlined),
+          )
+        else
+          TextButton(
+            key: const Key('calendar-today'),
+            onPressed: onToday,
+            child: Text(l10n.calendarToday),
+          ),
         IconButton(
           key: const Key('calendar-next-month'),
           tooltip: l10n.calendarNextMonth,
@@ -115,20 +128,30 @@ class CalendarMonthToolbar extends StatelessWidget {
 }
 
 class _SelectorLabel extends StatelessWidget {
-  const _SelectorLabel({required this.label});
+  const _SelectorLabel({required this.label, this.compact = false});
 
   final String label;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
-    final style = Theme.of(context).textTheme.titleLarge;
+    final style = compact
+        ? Theme.of(context).textTheme.titleSmall
+        : Theme.of(context).textTheme.titleLarge;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: compact ? 4 : 6, vertical: 8),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(label, style: style),
-          const SizedBox(width: 2),
+          ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: compact ? 72 : 140),
+            child: Text(
+              label,
+              style: style,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
           Icon(Icons.arrow_drop_down, size: 20, color: style?.color),
         ],
       ),

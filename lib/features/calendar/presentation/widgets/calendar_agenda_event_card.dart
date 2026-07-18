@@ -67,7 +67,7 @@ class CalendarAgendaEventCard extends ConsumerWidget {
           key: Key('calendar-event-ink-${event.id}'),
           onTap: () => _openActions(context, ref),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -116,6 +116,10 @@ class CalendarAgendaEventCard extends ConsumerWidget {
                         calendarOverdueStateLabel(l10n, event.overdueState),
                         AppColors.error,
                       ),
+                    _badge(
+                      calendarSourceKindLabel(l10n, event.sourceKind),
+                      AppColors.neutral600,
+                    ),
                     if (event.scheduleState ==
                         CalendarScheduleState.dayOffOverridden)
                       _badge(l10n.calendarDayOffConflict, AppColors.warning),
@@ -169,6 +173,7 @@ class CalendarAgendaEventCard extends ConsumerWidget {
   Widget _badge(String label, Color color, {IconData? icon, Key? badgeKey}) {
     return Container(
       key: badgeKey,
+      constraints: const BoxConstraints(maxWidth: 180),
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.15),
@@ -181,7 +186,14 @@ class CalendarAgendaEventCard extends ConsumerWidget {
             Icon(icon, size: 12, color: color),
             const SizedBox(width: 4),
           ],
-          Text(label, style: TextStyle(color: color, fontSize: 11)),
+          Flexible(
+            child: Text(
+              label,
+              style: TextStyle(color: color, fontSize: 11),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
         ],
       ),
     );

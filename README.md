@@ -5,14 +5,15 @@ businesses. It is being built first for Hayat Secret and is designed around
 serialized rental assets, recurring consumables, field service, customer debt,
 and double-entry accounting.
 
-> Repository status updated: **2026-07-17**
+> Repository status updated: **2026-07-19**
 >
-> Current milestone: **Phase 7 M7B CLOSED / ACCEPTED**
-> — M1–M7B closed/accepted; migration `100`, corrective hardening, Flutter
-> settings UI, automated gates, and owner visual acceptance are complete
+> Current milestone: **Phase 7 M9 CLOSED / ACCEPTED**
+> — M7A/M7B closed/accepted; M8 SQL/`101` accepted historically; M8 Flutter
+> corrective pass green (`M8 FLUTTER CORRECTED — OWNER RE-ACCEPTANCE PENDING`);
+> M9 mobile calendar owner-accepted on 2026-07-19; M10 not started
 >
-> Latest migrations on disk: **`100`** (working-date exceptions); prior M7A
-> **`098`**/**`099`** unchanged.
+> Latest migrations on disk: **`101`** (assignment/reschedule); `093`–`101`
+> unchanged in this work.
 
 ---
 
@@ -27,7 +28,7 @@ and double-entry accounting.
 | 4 | Engineering complete | Customers, suppliers, CoA, service locations, coordinates |
 | 5 | Complete | Invoices, returns, vouchers, journal, inventory accounting, PDFs |
 | 6 | Complete | Trial/rental contracts, lifecycle, billing, PDF, calendar handoff |
-| 7 | M7B closed / accepted | M1–M7B closed; working-date exceptions (`100`) passed automated and owner visual acceptance |
+| 7 | M9 closed / accepted | M1–M7B closed; M8 SQL/`101` + Flutter corrective green; M9 mobile calendar owner-accepted; M10 not started |
 | 8-12 | Not started | Field execution and later operational/reporting/production phases |
 
 Phase 6 closed through M13/migration `092` on 2026-07-12. Phase 7 M1 closed on
@@ -48,7 +49,11 @@ M7B Working Calendar Holidays & Exceptions is implemented and has completed a
 corrective pass covering RPC ACLs, strict validation, unconfigured-schedule
 warnings, explicit year windows, tenant-switch race protection, and stable
 pagination. The owner accepted the corrected visuals on 2026-07-17, so **M7B
-is closed / accepted**. M8 / migration `101` has not started.
+is closed / accepted**. M8 Assignment & Rescheduling landed with migration
+`101`; the Flutter live wiring was corrected on 2026-07-18
+(**`M8 FLUTTER CORRECTED — OWNER RE-ACCEPTANCE PENDING`**). M9 Mobile Calendar
+passed its final corrective, automated, and visual gates and was accepted by
+the owner on 2026-07-19 (**`M9 CLOSED / ACCEPTED`**). M10 has not started.
 
 Detailed roadmap: [BUILD_PLAN.md](docs/BUILD_PLAN.md)
 
@@ -292,8 +297,13 @@ Before implementing a milestone:
 - Phase 7 M7A Manual Business Events is **closed / owner-accepted** with
   migrations `098`/`099`, typed Flutter mutations, meeting/participant flows,
   reminder reconciliation, and AR/EN desktop UI.
-- M7B Working Calendar Holidays & Exceptions and migration `100` have not
-  started.
+- Phase 7 M7B Working Calendar Holidays & Exceptions is **closed / owner-accepted**
+  with migration `100`.
+- Phase 7 M8 SQL/`101` is accepted historically; Flutter corrective is green
+  (`M8 FLUTTER CORRECTED — OWNER RE-ACCEPTANCE PENDING`).
+- Phase 7 M9 Mobile Calendar is **closed / owner-accepted** after its final
+  responsive-layout, assigned-only, FAB-clearance, and visual gates. M10 has
+  not started.
 - Production Supabase/VPS deployment and external messaging credentials are not
   configured by this repository state.
 - The `resolve-google-maps-url` Edge Function has local verification but still
@@ -343,7 +353,9 @@ Before implementing a milestone:
   non-blocking polish note, provided the list remains fully scrollable without
   overflow.
 - **M7A closed / accepted.**
-- M7B, M8–M10, and Phase 8 execution remain not started.
+- Historical note at that snapshot: M7B–M10 were still ahead. See current
+  header / Phase 7 status for M7B closed, M8 Flutter re-acceptance pending,
+  M9 closed/accepted, and M10 not started.
 
 ---
 

@@ -24,6 +24,7 @@ class CalendarException extends AppException {
   static const conflictConfirmationRequired =
       'calendar_conflict_confirmation_required';
   static const workingDateExceptionOverlap = 'working_date_exception_overlap';
+  static const assignmentNotApplicable = 'calendar_assignment_not_applicable';
 
   factory CalendarException.fromSupabase(
     Object error, {
@@ -95,6 +96,12 @@ class CalendarException extends AppException {
         message.contains('confirmation_required')) {
       return CalendarException(
         code: confirmationRequired,
+        technicalDetail: message,
+      );
+    }
+    if (message.contains('calendar_assignment_not_applicable')) {
+      return CalendarException(
+        code: assignmentNotApplicable,
         technicalDetail: message,
       );
     }

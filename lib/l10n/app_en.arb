@@ -1671,7 +1671,7 @@
       "value": {"type": "int"}
     }
   },
-  "calendarDayEventCount": "{count} events",
+  "calendarDayEventCount": "{count, plural, =1{1 event} other{{count} events}}",
   "@calendarDayEventCount": {
     "placeholders": {
       "count": {"type": "int"}
@@ -1882,5 +1882,58 @@
     "placeholders": {
       "kindTitle": {"type": "String"}
     }
-  }
+  },
+  "calendarAssignAction": "Assign",
+  "calendarRescheduleAction": "Reschedule",
+  "calendarAssignDialogTitle": "Assign event",
+  "calendarAssignCurrentAssignee": "Current assignee: {name}",
+  "@calendarAssignCurrentAssignee": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "calendarAssignCurrentlyUnassigned": "Currently unassigned.",
+  "calendarAssignCurrentUnavailable": "Current assignee — unavailable (inactive)",
+  "calendarAssignUnassignOption": "Unassigned",
+  "calendarAssignSearchHint": "Search active employees",
+  "calendarAssignNoResults": "No matching active employees.",
+  "calendarAssignRetry": "Retry",
+  "calendarAssignWarningNoCalendarAccess": "No calendar access — assigned events will not be visible to them.",
+  "calendarAssignWarningNoActiveAccount": "Account is inactive for this company.",
+  "calendarAssignWarningNoAppAccount": "No app account — they cannot sign in.",
+  "calendarAssignSubmit": "Assign",
+  "calendarAssignSuccess": "Assignment saved.",
+  "calendarAssignedEventHidden": "Assignment saved. This event is no longer visible in your view.",
+  "calendarRescheduleDialogTitle": "Reschedule event",
+  "calendarRescheduleCurrentDate": "Current date: {date}",
+  "@calendarRescheduleCurrentDate": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "calendarRescheduleTargetDate": "New date: {date}",
+  "@calendarRescheduleTargetDate": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "calendarRescheduleDateUnchanged": "Pick a different date to enable rescheduling.",
+  "calendarRescheduleTimedWindow": "Time window {start}–{end} is kept on the new date.",
+  "@calendarRescheduleTimedWindow": {
+    "placeholders": {
+      "start": {"type": "String"},
+      "end": {"type": "String"}
+    }
+  },
+  "calendarRescheduleReasonLabel": "Reschedule reason",
+  "calendarRescheduleReasonRequired": "Enter a non-empty reschedule reason.",
+  "calendarRescheduleSubmit": "Reschedule",
+  "calendarRescheduleSuccess": "Event rescheduled.",
+  "calendarErrorAssignmentNotApplicable": "This event cannot be assigned.",
+  "calendarPreviousWeek": "Previous week",
+  "calendarNextWeek": "Next week",
+  "calendarMobileDaySelected": "Selected",
+  "calendarOverdueSectionExpand": "Show overdue outside range",
+  "calendarOverdueSectionCollapse": "Hide overdue outside range",
+  "calendarDirectionsUnavailable": "Directions not available"
 }

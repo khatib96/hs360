@@ -5,22 +5,27 @@ part of 'calendar_m6_screenshots.dart';
 
 final _rootKey = GlobalKey();
 const _desktop = Size(1280, 900);
-const _narrow = Size(1000, 900);
+// Window wide enough that content after AppShell nav stays in narrow desktop.
+const _narrow = Size(1100, 900);
 
 const _participants = [
-  CalendarEventParticipant(
+  CalendarParticipantCandidate(
     employeeId: 'emp-1',
     nameAr: 'أحمد الكندري',
     nameEn: 'Ahmad Al-Kandari',
     isActive: true,
     hasAppAccount: true,
+    hasActiveTenantAccount: true,
+    hasCalendarAccess: true,
   ),
-  CalendarEventParticipant(
+  CalendarParticipantCandidate(
     employeeId: 'emp-2',
     nameAr: 'سارة العتيبي',
     nameEn: 'Sara Al-Otaibi',
     isActive: true,
     hasAppAccount: true,
+    hasActiveTenantAccount: true,
+    hasCalendarAccess: true,
   ),
 ];
 
@@ -207,7 +212,8 @@ String _manualTypeLabel(WidgetTester tester, CalendarEventType type) {
     CalendarEventType.customerVisit => l10n.calendarEventTypeCustomerVisit,
     CalendarEventType.internalMeeting => l10n.calendarEventTypeInternalMeeting,
     CalendarEventType.internalTask => l10n.calendarEventTypeInternalTask,
-    CalendarEventType.internalActivity => l10n.calendarEventTypeInternalActivity,
+    CalendarEventType.internalActivity =>
+      l10n.calendarEventTypeInternalActivity,
     CalendarEventType.custom => l10n.calendarEventTypeCustom,
     _ => type.name,
   };
@@ -234,12 +240,7 @@ Future<void> _pumpCustomerVisitDialog(
   WidgetTester tester, {
   required Locale locale,
 }) async {
-  await _pump(
-    tester,
-    size: _desktop,
-    locale: locale,
-    repo: _richRepo(),
-  );
+  await _pump(tester, size: _desktop, locale: locale, repo: _richRepo());
   await tester.tap(find.byKey(const Key('calendar-create-event')));
   await tester.pumpAndSettle();
   await _selectManualType(tester, CalendarEventType.customerVisit);
@@ -317,15 +318,12 @@ List<Override> _lookupOverrides() {
       (ref) => FakeCustomerRepository(customers: [_demoCustomer]),
     ),
     customerServiceLocationRepositoryProvider.overrideWith(
-      (ref) => FakeCustomerServiceLocationRepository(
-        locations: [_demoLocation],
-      ),
+      (ref) =>
+          FakeCustomerServiceLocationRepository(locations: [_demoLocation]),
     ),
     contractRepositoryProvider.overrideWith(
       (ref) => FakeContractRepository(
-        summaries: [
-          sampleContractSummary(id: 'ct-1'),
-        ],
+        summaries: [sampleContractSummary(id: 'ct-1')],
       ),
     ),
   ];
@@ -402,17 +400,11 @@ Future<void> _loadFonts() async {
       'assets/fonts/noto/NotoSansArabic-Regular.ttf',
       'assets/fonts/noto/NotoSansArabic-Bold.ttf',
     ],
-    'MaterialIcons': [
-      'assets/fonts/material/MaterialIcons-Regular.otf',
-    ],
+    'MaterialIcons': ['assets/fonts/material/MaterialIcons-Regular.otf'],
     // IconData from flutter_lucide uses fontPackage, so tests must register
     // the package-prefixed family name used at paint time.
-    'packages/flutter_lucide/lucide': [
-      'assets/fonts/lucide/lucide.ttf',
-    ],
-    'lucide': [
-      'assets/fonts/lucide/lucide.ttf',
-    ],
+    'packages/flutter_lucide/lucide': ['assets/fonts/lucide/lucide.ttf'],
+    'lucide': ['assets/fonts/lucide/lucide.ttf'],
   };
   for (final entry in families.entries) {
     final loader = FontLoader(entry.key);

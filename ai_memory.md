@@ -1,8 +1,86 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-17 (Session: Phase 7 **M7B CLOSED / ACCEPTED** after owner
-> visual acceptance; migration `100` corrective hardening and all automated
-> gates passed; M8/`101` not started; commit/push requested next).
+> Updated 2026-07-19 (Session: Phase 7 **M9 closure / owner acceptance**;
+> automated and visual gates green; **`M9 CLOSED / ACCEPTED`**; M8 Flutter still
+> **`OWNER RE-ACCEPTANCE PENDING`**; M10 not started; no commit/push unless
+> requested).
+
+---
+
+## Session 2026-07-19 - M9 closure / owner acceptance
+
+**Decision:** The owner accepted the final M9 Mobile Calendar evidence after
+the content-width breakpoint, non-overlapping create control, assigned-only
+fixture, overlay capture, Day Off, exceptional-day, AR/EN, and small-screen
+corrections. Phase 7 M9 is now **CLOSED / ACCEPTED**.
+
+**Final gates:** `flutter analyze` clean; **1296 Flutter tests passed**;
+`git diff --check` clean; migrations `093`–`101` unchanged. The 12 M9
+screenshots under `build/screenshots/m9_*.png` were visually reviewed.
+
+**Next:** M10 Route View and Directions remains not started. Do not start M10
+or Phase 8, and do not commit/push, until explicitly requested. M8 Flutter
+re-acceptance remains a separate pending owner decision.
+
+---
+
+## Session 2026-07-19 - M9 Final Gate C Corrective Pass
+
+**Decision:** Content-width calendar layout (LayoutBuilder inside AppShell).
+AppShell chrome stays independent (`window > 768` ⇒ desktop nav) and does
+**not** import calendar presentation. Status stays owner-acceptance pending.
+
+**Layout contract:**
+- Calendar mobile when **content width ≤ 768**.
+- 767/768: Mobile Shell + Mobile Calendar.
+- 769: Desktop Shell + Mobile Calendar (content ≈ window−241).
+- Wide window with content > 768: Desktop Calendar.
+- Create FAB: non-scrolling clearance slot under the mobile list viewport
+  (`calendar-mobile-fab-clearance`), not scrollable padding alone.
+- m9_08 fixture: assigned events with agent name; no Unassigned / Create /
+  tenant-only filters.
+
+**Next:** Owner visual review. Do not start M10.
+
+---
+
+## Session 2026-07-19 - M9 Corrective Visual Evidence Pass (superseded notes)
+
+Historical note: an earlier pass briefly aligned shell+calendar on window
+width. The Final Gate C pass above restores **content-width** calendar
+decisions and unlinks AppShell from `CalendarLayout`.
+
+---
+
+## Session 2026-07-18 - M8 Flutter corrective (A1) + M9 Mobile Calendar
+
+**Decision:** Gate A1 completed the missing M8 Flutter live wiring without
+touching migrations `093`–`101`. Status after A1:
+**`M8 FLUTTER CORRECTED — OWNER RE-ACCEPTANCE PENDING`** (not auto-closed).
+Gate B implemented M9 mobile calendar. Status after B:
+**`M9 IMPLEMENTED — OWNER VISUAL ACCEPTANCE PENDING`**. Do not start M10.
+
+**M8 corrective scope (A1):**
+- `CalendarParticipantCandidate` extends `CalendarEventParticipant` (M7A
+  participant flows preserved).
+- Shared `mapCalendarManualConflictInfo`, assign/reschedule repository methods,
+  controller wrappers + invalidate, event-actions Assign/Reschedule buttons,
+  validators/errors/l10n, fakes/fixtures.
+- M8 screenshot harness builds and runs; analyze clean; full Flutter suite green.
+
+**M9 mobile scope:**
+- `CalendarLayout.mobileBreakpoint = 768` via content `LayoutBuilder`;
+  `narrowBreakpoint = 1100` remains desktop-only.
+- Mobile week strip of 7 days derived from `selectedDate` only; Prev/Next week
+  = `selectedDate ± 7` via `selectGridDate`; no independent week state; no N+1.
+- Shared filter form; desktop popover / mobile bottom sheet; agenda-first;
+  collapsible overdue; single create entry (FAB mobile / AppShell desktop).
+- Directions availability badge only; no map package / open-maps (M10).
+- No Phase 8 execution controls.
+
+**Screenshots:** `build/screenshots/m8_*.png` and `build/screenshots/m9_*.png`.
+
+**Next:** Owner visual review (Gate C). Commit/push only if explicitly requested.
 
 ---
 

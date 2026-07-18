@@ -295,6 +295,39 @@ Map<String, dynamic> validCalendarEventAbsentOptionalRpc() {
   return validCalendarEventRpc(omitOptionalLinkedEntities: true);
 }
 
+/// Candidate row from `list_calendar_participant_candidates` (M8 shape).
+Map<String, dynamic> validParticipantCandidateRpc({
+  String employeeId = '11111111-1111-1111-1111-111111111111',
+  String nameAr = 'موظف',
+  String? nameEn = 'Employee',
+  bool isActive = true,
+  bool hasAppAccount = true,
+  bool hasActiveTenantAccount = true,
+  bool hasCalendarAccess = true,
+}) {
+  return {
+    'employee_id': employeeId,
+    'name_ar': nameAr,
+    'name_en': nameEn,
+    'is_active': isActive,
+    'has_app_account': hasAppAccount,
+    'has_active_tenant_account': hasActiveTenantAccount,
+    'has_calendar_access': hasCalendarAccess,
+  };
+}
+
+/// Success envelope from assign/reschedule schedule mutation RPCs.
+Map<String, dynamic> validScheduleMutationOkRpc({
+  bool changed = true,
+  Map<String, dynamic>? event,
+}) {
+  return {
+    'status': 'ok',
+    'changed': changed,
+    'event': event ?? validCalendarEventRpc(),
+  };
+}
+
 Map<String, dynamic> validRangeSummaryRpc({
   String dateFrom = '2026-07-14',
   String dateTo = '2026-07-14',

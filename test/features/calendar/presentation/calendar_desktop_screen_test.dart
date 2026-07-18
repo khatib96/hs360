@@ -111,7 +111,8 @@ void main() {
     final repo = FakeCalendarRepository(
       listResult: sampleEventList(overdueRows: const []),
     );
-    await tester.binding.setSurfaceSize(const Size(1000, 900));
+    // Window 1100 → AppShell nav (~241) leaves content ~859 (narrow desktop).
+    await tester.binding.setSurfaceSize(const Size(1100, 900));
     await tester.pumpWidget(
       ProviderScope(
         overrides: [

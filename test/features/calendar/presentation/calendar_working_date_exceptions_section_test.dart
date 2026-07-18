@@ -165,8 +165,9 @@ void main() {
     await tester.tap(find.byKey(const Key('calendar-wde-kind')));
     await tester.pumpAndSettle();
     final l10n = lookupAppLocalizations(const Locale('en'));
-    await tester
-        .tap(find.text(l10n.calendarWorkingDateExceptionKindOfficialHoliday).last);
+    await tester.tap(
+      find.text(l10n.calendarWorkingDateExceptionKindOfficialHoliday).last,
+    );
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('calendar-wde-start-date')));
     await tester.pumpAndSettle();

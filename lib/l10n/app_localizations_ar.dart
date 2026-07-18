@@ -3938,7 +3938,17 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String calendarDayEventCount(int count) {
-    return '$count مواعيد';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count موعد',
+      many: '$count موعدًا',
+      few: '$count مواعيد',
+      two: 'موعدان',
+      one: 'موعد واحد',
+      zero: 'لا مواعيد',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -4444,4 +4454,115 @@ class AppLocalizationsAr extends AppLocalizations {
   String calendarMonthExceptionMarkerSemantics(String kindTitle) {
     return 'استثناء تاريخ: $kindTitle';
   }
+
+  @override
+  String get calendarAssignAction => 'إسناد';
+
+  @override
+  String get calendarRescheduleAction => 'إعادة جدولة';
+
+  @override
+  String get calendarAssignDialogTitle => 'إسناد الحدث';
+
+  @override
+  String calendarAssignCurrentAssignee(String name) {
+    return 'المسند إليه الحالي: $name';
+  }
+
+  @override
+  String get calendarAssignCurrentlyUnassigned => 'غير مسند حاليًا.';
+
+  @override
+  String get calendarAssignCurrentUnavailable =>
+      'المسند إليه الحالي — غير متاح (غير نشط)';
+
+  @override
+  String get calendarAssignUnassignOption => 'بدون إسناد';
+
+  @override
+  String get calendarAssignSearchHint => 'ابحث عن الموظفين النشطين';
+
+  @override
+  String get calendarAssignNoResults => 'لا يوجد موظفون نشطون مطابقون.';
+
+  @override
+  String get calendarAssignRetry => 'إعادة المحاولة';
+
+  @override
+  String get calendarAssignWarningNoCalendarAccess =>
+      'لا يملك صلاحية التقويم — لن تظهر له الأحداث المسندة.';
+
+  @override
+  String get calendarAssignWarningNoActiveAccount =>
+      'حسابه غير نشط في هذه الشركة.';
+
+  @override
+  String get calendarAssignWarningNoAppAccount =>
+      'لا يملك حساب تطبيق — لا يمكنه تسجيل الدخول.';
+
+  @override
+  String get calendarAssignSubmit => 'إسناد';
+
+  @override
+  String get calendarAssignSuccess => 'تم حفظ الإسناد.';
+
+  @override
+  String get calendarAssignedEventHidden =>
+      'تم حفظ الإسناد. لم يعد هذا الحدث ظاهرًا في عرضك.';
+
+  @override
+  String get calendarRescheduleDialogTitle => 'إعادة جدولة الحدث';
+
+  @override
+  String calendarRescheduleCurrentDate(String date) {
+    return 'التاريخ الحالي: $date';
+  }
+
+  @override
+  String calendarRescheduleTargetDate(String date) {
+    return 'التاريخ الجديد: $date';
+  }
+
+  @override
+  String get calendarRescheduleDateUnchanged =>
+      'اختر تاريخًا مختلفًا لتفعيل إعادة الجدولة.';
+
+  @override
+  String calendarRescheduleTimedWindow(String start, String end) {
+    return 'سيتم الاحتفاظ بالفترة الزمنية $start–$end في التاريخ الجديد.';
+  }
+
+  @override
+  String get calendarRescheduleReasonLabel => 'سبب إعادة الجدولة';
+
+  @override
+  String get calendarRescheduleReasonRequired =>
+      'أدخل سببًا غير فارغ لإعادة الجدولة.';
+
+  @override
+  String get calendarRescheduleSubmit => 'إعادة جدولة';
+
+  @override
+  String get calendarRescheduleSuccess => 'تمت إعادة جدولة الحدث.';
+
+  @override
+  String get calendarErrorAssignmentNotApplicable => 'لا يمكن إسناد هذا الحدث.';
+
+  @override
+  String get calendarPreviousWeek => 'الأسبوع السابق';
+
+  @override
+  String get calendarNextWeek => 'الأسبوع التالي';
+
+  @override
+  String get calendarMobileDaySelected => 'محدد';
+
+  @override
+  String get calendarOverdueSectionExpand => 'إظهار المتأخر خارج النطاق';
+
+  @override
+  String get calendarOverdueSectionCollapse => 'إخفاء المتأخر خارج النطاق';
+
+  @override
+  String get calendarDirectionsUnavailable => 'الاتجاهات غير متوفرة';
 }

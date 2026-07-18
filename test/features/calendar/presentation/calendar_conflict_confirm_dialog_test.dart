@@ -16,8 +16,10 @@ Widget _buildApp({
     home: Scaffold(
       body: Builder(
         builder: (context) => TextButton(
-          onPressed: () =>
-              showCalendarConflictConfirmDialog(context: context, conflicts: conflicts),
+          onPressed: () => showCalendarConflictConfirmDialog(
+            context: context,
+            conflicts: conflicts,
+          ),
           child: const Text('open'),
         ),
       ),
@@ -26,37 +28,36 @@ Widget _buildApp({
 }
 
 void main() {
-  testWidgets(
-    'shows safe kind+title from date_exception for non_working_day',
-    (tester) async {
-      final conflicts = CalendarManualConflictInfo(
-        scheduleWarnings: [
-          {
-            'code': 'non_working_day',
-            // Mirrors the server's `safe_date_exception_json` projection:
-            // kind/title_ar/title_en only, notes is never included.
-            'date_exception': {
-              'kind': 'official_holiday',
-              'title_ar': 'عيد الفطر',
-              'title_en': 'Eid al-Fitr',
-            },
+  testWidgets('shows safe kind+title from date_exception for non_working_day', (
+    tester,
+  ) async {
+    final conflicts = CalendarManualConflictInfo(
+      scheduleWarnings: [
+        {
+          'code': 'non_working_day',
+          // Mirrors the server's `safe_date_exception_json` projection:
+          // kind/title_ar/title_en only, notes is never included.
+          'date_exception': {
+            'kind': 'official_holiday',
+            'title_ar': 'عيد الفطر',
+            'title_en': 'Eid al-Fitr',
           },
-        ],
-        overlapWarnings: const [],
-        overlapTotalCount: 0,
-      );
+        },
+      ],
+      overlapWarnings: const [],
+      overlapTotalCount: 0,
+    );
 
-      await tester.pumpWidget(_buildApp(conflicts: conflicts));
-      await tester.tap(find.text('open'));
-      await tester.pumpAndSettle();
+    await tester.pumpWidget(_buildApp(conflicts: conflicts));
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
 
-      expect(
-        find.byKey(const Key('calendar-conflict-exception-label')),
-        findsOneWidget,
-      );
-      expect(find.textContaining('Eid al-Fitr'), findsOneWidget);
-    },
-  );
+    expect(
+      find.byKey(const Key('calendar-conflict-exception-label')),
+      findsOneWidget,
+    );
+    expect(find.textContaining('Eid al-Fitr'), findsOneWidget);
+  });
 
   testWidgets(
     'treats an unexpected non-safe key (e.g. notes) in date_exception as a '

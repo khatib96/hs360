@@ -80,6 +80,13 @@ void main() {
       ),
     );
 
+    // Tall desktop surface so Month+Agenda builds the event card (not only
+    // the grid above the fold on the default 800×600 viewport).
+    tester.view.physicalSize = const Size(1280, 1800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
     await tester.pumpWidget(_buildApp(repo: repo, locale: const Locale('en')));
     await tester.pumpAndSettle();
 
@@ -97,6 +104,11 @@ void main() {
         overdueRows: const [],
       ),
     );
+
+    tester.view.physicalSize = const Size(1280, 1800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
 
     await tester.pumpWidget(_buildApp(repo: repo, locale: const Locale('ar')));
     await tester.pumpAndSettle();

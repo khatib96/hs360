@@ -50,7 +50,7 @@ class CalendarManualEventFormController {
   String? serviceLocationId;
   String? contractId;
   final selectedParticipants = <String, CalendarEventParticipant>{};
-  var participantCandidates = <CalendarEventParticipant>[];
+  var participantCandidates = <CalendarParticipantCandidate>[];
   var customerResults = <Customer>[];
   var locations = <CustomerServiceLocation>[];
   var contracts = <ContractSummary>[];

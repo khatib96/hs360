@@ -614,7 +614,8 @@ void main() {
     expect(find.byKey(const Key('calendar-month-title')), findsOneWidget);
     expect(find.byKey(const Key('calendar-filter-toolbar')), findsOneWidget);
 
-    await _pumpScreen(tester, repo: repo, size: const Size(1000, 1800));
+    // Window 1100 → content ~859 after AppShell nav (narrow desktop band).
+    await _pumpScreen(tester, repo: repo, size: const Size(1100, 1800));
     expect(find.byKey(const Key('calendar-filter-toolbar')), findsOneWidget);
     expect(find.byKey(const Key('calendar-filters-collapsed')), findsNothing);
   });

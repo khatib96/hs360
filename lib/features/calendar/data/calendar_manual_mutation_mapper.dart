@@ -9,25 +9,8 @@ CalendarManualMutationResult mapCalendarManualMutationResult(dynamic raw) {
   final status = requireString(map['status'], 'manual mutation.status');
 
   if (status == 'confirmation_required') {
-    final conflictsRaw = requireMap(
-      map['conflicts'],
-      'manual mutation.conflicts',
-    );
     return CalendarManualMutationConfirmationRequired(
-      CalendarManualConflictInfo(
-        scheduleWarnings: _mapWarningList(
-          conflictsRaw['schedule_warnings'],
-          'conflicts.schedule_warnings',
-        ),
-        overlapWarnings: _mapWarningList(
-          conflictsRaw['overlap_warnings'],
-          'conflicts.overlap_warnings',
-        ),
-        overlapTotalCount: requireInt(
-          conflictsRaw['overlap_total_count'],
-          'conflicts.overlap_total_count',
-        ),
-      ),
+      mapCalendarManualConflictInfo(map['conflicts'], 'manual mutation'),
     );
   }
 
@@ -53,9 +36,34 @@ CalendarEvent mapCalendarManualOkEvent(dynamic raw) {
   return result.event;
 }
 
-List<CalendarEventParticipant> mapParticipantCandidates(dynamic raw) {
+List<CalendarParticipantCandidate> mapParticipantCandidates(dynamic raw) {
   final map = requireMap(raw, 'participant candidates root');
-  return mapCalendarParticipants(map['rows'], 'participant candidates.rows');
+  return mapCalendarParticipantCandidates(
+    map['rows'],
+    'participant candidates.rows',
+  );
+}
+
+/// Shared soft-conflict payload mapping for M7A manual and M8 schedule RPCs.
+CalendarManualConflictInfo mapCalendarManualConflictInfo(
+  dynamic raw,
+  String detail,
+) {
+  final conflictsRaw = requireMap(raw, '$detail.conflicts');
+  return CalendarManualConflictInfo(
+    scheduleWarnings: _mapWarningList(
+      conflictsRaw['schedule_warnings'],
+      'conflicts.schedule_warnings',
+    ),
+    overlapWarnings: _mapWarningList(
+      conflictsRaw['overlap_warnings'],
+      'conflicts.overlap_warnings',
+    ),
+    overlapTotalCount: requireInt(
+      conflictsRaw['overlap_total_count'],
+      'conflicts.overlap_total_count',
+    ),
+  );
 }
 
 List<Map<String, dynamic>> _mapWarningList(dynamic value, String detail) {

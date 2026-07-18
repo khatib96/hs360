@@ -72,6 +72,8 @@ void main() {
                   'name_en': 'A',
                   'is_active': true,
                   'has_app_account': false,
+                  'has_active_tenant_account': true,
+                  'has_calendar_access': true,
                 },
               ],
             };

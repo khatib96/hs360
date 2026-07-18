@@ -36,6 +36,7 @@ class AppShell extends ConsumerWidget {
     required this.body,
     this.actions,
     this.currentRoute,
+    this.floatingActionButton,
     super.key,
   });
 
@@ -43,6 +44,7 @@ class AppShell extends ConsumerWidget {
   final Widget body;
   final List<Widget>? actions;
   final String? currentRoute;
+  final Widget? floatingActionButton;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -55,6 +57,7 @@ class AppShell extends ConsumerWidget {
       return Scaffold(
         appBar: AppBar(title: Text(title), actions: actions),
         body: SafeArea(child: body),
+        floatingActionButton: floatingActionButton,
       );
     }
 
@@ -201,7 +204,8 @@ class AppShell extends ConsumerWidget {
             },
           )
         : null;
-    final isDesktop = MediaQuery.of(context).size.width > 768;
+    // AppShell chrome only — independent of calendar content breakpoints.
+    final isDesktop = MediaQuery.sizeOf(context).width > 768;
 
     if (isDesktop) {
       return Scaffold(
@@ -222,6 +226,7 @@ class AppShell extends ConsumerWidget {
                   actions: actions,
                 ),
                 body: SafeArea(child: body),
+                floatingActionButton: floatingActionButton,
               ),
             ),
           ],
@@ -241,6 +246,7 @@ class AppShell extends ConsumerWidget {
               items: authorizedItems,
             ),
       body: SafeArea(child: body),
+      floatingActionButton: floatingActionButton,
     );
   }
 }

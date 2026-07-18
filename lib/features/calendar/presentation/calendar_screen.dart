@@ -4,24 +4,16 @@ import 'package:hs360/l10n/app_localizations.dart';
 
 import '../../../core/routing/app_routes.dart';
 import '../../../shared/widgets/app_shell.dart';
-import '../../../shared/widgets/message_banner.dart';
 import '../../auth/presentation/auth_controller.dart';
-import '../domain/calendar_date.dart';
 import '../domain/calendar_permissions.dart';
-import '../domain/calendar_range_summary.dart';
 import 'calendar_controller.dart';
 import 'calendar_desktop_layout.dart';
-import 'calendar_labels.dart';
 import 'calendar_state.dart';
-import 'widgets/calendar_agenda_list.dart';
-import 'widgets/calendar_filter_bar.dart';
+import 'widgets/calendar_desktop_body.dart';
 import 'widgets/calendar_manual_event_dialog.dart';
-import 'widgets/calendar_month_grid.dart';
-import 'widgets/calendar_month_toolbar.dart';
-import 'widgets/calendar_overdue_panel.dart';
-import 'widgets/calendar_setup_banner.dart';
+import 'widgets/calendar_mobile_body.dart';
 
-/// Desktop Month + selected-day Agenda calendar surface (Phase 7 M6).
+/// Calendar surface: desktop Month+Agenda (M6) or mobile week+agenda (M9).
 class CalendarScreen extends ConsumerStatefulWidget {
   const CalendarScreen({super.key});
 
@@ -32,6 +24,10 @@ class CalendarScreen extends ConsumerStatefulWidget {
 class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   int? _scheduledWeekStart;
   int? _appliedWeekStart;
+
+  /// Latest AppShell body width; drives AppBar create after first layout.
+  /// Defaults to mobile-safe until measured.
+  double? _contentWidth;
 
   @override
   void didChangeDependencies() {
@@ -47,6 +43,26 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     });
   }
 
+  Future<void> _createEvent() async {
+    final state = ref.read(calendarControllerProvider);
+    final form = await showCalendarManualEventDialog(
+      context: context,
+      scheduledDate: state.selectedDate,
+    );
+    if (form == null || !mounted) return;
+    await ref
+        .read(calendarControllerProvider.notifier)
+        .createManualEvent(context, form.data);
+  }
+
+  void _syncContentWidth(double width) {
+    if (_contentWidth == width) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _contentWidth == width) return;
+      setState(() => _contentWidth = width);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -54,30 +70,84 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     final notifier = ref.read(calendarControllerProvider.notifier);
     final session = ref.watch(authControllerProvider).valueOrNull;
     final canCreate = session != null && canCreateCalendarEvent(session);
-    final narrow =
-        MediaQuery.sizeOf(context).width <
-        CalendarDesktopLayout.narrowBreakpoint;
+    final contentMobile = _contentWidth == null
+        ? true
+        : CalendarLayout.isMobileWidth(_contentWidth!);
 
     return AppShell(
       title: l10n.calendarTitle,
       currentRoute: AppRoutes.calendar,
+      // Desktop create only in AppBar. Mobile create lives in the non-scrolling
+      // clearance slot below (not Scaffold.floatingActionButton), so it cannot
+      // paint over the list viewport.
       actions: [
-        if (canCreate && !state.permissionDenied)
+        if (canCreate && !state.permissionDenied && !contentMobile)
           TextButton.icon(
             key: const Key('calendar-create-event'),
-            onPressed: () async {
-              final form = await showCalendarManualEventDialog(
-                context: context,
-                scheduledDate: state.selectedDate,
-              );
-              if (form == null || !context.mounted) return;
-              await notifier.createManualEvent(context, form.data);
-            },
+            onPressed: _createEvent,
             icon: const Icon(Icons.add),
             label: Text(l10n.calendarCreateEvent),
           ),
       ],
-      body: _buildBody(context, l10n, state, notifier, narrow),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final contentWidth = constraints.maxWidth;
+          _syncContentWidth(contentWidth);
+          final mobile = CalendarLayout.isMobileWidth(contentWidth);
+          final narrowDesktop = CalendarLayout.isNarrowDesktopWidth(
+            contentWidth,
+          );
+
+          final body = _buildBody(
+            context,
+            l10n,
+            state,
+            notifier,
+            mobile: mobile,
+            narrowDesktop: narrowDesktop,
+          );
+
+          if (mobile && canCreate && !state.permissionDenied) {
+            final clearanceColor = Theme.of(context).scaffoldBackgroundColor;
+            return Column(
+              key: const Key('calendar-layout-body'),
+              children: [
+                Expanded(child: ClipRect(child: body)),
+                Material(
+                  color: clearanceColor,
+                  child: SizedBox(
+                    key: const Key('calendar-mobile-fab-clearance'),
+                    height: CalendarLayout.mobileFabClearance,
+                    width: double.infinity,
+                    child: Align(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                          0,
+                          8,
+                          16,
+                          8,
+                        ),
+                        child: FloatingActionButton(
+                          key: const Key('calendar-create-event'),
+                          onPressed: _createEvent,
+                          tooltip: l10n.calendarCreateEvent,
+                          child: const Icon(Icons.add),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }
+
+          return KeyedSubtree(
+            key: const Key('calendar-layout-body'),
+            child: body,
+          );
+        },
+      ),
     );
   }
 
@@ -85,9 +155,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     BuildContext context,
     AppLocalizations l10n,
     CalendarState state,
-    CalendarController notifier,
-    bool narrow,
-  ) {
+    CalendarController notifier, {
+    required bool mobile,
+    required bool narrowDesktop,
+  }) {
     if (state.permissionDenied) {
       return Center(
         key: const Key('calendar-permission-denied'),
@@ -116,99 +187,14 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       );
     }
 
-    final daysByDate = <DateTime, CalendarDaySummary>{
-      for (final day in state.days) calendarDateOnly(day.date): day,
-    };
+    if (mobile) {
+      return CalendarMobileBody(state: state, notifier: notifier);
+    }
 
-    return RefreshIndicator(
-      onRefresh: notifier.refresh,
-      child: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          if (state.showSetupWarning)
-            CalendarSetupBanner(message: l10n.calendarSetupWarning),
-          if (state.summaryErrorCode != null)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  MessageBanner(
-                    variant: MessageBannerVariant.error,
-                    message: calendarErrorMessage(
-                      l10n,
-                      state.summaryErrorCode!,
-                    ),
-                  ),
-                  TextButton(
-                    key: const Key('calendar-retry-summary'),
-                    onPressed: notifier.retrySummary,
-                    child: Text(l10n.retry),
-                  ),
-                ],
-              ),
-            ),
-          CalendarFilterBar(
-            applied: state.filters,
-            scope: state.scope,
-            dateFrom: state.dateFrom,
-            dateTo: state.dateTo,
-            collapsed: narrow,
-            onApply: notifier.setFilters,
-            onClear: notifier.clearFilters,
-          ),
-          const SizedBox(height: 8),
-          CalendarMonthToolbar(
-            focusedMonth: state.focusedMonth,
-            onPrevious: notifier.goToPreviousMonth,
-            onNext: notifier.goToNextMonth,
-            onToday: notifier.goToToday,
-            onMonthSelected: notifier.goToMonth,
-          ),
-          if (state.isLoadingSummary && state.isSummaryQueryAligned)
-            const LinearProgressIndicator(),
-          CalendarMonthGrid(
-            focusedMonth: state.focusedMonth,
-            firstDayOfWeekIndex: state.firstDayOfWeekIndex!,
-            dateFrom: state.dateFrom,
-            dateTo: state.dateTo,
-            selectedDate: state.selectedDate,
-            tenantLocalToday: state.tenantLocalToday,
-            daysByDate: daysByDate,
-            isAligned: state.isSummaryQueryAligned,
-            isLoading: state.isLoadingSummary,
-            onSelectDate: notifier.selectGridDate,
-          ),
-          const SizedBox(height: 24),
-          CalendarAgendaList(
-            selectedDate: state.selectedDate,
-            workingDay: state.selectedDaySummary?.workingDay,
-            daySummary: state.selectedDaySummary,
-            events: state.agendaEvents,
-            isLoading: state.isLoadingAgenda,
-            hasActiveFilters: state.hasActiveFilters,
-            errorCode: state.agendaErrorCode,
-            loadMoreErrorCode: state.loadMoreInRangeErrorCode,
-            hasMore: state.hasMoreInRange,
-            isLoadingMore: state.isLoadingMoreInRange,
-            onRetry: notifier.retryAgenda,
-            onLoadMore: notifier.loadMoreInRange,
-            onClearFilters: notifier.clearFilters,
-          ),
-          const SizedBox(height: 24),
-          CalendarOverduePanel(
-            summary: state.overdueOutsideRangeSummary,
-            events: state.overdueEvents,
-            isLoading: state.isLoadingOverdue,
-            errorCode: state.overdueErrorCode,
-            loadMoreErrorCode: state.loadMoreOverdueErrorCode,
-            hasMore: state.hasMoreOverdue,
-            isLoadingMore: state.isLoadingMoreOverdue,
-            onRetry: notifier.retryOverdue,
-            onLoadMore: notifier.loadMoreOverdue,
-          ),
-        ],
-      ),
+    return CalendarDesktopBody(
+      state: state,
+      notifier: notifier,
+      narrow: narrowDesktop,
     );
   }
 }

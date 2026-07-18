@@ -3983,7 +3983,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String calendarDayEventCount(int count) {
-    return '$count events';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events',
+      one: '1 event',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -4499,4 +4505,116 @@ class AppLocalizationsEn extends AppLocalizations {
   String calendarMonthExceptionMarkerSemantics(String kindTitle) {
     return 'Date exception: $kindTitle';
   }
+
+  @override
+  String get calendarAssignAction => 'Assign';
+
+  @override
+  String get calendarRescheduleAction => 'Reschedule';
+
+  @override
+  String get calendarAssignDialogTitle => 'Assign event';
+
+  @override
+  String calendarAssignCurrentAssignee(String name) {
+    return 'Current assignee: $name';
+  }
+
+  @override
+  String get calendarAssignCurrentlyUnassigned => 'Currently unassigned.';
+
+  @override
+  String get calendarAssignCurrentUnavailable =>
+      'Current assignee — unavailable (inactive)';
+
+  @override
+  String get calendarAssignUnassignOption => 'Unassigned';
+
+  @override
+  String get calendarAssignSearchHint => 'Search active employees';
+
+  @override
+  String get calendarAssignNoResults => 'No matching active employees.';
+
+  @override
+  String get calendarAssignRetry => 'Retry';
+
+  @override
+  String get calendarAssignWarningNoCalendarAccess =>
+      'No calendar access — assigned events will not be visible to them.';
+
+  @override
+  String get calendarAssignWarningNoActiveAccount =>
+      'Account is inactive for this company.';
+
+  @override
+  String get calendarAssignWarningNoAppAccount =>
+      'No app account — they cannot sign in.';
+
+  @override
+  String get calendarAssignSubmit => 'Assign';
+
+  @override
+  String get calendarAssignSuccess => 'Assignment saved.';
+
+  @override
+  String get calendarAssignedEventHidden =>
+      'Assignment saved. This event is no longer visible in your view.';
+
+  @override
+  String get calendarRescheduleDialogTitle => 'Reschedule event';
+
+  @override
+  String calendarRescheduleCurrentDate(String date) {
+    return 'Current date: $date';
+  }
+
+  @override
+  String calendarRescheduleTargetDate(String date) {
+    return 'New date: $date';
+  }
+
+  @override
+  String get calendarRescheduleDateUnchanged =>
+      'Pick a different date to enable rescheduling.';
+
+  @override
+  String calendarRescheduleTimedWindow(String start, String end) {
+    return 'Time window $start–$end is kept on the new date.';
+  }
+
+  @override
+  String get calendarRescheduleReasonLabel => 'Reschedule reason';
+
+  @override
+  String get calendarRescheduleReasonRequired =>
+      'Enter a non-empty reschedule reason.';
+
+  @override
+  String get calendarRescheduleSubmit => 'Reschedule';
+
+  @override
+  String get calendarRescheduleSuccess => 'Event rescheduled.';
+
+  @override
+  String get calendarErrorAssignmentNotApplicable =>
+      'This event cannot be assigned.';
+
+  @override
+  String get calendarPreviousWeek => 'Previous week';
+
+  @override
+  String get calendarNextWeek => 'Next week';
+
+  @override
+  String get calendarMobileDaySelected => 'Selected';
+
+  @override
+  String get calendarOverdueSectionExpand => 'Show overdue outside range';
+
+  @override
+  String get calendarOverdueSectionCollapse => 'Hide overdue outside range';
+
+  @override
+  String get calendarDirectionsUnavailable => 'Directions not available';
 }

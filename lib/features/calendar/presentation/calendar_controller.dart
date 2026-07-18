@@ -12,6 +12,7 @@ import '../domain/calendar_month_grid.dart';
 import '../domain/calendar_permissions.dart';
 import 'calendar_clock.dart';
 import 'calendar_manual_mutations.dart';
+import 'calendar_schedule_mutations.dart';
 import 'calendar_section_loader.dart';
 import 'calendar_state.dart';
 
@@ -23,6 +24,7 @@ part 'calendar_controller.g.dart';
 class CalendarController extends _$CalendarController {
   late CalendarSectionLoader _loader;
   late CalendarManualMutations _mutations;
+  late CalendarScheduleMutations _scheduleMutations;
   bool _hasStartedInitialLoad = false;
 
   @override
@@ -39,16 +41,24 @@ class CalendarController extends _$CalendarController {
       readRepo: () => ref.read(calendarRepositoryProvider),
       refresh: refresh,
     );
+    _scheduleMutations = CalendarScheduleMutations(
+      readSession: () => ref.read(authControllerProvider).valueOrNull,
+      readRepo: () => ref.read(calendarRepositoryProvider),
+      readState: () => state,
+      refresh: refresh,
+    );
     ref.listen(authControllerProvider, (previous, next) {
       final previousSession = previous?.valueOrNull;
       final nextSession = next.valueOrNull;
       if (nextSession == null) {
         _loader.invalidateAll();
+        _scheduleMutations.invalidate();
         _hasStartedInitialLoad = false;
         state = calendarInitialState(calendarClock());
         return;
       }
       if (_shouldReloadForSession(previousSession, nextSession)) {
+        _scheduleMutations.invalidate();
         _resetForIdentityChange();
         if (state.firstDayOfWeekIndex != null) {
           refresh();
@@ -339,4 +349,26 @@ class CalendarController extends _$CalendarController {
 
   Future<bool> markManualDone(CalendarEvent event) =>
       _mutations.markManualDone(event);
+
+  Future<bool> assignCalendarEvent(
+    BuildContext context,
+    CalendarEvent event, {
+    required String? assignedAgentId,
+  }) => _scheduleMutations.assignEvent(
+    context,
+    event,
+    assignedAgentId: assignedAgentId,
+  );
+
+  Future<bool> rescheduleCalendarEvent(
+    BuildContext context,
+    CalendarEvent event, {
+    required DateTime targetDate,
+    required String reason,
+  }) => _scheduleMutations.rescheduleEvent(
+    context,
+    event,
+    targetDate: targetDate,
+    reason: reason,
+  );
 }

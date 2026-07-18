@@ -75,3 +75,36 @@ List<CalendarEventParticipant> mapCalendarParticipants(
     );
   }).toList();
 }
+
+/// Candidates carry the M8 reachability flags on top of the participant shape.
+List<CalendarParticipantCandidate> mapCalendarParticipantCandidates(
+  dynamic value,
+  String detail,
+) {
+  final list = requireList(value, detail);
+  // Frozen at the data boundary: lookup state and dialogs must never mutate
+  // the candidate collection in place.
+  return List.unmodifiable(
+    list.map((item) {
+      final map = requireMap(item, '$detail[]');
+      return CalendarParticipantCandidate(
+        employeeId: requireString(map['employee_id'], '$detail.employee_id'),
+        nameAr: requireString(map['name_ar'], '$detail.name_ar'),
+        nameEn: optionalString(map['name_en']),
+        isActive: requireBool(map['is_active'], '$detail.is_active'),
+        hasAppAccount: requireBool(
+          map['has_app_account'],
+          '$detail.has_app_account',
+        ),
+        hasActiveTenantAccount: requireBool(
+          map['has_active_tenant_account'],
+          '$detail.has_active_tenant_account',
+        ),
+        hasCalendarAccess: requireBool(
+          map['has_calendar_access'],
+          '$detail.has_calendar_access',
+        ),
+      );
+    }),
+  );
+}

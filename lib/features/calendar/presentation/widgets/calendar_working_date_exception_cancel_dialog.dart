@@ -43,8 +43,10 @@ class _CancelDialogBodyState extends ConsumerState<_CancelDialogBody> {
 
   Future<void> _submit() async {
     if (_submitting) return;
-    final validation = CalendarWorkingDateExceptionValidators
-        .validateCancelReason(_controller.text);
+    final validation =
+        CalendarWorkingDateExceptionValidators.validateCancelReason(
+          _controller.text,
+        );
     if (!validation.isValid) {
       setState(() => _fieldErrorCode = validation.codes.first);
       return;
