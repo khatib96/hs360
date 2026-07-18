@@ -5,12 +5,13 @@
 > customer visits, tasks, reminders, activities, and other controlled manual
 > business appointments in one operational calendar.
 >
-> Status: **M0–M7B complete / accepted.** Migrations `093`–`101` exist. M7A
-> closed on 2026-07-15; M7B closed on 2026-07-17; M8 SQL/`101` accepted with
-> Flutter corrective pass on 2026-07-18
-> (`M8 FLUTTER CORRECTED — OWNER RE-ACCEPTANCE PENDING`). **M9 Mobile Calendar
-> CLOSED / ACCEPTED on 2026-07-19.** The next milestone is **M10 Route View and
-> Directions** (not started).
+> Status: **M0–M10 complete / accepted** (M8 Flutter still
+> `OWNER RE-ACCEPTANCE PENDING`). Migrations `093`–`102` exist. M7A closed on
+> 2026-07-15; M7B closed on 2026-07-17; M8 SQL/`101` accepted with Flutter
+> corrective pass on 2026-07-18. **M9 Mobile Calendar CLOSED / ACCEPTED on
+> 2026-07-19.** **M10 Route View and Directions CLOSED / ACCEPTED on
+> 2026-07-19** (migration `102`). M11/M12 not started.
+> Map provider decision: `docs/PHASE_7_M10_MAP_PROVIDER.md`.
 >
 > Owner direction (revised 2026-07-15): HS360 Calendar is the company's shared
 > appointment-management surface, not only a contract-follow-up calendar. The
@@ -1770,7 +1771,8 @@ Phase 8 execution into Phase 7.
 **Closure (2026-07-19):** final automated and owner visual gates passed after
 the content-width responsive correction, non-overlapping mobile create control,
 assigned-only evidence correction, and regenerated 12-frame M9 screenshot set.
-M9 is **CLOSED / ACCEPTED**. M10 remains not started.
+M9 is **CLOSED / ACCEPTED**. M10 subsequently closed on 2026-07-19; see its
+implementation and closure record below.
 
 ---
 
@@ -1803,6 +1805,45 @@ Help users understand daily geography and open reliable native directions.
 - Missing coordinates degrade gracefully.
 - Route View is explicitly display-only.
 - No customer/location data leaks through markers, counts, or map bounds.
+
+### Implementation record (2026-07-19)
+
+**Status: `M10 CLOSED / ACCEPTED` (2026-07-19).**
+
+Delivered:
+
+- Migration `102_phase_7_calendar_route_view.sql` with
+  `get_calendar_route_day`, `list_calendar_route_employees`,
+  `get_calendar_event_directions`, and a forward replace of
+  `calendar_read_scoped_events` so `directions_available` /
+  `can_open_directions` cover mapped **or** allowlisted URL (`url_only`)
+  without exposing coords/URL in `list_calendar_events`.
+- Route membership = assignee or participant only (not creator-only /
+  unassigned). Caller ACL via `assert_calendar_event_view`; managers with
+  `tenant_wide` do not need the assigned-only visibility helper for
+  directions.
+- Flutter Route View at `/calendar/route?date=YYYY-MM-DD`,
+  `flutter_map` 8.3.1 + `latlong2` 0.10.1, FakeCalendarMapSurface screenshots,
+  Directions launcher + on-demand directions RPC.
+- Map provider / tile policy: `docs/PHASE_7_M10_MAP_PROVIDER.md`.
+- Migrations `093`–`101` unchanged. No Phase 8. No Operations Map for
+  rented/trial devices (Phase 10).
+
+Final closure evidence:
+
+- Owner accepted the final 17-frame M10 visual evidence set after the
+  micro-corrective pass.
+- `flutter analyze` clean; full `flutter test` **1366 passed**; M10 SQL suite
+  `phase_7_calendar_route_view.sql` passed; `git diff --check` clean.
+- Apple Maps uses its official HTTPS destination URL and is always offered on
+  iOS; `url_only` offers Browser only; Arabic RTL day arrows and tile Retry
+  contrast were corrected.
+- iOS/Android installed-app smoke was skipped because no device session was
+  available; it remains a pre-production smoke check, not an M10 closure
+  blocker.
+- The full SQL runner still reaches a pre-existing, unrelated reminder-suite
+  FK failure (`fk_calendar_events_assigned_agent` / `v_cross_employee`); retain
+  it as a known issue for M11/M12. No M10 SQL regression was observed.
 
 ---
 
@@ -2151,15 +2192,15 @@ Phase 6 foundation can be reused without corrective work.
 
 ## Starting Point For Implementation
 
-M0–M7B are closed/accepted. M8 SQL/`101` is accepted historically; Flutter
-corrective is green (`M8 FLUTTER CORRECTED — OWNER RE-ACCEPTANCE PENDING`).
-M9 Mobile Calendar passed its final automated and owner visual gates on
-2026-07-19 (`M9 CLOSED / ACCEPTED`). Migrations `093`–`101` remain
-byte-unchanged for this corrective/mobile phase (verify with
+M0–M10 are closed/accepted for their scopes (M8 Flutter still
+`OWNER RE-ACCEPTANCE PENDING`). **M10 is CLOSED / ACCEPTED** with migration
+`102`. Migrations `093`–`101` remain
+byte-unchanged for this work (verify with
 `git diff -- supabase/migrations/093* … 101*`).
 
-Next milestone: **M10 Route View and Directions**.
-Do not start M10 or Phase 8 until explicitly requested.
+Next milestone: **M11 Integration, Performance, and Hardening** (not started).
+Do not start M11/M12 or Phase 8 until explicitly requested.
+Operations Map for rented/trial devices remains Phase 10.
 
 Do not begin external reminder delivery until:
 

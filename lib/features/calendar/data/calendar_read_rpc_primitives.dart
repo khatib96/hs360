@@ -116,6 +116,21 @@ T? optionalEnum<T>(dynamic value, T? Function(String) fromRpc, String detail) {
   return requireEnum(value, fromRpc, detail);
 }
 
+double requireDouble(dynamic value, String detail) {
+  if (value is double) return value;
+  if (value is num) return value.toDouble();
+  if (value is String) {
+    final parsed = double.tryParse(value);
+    if (parsed != null) return parsed;
+  }
+  return malformedCalendarResponse(detail);
+}
+
+double? optionalDouble(dynamic value, String detail) {
+  if (value == null) return null;
+  return requireDouble(value, detail);
+}
+
 Decimal? optionalDecimal(dynamic value, String detail) {
   if (value == null) return null;
   return requireDecimal(value, detail);

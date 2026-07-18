@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
 import '../../../core/routing/app_routes.dart';
@@ -81,6 +82,15 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       // clearance slot below (not Scaffold.floatingActionButton), so it cannot
       // paint over the list viewport.
       actions: [
+        if (!contentMobile)
+          TextButton.icon(
+            key: const Key('calendar-open-route-view'),
+            onPressed: () => context.push(
+              AppRoutes.calendarRoutePath(date: state.selectedDate),
+            ),
+            icon: const Icon(Icons.map_outlined),
+            label: Text(l10n.calendarRouteViewButton),
+          ),
         if (canCreate && !state.permissionDenied && !contentMobile)
           TextButton.icon(
             key: const Key('calendar-create-event'),

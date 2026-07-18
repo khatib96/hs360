@@ -7,6 +7,7 @@ abstract final class AppRoutes {
   static const dashboard = '/dashboard';
   static const fieldToday = '/field/today';
   static const calendar = '/calendar';
+  static const calendarRoute = '/calendar/route';
   static const blocked = '/blocked';
   static const products = '/products';
   static const productsNew = '/products/new';
@@ -59,6 +60,7 @@ abstract final class AppRoutes {
   static const dashboardName = 'dashboard';
   static const fieldTodayName = 'fieldToday';
   static const calendarName = 'calendar';
+  static const calendarRouteName = 'calendarRoute';
   static const blockedName = 'blocked';
   static const productsName = 'products';
   static const productsNewName = 'productsNew';
@@ -156,6 +158,14 @@ abstract final class AppRoutes {
     if (to != null) params['to'] = _dateOnly(to);
     if (invoiceType != null) params['invoiceType'] = invoiceType.toDb();
     return Uri(path: documentPreview, queryParameters: params).toString();
+  }
+
+  static String calendarRoutePath({DateTime? date}) {
+    if (date == null) return calendarRoute;
+    return Uri(
+      path: calendarRoute,
+      queryParameters: {'date': _dateOnly(date)},
+    ).toString();
   }
 
   static String _dateOnly(DateTime date) {

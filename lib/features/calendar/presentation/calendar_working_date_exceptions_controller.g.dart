@@ -7,7 +7,7 @@ part of 'calendar_working_date_exceptions_controller.dart';
 // **************************************************************************
 
 String _$calendarWorkingDateExceptionsControllerHash() =>
-    r'0be6e74bee4b250b96279025d57ec51e7254d164';
+    r'4c6a5ada54f7a39e73def87ea4b066741b124492';
 
 /// See also [CalendarWorkingDateExceptionsController].
 @ProviderFor(CalendarWorkingDateExceptionsController)

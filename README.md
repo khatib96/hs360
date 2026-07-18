@@ -7,12 +7,13 @@ and double-entry accounting.
 
 > Repository status updated: **2026-07-19**
 >
-> Current milestone: **Phase 7 M9 CLOSED / ACCEPTED**
+> Current milestone: **Phase 7 M10 CLOSED / ACCEPTED**
 > — M7A/M7B closed/accepted; M8 SQL/`101` accepted historically; M8 Flutter
 > corrective pass green (`M8 FLUTTER CORRECTED — OWNER RE-ACCEPTANCE PENDING`);
-> M9 mobile calendar owner-accepted on 2026-07-19; M10 not started
+> M9 mobile calendar **CLOSED / ACCEPTED**; M10 Route View + Directions
+> **CLOSED / ACCEPTED** (migration `102`, Flutter route UI, directions RPCs)
 >
-> Latest migrations on disk: **`101`** (assignment/reschedule); `093`–`101`
+> Latest migrations on disk: **`102`** (route view / directions); `093`–`101`
 > unchanged in this work.
 
 ---
@@ -28,7 +29,7 @@ and double-entry accounting.
 | 4 | Engineering complete | Customers, suppliers, CoA, service locations, coordinates |
 | 5 | Complete | Invoices, returns, vouchers, journal, inventory accounting, PDFs |
 | 6 | Complete | Trial/rental contracts, lifecycle, billing, PDF, calendar handoff |
-| 7 | M9 closed / accepted | M1–M7B closed; M8 SQL/`101` + Flutter corrective green; M9 mobile calendar owner-accepted; M10 not started |
+| 7 | M10 closed / accepted | M1–M7B closed; M8 SQL/`101` + Flutter corrective green; M9 and M10 CLOSED/ACCEPTED; M11/M12 not started |
 | 8-12 | Not started | Field execution and later operational/reporting/production phases |
 
 Phase 6 closed through M13/migration `092` on 2026-07-12. Phase 7 M1 closed on
@@ -53,7 +54,12 @@ is closed / accepted**. M8 Assignment & Rescheduling landed with migration
 `101`; the Flutter live wiring was corrected on 2026-07-18
 (**`M8 FLUTTER CORRECTED — OWNER RE-ACCEPTANCE PENDING`**). M9 Mobile Calendar
 passed its final corrective, automated, and visual gates and was accepted by
-the owner on 2026-07-19 (**`M9 CLOSED / ACCEPTED`**). M10 has not started.
+the owner on 2026-07-19 (**`M9 CLOSED / ACCEPTED`**). M10 Route View and
+Directions passed its final corrective, automated, and owner visual gates on
+2026-07-19 (**`M10 CLOSED / ACCEPTED`**) with migration `102`, a
+flutter_map display-only map, and privacy-scoped directions RPCs. See
+[PHASE_7_M10_MAP_PROVIDER.md](docs/PHASE_7_M10_MAP_PROVIDER.md). M11/M12 and
+Phase 8 have not started.
 
 Detailed roadmap: [BUILD_PLAN.md](docs/BUILD_PLAN.md)
 
@@ -302,8 +308,9 @@ Before implementing a milestone:
 - Phase 7 M8 SQL/`101` is accepted historically; Flutter corrective is green
   (`M8 FLUTTER CORRECTED — OWNER RE-ACCEPTANCE PENDING`).
 - Phase 7 M9 Mobile Calendar is **closed / owner-accepted** after its final
-  responsive-layout, assigned-only, FAB-clearance, and visual gates. M10 has
-  not started.
+  responsive-layout, assigned-only, FAB-clearance, and visual gates.
+- Phase 7 M10 Route View and Directions is **closed / owner-accepted** after
+  its final Open-with, RTL navigation, tile-failure, privacy, and visual gates.
 - Production Supabase/VPS deployment and external messaging credentials are not
   configured by this repository state.
 - The `resolve-google-maps-url` Edge Function has local verification but still
@@ -354,8 +361,8 @@ Before implementing a milestone:
   overflow.
 - **M7A closed / accepted.**
 - Historical note at that snapshot: M7B–M10 were still ahead. See current
-  header / Phase 7 status for M7B closed, M8 Flutter re-acceptance pending,
-  M9 closed/accepted, and M10 not started.
+  header / Phase 7 status for M7B–M9 closed/accepted, M8 Flutter re-acceptance
+  pending, and M10 closed/accepted.
 
 ---
 

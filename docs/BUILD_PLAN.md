@@ -19,7 +19,7 @@
 | **4 - Customers, Suppliers & CoA** | Engineering complete | 2026-06-06 |
 | **5 - Invoices, Vouchers & Journal** | Done | M1–M10 closed through migration `076` |
 | **6 - Contracts** | Complete | M0–M13 closed (2026-07-12) |
-| **7 - Calendar & Company Appointments** | M7B closed / accepted | M1–M7A closed (2026-07-15); M7B (`100`) closed (2026-07-17) |
+| **7 - Calendar & Company Appointments** | M10 closed / accepted | M9 and M10 CLOSED/ACCEPTED (2026-07-19); M8 Flutter re-acceptance still pending; M11/M12 not started |
 | **8 - Mobile Field Ops** | Not started | - |
 | **9 - POS, Maintenance & HR** | Not started | - |
 | **10 - Reports & Close** | Not started | - |
@@ -652,12 +652,15 @@ The core of the system: contracts can be created, billed, refilled, and closed.
 > estimate is a legacy roadmap estimate; use the detailed plan for professional
 > delivery sizing.
 >
-> Current status: **M9 CLOSED / ACCEPTED.** M1–M7B
-> are closed/accepted. M8 migration `101` exists; Flutter live assignment UI was
-> correctively closed for automation on 2026-07-18
-> (`M8 FLUTTER CORRECTED — OWNER RE-ACCEPTANCE PENDING`). M9 mobile calendar
-> passed its final automated and owner visual gates on 2026-07-19. M10 has not
-> started.
+> Current status: **M10 CLOSED / ACCEPTED (2026-07-19).**
+> M1–M7B are closed/accepted. M8 migration `101` exists; Flutter live assignment
+> UI was correctively closed for automation on 2026-07-18
+> (`M8 FLUTTER CORRECTED — OWNER RE-ACCEPTANCE PENDING`). M9 mobile calendar is
+> **CLOSED / ACCEPTED** (2026-07-19). M10 Route View and Directions closed with
+> migration `102`, route RPCs, flutter_map display-only map, and native
+> Open-with directions flow after its final automated and owner visual gates.
+> M11/M12 and Phase 8 have not started. Operations Map for
+> rented/trial devices remains Phase 10.
 
 ### Goal
 A unified company appointment-management calendar showing contract-generated
@@ -844,7 +847,11 @@ All key reports work. Managers can answer business questions in under a minute.
 13. Renewal / Increase Suggestions: flags old contracts that may need price review before renewal
 14. Audit Review Dashboard: sensitive changes, overrides, cancellations, permission changes
 15. Data Quality Warnings: missing GPS, products without cost, contracts without refill day, duplicate phone numbers
-16. Operations Map: reusable map widget with typed layers and clustering, starting with service locations/today's visits and later rented assets
+16. Operations Map: reusable map widget with typed layers and clustering,
+    starting with service locations/today's visits and later rented and trial
+    assets. Trial devices must use a visually distinct, accessible marker
+    treatment (color and/or icon plus legend) from rented devices; choose the
+    exact palette during Phase 10 design rather than expanding Phase 7 M10.
 17. Document Template Editor: visual/settings-based editor on top of the Phase 5 JSON template model
 18. Trial Balance: opening, period debits/credits, and closing balance by account
 19. Inventory-to-GL Reconciliation: compare inventory valuation with account `1301`
@@ -873,7 +880,9 @@ All key reports work. Managers can answer business questions in under a minute.
 - Contract Health Score identifies at-risk contracts without manual spreadsheet work
 - Debt Priority List gives a ranked collection queue
 - Suspicious Visits Report shows all flagged visits with supporting evidence
-- Operations Map can show clustered service-location/rented-asset points without duplicating map logic per report
+- Operations Map can show clustered service-location/rented/trial-asset points
+  without duplicating map logic per report; trial and rented devices remain
+  distinguishable without relying on color alone.
 
 ---
 

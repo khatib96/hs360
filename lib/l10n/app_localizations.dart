@@ -8623,6 +8623,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Directions not available'**
   String get calendarDirectionsUnavailable;
+
+  /// No description provided for @calendarDirectionsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Directions'**
+  String get calendarDirectionsAction;
+
+  /// No description provided for @calendarDirectionsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open directions.'**
+  String get calendarDirectionsFailed;
+
+  /// No description provided for @calendarOpenWithTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open with'**
+  String get calendarOpenWithTitle;
+
+  /// No description provided for @calendarOpenWithAppleMaps.
+  ///
+  /// In en, this message translates to:
+  /// **'Apple Maps'**
+  String get calendarOpenWithAppleMaps;
+
+  /// No description provided for @calendarOpenWithGoogleMaps.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Maps'**
+  String get calendarOpenWithGoogleMaps;
+
+  /// No description provided for @calendarOpenWithWaze.
+  ///
+  /// In en, this message translates to:
+  /// **'Waze'**
+  String get calendarOpenWithWaze;
+
+  /// No description provided for @calendarOpenWithSystemMaps.
+  ///
+  /// In en, this message translates to:
+  /// **'Maps'**
+  String get calendarOpenWithSystemMaps;
+
+  /// No description provided for @calendarOpenWithBrowser.
+  ///
+  /// In en, this message translates to:
+  /// **'Browser'**
+  String get calendarOpenWithBrowser;
+
+  /// No description provided for @calendarOpenWithCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get calendarOpenWithCancel;
+
+  /// No description provided for @calendarPreviousDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous day'**
+  String get calendarPreviousDay;
+
+  /// No description provided for @calendarNextDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Next day'**
+  String get calendarNextDay;
+
+  /// No description provided for @calendarRouteRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get calendarRouteRetry;
+
+  /// No description provided for @calendarRouteEmployeesLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load employees.'**
+  String get calendarRouteEmployeesLoadFailed;
+
+  /// No description provided for @calendarRouteDayLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load this day\'s route.'**
+  String get calendarRouteDayLoadFailed;
+
+  /// No description provided for @calendarRouteViewButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Route View'**
+  String get calendarRouteViewButton;
+
+  /// No description provided for @calendarRouteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Route View'**
+  String get calendarRouteTitle;
+
+  /// No description provided for @calendarRouteSelectEmployee.
+  ///
+  /// In en, this message translates to:
+  /// **'Select employee'**
+  String get calendarRouteSelectEmployee;
+
+  /// No description provided for @calendarRouteEmployeeSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search employees'**
+  String get calendarRouteEmployeeSearchHint;
+
+  /// No description provided for @calendarRouteSelectEmployeePrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Select an employee to view their route.'**
+  String get calendarRouteSelectEmployeePrompt;
+
+  /// No description provided for @calendarRouteLocationUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Location unavailable for this event.'**
+  String get calendarRouteLocationUnavailable;
+
+  /// No description provided for @calendarRouteTruncatedWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This day has more events than shown here.'**
+  String get calendarRouteTruncatedWarning;
+
+  /// No description provided for @calendarRouteMapTilesUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Map tiles are unavailable. The list below still works.'**
+  String get calendarRouteMapTilesUnavailable;
+
+  /// No description provided for @calendarRouteEmptyDay.
+  ///
+  /// In en, this message translates to:
+  /// **'No mapped locations for this day.'**
+  String get calendarRouteEmptyDay;
+
+  /// No description provided for @calendarRouteInvalidDate.
+  ///
+  /// In en, this message translates to:
+  /// **'The date in this link is invalid.'**
+  String get calendarRouteInvalidDate;
+
+  /// No description provided for @calendarRouteEmployeesTruncated.
+  ///
+  /// In en, this message translates to:
+  /// **'More employees match your search. Refine your search to see them.'**
+  String get calendarRouteEmployeesTruncated;
+
+  /// No description provided for @calendarRouteMapAttributionDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'© OpenStreetMap contributors'**
+  String get calendarRouteMapAttributionDefault;
+
+  /// No description provided for @calendarRouteMarkerGroupCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} events at this location'**
+  String calendarRouteMarkerGroupCount(int count);
 }
 
 class _AppLocalizationsDelegate

@@ -4617,4 +4617,93 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get calendarDirectionsUnavailable => 'Directions not available';
+
+  @override
+  String get calendarDirectionsAction => 'Directions';
+
+  @override
+  String get calendarDirectionsFailed => 'Could not open directions.';
+
+  @override
+  String get calendarOpenWithTitle => 'Open with';
+
+  @override
+  String get calendarOpenWithAppleMaps => 'Apple Maps';
+
+  @override
+  String get calendarOpenWithGoogleMaps => 'Google Maps';
+
+  @override
+  String get calendarOpenWithWaze => 'Waze';
+
+  @override
+  String get calendarOpenWithSystemMaps => 'Maps';
+
+  @override
+  String get calendarOpenWithBrowser => 'Browser';
+
+  @override
+  String get calendarOpenWithCancel => 'Cancel';
+
+  @override
+  String get calendarPreviousDay => 'Previous day';
+
+  @override
+  String get calendarNextDay => 'Next day';
+
+  @override
+  String get calendarRouteRetry => 'Retry';
+
+  @override
+  String get calendarRouteEmployeesLoadFailed => 'Could not load employees.';
+
+  @override
+  String get calendarRouteDayLoadFailed => 'Could not load this day\'s route.';
+
+  @override
+  String get calendarRouteViewButton => 'Route View';
+
+  @override
+  String get calendarRouteTitle => 'Route View';
+
+  @override
+  String get calendarRouteSelectEmployee => 'Select employee';
+
+  @override
+  String get calendarRouteEmployeeSearchHint => 'Search employees';
+
+  @override
+  String get calendarRouteSelectEmployeePrompt =>
+      'Select an employee to view their route.';
+
+  @override
+  String get calendarRouteLocationUnavailable =>
+      'Location unavailable for this event.';
+
+  @override
+  String get calendarRouteTruncatedWarning =>
+      'This day has more events than shown here.';
+
+  @override
+  String get calendarRouteMapTilesUnavailable =>
+      'Map tiles are unavailable. The list below still works.';
+
+  @override
+  String get calendarRouteEmptyDay => 'No mapped locations for this day.';
+
+  @override
+  String get calendarRouteInvalidDate => 'The date in this link is invalid.';
+
+  @override
+  String get calendarRouteEmployeesTruncated =>
+      'More employees match your search. Refine your search to see them.';
+
+  @override
+  String get calendarRouteMapAttributionDefault =>
+      '© OpenStreetMap contributors';
+
+  @override
+  String calendarRouteMarkerGroupCount(int count) {
+    return '$count events at this location';
+  }
 }

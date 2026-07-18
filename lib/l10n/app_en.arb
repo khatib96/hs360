@@ -1935,5 +1935,37 @@
   "calendarMobileDaySelected": "Selected",
   "calendarOverdueSectionExpand": "Show overdue outside range",
   "calendarOverdueSectionCollapse": "Hide overdue outside range",
-  "calendarDirectionsUnavailable": "Directions not available"
+  "calendarDirectionsUnavailable": "Directions not available",
+  "calendarDirectionsAction": "Directions",
+  "calendarDirectionsFailed": "Could not open directions.",
+  "calendarOpenWithTitle": "Open with",
+  "calendarOpenWithAppleMaps": "Apple Maps",
+  "calendarOpenWithGoogleMaps": "Google Maps",
+  "calendarOpenWithWaze": "Waze",
+  "calendarOpenWithSystemMaps": "Maps",
+  "calendarOpenWithBrowser": "Browser",
+  "calendarOpenWithCancel": "Cancel",
+  "calendarPreviousDay": "Previous day",
+  "calendarNextDay": "Next day",
+  "calendarRouteRetry": "Retry",
+  "calendarRouteEmployeesLoadFailed": "Could not load employees.",
+  "calendarRouteDayLoadFailed": "Could not load this day's route.",
+  "calendarRouteViewButton": "Route View",
+  "calendarRouteTitle": "Route View",
+  "calendarRouteSelectEmployee": "Select employee",
+  "calendarRouteEmployeeSearchHint": "Search employees",
+  "calendarRouteSelectEmployeePrompt": "Select an employee to view their route.",
+  "calendarRouteLocationUnavailable": "Location unavailable for this event.",
+  "calendarRouteTruncatedWarning": "This day has more events than shown here.",
+  "calendarRouteMapTilesUnavailable": "Map tiles are unavailable. The list below still works.",
+  "calendarRouteEmptyDay": "No mapped locations for this day.",
+  "calendarRouteInvalidDate": "The date in this link is invalid.",
+  "calendarRouteEmployeesTruncated": "More employees match your search. Refine your search to see them.",
+  "calendarRouteMapAttributionDefault": "© OpenStreetMap contributors",
+  "calendarRouteMarkerGroupCount": "{count} events at this location",
+  "@calendarRouteMarkerGroupCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  }
 }

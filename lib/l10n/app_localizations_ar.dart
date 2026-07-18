@@ -4565,4 +4565,91 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get calendarDirectionsUnavailable => 'الاتجاهات غير متوفرة';
+
+  @override
+  String get calendarDirectionsAction => 'الاتجاهات';
+
+  @override
+  String get calendarDirectionsFailed => 'تعذر فتح الاتجاهات.';
+
+  @override
+  String get calendarOpenWithTitle => 'فتح باستخدام';
+
+  @override
+  String get calendarOpenWithAppleMaps => 'خرائط Apple';
+
+  @override
+  String get calendarOpenWithGoogleMaps => 'خرائط Google';
+
+  @override
+  String get calendarOpenWithWaze => 'Waze';
+
+  @override
+  String get calendarOpenWithSystemMaps => 'الخرائط';
+
+  @override
+  String get calendarOpenWithBrowser => 'المتصفح';
+
+  @override
+  String get calendarOpenWithCancel => 'إلغاء';
+
+  @override
+  String get calendarPreviousDay => 'اليوم السابق';
+
+  @override
+  String get calendarNextDay => 'اليوم التالي';
+
+  @override
+  String get calendarRouteRetry => 'إعادة المحاولة';
+
+  @override
+  String get calendarRouteEmployeesLoadFailed => 'تعذر تحميل الموظفين.';
+
+  @override
+  String get calendarRouteDayLoadFailed => 'تعذر تحميل مسار هذا اليوم.';
+
+  @override
+  String get calendarRouteViewButton => 'عرض المسار';
+
+  @override
+  String get calendarRouteTitle => 'عرض المسار';
+
+  @override
+  String get calendarRouteSelectEmployee => 'اختر موظفًا';
+
+  @override
+  String get calendarRouteEmployeeSearchHint => 'بحث عن موظفين';
+
+  @override
+  String get calendarRouteSelectEmployeePrompt => 'اختر موظفًا لعرض مساره.';
+
+  @override
+  String get calendarRouteLocationUnavailable => 'الموقع غير متوفر لهذا الحدث.';
+
+  @override
+  String get calendarRouteTruncatedWarning =>
+      'هذا اليوم يحتوي على أحداث أكثر من المعروضة هنا.';
+
+  @override
+  String get calendarRouteMapTilesUnavailable =>
+      'خريطة الموقع غير متوفرة حاليًا. القائمة أدناه لا تزال تعمل.';
+
+  @override
+  String get calendarRouteEmptyDay =>
+      'لا توجد مواقع محددة على الخريطة لهذا اليوم.';
+
+  @override
+  String get calendarRouteInvalidDate => 'التاريخ في هذا الرابط غير صالح.';
+
+  @override
+  String get calendarRouteEmployeesTruncated =>
+      'هناك موظفون آخرون مطابقون لبحثك. حدد بحثك لعرضهم.';
+
+  @override
+  String get calendarRouteMapAttributionDefault => '© مساهمو OpenStreetMap';
+
+  @override
+  String calendarRouteMarkerGroupCount(int count) {
+    return '$count أحداث في هذا الموقع';
+  }
 }

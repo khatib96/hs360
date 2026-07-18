@@ -1,9 +1,119 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-19 (Session: Phase 7 **M9 closure / owner acceptance**;
-> automated and visual gates green; **`M9 CLOSED / ACCEPTED`**; M8 Flutter still
-> **`OWNER RE-ACCEPTANCE PENDING`**; M10 not started; no commit/push unless
-> requested).
+> Updated 2026-07-19 (Session: Phase 7 **`M10 CLOSED / ACCEPTED`** after final
+> micro-corrective and owner visual gates;
+> **`M9 CLOSED / ACCEPTED`** preserved; M8 Flutter still
+> **`OWNER RE-ACCEPTANCE PENDING`**; Phase 10 Operations Map trial-device note
+> preserved; no commit/push unless requested).
+
+---
+
+## Session 2026-07-19 - M10 closure / owner acceptance
+
+**Decision:** The owner accepted the final M10 Route View and Directions
+evidence after the Open-with, Apple Maps, `url_only`, Arabic RTL navigation,
+tile-failure, privacy, and visual corrections. Phase 7 M10 is now
+**`CLOSED / ACCEPTED`**. M11/M12 and Phase 8 remain not started.
+
+**Final gates:** `flutter analyze` clean; full `flutter test` **1366 passed**;
+M10 SQL suite `phase_7_calendar_route_view.sql` passed; `git diff --check`
+clean; migrations `093`–`101` untouched; 17 deterministic M10 screenshots.
+
+**Recorded exceptions:** iOS/Android installed-app smoke was skipped because no
+device session was available and remains a pre-production check. The full SQL
+runner still encounters the pre-existing unrelated reminder-suite FK failure
+(`fk_calendar_events_assigned_agent` / `v_cross_employee`); preserve it for
+M11/M12 follow-up. M10's own SQL suite passed.
+
+**Next:** M11 is the next planned milestone but has not started. M8 Flutter
+owner re-acceptance remains independent. No commit/push at closure recording.
+
+---
+
+## Session 2026-07-19 - M10 final micro-corrective pass
+
+**Decision:** Micro-corrective only (no SQL M10 edits, no Phase 8/M11). Status
+remains **`M10 IMPLEMENTED — OWNER VISUAL ACCEPTANCE PENDING`**.
+
+**Fixes:**
+- Apple Maps → official `https://maps.apple.com/?daddr=` via `Uri.https`;
+  removed `maps:` scheme from iOS queries.
+- `url_only` → Browser only (no Google Maps row that reopens the same HTTPS).
+- Route date bar → Material `Icons.chevron_*` (visible under AR RTL).
+- Tile-failure Retry → `onErrorContainer` high-contrast label/button.
+
+**Unrelated:** full `run_sql_suites.sh` still fails in
+`phase_7_calendar_reminders.sql` on
+`fk_calendar_events_assigned_agent` / `v_cross_employee` (pre-existing; not
+M10). M10 suite `phase_7_calendar_route_view.sql` remains the M10 gate.
+
+**Device smoke (Open with / installed-app discovery):** skipped — no iOS/Android
+device session in this run.
+
+**Next:** Owner visual acceptance. No commit/push unless requested.
+
+---
+
+## Session 2026-07-19 - M10 corrective functional + visual evidence pass
+
+**Decision:** Corrective pass only (no Phase 8 / M11). Status remains
+**`M10 IMPLEMENTED — OWNER VISUAL ACCEPTANCE PENDING`**.
+
+**Corrected:**
+- Directions never auto-launches; always shows Open-with / فتح باستخدام sheet
+  after `get_calendar_event_directions` (`CalendarMapAppResolver` +
+  `CalendarDirectionsLauncher` + providers).
+- `tileFailure` banner + Retry remounts map (`tileSessionId`); list stays usable.
+- Hardened `CalendarMapTileConfig` (HTTPS/host/zxy/key/attribution; public OSM
+  blocked unless explicit smoke flag).
+- Translated employees/day-load errors with independent Retry.
+- Deterministic Fake map (roads/blocks + pins); broader M10 screenshots;
+  independent Previous/Next **day** l10n.
+
+**Gates:** `flutter analyze` clean; `flutter test` 1364 passed; M10 SQL suite
+`phase_7_calendar_route_view.sql` passed; `git diff --check` clean; migrations
+`093`–`101` untouched. No commit/push.
+
+**Next:** Owner visual acceptance of M10. Do not start M11/M12 or Phase 8
+until requested.
+
+---
+
+## Session 2026-07-19 - M10 Route View and Directions implemented
+
+**Decision:** Implemented Phase 7 M10 per the locked plan (including final
+contract corrections). Status:
+**`M10 IMPLEMENTED — OWNER VISUAL ACCEPTANCE PENDING`**. Do not auto-close.
+
+**Delivered:**
+- Migration `102` — route day / route employees / event directions RPCs;
+  forward replace of calendar read directions flags for `url_only`; helpers
+  for allowlisted Maps URLs; grants/postflight.
+- Flutter Route View (`/calendar/route?date=`), domain/data/controller,
+  flutter_map 8.3.1 + latlong2 0.10.1, FakeCalendarMapSurface screenshots,
+  native Directions launcher gated by `get_calendar_event_directions`.
+- Map provider doc: `docs/PHASE_7_M10_MAP_PROVIDER.md` (client token policy,
+  no offline tile package, OSM not production default).
+- SQL suite `supabase/tests/phase_7_calendar_route_view.sql` wired into
+  `run_sql_suites.sh` / `.ps1`.
+
+**Boundaries preserved:** migrations `093`–`101` unchanged; no Phase 8; no
+Operations Map for rented/trial devices; M9 CLOSED/ACCEPTED unchanged; M8
+Flutter re-acceptance remains independent; no commit/push.
+
+**Next:** Owner visual acceptance of M10. Do not start M11/M12 or Phase 8
+until requested.
+
+---
+
+## Session 2026-07-19 - Future Operations Map trial-device layer
+
+**Owner clarification:** Keep Phase 7 M10 on its original daily Route View and
+native-directions scope. The broader Operations Map remains in overall Phase 10
+and must later include both rented and trial devices. Trial-device pins must be
+visually distinguishable from rented-device pins using an accessible marker
+treatment (color and/or icon with a legend, not color alone). The exact palette
+is deferred to Phase 10 design. This is not authorization to expand Phase 7 M10.
 
 ---
 
@@ -18,9 +128,9 @@ corrections. Phase 7 M9 is now **CLOSED / ACCEPTED**.
 `git diff --check` clean; migrations `093`–`101` unchanged. The 12 M9
 screenshots under `build/screenshots/m9_*.png` were visually reviewed.
 
-**Next:** M10 Route View and Directions remains not started. Do not start M10
-or Phase 8, and do not commit/push, until explicitly requested. M8 Flutter
-re-acceptance remains a separate pending owner decision.
+**Next (historical at closure):** M10 was then not started. Superseded by the
+M10 implementation session above. M8 Flutter re-acceptance remains a separate
+pending owner decision.
 
 ---
 

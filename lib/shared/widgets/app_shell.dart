@@ -87,6 +87,7 @@ class AppShell extends ConsumerWidget {
         icon: Icons.calendar_today_outlined,
         route: AppRoutes.calendar,
         isVisible: canAccessCalendar,
+        matchChildren: true,
       ),
       _NavItem(
         titleGetter: (l) => l.products,

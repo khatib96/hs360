@@ -11,14 +11,18 @@ import '../domain/calendar_event_list_result.dart';
 import '../domain/calendar_event_participant.dart';
 import '../domain/calendar_filter_validator.dart';
 import '../domain/calendar_filters.dart';
+import '../domain/calendar_directions_target.dart';
 import '../domain/calendar_manual_mutation.dart';
 import '../domain/calendar_mutation_validators.dart';
 import '../domain/calendar_permissions.dart';
 import '../domain/calendar_range_summary.dart';
+import '../domain/calendar_route_employee.dart';
+import '../domain/calendar_route_result.dart';
 import '../domain/calendar_schedule_mutation.dart';
 import 'calendar_event_list_rpc_mapper.dart';
 import 'calendar_manual_mutation_mapper.dart';
 import 'calendar_range_summary_rpc_mapper.dart';
+import 'calendar_route_repository.dart';
 import 'calendar_schedule_mutation_mapper.dart';
 
 part 'calendar_repository.g.dart';
@@ -39,6 +43,11 @@ class CalendarRepository {
 
   final SupabaseClient? _client;
   final CalendarRpcInvoker? _rpcInvoker;
+
+  /// M10 Route View / directions RPCs, extracted to keep this file focused.
+  late final CalendarRouteRepository _routeRepo = CalendarRouteRepository(
+    _invokeRpc,
+  );
 
   SupabaseClient get _requireClient {
     final client = _client;
@@ -340,4 +349,24 @@ class CalendarRepository {
       throw CalendarException.fromSupabase(e, stackTrace: st);
     }
   }
+
+  /// M10: one employee's Route View events for [date] (`get_calendar_route_day`).
+  Future<CalendarRouteResult> getRouteDay(
+    AppSession session, {
+    required DateTime date,
+    String? employeeId,
+  }) => _routeRepo.getRouteDay(session, date: date, employeeId: employeeId);
+
+  /// M10: tenant-wide employee picker candidates (`list_calendar_route_employees`).
+  Future<CalendarRouteEmployeeListResult> listRouteEmployees(
+    AppSession session, {
+    String? search,
+    int? limit,
+  }) => _routeRepo.listRouteEmployees(session, search: search, limit: limit);
+
+  /// M10: resolved directions target for one event (`get_calendar_event_directions`).
+  Future<CalendarDirectionsTarget> getEventDirections(
+    AppSession session,
+    String eventId,
+  ) => _routeRepo.getEventDirections(session, eventId);
 }

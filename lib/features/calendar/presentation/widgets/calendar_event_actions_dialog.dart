@@ -11,6 +11,7 @@ import '../calendar_join_meeting.dart';
 import '../calendar_labels.dart';
 import 'calendar_assignment_dialog.dart';
 import 'calendar_cancel_event_dialog.dart';
+import 'calendar_directions_action_button.dart';
 import 'calendar_reschedule_dialog.dart';
 
 Future<void> showCalendarEventActionsDialog({
@@ -34,6 +35,8 @@ Future<void> showCalendarEventActionsDialog({
   final markDoneLabel = isMeeting
       ? l10n.calendarCloseMeeting
       : l10n.calendarMarkManualDone;
+  final showDirections =
+      event.directionsAvailable && actions.canOpenDirections;
 
   return showDialog<void>(
     context: context,
@@ -41,6 +44,7 @@ Future<void> showCalendarEventActionsDialog({
       final scheme = Theme.of(dialogContext).colorScheme;
       final hasPrimaryActions =
           actions.canOpenMeetingLink ||
+          showDirections ||
           actions.canAssign ||
           actions.canReschedule ||
           actions.canEditManual ||
@@ -151,6 +155,13 @@ Future<void> showCalendarEventActionsDialog({
                       icon: const Icon(Icons.videocam_outlined),
                       label: Text(l10n.calendarJoinMeeting),
                     ),
+                  if (showDirections) ...[
+                    const SizedBox(height: 8),
+                    CalendarDirectionsActionButton(
+                      eventId: event.id,
+                      onBeforeLaunch: () => Navigator.of(dialogContext).pop(),
+                    ),
+                  ],
                   if (actions.canAssign) ...[
                     const SizedBox(height: 8),
                     OutlinedButton.icon(

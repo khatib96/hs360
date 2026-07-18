@@ -18,6 +18,8 @@ import 'package:hs360/features/calendar/domain/calendar_time_window.dart';
 import 'package:hs360/features/calendar/domain/calendar_working_day.dart';
 import 'package:hs360/features/calendar/domain/calendar_working_date_exception.dart';
 
+import 'fake_calendar_route_repository.dart';
+
 CalendarWorkingDay sampleCalendarWorkingDay({
   DateTime? date,
   TenantWorkingDayMode dayMode = TenantWorkingDayMode.workingHours,
@@ -257,7 +259,8 @@ CalendarEventListResult sampleEventList({
   );
 }
 
-class FakeCalendarRepository extends CalendarRepository {
+class FakeCalendarRepository extends CalendarRepository
+    with FakeCalendarRouteRepositoryMixin {
   FakeCalendarRepository({
     CalendarRangeSummaryResult? rangeResult,
     CalendarEventListResult? listResult,

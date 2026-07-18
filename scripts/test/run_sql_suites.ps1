@@ -146,6 +146,9 @@ Invoke-SqlSuite -SuitePath "supabase/tests/phase_7_working_date_exceptions.sql"
 & "$repoRoot/supabase/tests/phase_7_working_date_exceptions_concurrency.sh" $ContainerName
 & "$repoRoot/supabase/tests/phase_7_working_date_exceptions_idempotency_concurrency.sh" $ContainerName
 
+Write-Host "Phase V: Phase 7 M10 route view"
+Invoke-SqlSuite -SuitePath "supabase/tests/phase_7_calendar_route_view.sql"
+
 Write-Host "Phase C: baseline regression (pollution gate)"
 foreach ($suite in $phaseAAllowlist) {
   Invoke-SqlSuite -SuitePath $suite

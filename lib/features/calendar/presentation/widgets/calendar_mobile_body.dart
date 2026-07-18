@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
+import '../../../../core/routing/app_routes.dart';
 import '../../../../shared/widgets/message_banner.dart';
 import '../../domain/calendar_date.dart';
 import '../../domain/calendar_range_summary.dart';
@@ -69,7 +71,17 @@ class CalendarMobileBody extends StatelessWidget {
             onApply: notifier.setFilters,
             onClear: notifier.clearFilters,
           ),
-          const SizedBox(height: 8),
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: TextButton.icon(
+              key: const Key('calendar-open-route-view'),
+              onPressed: () => context.push(
+                AppRoutes.calendarRoutePath(date: state.selectedDate),
+              ),
+              icon: const Icon(Icons.map_outlined),
+              label: Text(l10n.calendarRouteViewButton),
+            ),
+          ),
           CalendarMobileDateNav(
             focusedMonth: state.focusedMonth,
             selectedDate: state.selectedDate,

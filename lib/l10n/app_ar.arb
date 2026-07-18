@@ -1576,5 +1576,37 @@
   "calendarMobileDaySelected": "محدد",
   "calendarOverdueSectionExpand": "إظهار المتأخر خارج النطاق",
   "calendarOverdueSectionCollapse": "إخفاء المتأخر خارج النطاق",
-  "calendarDirectionsUnavailable": "الاتجاهات غير متوفرة"
+  "calendarDirectionsUnavailable": "الاتجاهات غير متوفرة",
+  "calendarDirectionsAction": "الاتجاهات",
+  "calendarDirectionsFailed": "تعذر فتح الاتجاهات.",
+  "calendarOpenWithTitle": "فتح باستخدام",
+  "calendarOpenWithAppleMaps": "خرائط Apple",
+  "calendarOpenWithGoogleMaps": "خرائط Google",
+  "calendarOpenWithWaze": "Waze",
+  "calendarOpenWithSystemMaps": "الخرائط",
+  "calendarOpenWithBrowser": "المتصفح",
+  "calendarOpenWithCancel": "إلغاء",
+  "calendarPreviousDay": "اليوم السابق",
+  "calendarNextDay": "اليوم التالي",
+  "calendarRouteRetry": "إعادة المحاولة",
+  "calendarRouteEmployeesLoadFailed": "تعذر تحميل الموظفين.",
+  "calendarRouteDayLoadFailed": "تعذر تحميل مسار هذا اليوم.",
+  "calendarRouteViewButton": "عرض المسار",
+  "calendarRouteTitle": "عرض المسار",
+  "calendarRouteSelectEmployee": "اختر موظفًا",
+  "calendarRouteEmployeeSearchHint": "بحث عن موظفين",
+  "calendarRouteSelectEmployeePrompt": "اختر موظفًا لعرض مساره.",
+  "calendarRouteLocationUnavailable": "الموقع غير متوفر لهذا الحدث.",
+  "calendarRouteTruncatedWarning": "هذا اليوم يحتوي على أحداث أكثر من المعروضة هنا.",
+  "calendarRouteMapTilesUnavailable": "خريطة الموقع غير متوفرة حاليًا. القائمة أدناه لا تزال تعمل.",
+  "calendarRouteEmptyDay": "لا توجد مواقع محددة على الخريطة لهذا اليوم.",
+  "calendarRouteInvalidDate": "التاريخ في هذا الرابط غير صالح.",
+  "calendarRouteEmployeesTruncated": "هناك موظفون آخرون مطابقون لبحثك. حدد بحثك لعرضهم.",
+  "calendarRouteMapAttributionDefault": "© مساهمو OpenStreetMap",
+  "calendarRouteMarkerGroupCount": "{count} أحداث في هذا الموقع",
+  "@calendarRouteMarkerGroupCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  }
 }

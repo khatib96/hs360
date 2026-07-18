@@ -262,7 +262,7 @@ bool _isPathAllowed(
   if (path == AppRoutes.taxSettings) {
     return canViewTaxSettings(session);
   }
-  if (path == AppRoutes.calendar) {
+  if (path == AppRoutes.calendar || path == AppRoutes.calendarRoute) {
     return canAccessCalendar(session);
   }
   if (path == AppRoutes.calendarSettings) {
