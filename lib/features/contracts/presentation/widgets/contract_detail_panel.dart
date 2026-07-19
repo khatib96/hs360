@@ -7,15 +7,17 @@ class ContractDetailPanel extends StatelessWidget {
   const ContractDetailPanel({
     required this.title,
     required this.child,
+    this.trailing,
     super.key,
   });
 
   final String title;
   final Widget child;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
-    return InvoiceSectionCard(title: title, child: child);
+    return InvoiceSectionCard(title: title, trailing: trailing, child: child);
   }
 }
 

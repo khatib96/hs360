@@ -920,14 +920,26 @@ begin
 end $$;
 rollback;
 
--- Case 26: Cross-tenant recipient — rejected
+-- Case 26: Cross-tenant assignee rejected by composite FK and by assign RPC.
+-- Both paths are required. Path 1 catches only foreign_key_violation and
+-- verifies RETURNED_SQLSTATE + CONSTRAINT_NAME via GET STACKED DIAGNOSTICS.
+-- Path 2 requires validation_failed from assign_calendar_event; any other
+-- error is re-raised. After each rejection, assignee and foreign reminders
+-- must be unchanged.
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$ begin perform pg_temp.p7m3_configure_reminders(); end $$;
 set local role postgres;
 do $$
-declare v_event_id uuid; v_cross_employee uuid := gen_random_uuid();
+declare
+  v_event_id uuid;
+  v_cross_employee uuid := gen_random_uuid();
+  v_original_assignee uuid;
+  v_sqlstate text;
+  v_constraint text;
+  v_foreign_recipient int;
+  v_version int;
 begin
   insert into public.employees (
     id, tenant_id, user_id, code, name_ar, name_en, job_type, phone, email, base_salary, hire_date
@@ -935,10 +947,101 @@ begin
     v_cross_employee, '00000000-0000-0000-0000-000000000102', '00000000-0000-0000-0000-000000000204',
     'P7M3-X', 'عامل ب', 'Tenant B Agent', 'field_refill', '+96550000999', 'owner@tenant-b.test', 0, current_date
   );
-  v_event_id := pg_temp.p7m3_create_pending_event(pg_temp.p7m3_next_iso_weekday(1, current_date+1));
+
+  v_event_id := pg_temp.p7m3_create_pending_event(
+    pg_temp.p7m3_next_iso_weekday(1, current_date + 1)
+  );
   perform public.refresh_calendar_event_reminder_plans(v_event_id);
-  update public.calendar_events set assigned_agent_id = v_cross_employee where id = v_event_id;
-  perform pg_temp.p7m3_assert_plan_state(v_event_id, 'event_workday_start', 'suppressed', 'no_assigned_recipient');
+
+  select assigned_agent_id, schedule_version
+  into v_original_assignee, v_version
+  from public.calendar_events
+  where id = v_event_id;
+
+  -- Path 1: direct FK protection (composite tenant_id, assigned_agent_id).
+  begin
+    update public.calendar_events
+    set assigned_agent_id = v_cross_employee
+    where id = v_event_id;
+    raise exception 'case26_fk: expected foreign_key_violation';
+  exception
+    when foreign_key_violation then
+      get stacked diagnostics
+        v_sqlstate = returned_sqlstate,
+        v_constraint = constraint_name;
+      if v_sqlstate is distinct from '23503' then
+        raise exception 'case26_fk: unexpected sqlstate %', v_sqlstate;
+      end if;
+      if v_constraint is distinct from 'fk_calendar_events_assigned_agent' then
+        raise exception 'case26_fk: unexpected constraint %', v_constraint;
+      end if;
+  end;
+
+  if (
+    select assigned_agent_id from public.calendar_events where id = v_event_id
+  ) is distinct from v_original_assignee then
+    raise exception 'case26_fk: assignee mutated after FK rejection';
+  end if;
+
+  select count(*) into v_foreign_recipient
+  from public.calendar_reminder_plans p
+  where p.calendar_event_id = v_event_id
+    and (
+      p.recipient_employee_id = v_cross_employee
+      or p.recipient_user_id = '00000000-0000-0000-0000-000000000204'
+    );
+  if v_foreign_recipient <> 0 then
+    raise exception 'case26_fk: foreign recipient/reminder created';
+  end if;
+
+  -- Path 2: Assignment RPC rejection.
+  perform set_config(
+    'request.jwt.claim.sub',
+    '00000000-0000-0000-0000-000000000201',
+    true
+  );
+  begin
+    perform public.assign_calendar_event(
+      v_event_id,
+      v_version,
+      jsonb_build_object('assigned_agent_id', v_cross_employee::text),
+      gen_random_uuid()
+    );
+    raise exception 'case26_rpc: expected rejection';
+  exception
+    when raise_exception then
+      get stacked diagnostics
+        v_sqlstate = returned_sqlstate;
+      if sqlerrm not like '%validation_failed%' then
+        raise;
+      end if;
+      if v_sqlstate is distinct from 'P0001' then
+        raise exception 'case26_rpc: unexpected sqlstate %', v_sqlstate;
+      end if;
+  end;
+
+  if (
+    select assigned_agent_id from public.calendar_events where id = v_event_id
+  ) is distinct from v_original_assignee then
+    raise exception 'case26_rpc: assignee mutated after RPC rejection';
+  end if;
+
+  if (
+    select schedule_version from public.calendar_events where id = v_event_id
+  ) is distinct from v_version then
+    raise exception 'case26_rpc: schedule_version mutated after RPC rejection';
+  end if;
+
+  select count(*) into v_foreign_recipient
+  from public.calendar_reminder_plans p
+  where p.calendar_event_id = v_event_id
+    and (
+      p.recipient_employee_id = v_cross_employee
+      or p.recipient_user_id = '00000000-0000-0000-0000-000000000204'
+    );
+  if v_foreign_recipient <> 0 then
+    raise exception 'case26_rpc: foreign recipient/reminder created';
+  end if;
 end $$;
 rollback;
 

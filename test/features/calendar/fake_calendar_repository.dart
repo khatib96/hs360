@@ -10,6 +10,7 @@ import 'package:hs360/features/calendar/domain/calendar_event.dart';
 import 'package:hs360/features/calendar/domain/calendar_event_list_result.dart';
 import 'package:hs360/features/calendar/domain/calendar_event_participant.dart';
 import 'package:hs360/features/calendar/domain/calendar_filters.dart';
+import 'package:hs360/features/calendar/domain/calendar_manual_mutation.dart';
 import 'package:hs360/features/calendar/domain/calendar_meeting_mode.dart';
 import 'package:hs360/features/calendar/domain/calendar_range_summary.dart';
 import 'package:hs360/features/calendar/domain/calendar_schedule_mutation.dart';
@@ -316,10 +317,19 @@ class FakeCalendarRepository extends CalendarRepository
 
   Completer<void>? holdAssignUntil;
   Completer<void>? holdRescheduleUntil;
+  Completer<void>? holdCancelManualUntil;
+  Completer<void>? holdMarkManualDoneUntil;
+  Completer<void>? holdCreateManualUntil;
 
   int assignCount = 0;
   int rescheduleCount = 0;
   int candidatesCount = 0;
+  int cancelManualCount = 0;
+  int markManualDoneCount = 0;
+  int createManualCount = 0;
+  AppSession? lastCancelManualSession;
+  AppSession? lastMarkManualDoneSession;
+  AppSession? lastCreateManualSession;
 
   String? lastAssignEventId;
   int? lastAssignExpectedVersion;
@@ -545,6 +555,64 @@ class FakeCalendarRepository extends CalendarRepository
           }).toList();
     // Mirrors the real mapper: candidate collections are frozen.
     return List.unmodifiable(filtered.take(limit.clamp(1, 100)));
+  }
+
+  @override
+  Future<CalendarManualMutationResult> createManualEvent(
+    AppSession session, {
+    required CalendarManualEventData data,
+    required String idempotencyKey,
+  }) async {
+    createManualCount++;
+    lastCreateManualSession = session;
+    final gate = holdCreateManualUntil;
+    if (gate != null) await gate.future;
+    return CalendarManualMutationOk(
+      sampleCalendarEvent(
+        id: 'manual-created',
+        scheduledDate: data.scheduledDate,
+        sourceKind: CalendarEventSourceKind.manual,
+      ),
+    );
+  }
+
+  @override
+  Future<CalendarEvent> cancelManualEvent(
+    AppSession session, {
+    required String eventId,
+    required int expectedVersion,
+    required String reason,
+    required String idempotencyKey,
+  }) async {
+    cancelManualCount++;
+    lastCancelManualSession = session;
+    final gate = holdCancelManualUntil;
+    if (gate != null) await gate.future;
+    return sampleCalendarEvent(
+      id: eventId,
+      scheduleVersion: expectedVersion + 1,
+      sourceKind: CalendarEventSourceKind.manual,
+      status: CalendarEventStatus.cancelled,
+    );
+  }
+
+  @override
+  Future<CalendarEvent> markManualEventDone(
+    AppSession session, {
+    required String eventId,
+    required int expectedVersion,
+    required String idempotencyKey,
+  }) async {
+    markManualDoneCount++;
+    lastMarkManualDoneSession = session;
+    final gate = holdMarkManualDoneUntil;
+    if (gate != null) await gate.future;
+    return sampleCalendarEvent(
+      id: eventId,
+      scheduleVersion: expectedVersion + 1,
+      sourceKind: CalendarEventSourceKind.manual,
+      status: CalendarEventStatus.done,
+    );
   }
 
   @override

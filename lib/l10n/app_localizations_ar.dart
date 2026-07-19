@@ -4612,6 +4612,27 @@ class AppLocalizationsAr extends AppLocalizations {
   String get calendarRouteViewButton => 'عرض المسار';
 
   @override
+  String get calendarRouteScopeCustomer => 'نطاق العميل';
+
+  @override
+  String get calendarRouteScopeContract => 'نطاق العقد';
+
+  @override
+  String get calendarRouteScopeClear => 'مسح';
+
+  @override
+  String get calendarRouteScopeInvalid => 'رابط التقويم غير صالح.';
+
+  @override
+  String get calendarOpenInCalendar => 'فتح في التقويم';
+
+  @override
+  String get calendarViewCustomerInCalendar => 'عرض العميل في التقويم';
+
+  @override
+  String get calendarViewContractInCalendar => 'عرض في التقويم';
+
+  @override
   String get calendarRouteTitle => 'عرض المسار';
 
   @override

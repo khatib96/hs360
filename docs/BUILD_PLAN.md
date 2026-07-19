@@ -19,7 +19,7 @@
 | **4 - Customers, Suppliers & CoA** | Engineering complete | 2026-06-06 |
 | **5 - Invoices, Vouchers & Journal** | Done | M1–M10 closed through migration `076` |
 | **6 - Contracts** | Complete | M0–M13 closed (2026-07-12) |
-| **7 - Calendar & Company Appointments** | M10 closed / accepted | M9 and M10 CLOSED/ACCEPTED (2026-07-19); M8 Flutter re-acceptance still pending; M11/M12 not started |
+| **7 - Calendar & Company Appointments** | M11 closed / accepted | M9–M11 CLOSED/ACCEPTED (2026-07-19); M8 Flutter re-acceptance still pending; M12 not started |
 | **8 - Mobile Field Ops** | Not started | - |
 | **9 - POS, Maintenance & HR** | Not started | - |
 | **10 - Reports & Close** | Not started | - |
@@ -652,15 +652,19 @@ The core of the system: contracts can be created, billed, refilled, and closed.
 > estimate is a legacy roadmap estimate; use the detailed plan for professional
 > delivery sizing.
 >
-> Current status: **M10 CLOSED / ACCEPTED (2026-07-19).**
+> Current status: **M11 CLOSED / ACCEPTED (2026-07-19).**
 > M1–M7B are closed/accepted. M8 migration `101` exists; Flutter live assignment
 > UI was correctively closed for automation on 2026-07-18
 > (`M8 FLUTTER CORRECTED — OWNER RE-ACCEPTANCE PENDING`). M9 mobile calendar is
 > **CLOSED / ACCEPTED** (2026-07-19). M10 Route View and Directions closed with
-> migration `102`, route RPCs, flutter_map display-only map, and native
-> Open-with directions flow after its final automated and owner visual gates.
-> M11/M12 and Phase 8 have not started. Operations Map for
-> rented/trial devices remains Phase 10.
+> migration `102`. M11 Final Corrective Pass completed (invalid scope, date-only
+> banner, session URL clear, mutation identity guards, single entry points,
+> production screenshots ×13, strict pre/post pollution gate); the owner
+> accepted M11 on 2026-07-19. List P95≈1023ms is under the enforced 3000ms
+> ceiling; the unmet 800ms target is non-blocking optimization backlog.
+> Migration `103` is unchanged. M12 and
+> Phase 8 have not started. Operations Map for rented/trial devices remains
+> Phase 10.
 
 ### Goal
 A unified company appointment-management calendar showing contract-generated

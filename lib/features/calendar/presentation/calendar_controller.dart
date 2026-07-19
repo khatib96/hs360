@@ -10,8 +10,10 @@ import '../domain/calendar_filters.dart';
 import '../domain/calendar_manual_mutation.dart';
 import '../domain/calendar_month_grid.dart';
 import '../domain/calendar_permissions.dart';
+import '../domain/calendar_route_scope.dart';
 import 'calendar_clock.dart';
 import 'calendar_manual_mutations.dart';
+import 'calendar_route_scope_handler.dart';
 import 'calendar_schedule_mutations.dart';
 import 'calendar_section_loader.dart';
 import 'calendar_state.dart';
@@ -25,6 +27,7 @@ class CalendarController extends _$CalendarController {
   late CalendarSectionLoader _loader;
   late CalendarManualMutations _mutations;
   late CalendarScheduleMutations _scheduleMutations;
+  late CalendarRouteScopeHandler _routeScopeHandler;
   bool _hasStartedInitialLoad = false;
 
   @override
@@ -47,17 +50,26 @@ class CalendarController extends _$CalendarController {
       readState: () => state,
       refresh: refresh,
     );
+    _routeScopeHandler = CalendarRouteScopeHandler(
+      readState: () => state,
+      writeState: (next) => state = next,
+      loader: _loader,
+      reloadAfterMonthChange: _reloadAfterMonthChange,
+      refresh: refresh,
+    );
     ref.listen(authControllerProvider, (previous, next) {
       final previousSession = previous?.valueOrNull;
       final nextSession = next.valueOrNull;
       if (nextSession == null) {
         _loader.invalidateAll();
+        _mutations.invalidate();
         _scheduleMutations.invalidate();
         _hasStartedInitialLoad = false;
         state = calendarInitialState(calendarClock());
         return;
       }
       if (_shouldReloadForSession(previousSession, nextSession)) {
+        _mutations.invalidate();
         _scheduleMutations.invalidate();
         _resetForIdentityChange();
         if (state.firstDayOfWeekIndex != null) {
@@ -80,6 +92,7 @@ class CalendarController extends _$CalendarController {
     if (previous == null) return true;
     return previous.userId != next.userId ||
         previous.tenantId != next.tenantId ||
+        previous.tenantUserId != next.tenantUserId ||
         previous.isManager != next.isManager ||
         previous.permissions != next.permissions;
   }
@@ -308,6 +321,14 @@ class CalendarController extends _$CalendarController {
   }
 
   Future<void> clearFilters() => setFilters(CalendarFilters.empty);
+
+  /// Applies a deep-link [scope] parsed from the Calendar route's query
+  /// parameters. See [CalendarRouteScopeHandler].
+  Future<void> applyRouteScope(CalendarRouteScope scope) =>
+      _routeScopeHandler.apply(scope);
+
+  /// Clears any active deep-link scope and reloads without the merged IDs.
+  Future<void> clearRouteScope() => _routeScopeHandler.clear();
 
   Future<void> retrySummary() async {
     if (state.isLoadingSummary) return;

@@ -3,6 +3,7 @@ import '../domain/calendar_event.dart';
 import '../domain/calendar_filters.dart';
 import '../domain/calendar_month_grid.dart';
 import '../domain/calendar_range_summary.dart';
+import '../domain/calendar_route_scope.dart';
 
 /// Placeholder for future M7/M8 mutation outcomes (unused in M5/M6).
 enum CalendarMutationOutcome { none, success, failure }
@@ -53,6 +54,7 @@ class CalendarState {
     this.workingScheduleConfigured = false,
     this.scope,
     this.filtersHash,
+    CalendarRouteScope? routeScope,
     List<CalendarDaySummary> days = const [],
     this.overdueOutsideRangeSummary,
     List<CalendarEvent> agendaEvents = const [],
@@ -68,6 +70,7 @@ class CalendarState {
     this.overdueErrorCode,
     this.mutationOutcome = CalendarMutationOutcome.none,
   }) : filters = filters ?? CalendarFilters.empty,
+       routeScope = routeScope ?? CalendarRouteScope.empty,
        days = List.unmodifiable(List<CalendarDaySummary>.from(days)),
        agendaEvents = List.unmodifiable(List<CalendarEvent>.from(agendaEvents)),
        overdueEvents = List.unmodifiable(
@@ -105,6 +108,10 @@ class CalendarState {
   final bool workingScheduleConfigured;
   final CalendarReadScope? scope;
   final String? filtersHash;
+
+  /// Deep-link customer/contract/date scope from the Calendar route's query
+  /// parameters. Kept separate from [filters] (see `CalendarRouteScope` doc).
+  final CalendarRouteScope routeScope;
   final List<CalendarDaySummary> days;
   final CalendarOverdueOutsideRangeSummary? overdueOutsideRangeSummary;
 
@@ -135,6 +142,9 @@ class CalendarState {
   bool get hasOverdue => overdueEvents.isNotEmpty;
 
   bool get hasActiveFilters => filters != CalendarFilters.empty;
+
+  /// True when the current route carries an unparseable deep-link scope.
+  bool get routeScopeInvalid => routeScope.isInvalid;
 
   bool get isSummaryQueryAligned {
     final loaded = loadedSummaryQuery;
@@ -181,6 +191,7 @@ class CalendarState {
     bool clearScope = false,
     String? filtersHash,
     bool clearFiltersHash = false,
+    CalendarRouteScope? routeScope,
     List<CalendarDaySummary>? days,
     CalendarOverdueOutsideRangeSummary? overdueOutsideRangeSummary,
     bool clearOverdueOutsideRangeSummary = false,
@@ -235,6 +246,7 @@ class CalendarState {
           workingScheduleConfigured ?? this.workingScheduleConfigured,
       scope: clearScope ? null : (scope ?? this.scope),
       filtersHash: clearFiltersHash ? null : (filtersHash ?? this.filtersHash),
+      routeScope: routeScope ?? this.routeScope,
       days: days ?? this.days,
       overdueOutsideRangeSummary: clearOverdueOutsideRangeSummary
           ? null

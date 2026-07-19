@@ -78,6 +78,15 @@ function Invoke-SqlSuite {
   }
 }
 
+function Remove-M11PollutionBaseline {
+  # Always drop the M11 pollution baseline scratch table on runner exit
+  # (success, failure, or interrupt) so it cannot linger across runs.
+  docker exec $ContainerName `
+    psql -U postgres -d postgres -v ON_ERROR_STOP=1 `
+    -c "drop table if exists public._m11_pollution_baseline;" 2>$null | Out-Null
+}
+
+try {
 Write-Host "Phase A: baseline regression (excluding M3 suites)"
 foreach ($suite in $phaseAAllowlist) {
   Invoke-SqlSuite -SuitePath $suite
@@ -87,6 +96,9 @@ Write-Host "Phase B: M3 document template suites"
 foreach ($suite in $phaseBSuites) {
   Invoke-SqlSuite -SuitePath $suite -AllowDenylisted
 }
+
+Write-Host "Phase H.0: Phase 7 M11 pollution baseline (pre Phase 6/7)"
+Invoke-SqlSuite -SuitePath "supabase/tests/phase_7_m11_pollution_baseline.sql"
 
 Write-Host "Phase H: Phase 6 M1 contract settings and permissions"
 Invoke-SqlSuite -SuitePath "supabase/tests/phase_6_contract_settings_permissions.sql"
@@ -146,12 +158,30 @@ Invoke-SqlSuite -SuitePath "supabase/tests/phase_7_working_date_exceptions.sql"
 & "$repoRoot/supabase/tests/phase_7_working_date_exceptions_concurrency.sh" $ContainerName
 & "$repoRoot/supabase/tests/phase_7_working_date_exceptions_idempotency_concurrency.sh" $ContainerName
 
+Write-Host "Phase U: Phase 7 M8 calendar assignment"
+Invoke-SqlSuite -SuitePath "supabase/tests/phase_7_calendar_assignment.sql"
+& "$repoRoot/supabase/tests/phase_7_calendar_assignment_concurrency.sh" $ContainerName
+
 Write-Host "Phase V: Phase 7 M10 route view"
 Invoke-SqlSuite -SuitePath "supabase/tests/phase_7_calendar_route_view.sql"
+
+Write-Host "Phase W: Phase 7 M11 cross-module + performance"
+Invoke-SqlSuite -SuitePath "supabase/tests/phase_7_m11_cross_module.sql"
+Invoke-SqlSuite -SuitePath "supabase/tests/phase_7_m11_performance.sql"
+
+Write-Host "Phase W.5: Phase 7 M11 Phase 6/7 audit-journal reclaim (pre pollution gate)"
+Invoke-SqlSuite -SuitePath "supabase/tests/phase_7_m11_phase67_audit_reclaim.sql"
 
 Write-Host "Phase C: baseline regression (pollution gate)"
 foreach ($suite in $phaseAAllowlist) {
   Invoke-SqlSuite -SuitePath $suite
 }
 
+Write-Host "Phase C.7: Phase 6/7 calendar pollution gate"
+Invoke-SqlSuite -SuitePath "supabase/tests/phase_7_m11_pollution_gate.sql"
+
 Write-Host "All SQL suite phases passed."
+}
+finally {
+  Remove-M11PollutionBaseline
+}

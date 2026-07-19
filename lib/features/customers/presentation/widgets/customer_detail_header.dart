@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
 import '../../../../core/localization/locale_controller.dart';
 import '../../../../core/location/kuwait_locations.dart';
+import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../auth/presentation/auth_controller.dart';
+import '../../../calendar/domain/calendar_permissions.dart';
 import '../../domain/customer.dart';
 import '../../domain/customer_service_location.dart';
 import '../../domain/customer_type.dart';
@@ -116,6 +120,8 @@ class CustomerDetailHeader extends ConsumerWidget {
                 _StatusChip(label: l10n.customerVip, color: AppColors.gold),
             ],
           ),
+          const SizedBox(height: 8),
+          _CustomerOpenInCalendarButton(customerId: customerId),
           const SizedBox(height: 12),
           Text(
             l10n.customerPrimaryLocationSummary,
@@ -132,6 +138,29 @@ class CustomerDetailHeader extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _CustomerOpenInCalendarButton extends ConsumerWidget {
+  const _CustomerOpenInCalendarButton({required this.customerId});
+
+  final String customerId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final session = ref.watch(authControllerProvider).valueOrNull;
+    if (session == null || !canAccessCalendar(session)) {
+      return const SizedBox.shrink();
+    }
+    final l10n = AppLocalizations.of(context)!;
+    return TextButton.icon(
+      key: const Key('customer-view-in-calendar'),
+      onPressed: () => context.push(
+        AppRoutes.calendarPath(customerId: customerId),
+      ),
+      icon: const Icon(Icons.calendar_month_outlined, size: 18),
+      label: Text(l10n.calendarOpenInCalendar),
     );
   }
 }

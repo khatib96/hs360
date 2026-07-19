@@ -42,9 +42,7 @@ class CalendarScheduleMutations {
     return current != null &&
         current.userId == captured.userId &&
         current.tenantId == captured.tenantId &&
-        current.accountType == captured.accountType &&
-        current.isManager == captured.isManager &&
-        current.permissions == captured.permissions;
+        current.tenantUserId == captured.tenantUserId;
   }
 
   bool _eventVisible(String eventId) {

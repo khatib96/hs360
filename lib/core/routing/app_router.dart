@@ -186,7 +186,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.calendar,
         name: AppRoutes.calendarName,
-        builder: (context, state) => const CalendarScreen(),
+        builder: (context, state) => CalendarScreen(
+          customerIdQueryParam: state.uri.queryParameters['customerId'],
+          contractIdQueryParam: state.uri.queryParameters['contractId'],
+          dateQueryParam: state.uri.queryParameters['date'],
+        ),
       ),
       GoRoute(
         path: AppRoutes.calendarRoute,

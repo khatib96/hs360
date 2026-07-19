@@ -25,6 +25,7 @@ import 'widgets/contract_detail_sections.dart';
 import 'widgets/contract_rental_collection_dialog.dart';
 import 'widgets/contract_trial_extension_dialog.dart';
 import 'widgets/contract_trial_return_dialog.dart';
+import 'widgets/contract_upcoming_schedule_section.dart';
 
 class ContractDetailScreen extends ConsumerWidget {
   const ContractDetailScreen({required this.contractId, super.key});
@@ -165,6 +166,7 @@ class ContractDetailScreen extends ConsumerWidget {
             ContractUpcomingScheduleSection(
               detail: detail,
               languageCode: locale.languageCode,
+              session: session,
             ),
             const SizedBox(height: 12),
             ContractHistorySection(detail: detail),

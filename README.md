@@ -7,14 +7,17 @@ and double-entry accounting.
 
 > Repository status updated: **2026-07-19**
 >
-> Current milestone: **Phase 7 M10 CLOSED / ACCEPTED**
+> Current milestone: **Phase 7 M11 CLOSED / ACCEPTED**
 > — M7A/M7B closed/accepted; M8 SQL/`101` accepted historically; M8 Flutter
 > corrective pass green (`M8 FLUTTER CORRECTED — OWNER RE-ACCEPTANCE PENDING`);
 > M9 mobile calendar **CLOSED / ACCEPTED**; M10 Route View + Directions
-> **CLOSED / ACCEPTED** (migration `102`, Flutter route UI, directions RPCs)
+> **CLOSED / ACCEPTED** (migration `102`); M11 **CLOSED / ACCEPTED** after its
+> Final Corrective and SQL Pollution Micro-Corrective passes
+> (Flutter **1417**, SQL runner green, list P95≈1023ms, 13 `m11_*.png`);
+> evidence-gated migration `103` unchanged; M12 not started
 >
-> Latest migrations on disk: **`102`** (route view / directions); `093`–`101`
-> unchanged in this work.
+> Latest migrations on disk: **`103`** (M11 read hardening); `093`–`102`
+> unchanged / checksummed through M11.
 
 ---
 
@@ -29,7 +32,7 @@ and double-entry accounting.
 | 4 | Engineering complete | Customers, suppliers, CoA, service locations, coordinates |
 | 5 | Complete | Invoices, returns, vouchers, journal, inventory accounting, PDFs |
 | 6 | Complete | Trial/rental contracts, lifecycle, billing, PDF, calendar handoff |
-| 7 | M10 closed / accepted | M1–M7B closed; M8 SQL/`101` + Flutter corrective green; M9 and M10 CLOSED/ACCEPTED; M11/M12 not started |
+| 7 | M11 closed / accepted | M1–M7B/M9–M11 closed/accepted; M8 Flutter re-acceptance pending; M12 not started |
 | 8-12 | Not started | Field execution and later operational/reporting/production phases |
 
 Phase 6 closed through M13/migration `092` on 2026-07-12. Phase 7 M1 closed on
@@ -58,8 +61,11 @@ the owner on 2026-07-19 (**`M9 CLOSED / ACCEPTED`**). M10 Route View and
 Directions passed its final corrective, automated, and owner visual gates on
 2026-07-19 (**`M10 CLOSED / ACCEPTED`**) with migration `102`, a
 flutter_map display-only map, and privacy-scoped directions RPCs. See
-[PHASE_7_M10_MAP_PROVIDER.md](docs/PHASE_7_M10_MAP_PROVIDER.md). M11/M12 and
-Phase 8 have not started.
+[PHASE_7_M10_MAP_PROVIDER.md](docs/PHASE_7_M10_MAP_PROVIDER.md). M11 Integration,
+Performance, and Hardening was accepted by the owner on 2026-07-19 after the
+Final Corrective and strict SQL pollution passes (**`M11 CLOSED / ACCEPTED`**).
+Its list P95≈1023ms passes the 3000ms hard ceiling; the 800ms optimization target
+remains a non-blocking future improvement. M12 and Phase 8 have not started.
 
 Detailed roadmap: [BUILD_PLAN.md](docs/BUILD_PLAN.md)
 
@@ -311,6 +317,10 @@ Before implementing a milestone:
   responsive-layout, assigned-only, FAB-clearance, and visual gates.
 - Phase 7 M10 Route View and Directions is **closed / owner-accepted** after
   its final Open-with, RTL navigation, tile-failure, privacy, and visual gates.
+- Phase 7 M11 Integration, Performance, and Hardening is **closed /
+  owner-accepted** after its final functional, visual, performance, full SQL,
+  and strict pollution gates. The list-query 800ms optimization target remains
+  non-blocking backlog; the enforced 3000ms ceiling passed.
 - Production Supabase/VPS deployment and external messaging credentials are not
   configured by this repository state.
 - The `resolve-google-maps-url` Edge Function has local verification but still

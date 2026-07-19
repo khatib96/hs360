@@ -7,16 +7,28 @@ import '../../../core/routing/app_routes.dart';
 import '../../../shared/widgets/app_shell.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../domain/calendar_permissions.dart';
+import '../domain/calendar_route_scope.dart';
 import 'calendar_controller.dart';
 import 'calendar_desktop_layout.dart';
 import 'calendar_state.dart';
 import 'widgets/calendar_desktop_body.dart';
 import 'widgets/calendar_manual_event_dialog.dart';
 import 'widgets/calendar_mobile_body.dart';
+import 'widgets/calendar_route_scope_banner.dart';
 
 /// Calendar surface: desktop Month+Agenda (M6) or mobile week+agenda (M9).
 class CalendarScreen extends ConsumerStatefulWidget {
-  const CalendarScreen({super.key});
+  const CalendarScreen({
+    this.customerIdQueryParam,
+    this.contractIdQueryParam,
+    this.dateQueryParam,
+    super.key,
+  });
+
+  /// Deep-link query parameters (Phase 7 M11); see [CalendarRouteScope].
+  final String? customerIdQueryParam;
+  final String? contractIdQueryParam;
+  final String? dateQueryParam;
 
   @override
   ConsumerState<CalendarScreen> createState() => _CalendarScreenState();
@@ -29,6 +41,39 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   /// Latest AppShell body width; drives AppBar create after first layout.
   /// Defaults to mobile-safe until measured.
   double? _contentWidth;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _applyRouteScope());
+  }
+
+  @override
+  void didUpdateWidget(CalendarScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.customerIdQueryParam != widget.customerIdQueryParam ||
+        oldWidget.contractIdQueryParam != widget.contractIdQueryParam ||
+        oldWidget.dateQueryParam != widget.dateQueryParam) {
+      _applyRouteScope();
+    }
+  }
+
+  void _applyRouteScope() {
+    if (!mounted) return;
+    final scope = CalendarRouteScope.fromQueryParameters({
+      if (widget.customerIdQueryParam != null)
+        'customerId': widget.customerIdQueryParam!,
+      if (widget.contractIdQueryParam != null)
+        'contractId': widget.contractIdQueryParam!,
+      if (widget.dateQueryParam != null) 'date': widget.dateQueryParam!,
+    });
+    ref.read(calendarControllerProvider.notifier).applyRouteScope(scope);
+  }
+
+  void _clearRouteScope() {
+    ref.read(calendarControllerProvider.notifier).clearRouteScope();
+    context.replace(AppRoutes.calendar);
+  }
 
   @override
   void didChangeDependencies() {
@@ -75,6 +120,31 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         ? true
         : CalendarLayout.isMobileWidth(_contentWidth!);
 
+    // Strip deep-link query params on identity switch. Do not clear during
+    // initial auth resolution (null/loading → first real session).
+    ref.listen(authControllerProvider, (previous, next) {
+      final previousSession = previous?.valueOrNull;
+      final nextSession = next.valueOrNull;
+      if (previousSession == null) return;
+      final identityChanged =
+          nextSession == null ||
+          previousSession.userId != nextSession.userId ||
+          previousSession.tenantId != nextSession.tenantId ||
+          previousSession.tenantUserId != nextSession.tenantUserId;
+      if (!identityChanged || !mounted) return;
+      try {
+        final uri = GoRouterState.of(context).uri;
+        final q = uri.queryParameters;
+        if (q.containsKey('customerId') ||
+            q.containsKey('contractId') ||
+            q.containsKey('date')) {
+          context.replace(AppRoutes.calendar);
+        }
+      } on GoError {
+        // Harness without a GoRouter (e.g. MaterialApp home) — skip URL strip.
+      }
+    });
+
     return AppShell(
       title: l10n.calendarTitle,
       currentRoute: AppRoutes.calendar,
@@ -108,13 +178,25 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             contentWidth,
           );
 
-          final body = _buildBody(
-            context,
-            l10n,
-            state,
-            notifier,
-            mobile: mobile,
-            narrowDesktop: narrowDesktop,
+          final body = Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (state.routeScope.showsBanner)
+                CalendarRouteScopeBanner(
+                  scope: state.routeScope,
+                  onClear: _clearRouteScope,
+                ),
+              Expanded(
+                child: _buildBody(
+                  context,
+                  l10n,
+                  state,
+                  notifier,
+                  mobile: mobile,
+                  narrowDesktop: narrowDesktop,
+                ),
+              ),
+            ],
           );
 
           if (mobile && canCreate && !state.permissionDenied) {

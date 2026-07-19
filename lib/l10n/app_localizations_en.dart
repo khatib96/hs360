@@ -4664,6 +4664,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get calendarRouteViewButton => 'Route View';
 
   @override
+  String get calendarRouteScopeCustomer => 'Customer scope';
+
+  @override
+  String get calendarRouteScopeContract => 'Contract scope';
+
+  @override
+  String get calendarRouteScopeClear => 'Clear';
+
+  @override
+  String get calendarRouteScopeInvalid => 'This calendar link is invalid.';
+
+  @override
+  String get calendarOpenInCalendar => 'Open in Calendar';
+
+  @override
+  String get calendarViewCustomerInCalendar => 'View customer in Calendar';
+
+  @override
+  String get calendarViewContractInCalendar => 'View in calendar';
+
+  @override
   String get calendarRouteTitle => 'Route View';
 
   @override

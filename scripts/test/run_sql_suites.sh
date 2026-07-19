@@ -9,6 +9,16 @@ cd "$repo_root"
 
 container_name="${1:-supabase_db_hs360}"
 
+# Always drop the M11 pollution baseline scratch table on runner exit
+# (success, failure, or interrupt) so it cannot linger across runs.
+m11_drop_pollution_baseline() {
+  docker exec "$container_name" \
+    psql -U postgres -d postgres -v ON_ERROR_STOP=1 \
+    -c "drop table if exists public._m11_pollution_baseline;" \
+    >/dev/null 2>&1 || true
+}
+trap m11_drop_pollution_baseline EXIT
+
 phase_a_suites=(
   "supabase/tests/phase_1d_rls.sql"
   "supabase/tests/phase_3_products_inventory.sql"
@@ -110,6 +120,9 @@ done
 
 bash "$repo_root/supabase/tests/phase_5_returns_concurrency.sh" "$container_name"
 
+printf 'Phase H.0: Phase 7 M11 pollution baseline (pre Phase 6/7)\n'
+run_suite "supabase/tests/phase_7_m11_pollution_baseline.sql"
+
 printf 'Phase H: Phase 6 M1 contract settings and permissions\n'
 run_suite "supabase/tests/phase_6_contract_settings_permissions.sql"
 
@@ -168,12 +181,26 @@ run_suite "supabase/tests/phase_7_working_date_exceptions.sql"
 bash "$repo_root/supabase/tests/phase_7_working_date_exceptions_concurrency.sh" "$container_name"
 bash "$repo_root/supabase/tests/phase_7_working_date_exceptions_idempotency_concurrency.sh" "$container_name"
 
+printf 'Phase U: Phase 7 M8 calendar assignment\n'
+run_suite "supabase/tests/phase_7_calendar_assignment.sql"
+bash "$repo_root/supabase/tests/phase_7_calendar_assignment_concurrency.sh" "$container_name"
+
 printf 'Phase V: Phase 7 M10 route view\n'
 run_suite "supabase/tests/phase_7_calendar_route_view.sql"
+
+printf 'Phase W: Phase 7 M11 cross-module + performance\n'
+run_suite "supabase/tests/phase_7_m11_cross_module.sql"
+run_suite "supabase/tests/phase_7_m11_performance.sql"
+
+printf 'Phase W.5: Phase 7 M11 Phase 6/7 audit-journal reclaim (pre pollution gate)\n'
+run_suite "supabase/tests/phase_7_m11_phase67_audit_reclaim.sql"
 
 printf 'Phase C: baseline pollution gate\n'
 for suite in "${phase_a_suites[@]}"; do
   run_suite "$suite"
 done
+
+printf 'Phase C.7: Phase 6/7 calendar pollution gate\n'
+run_suite "supabase/tests/phase_7_m11_pollution_gate.sql"
 
 printf 'All SQL suite phases passed.\n'

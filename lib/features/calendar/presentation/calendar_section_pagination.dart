@@ -40,8 +40,10 @@ class CalendarSectionPagination {
 
     final session = readSession();
     if (session == null || !canAccessCalendar(session)) return;
+    if (_state.routeScope.blocksRepositoryReads) return;
 
     final gen = ++inRangePaginationGeneration;
+    final requestFilters = _state.routeScope.mergeIntoFilters(_state.filters);
     _state = _state.copyWith(
       isLoadingMoreInRange: true,
       clearLoadMoreInRangeError: true,
@@ -52,7 +54,7 @@ class CalendarSectionPagination {
         session,
         dateFrom: _state.selectedDate,
         dateTo: _state.selectedDate,
-        filters: _state.filters,
+        filters: requestFilters,
         cursorInRange: _state.nextCursorInRange,
         limit: CalendarFilters.defaultPageLimit,
         includeOverdueOutsideRange: false,
@@ -90,8 +92,10 @@ class CalendarSectionPagination {
 
     final session = readSession();
     if (session == null || !canAccessCalendar(session)) return;
+    if (_state.routeScope.blocksRepositoryReads) return;
 
     final gen = ++overduePaginationGeneration;
+    final requestFilters = _state.routeScope.mergeIntoFilters(_state.filters);
     _state = _state.copyWith(
       isLoadingMoreOverdue: true,
       clearLoadMoreOverdueError: true,
@@ -102,7 +106,7 @@ class CalendarSectionPagination {
         session,
         dateFrom: _state.dateFrom,
         dateTo: _state.dateTo,
-        filters: _state.filters,
+        filters: requestFilters,
         cursorOverdue: _state.nextCursorOverdue,
         limit: CalendarFilters.defaultPageLimit,
         includeOverdueOutsideRange: true,

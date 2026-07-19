@@ -168,6 +168,26 @@ abstract final class AppRoutes {
     ).toString();
   }
 
+  /// Calendar deep link scoped to a customer and/or contract, optionally
+  /// focused on a specific date. Omitted params are left out of the query
+  /// string entirely (never sent as empty).
+  static String calendarPath({
+    String? customerId,
+    String? contractId,
+    DateTime? date,
+  }) {
+    final params = <String, String>{};
+    if (customerId != null && customerId.isNotEmpty) {
+      params['customerId'] = customerId;
+    }
+    if (contractId != null && contractId.isNotEmpty) {
+      params['contractId'] = contractId;
+    }
+    if (date != null) params['date'] = _dateOnly(date);
+    if (params.isEmpty) return calendar;
+    return Uri(path: calendar, queryParameters: params).toString();
+  }
+
   static String _dateOnly(DateTime date) {
     final y = date.year.toString().padLeft(4, '0');
     final m = date.month.toString().padLeft(2, '0');

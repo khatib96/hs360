@@ -5,13 +5,11 @@
 > customer visits, tasks, reminders, activities, and other controlled manual
 > business appointments in one operational calendar.
 >
-> Status: **M0–M10 complete / accepted** (M8 Flutter still
-> `OWNER RE-ACCEPTANCE PENDING`). Migrations `093`–`102` exist. M7A closed on
-> 2026-07-15; M7B closed on 2026-07-17; M8 SQL/`101` accepted with Flutter
-> corrective pass on 2026-07-18. **M9 Mobile Calendar CLOSED / ACCEPTED on
-> 2026-07-19.** **M10 Route View and Directions CLOSED / ACCEPTED on
-> 2026-07-19** (migration `102`). M11/M12 not started.
-> Map provider decision: `docs/PHASE_7_M10_MAP_PROVIDER.md`.
+> Status: **M0–M11 complete / accepted** (M8 Flutter still
+> `OWNER RE-ACCEPTANCE PENDING`). Migrations `093`–`102` remain byte-unchanged.
+> **M11 CLOSED / ACCEPTED** (2026-07-19) with evidence-gated
+> migration `103` (date-bounded reads + summary facts + composite index).
+> M12 / Phase 8 not started. Map provider decision: `docs/PHASE_7_M10_MAP_PROVIDER.md`.
 >
 > Owner direction (revised 2026-07-15): HS360 Calendar is the company's shared
 > appointment-management surface, not only a contract-follow-up calendar. The
@@ -1849,6 +1847,31 @@ Final closure evidence:
 
 ## M11 - Integration, Performance, and Hardening
 
+### Status
+
+**`M11 CLOSED / ACCEPTED` (2026-07-19).**
+
+Automated gates completed: Case 26 reminders (FK + Assignment RPC), Phase U
+assignment wired into full SQL runner, cross-module + performance + pollution
+suites (pre baseline before Phase 6/7 + post after Phase W with negative
+self-test), CalendarRouteScope deep links, session identity hardening,
+a11y/visual evidence. Migration `103` created from Gate D/F evidence (unbound
+`calendar_read_scoped_events` JSON fan-out exceeded range-summary P95 ceiling;
+lightweight summary facts + date bounds + `(tenant_id, scheduled_date)` index).
+List P95≈1023ms (corrective re-measure; was ≈1017ms) passes hard ceiling 3000ms
+but misses optimization target 800ms (documented; no additional migration in
+the Final Corrective Pass; `103` unchanged).
+
+**Final Corrective Pass (2026-07-19):** invalid-scope zero reads; date-only
+without empty banner; session URL clear on identity switch; mutation identity
+guards + delayed tests; single customer/contract entries; 13 production
+screenshot PNGs; real pre/post pollution gate. Verification: analyze clean;
+full Flutter **1417**; SQL runner green; perf 2+20 passed; `093`–`102`
+checksums unchanged. **Pollution micro-corrective (same day):** strict count
+equality for all 11 tables, Phase W.5 audit-journal reclaim, baseline table
+dropped after success + runner EXIT/finally cleanup. The owner explicitly
+accepted M11 on 2026-07-19. M8 Flutter re-acceptance remains independent.
+
 ### Goal
 
 Close cross-module, scale, security, concurrency, and usability gaps before
@@ -2035,7 +2058,8 @@ after Phase 6 migration `092`:
 | `099_phase_7_manual_business_events.sql` | M7A | Optional time windows, participants, lifecycle RPCs, read/reminder extensions |
 | `100_phase_7_working_date_exceptions.sql` | M7B | Holidays, company closures, exceptional working days, resolution precedence |
 | `101_phase_7_calendar_assignment_rpc.sql` | M8 | Assignment/reschedule/concurrency behavior |
-| `102_phase_7_calendar_closure_hardening.sql` | M11/M12 | Only evidence-backed closure fixes; create only if required |
+| `102_phase_7_calendar_route_view.sql` | M10 | Route View + directions RPCs (shipped) |
+| `103_phase_7_calendar_m11_hardening.sql` | M11 | Evidence-gated: composite `(tenant_id, scheduled_date)` index; date-bounded `calendar_read_scoped_events`; `calendar_read_summary_facts` + range `get_calendar_range_summary`; list/route_day pass date bounds |
 
 Do not reserve empty migrations merely to preserve this table. If one milestone
 needs multiple transaction boundaries or enum commits, update the plan before
@@ -2192,14 +2216,14 @@ Phase 6 foundation can be reused without corrective work.
 
 ## Starting Point For Implementation
 
-M0–M10 are closed/accepted for their scopes (M8 Flutter still
-`OWNER RE-ACCEPTANCE PENDING`). **M10 is CLOSED / ACCEPTED** with migration
-`102`. Migrations `093`–`101` remain
-byte-unchanged for this work (verify with
-`git diff -- supabase/migrations/093* … 101*`).
+M0–M11 are closed/accepted for their scopes (M8 Flutter still
+`OWNER RE-ACCEPTANCE PENDING`). **M11 is `CLOSED / ACCEPTED`** (2026-07-19).
+Migrations `093`–`102` remain byte-unchanged /
+checksummed; evidence-gated `103` was created. M12 and Phase 8 are not started.
 
-Next milestone: **M11 Integration, Performance, and Hardening** (not started).
-Do not start M11/M12 or Phase 8 until explicitly requested.
+Next milestone: **M12 Verification and Phase Close** (not started) — begin only
+after an explicit owner request.
+Do not start Phase 8 until Phase 7 is closed.
 Operations Map for rented/trial devices remains Phase 10.
 
 Do not begin external reminder delivery until:

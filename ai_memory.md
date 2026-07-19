@@ -1,10 +1,117 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-19 (Session: Phase 7 **`M10 CLOSED / ACCEPTED`** after final
-> micro-corrective and owner visual gates;
-> **`M9 CLOSED / ACCEPTED`** preserved; M8 Flutter still
-> **`OWNER RE-ACCEPTANCE PENDING`**; Phase 10 Operations Map trial-device note
-> preserved; no commit/push unless requested).
+> Updated 2026-07-19 (Session: Phase 7 **`M11 CLOSED / ACCEPTED`** after owner
+> acceptance of the Final Corrective and SQL Pollution Micro-Corrective passes;
+> **`M10 CLOSED /
+> ACCEPTED`** and **`M9 CLOSED / ACCEPTED`** preserved; M8 Flutter still
+> **`OWNER RE-ACCEPTANCE PENDING`**; migration `103` unchanged; migrations
+> `093`–`102` checksum-unchanged; no commit/push unless requested).
+
+---
+
+## Session 2026-07-19 - M11 closure / owner acceptance
+
+**Decision:** The owner explicitly accepted Phase 7 M11 Integration,
+Performance, and Hardening after the Final Corrective Pass and Final SQL
+Pollution Micro-Corrective Pass. M11 is now **`CLOSED / ACCEPTED`**.
+
+**Closure evidence:**
+- `flutter analyze` clean; full `flutter test` **1417 passed**.
+- Full SQL runner passed, including Phase U, Phase W, Phase W.5, strict
+  pre/post equality across all 11 pollution-gated tables, marker checks, and
+  the negative self-test.
+- Pollution baseline cleanup is guaranteed by the SQL success path plus Bash
+  `trap EXIT` / PowerShell `finally`; final `to_regclass` returned `NULL`.
+- Performance 2+20: list P95≈1023ms passed the enforced 3000ms ceiling; the
+  800ms target remains non-blocking optimization backlog. Range≈68ms,
+  selected-day≈26ms, and route-day≈25ms passed their ceilings.
+- Migration `103` is the evidence-gated M11 hardening migration; migrations
+  `093`–`102` remained checksum-unchanged through closure.
+- `git diff --check` clean; 13 M11 screenshots recorded.
+
+**Preserved state:** M8 Flutter remains **`OWNER RE-ACCEPTANCE PENDING`**;
+M9/M10 remain **`CLOSED / ACCEPTED`**; M12 and Phase 8 have not started. No
+commit/push performed while recording this acceptance.
+
+**Next:** M12 Verification and Phase Close, only when explicitly requested.
+
+---
+
+## Session 2026-07-19 - M11 Final SQL Pollution Micro-Corrective Pass
+
+**Decision:** Strict baseline/post row-count equality for all 11 gated tables;
+marker checks + negative self-test retained as an additional layer; drop
+`public._m11_pollution_baseline` after success; Bash `trap` + PowerShell
+`finally` always drop the baseline table. Phase W.5 reclaims append-only
+generation/reminder run journals created after H.0 (documented; not a blanket
+delta exception). Status remains **`M11 IMPLEMENTED — OWNER ACCEPTANCE
+PENDING`**. No Flutter / no `103` edits / no commit/push.
+
+---
+
+## Session 2026-07-19 - M11 Final Corrective Pass (owner acceptance pending)
+
+**Decision:** Completed the Final Corrective Pass only. Status remains
+**`M11 IMPLEMENTED — OWNER ACCEPTANCE PENDING`**. Do not mark CLOSED/ACCEPTED
+without explicit owner acceptance. Do not start M12 or Phase 8. No commit/push.
+
+**Corrective fixes:**
+1. Invalid route scope blocks repository reads; no calendar rows/counts behind
+   invalid banner; zero-read tests.
+2. Date-only query focuses day without empty Route Scope banner (`hasEntityScope`
+   / `showsBanner`).
+3. Session identity switch clears scope + URL via `context.replace(AppRoutes.calendar)`;
+   skips null→first-session; GoRouter tenant-switch test.
+4. Settings `save()` + manual create/edit/cancel/done identity/generation guards;
+   delayed save + delayed manual mutation tests.
+5. Single production Customer Detail calendar entry; Contract Detail single link;
+   entry-point tests.
+6. Real production screenshot evidence (CustomerDetailHeader /
+   ContractUpcomingScheduleSection); Clear + after-clear URL; 13 PNGs; Fake map.
+7. Pollution: Phase H.0 baseline before Phase 6/7; post gate after Phase W;
+   pre/post deltas + marker/orphan asserts + negative self-test; Bash/PS1 parity.
+8. Perf budgets unchanged; list P95≈1023ms under hard ceiling 3000ms, still above
+   optimization target 800ms; no new migration (`103` unchanged).
+
+**Verification (corrective pass):**
+- `flutter analyze` — clean
+- focused Flutter (route scope/router/settings/entry/manual mutations) — green
+- screenshot suite — **11 tests / 13 PNGs** (`m11_01`…`m11_11` + `05b`/`06b`)
+- full `flutter test` — **1417 passed**
+- full SQL runner — green (Phase H.0 baseline, U, W, pollution gate + negative)
+- performance 2+20 — list P95≈1023ms; range≈68ms; selected_day≈26ms; route≈25ms
+- `git diff --check` clean; `093`–`102` checksums unchanged
+
+**Next:** Owner acceptance of M11. No commit/push unless requested.
+
+---
+
+## Session 2026-07-19 - M11 implementation (owner acceptance pending)
+
+**Decision:** Implemented Phase 7 M11 Integration, Performance, and Hardening
+per the locked plan. Status is **`M11 IMPLEMENTED — OWNER ACCEPTANCE PENDING`**.
+Do not mark CLOSED/ACCEPTED without explicit owner acceptance. Do not start
+M12 or Phase 8.
+
+**Highlights:**
+- Reminder Case 26 rewritten for both paths (direct FK `23503` /
+  `fk_calendar_events_assigned_agent` via `GET STACKED DIAGNOSTICS`, and
+  `assign_calendar_event` `validation_failed`) with assignee/reminder
+  non-mutation assertions.
+- SQL runner: Phase U assignment + concurrency before Phase V; Phase W
+  cross-module + performance; Phase C.7 named pollution gate.
+- Flutter: `CalendarRouteScope` separated from UI filters; deep links from
+  Customer 360 / Contract; identity-tuple session hardening; M11 screenshots.
+- Performance (local Docker PG 17.6): measured tenant 5k + noise ≥2.5k×2;
+  2 warm-up + 20 runs. Pre-`103` range_summary P95 ≈1475ms failed the 1000ms
+  hard ceiling (unbound JSON fan-out). Migration `103` added composite index,
+  date-bounded scoped reads, and lightweight summary facts. After: list
+  P95≈1017ms (passes hard ceiling 3000ms; does **not** meet optimization
+  target 800ms — recorded, no further migration in the corrective pass),
+  range_summary P95≈67ms, selected_day P95≈27ms, route_day P95≈25ms.
+
+**Next:** Owner acceptance of M11. M8 Flutter re-acceptance remains independent.
+No commit/push at status recording unless requested.
 
 ---
 

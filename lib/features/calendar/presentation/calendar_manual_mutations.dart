@@ -12,7 +12,9 @@ import 'calendar_labels.dart';
 import 'widgets/calendar_conflict_confirm_dialog.dart';
 import 'widgets/calendar_manual_event_dialog.dart';
 
-/// Runs M7A manual create/edit/cancel/done mutations with soft-conflict loops.
+/// Runs M7A manual create/edit/cancel/done mutations with soft-conflict loops
+/// and generation/session guards: results that land after logout or a
+/// user/tenant/tenant-user switch are discarded without touching state or UI.
 ///
 /// Mirrors [CalendarSectionLoader]: a focused helper owned by
 /// [CalendarController], not UI or repository logic.
@@ -26,6 +28,20 @@ class CalendarManualMutations {
   final AppSession? Function() readSession;
   final CalendarRepository Function() readRepo;
   final Future<void> Function() refresh;
+
+  var _generation = 0;
+
+  /// Discards in-flight mutation results (logout / identity change).
+  void invalidate() => _generation++;
+
+  bool _isCurrent(int generation, AppSession captured) {
+    if (generation != _generation) return false;
+    final current = readSession();
+    return current != null &&
+        current.userId == captured.userId &&
+        current.tenantId == captured.tenantId &&
+        current.tenantUserId == captured.tenantUserId;
+  }
 
   AppSession? get _session => readSession();
 
@@ -80,6 +96,7 @@ class CalendarManualMutations {
   }) async {
     final session = _session;
     if (session == null || !canEditCalendarEvent(session)) return false;
+    final generation = _generation;
     final idempotency = CalendarIdempotencySession();
     try {
       await readRepo().cancelManualEvent(
@@ -89,9 +106,11 @@ class CalendarManualMutations {
         reason: reason,
         idempotencyKey: idempotency.key,
       );
+      if (!_isCurrent(generation, session)) return false;
       await refresh();
-      return true;
+      return _isCurrent(generation, session);
     } on CalendarException catch (e) {
+      if (!_isCurrent(generation, session)) return false;
       if (e.code == CalendarException.staleVersion) {
         await refresh();
       }
@@ -102,6 +121,7 @@ class CalendarManualMutations {
   Future<bool> markManualDone(CalendarEvent event) async {
     final session = _session;
     if (session == null || !canEditCalendarEvent(session)) return false;
+    final generation = _generation;
     final idempotency = CalendarIdempotencySession();
     try {
       await readRepo().markManualEventDone(
@@ -110,9 +130,11 @@ class CalendarManualMutations {
         expectedVersion: event.scheduleVersion,
         idempotencyKey: idempotency.key,
       );
+      if (!_isCurrent(generation, session)) return false;
       await refresh();
-      return true;
+      return _isCurrent(generation, session);
     } on CalendarException catch (e) {
+      if (!_isCurrent(generation, session)) return false;
       if (e.code == CalendarException.staleVersion) {
         await refresh();
       }
@@ -133,6 +155,7 @@ class CalendarManualMutations {
   }) async {
     final session = _session;
     if (session == null) return false;
+    final generation = _generation;
 
     final idempotency = CalendarIdempotencySession();
     var data = initialData;
@@ -143,9 +166,11 @@ class CalendarManualMutations {
       submitting = true;
       try {
         final result = await mutate(session, data, idempotency.key);
+        if (!_isCurrent(generation, session)) return false;
         if (result is CalendarManualMutationOk) {
           idempotency.clear();
           await refresh();
+          if (!_isCurrent(generation, session)) return false;
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -161,18 +186,21 @@ class CalendarManualMutations {
           // Soft confirmation is never persisted — reuse the same key.
           submitting = false;
           if (!context.mounted) return false;
+          if (!_isCurrent(generation, session)) return false;
           final acks = await showCalendarConflictConfirmDialog(
             context: context,
             conflicts: result.conflicts,
             initial: data.acknowledgements,
           );
           if (acks == null) return false;
+          if (!_isCurrent(generation, session)) return false;
           data = data.copyWith(acknowledgements: acks);
           continue;
         }
         return false;
       } on CalendarException catch (e) {
         submitting = false;
+        if (!_isCurrent(generation, session)) return false;
         if (!idempotency.shouldPreserveKeyOn(e)) {
           idempotency.regenerate();
         }
@@ -180,6 +208,7 @@ class CalendarManualMutations {
           await onStaleVersion?.call();
           await refresh();
         }
+        if (!_isCurrent(generation, session)) return false;
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

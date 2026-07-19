@@ -84,16 +84,45 @@ class CalendarSectionLoader {
     );
   }
 
+  /// Invalid deep links must not fall back to an unfiltered calendar read.
+  bool _blockInvalidScopeLoad() {
+    if (!_state.routeScope.blocksRepositoryReads) return false;
+    _state = _state.copyWith(
+      days: const [],
+      agendaEvents: const [],
+      overdueEvents: const [],
+      clearOverdueOutsideRangeSummary: true,
+      clearLoadedSummaryQuery: true,
+      clearNextCursorInRange: true,
+      clearNextCursorOverdue: true,
+      hasMoreInRange: false,
+      hasMoreOverdue: false,
+      isLoadingSummary: false,
+      isLoadingAgenda: false,
+      isLoadingOverdue: false,
+      clearSummaryError: true,
+      clearAgendaError: true,
+      clearOverdueError: true,
+    );
+    return true;
+  }
+
   Future<void> loadSummary() async {
     final session = readSession();
     if (session == null || !canAccessCalendar(session)) return;
     if (_state.firstDayOfWeekIndex == null) return;
+    if (_blockInvalidScopeLoad()) return;
 
     final gen = ++summaryGeneration;
     final requestedFrom = _state.dateFrom;
     final requestedTo = _state.dateTo;
     final requestedFilters = _state.filters;
     final requestedKey = requestedFilters.canonicalQueryKey;
+    // Route scope (customer/contract deep link) is merged into the RPC
+    // payload only; requestedFilters (UI-facing) stays untouched.
+    final requestFilters = _state.routeScope.mergeIntoFilters(
+      requestedFilters,
+    );
     _state = _state.copyWith(isLoadingSummary: true, clearSummaryError: true);
 
     try {
@@ -101,13 +130,14 @@ class CalendarSectionLoader {
         session,
         dateFrom: requestedFrom,
         dateTo: requestedTo,
-        filters: requestedFilters,
+        filters: requestFilters,
       );
       if (gen != summaryGeneration) return;
 
       if (result.dateFrom != requestedFrom ||
           result.dateTo != requestedTo ||
-          result.filtersApplied.canonicalQueryKey != requestedKey) {
+          result.filtersApplied.canonicalQueryKey !=
+              requestFilters.canonicalQueryKey) {
         _state = _state.copyWith(
           isLoadingSummary: false,
           summaryErrorCode: CalendarException.malformedResponse,
@@ -228,9 +258,11 @@ class CalendarSectionLoader {
   Future<void> loadAgenda() async {
     final session = readSession();
     if (session == null || !canAccessCalendar(session)) return;
+    if (_blockInvalidScopeLoad()) return;
 
     final gen = ++agendaGeneration;
     final selected = _state.selectedDate;
+    final requestFilters = _state.routeScope.mergeIntoFilters(_state.filters);
     _state = _state.copyWith(isLoadingAgenda: true, clearAgendaError: true);
 
     try {
@@ -238,7 +270,7 @@ class CalendarSectionLoader {
         session,
         dateFrom: selected,
         dateTo: selected,
-        filters: _state.filters,
+        filters: requestFilters,
         limit: CalendarFilters.defaultPageLimit,
         includeOverdueOutsideRange: false,
       );
@@ -273,15 +305,17 @@ class CalendarSectionLoader {
   Future<void> loadOverdueInitial() async {
     final session = readSession();
     if (session == null || !canAccessCalendar(session)) return;
+    if (_blockInvalidScopeLoad()) return;
 
     final gen = ++_pagination.overduePaginationGeneration;
+    final requestFilters = _state.routeScope.mergeIntoFilters(_state.filters);
     _state = _state.copyWith(isLoadingOverdue: true, clearOverdueError: true);
     try {
       final result = await readRepo().listEvents(
         session,
         dateFrom: _state.dateFrom,
         dateTo: _state.dateTo,
-        filters: _state.filters,
+        filters: requestFilters,
         limit: CalendarFilters.defaultPageLimit,
         includeOverdueOutsideRange: true,
       );

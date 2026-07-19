@@ -8714,6 +8714,48 @@ abstract class AppLocalizations {
   /// **'Route View'**
   String get calendarRouteViewButton;
 
+  /// No description provided for @calendarRouteScopeCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer scope'**
+  String get calendarRouteScopeCustomer;
+
+  /// No description provided for @calendarRouteScopeContract.
+  ///
+  /// In en, this message translates to:
+  /// **'Contract scope'**
+  String get calendarRouteScopeContract;
+
+  /// No description provided for @calendarRouteScopeClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get calendarRouteScopeClear;
+
+  /// No description provided for @calendarRouteScopeInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'This calendar link is invalid.'**
+  String get calendarRouteScopeInvalid;
+
+  /// No description provided for @calendarOpenInCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in Calendar'**
+  String get calendarOpenInCalendar;
+
+  /// No description provided for @calendarViewCustomerInCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'View customer in Calendar'**
+  String get calendarViewCustomerInCalendar;
+
+  /// No description provided for @calendarViewContractInCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'View in calendar'**
+  String get calendarViewContractInCalendar;
+
   /// No description provided for @calendarRouteTitle.
   ///
   /// In en, this message translates to:
