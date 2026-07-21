@@ -158,6 +158,23 @@ begin
   delete from public.invoices
   where id = any (v_invoice_ids);
 
+  delete from public.calendar_reminder_plans
+  where calendar_event_id in (
+    select ce.id
+    from public.calendar_events ce
+    where ce.contract_id = any (v_contract_ids)
+  );
+
+  delete from public.calendar_event_participants
+  where event_id in (
+    select ce.id
+    from public.calendar_events ce
+    where ce.contract_id = any (v_contract_ids)
+  );
+
+  delete from public.calendar_refill_execution_facts
+  where contract_id = any (v_contract_ids);
+
   delete from public.calendar_events
   where contract_id = any (v_contract_ids);
 

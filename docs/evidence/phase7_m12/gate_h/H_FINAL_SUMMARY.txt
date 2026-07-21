@@ -1,0 +1,30 @@
+gate_h_kind: FINAL PASS THROUGH 104
+completed_at: 2026-07-22
+branch: main
+phase7: CLOSED / ACCEPTED
+m12: CLOSED / ACCEPTED
+gate_d: PASS / OWNER ACCEPTED
+gate_e: PASS / OWNER ACCEPTED
+gate_f: PASS / OWNER ACCEPTED — PHYSICAL IOS + ANDROID EMULATOR
+gate_g: PASS
+gate_h: FINAL PASS
+migrations_through: 104
+093_103: checksum-unchanged vs Gate 0
+104_sha256: bea3ad5042f10dcc9cf764fa101702d6b7da338134e9056de480031446c82a66
+cleanup_before_reset: PASS — P6M13 and P7M12 counters all zero
+pollution_baseline_after_reset: NULL
+calendar_events_after_reset: 0
+db_reset: PASS — applied 001 through 104
+dart_format: PASS — final repository-wide check clean after five Gate F files were mechanically formatted
+flutter_analyze: PASS — no issues
+flutter_test: PASS — full suite
+gate_e_checksums: PASS
+gate_f_checksums: PASS — 58 durable evidence files
+git_diff_check: PASS
+phase8: NOT STARTED
+commit_push: NOT PERFORMED
+permanent_constraint: PHYSICAL ANDROID SMOKE REQUIRED BEFORE PRODUCTION — OWNER-APPROVED DEFERRAL
+
+The physical-Android obligation does not invalidate this Phase 7 acceptance.
+If the pre-production smoke exposes a defect, fix and regression-test it before
+production release.

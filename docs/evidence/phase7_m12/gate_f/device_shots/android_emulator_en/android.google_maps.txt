@@ -1,0 +1,8 @@
+token=android.google_maps
+foreground:
+    topResumedActivity=ActivityRecord{817e06 u0 com.google.android.apps.maps/com.google.android.maps.MapsActivity t8}
+PASS maps_foreground
+restored_foreground:
+    topResumedActivity=ActivityRecord{2bf589 u0 com.hs360.hs360/.MainActivity t7}
+PASS app_restored
+PASS device_shot bytes=117064

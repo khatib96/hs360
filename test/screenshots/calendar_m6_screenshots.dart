@@ -91,7 +91,10 @@ void main() {
     );
     await tester.tap(find.byKey(const Key('calendar-create-event')));
     await tester.pumpAndSettle();
-    expect(find.byKey(const Key('calendar-create-event-dialog')), findsOneWidget);
+    expect(
+      find.byKey(const Key('calendar-create-event-dialog')),
+      findsOneWidget,
+    );
     expect(
       find.byKey(const Key('calendar-manual-scheduled-date')),
       findsOneWidget,
@@ -109,7 +112,10 @@ void main() {
     );
     await tester.tap(find.byKey(const Key('calendar-create-event')));
     await tester.pumpAndSettle();
-    expect(find.byKey(const Key('calendar-create-event-dialog')), findsOneWidget);
+    expect(
+      find.byKey(const Key('calendar-create-event-dialog')),
+      findsOneWidget,
+    );
     expect(
       find.byKey(const Key('calendar-manual-scheduled-date')),
       findsOneWidget,
@@ -134,7 +140,10 @@ void main() {
       'https://meet.example.com/hs360-standup',
     );
     await tester.pumpAndSettle();
-    expect(find.byKey(const Key('calendar-manual-meeting-url')), findsOneWidget);
+    expect(
+      find.byKey(const Key('calendar-manual-meeting-url')),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
     await _capture(tester, 'm7a_meeting_online_ar_rtl');
   });
@@ -168,7 +177,10 @@ void main() {
     );
     await tester.tap(find.byKey(const Key('calendar-create-event')));
     await tester.pumpAndSettle();
-    await _scrollDialogTo(tester, const Key('calendar-manual-participant-search'));
+    await _scrollDialogTo(
+      tester,
+      const Key('calendar-manual-participant-search'),
+    );
     final search = find.byKey(const Key('calendar-manual-participant-search'));
     await tester.enterText(search, 'أحمد');
     await tester.testTextInput.receiveAction(TextInputAction.done);
@@ -189,7 +201,10 @@ void main() {
     );
     await tester.tap(find.byKey(const Key('calendar-create-event')));
     await tester.pumpAndSettle();
-    await _scrollDialogTo(tester, const Key('calendar-manual-participant-search'));
+    await _scrollDialogTo(
+      tester,
+      const Key('calendar-manual-participant-search'),
+    );
     final search = find.byKey(const Key('calendar-manual-participant-search'));
     await tester.enterText(search, 'Ahmad');
     await tester.testTextInput.receiveAction(TextInputAction.done);
@@ -331,9 +346,14 @@ void main() {
       repo: _richRepo(),
     );
     await _openMeetingActions(tester);
-    await tester.tap(find.byKey(const Key('calendar-cancel-manual-evt-meeting')));
+    await tester.tap(
+      find.byKey(const Key('calendar-cancel-manual-evt-meeting')),
+    );
     await tester.pumpAndSettle();
-    expect(find.byKey(const Key('calendar-cancel-event-dialog')), findsOneWidget);
+    expect(
+      find.byKey(const Key('calendar-cancel-event-dialog')),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
     await _capture(tester, 'm7a_cancel_confirm_ar_rtl');
   });
@@ -346,9 +366,14 @@ void main() {
       repo: _richRepo(),
     );
     await _openMeetingActions(tester);
-    await tester.tap(find.byKey(const Key('calendar-cancel-manual-evt-meeting')));
+    await tester.tap(
+      find.byKey(const Key('calendar-cancel-manual-evt-meeting')),
+    );
     await tester.pumpAndSettle();
-    expect(find.byKey(const Key('calendar-cancel-event-dialog')), findsOneWidget);
+    expect(
+      find.byKey(const Key('calendar-cancel-event-dialog')),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
     await _capture(tester, 'm7a_cancel_confirm_en_ltr');
   });

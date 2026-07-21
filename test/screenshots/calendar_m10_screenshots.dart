@@ -55,8 +55,14 @@ void main() {
     );
     expect(find.byKey(const Key('calendar-route-prev-day')), findsOneWidget);
     expect(find.byKey(const Key('calendar-route-next-day')), findsOneWidget);
-    expect(find.byKey(const Key('calendar-route-prev-day-icon')), findsOneWidget);
-    expect(find.byKey(const Key('calendar-route-next-day-icon')), findsOneWidget);
+    expect(
+      find.byKey(const Key('calendar-route-prev-day-icon')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const Key('calendar-route-next-day-icon')),
+      findsOneWidget,
+    );
     await _capture(tester, 'm10_02_assigned_mobile_360_ar_rtl');
   });
 
@@ -81,8 +87,14 @@ void main() {
     );
     expect(find.byKey(const Key('calendar-route-prev-day')), findsOneWidget);
     expect(find.byKey(const Key('calendar-route-next-day')), findsOneWidget);
-    expect(find.byKey(const Key('calendar-route-prev-day-icon')), findsOneWidget);
-    expect(find.byKey(const Key('calendar-route-next-day-icon')), findsOneWidget);
+    expect(
+      find.byKey(const Key('calendar-route-prev-day-icon')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const Key('calendar-route-next-day-icon')),
+      findsOneWidget,
+    );
     await _capture(tester, 'm10_04_assigned_mobile_412_ar_rtl');
   });
 
@@ -116,10 +128,22 @@ void main() {
       dateQueryParam: '2026-07-14',
       size: _desktop,
     );
-    expect(find.byKey(const Key('calendar-route-point-mapped-a')), findsOneWidget);
-    expect(find.byKey(const Key('calendar-route-point-url-only-b')), findsOneWidget);
-    expect(find.byKey(const Key('calendar-route-point-missing-c')), findsOneWidget);
-    expect(find.byKey(const Key('calendar-route-point-invalid-d')), findsOneWidget);
+    expect(
+      find.byKey(const Key('calendar-route-point-mapped-a')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const Key('calendar-route-point-url-only-b')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const Key('calendar-route-point-missing-c')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const Key('calendar-route-point-invalid-d')),
+      findsOneWidget,
+    );
     await _capture(tester, 'm10_07_assigned_mixed_location_states_en_ltr');
   });
 
@@ -161,7 +185,9 @@ void main() {
       dateQueryParam: '2026-07-14',
       size: _desktop,
     );
-    await tester.tap(find.byKey(const Key('calendar-route-point-ink-route-mapped-1')));
+    await tester.tap(
+      find.byKey(const Key('calendar-route-point-ink-route-mapped-1')),
+    );
     await tester.pumpAndSettle();
     await _capture(tester, 'm10_10_selected_marker_list_sync_en_ltr');
   });
@@ -226,7 +252,10 @@ void main() {
       size: _desktop,
       mapSurfaceBuilder: _failingMapSurfaceBuilder,
     );
-    expect(find.byKey(const Key('calendar-route-tile-failure')), findsOneWidget);
+    expect(
+      find.byKey(const Key('calendar-route-tile-failure')),
+      findsOneWidget,
+    );
     expect(
       find.byKey(const Key('calendar-route-point-route-mapped-1')),
       findsOneWidget,
@@ -265,7 +294,10 @@ void main() {
       dateQueryParam: 'not-a-date',
       size: _phone360,
     );
-    expect(find.byKey(const Key('calendar-route-invalid-date')), findsOneWidget);
+    expect(
+      find.byKey(const Key('calendar-route-invalid-date')),
+      findsOneWidget,
+    );
     await _capture(tester, 'm10_16_invalid_date_en_ltr');
   });
 
@@ -277,7 +309,10 @@ void main() {
       dateQueryParam: '2026-07-14',
       size: _desktop,
     );
-    expect(find.byKey(const Key('calendar-map-marker-cluster-1')), findsOneWidget);
+    expect(
+      find.byKey(const Key('calendar-map-marker-cluster-1')),
+      findsOneWidget,
+    );
     await _capture(tester, 'm10_17_same_coordinate_cluster_en_ltr');
   });
 }

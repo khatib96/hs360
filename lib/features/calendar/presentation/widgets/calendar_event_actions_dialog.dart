@@ -35,8 +35,7 @@ Future<void> showCalendarEventActionsDialog({
   final markDoneLabel = isMeeting
       ? l10n.calendarCloseMeeting
       : l10n.calendarMarkManualDone;
-  final showDirections =
-      event.directionsAvailable && actions.canOpenDirections;
+  final showDirections = event.directionsAvailable && actions.canOpenDirections;
 
   return showDialog<void>(
     context: context,

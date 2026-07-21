@@ -39,14 +39,16 @@ void main() {
       'AR RTL ${size.width.toInt()} shows prev/next day icons and navigates',
       (tester) async {
         DateTime? selected;
-        await pumpArRtl(
-          tester,
-          size: size,
-          onSelectDate: (d) => selected = d,
-        );
+        await pumpArRtl(tester, size: size, onSelectDate: (d) => selected = d);
 
-        expect(find.byKey(const Key('calendar-route-prev-day')), findsOneWidget);
-        expect(find.byKey(const Key('calendar-route-next-day')), findsOneWidget);
+        expect(
+          find.byKey(const Key('calendar-route-prev-day')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('calendar-route-next-day')),
+          findsOneWidget,
+        );
         expect(
           find.byKey(const Key('calendar-route-prev-day-icon')),
           findsOneWidget,

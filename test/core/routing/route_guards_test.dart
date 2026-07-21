@@ -1250,6 +1250,48 @@ void main() {
       );
     });
 
+    test('calendar.view can access /calendar/route', () {
+      final viewer = session(
+        accountType: 'user',
+        permissions: {'calendar.view'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.calendarRoute,
+          hasSupabaseSession: true,
+          authState: loaded(viewer),
+        ),
+        isNull,
+      );
+    });
+
+    test('calendar.view_assigned can access /calendar/route', () {
+      final assigned = session(
+        accountType: 'user',
+        permissions: {'calendar.view_assigned'},
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.calendarRoute,
+          hasSupabaseSession: true,
+          authState: loaded(assigned),
+        ),
+        isNull,
+      );
+    });
+
+    test('zero perms cannot access /calendar/route', () {
+      final zeroUser = session(accountType: 'user');
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.calendarRoute,
+          hasSupabaseSession: true,
+          authState: loaded(zeroUser),
+        ),
+        AppRoutes.blocked,
+      );
+    });
+
     test('settings.calendar.view alone cannot access /calendar', () {
       final settingsOnly = session(
         accountType: 'user',

@@ -1,0 +1,8 @@
+     metric      | n 
+-----------------+---
+ p7m12_customers | 0
+ p7m12_events    | 0
+ p7m12_wde       | 0
+ p6m13_customers | 0
+(4 rows)
+

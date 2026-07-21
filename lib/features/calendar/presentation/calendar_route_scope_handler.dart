@@ -22,7 +22,10 @@ class CalendarRouteScopeHandler {
 
   /// Reloads the padded month range + all sections after a focused-month
   /// change (mirrors `CalendarController._reloadAfterMonthChange`).
-  final Future<void> Function(DateTime focused, {required DateTime selectedDate})
+  final Future<void> Function(
+    DateTime focused, {
+    required DateTime selectedDate,
+  })
   reloadAfterMonthChange;
 
   /// Full triple reload (summary + agenda + overdue).

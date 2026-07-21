@@ -164,56 +164,69 @@ void main() {
     },
   );
 
-  test('delayed save after tenant switch does not write success into new identity', () async {
-    final hold = Completer<void>();
-    final auth = _TestAuthController(
-      _session(permissions: const {'settings.calendar.view', 'settings.calendar.edit'}),
-    );
-    final repo = FakeCalendarSettingsRepository(
-      settings: CalendarSettings(
-        timezoneName: 'Asia/Kuwait',
-        timezoneConfirmed: true,
-        workingScheduleConfigured: true,
-        canEdit: true,
-        days: CalendarSettings.defaultUnreviewedDays()
-            .map(
-              (d) => d.isoWeekday >= 6
-                  ? d.copyWith(mode: TenantWorkingDayMode.dayOff)
-                  : d.copyWith(
-                      mode: TenantWorkingDayMode.workingHours,
-                      workStart: '08:00',
-                      workEnd: '17:00',
-                    ),
-            )
-            .toList(),
-      ),
-    )..holdUpdateUntil = hold;
-    final container = _container(auth: auth, repo: repo);
-    addTearDown(container.dispose);
+  test(
+    'delayed save after tenant switch does not write success into new identity',
+    () async {
+      final hold = Completer<void>();
+      final auth = _TestAuthController(
+        _session(
+          permissions: const {
+            'settings.calendar.view',
+            'settings.calendar.edit',
+          },
+        ),
+      );
+      final repo = FakeCalendarSettingsRepository(
+        settings: CalendarSettings(
+          timezoneName: 'Asia/Kuwait',
+          timezoneConfirmed: true,
+          workingScheduleConfigured: true,
+          canEdit: true,
+          days: CalendarSettings.defaultUnreviewedDays()
+              .map(
+                (d) => d.isoWeekday >= 6
+                    ? d.copyWith(mode: TenantWorkingDayMode.dayOff)
+                    : d.copyWith(
+                        mode: TenantWorkingDayMode.workingHours,
+                        workStart: '08:00',
+                        workEnd: '17:00',
+                      ),
+              )
+              .toList(),
+        ),
+      )..holdUpdateUntil = hold;
+      final container = _container(auth: auth, repo: repo);
+      addTearDown(container.dispose);
 
-    container.read(calendarSettingsControllerProvider);
-    await _waitForLoad(container);
+      container.read(calendarSettingsControllerProvider);
+      await _waitForLoad(container);
 
-    final notifier = container.read(calendarSettingsControllerProvider.notifier);
-    notifier.updateTimezone('Asia/Riyadh');
-    final saveFuture = notifier.save();
-    await Future<void>.delayed(Duration.zero);
-    expect(repo.updateCount, 1);
+      final notifier = container.read(
+        calendarSettingsControllerProvider.notifier,
+      );
+      notifier.updateTimezone('Asia/Riyadh');
+      final saveFuture = notifier.save();
+      await Future<void>.delayed(Duration.zero);
+      expect(repo.updateCount, 1);
 
-    auth.setSession(
-      _session(
-        tenantId: 'tenant-b',
-        permissions: const {'settings.calendar.view', 'settings.calendar.edit'},
-      ),
-    );
-    await Future<void>.delayed(Duration.zero);
-    hold.complete();
-    final saved = await saveFuture;
-    expect(saved, isFalse);
+      auth.setSession(
+        _session(
+          tenantId: 'tenant-b',
+          permissions: const {
+            'settings.calendar.view',
+            'settings.calendar.edit',
+          },
+        ),
+      );
+      await Future<void>.delayed(Duration.zero);
+      hold.complete();
+      final saved = await saveFuture;
+      expect(saved, isFalse);
 
-    final state = container.read(calendarSettingsControllerProvider);
-    expect(state.saveSuccess, isFalse);
-    // Stale save must not apply Asia/Riyadh into the new tenant's state.
-    expect(state.timezoneName, isNot('Asia/Riyadh'));
-  });
+      final state = container.read(calendarSettingsControllerProvider);
+      expect(state.saveSuccess, isFalse);
+      // Stale save must not apply Asia/Riyadh into the new tenant's state.
+      expect(state.timezoneName, isNot('Asia/Riyadh'));
+    },
+  );
 }

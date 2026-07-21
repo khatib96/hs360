@@ -1,0 +1,8 @@
+ui_primary: live/en/ge_en_ltr_17_overdue_panel.png + live/ar/ge_ar_rtl_17_overdue_panel.png
+ui_shows: pending overdue event titled P7M12 Overdue Pending / مهمة متأخرة P7M12
+ui_does_not_render: original_due_date and overdue_days numeric fields
+  (CalendarAgendaEventCard exposes overdue badge via isOverdue/overdueState only)
+sql_primary: supabase/tests/phase_7_calendar_read_rpc.sql cases 42-45 (overdue bucket + overdue_days)
+sql_generation: supabase/tests/phase_7_calendar_event_generation_engine.sql (overdue preserved; no later refill)
+fixture_row: calendar_events id 00000000-0000-7000-8000-00000000e015
+  scheduled_date=current_date-40, original_due_date=current_date-55, status=pending

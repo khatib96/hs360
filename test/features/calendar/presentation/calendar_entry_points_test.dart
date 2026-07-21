@@ -37,67 +37,80 @@ AppSession _session({Set<String> permissions = const {'customers.view'}}) {
 }
 
 void main() {
-  testWidgets('customer detail shows exactly one calendar entry when permitted', (
-    tester,
-  ) async {
-    final customer = sampleCustomer();
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          authControllerProvider.overrideWith(
-            () => _TestAuth(
-              _session(permissions: const {'customers.view', 'calendar.view'}),
+  testWidgets(
+    'customer detail shows exactly one calendar entry when permitted',
+    (tester) async {
+      final customer = sampleCustomer();
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authControllerProvider.overrideWith(
+              () => _TestAuth(
+                _session(
+                  permissions: const {'customers.view', 'calendar.view'},
+                ),
+              ),
             ),
+            customerRepositoryProvider.overrideWith(
+              (ref) => FakeCustomerRepository(customers: [customer]),
+            ),
+            customerServiceLocationRepositoryProvider.overrideWith(
+              (ref) => FakeCustomerServiceLocationRepository(),
+            ),
+          ],
+          child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: CustomerDetailScreen(customerId: customer.id),
           ),
-          customerRepositoryProvider.overrideWith(
-            (ref) => FakeCustomerRepository(customers: [customer]),
-          ),
-          customerServiceLocationRepositoryProvider.overrideWith(
-            (ref) => FakeCustomerServiceLocationRepository(),
-          ),
-        ],
-        child: MaterialApp(
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: CustomerDetailScreen(customerId: customer.id),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
+      );
+      await tester.pumpAndSettle();
 
-    expect(find.byKey(const Key('customer-view-in-calendar')), findsOneWidget);
-    expect(find.byKey(const Key('customer-detail-open-calendar')), findsNothing);
-  });
+      expect(
+        find.byKey(const Key('customer-view-in-calendar')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('customer-detail-open-calendar')),
+        findsNothing,
+      );
+    },
+  );
 
-  testWidgets('customer detail hides calendar entry without calendar permission', (
-    tester,
-  ) async {
-    final customer = sampleCustomer();
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          authControllerProvider.overrideWith(
-            () => _TestAuth(_session(permissions: const {'customers.view'})),
+  testWidgets(
+    'customer detail hides calendar entry without calendar permission',
+    (tester) async {
+      final customer = sampleCustomer();
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authControllerProvider.overrideWith(
+              () => _TestAuth(_session(permissions: const {'customers.view'})),
+            ),
+            customerRepositoryProvider.overrideWith(
+              (ref) => FakeCustomerRepository(customers: [customer]),
+            ),
+            customerServiceLocationRepositoryProvider.overrideWith(
+              (ref) => FakeCustomerServiceLocationRepository(),
+            ),
+          ],
+          child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: CustomerDetailScreen(customerId: customer.id),
           ),
-          customerRepositoryProvider.overrideWith(
-            (ref) => FakeCustomerRepository(customers: [customer]),
-          ),
-          customerServiceLocationRepositoryProvider.overrideWith(
-            (ref) => FakeCustomerServiceLocationRepository(),
-          ),
-        ],
-        child: MaterialApp(
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: CustomerDetailScreen(customerId: customer.id),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
+      );
+      await tester.pumpAndSettle();
 
-    expect(find.byKey(const Key('customer-view-in-calendar')), findsNothing);
-    expect(find.byKey(const Key('customer-detail-open-calendar')), findsNothing);
-  });
+      expect(find.byKey(const Key('customer-view-in-calendar')), findsNothing);
+      expect(
+        find.byKey(const Key('customer-detail-open-calendar')),
+        findsNothing,
+      );
+    },
+  );
 
   testWidgets('contract upcoming schedule exposes a single calendar link', (
     tester,
@@ -107,9 +120,7 @@ void main() {
       ProviderScope(
         overrides: [
           authControllerProvider.overrideWith(
-            () => _TestAuth(
-              _session(permissions: const {'calendar.view'}),
-            ),
+            () => _TestAuth(_session(permissions: const {'calendar.view'})),
           ),
         ],
         child: MaterialApp(

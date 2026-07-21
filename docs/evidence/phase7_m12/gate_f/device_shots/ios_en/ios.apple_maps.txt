@@ -1,0 +1,4 @@
+token=ios.apple_maps
+note=ios_external_capture
+PASS apple_maps_launchUrl_true
+PASS device_shot_optional_tool_missing

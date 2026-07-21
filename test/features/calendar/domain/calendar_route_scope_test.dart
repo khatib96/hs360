@@ -34,15 +34,18 @@ void main() {
       expect(scope.isInvalid, isFalse);
     });
 
-    test('parses both customerId and contractId without proving a relationship', () {
-      final scope = CalendarRouteScope.fromQueryParameters(const {
-        'customerId': _customerId,
-        'contractId': _contractId,
-      });
-      expect(scope.customerId, _customerId);
-      expect(scope.contractId, _contractId);
-      expect(scope.isInvalid, isFalse);
-    });
+    test(
+      'parses both customerId and contractId without proving a relationship',
+      () {
+        final scope = CalendarRouteScope.fromQueryParameters(const {
+          'customerId': _customerId,
+          'contractId': _contractId,
+        });
+        expect(scope.customerId, _customerId);
+        expect(scope.contractId, _contractId);
+        expect(scope.isInvalid, isFalse);
+      },
+    );
 
     test('parses a valid yyyy-MM-dd date', () {
       final scope = CalendarRouteScope.fromQueryParameters(const {
@@ -103,14 +106,17 @@ void main() {
       expect(scope.isInvalid, isTrue);
     });
 
-    test('a valid customerId alongside an invalid contractId rejects the whole scope', () {
-      final scope = CalendarRouteScope.fromQueryParameters(const {
-        'customerId': _customerId,
-        'contractId': 'bad',
-      });
-      expect(scope.isInvalid, isTrue);
-      expect(scope.customerId, isNull);
-    });
+    test(
+      'a valid customerId alongside an invalid contractId rejects the whole scope',
+      () {
+        final scope = CalendarRouteScope.fromQueryParameters(const {
+          'customerId': _customerId,
+          'contractId': 'bad',
+        });
+        expect(scope.isInvalid, isTrue);
+        expect(scope.customerId, isNull);
+      },
+    );
 
     test('blank string values are treated as absent, not invalid', () {
       final scope = CalendarRouteScope.fromQueryParameters(const {
@@ -171,12 +177,15 @@ void main() {
       expect(CalendarRouteScope.empty.toQueryParameters(), isEmpty);
     });
 
-    test('invalid scope produces no query parameters (nothing untrusted kept)', () {
-      final invalid = CalendarRouteScope.fromQueryParameters(const {
-        'customerId': 'bad',
-      });
-      expect(invalid.toQueryParameters(), isEmpty);
-    });
+    test(
+      'invalid scope produces no query parameters (nothing untrusted kept)',
+      () {
+        final invalid = CalendarRouteScope.fromQueryParameters(const {
+          'customerId': 'bad',
+        });
+        expect(invalid.toQueryParameters(), isEmpty);
+      },
+    );
   });
 
   group('mergeIntoFilters', () {

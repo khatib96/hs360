@@ -1,0 +1,5 @@
+status: SUPERSEDED BY ITEM 20 CORRECTION / MIGRATION 104
+also: see H_SUMMARY.txt first line SUPERSEDED — PRIOR REHEARSAL THROUGH 103
+prior_claim: PRELIMINARY CLEAN-STATE PASS through migration 103
+authoritative: FINAL PASS THROUGH 104 (see H_FINAL_SUMMARY.txt)
+reason: migration 104 added; final Gate H only after Gate F dual-device accept

@@ -42,9 +42,9 @@ class CalendarDirectionsActionButton extends ConsumerWidget {
     final session = ref.read(authControllerProvider).valueOrNull;
     if (session == null) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.calendarDirectionsFailed)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.calendarDirectionsFailed)));
       }
       return;
     }
@@ -61,9 +61,9 @@ class CalendarDirectionsActionButton extends ConsumerWidget {
       );
     } catch (_) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.calendarDirectionsFailed)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.calendarDirectionsFailed)));
       }
     }
   }

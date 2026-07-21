@@ -1,0 +1,56 @@
+                           jsonb_pretty                           
+------------------------------------------------------------------
+ {                                                               +
+     "id": "00000000-0000-7000-8000-00000000e015",               +
+     "type": "custom",                                           +
+     "status": "pending",                                        +
+     "title_ar": "مهمة متأخرة P7M12",                            +
+     "title_en": "P7M12 Overdue Pending",                        +
+     "is_overdue": true,                                         +
+     "source_kind": "manual",                                    +
+     "time_window": null,                                        +
+     "working_day": {                                            +
+         "date": "2026-06-10",                                   +
+         "day_mode": "working_hours",                            +
+         "work_end": "17:00",                                    +
+         "tenant_id": "00000000-0000-0000-0000-000000000101",    +
+         "is_day_off": false,                                    +
+         "work_start": "08:00",                                  +
+         "is_24_hours": false,                                   +
+         "iso_weekday": 3,                                       +
+         "is_unreviewed": false,                                 +
+         "timezone_name": "Asia/Kuwait",                         +
+         "is_working_hours": true,                               +
+         "schedule_configured": true                             +
+     },                                                          +
+     "overdue_days": 40,                                         +
+     "participants": [                                           +
+     ],                                                          +
+     "overdue_state": "overdue",                                 +
+     "is_rescheduled": false,                                    +
+     "schedule_state": "working_day",                            +
+     "scheduled_date": "2026-06-10",                             +
+     "schedule_version": 1,                                      +
+     "assigned_agent_id": "00000000-0000-0000-0000-000000000602",+
+     "available_actions": {                                      +
+         "can_assign": true,                                     +
+         "can_reschedule": true,                                 +
+         "can_edit_manual": true,                                +
+         "can_cancel_manual": true,                              +
+         "can_create_manual": true,                              +
+         "can_view_contract": true,                              +
+         "can_view_customer": true,                              +
+         "can_open_directions": false,                           +
+         "can_mark_manual_done": true,                           +
+         "can_open_meeting_link": false                          +
+     },                                                          +
+     "execution_summary": null,                                  +
+     "original_due_date": "2026-06-10",                          +
+     "directions_available": false,                              +
+     "operational_metadata": {                                   +
+     },                                                          +
+     "assigned_agent_name_ar": "أحمد المندوب",                   +
+     "assigned_agent_name_en": "Field Ahmad"                     +
+ }
+(1 row)
+

@@ -562,23 +562,40 @@ class AppBrandMark extends StatelessWidget {
       image: true,
       label: title,
       child: ExcludeSemantics(
-        child: SizedBox(
-          width: width,
-          child: Image.asset(
-            logoAssetPath,
-            fit: BoxFit.contain,
-            filterQuality: FilterQuality.high,
-            errorBuilder: (context, error, stackTrace) {
-              return Text(
-                title,
-                style: const TextStyle(
-                  color: AppColors.gold,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final maxW = constraints.maxWidth.isFinite
+                ? constraints.maxWidth.clamp(0.0, width).toDouble()
+                : width;
+            return SizedBox(
+              width: maxW > 0 ? maxW : width,
+              child: AspectRatio(
+                aspectRatio: 220 / 88,
+                child: FittedBox(
+                  fit: BoxFit.contain,
+                  child: SizedBox(
+                    width: width,
+                    height: width * 88 / 220,
+                    child: Image.asset(
+                      logoAssetPath,
+                      fit: BoxFit.contain,
+                      filterQuality: FilterQuality.high,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Text(
+                          title,
+                          style: const TextStyle(
+                            color: AppColors.gold,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ),
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
       ),
     );

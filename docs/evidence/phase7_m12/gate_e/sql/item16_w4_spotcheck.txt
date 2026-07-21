@@ -1,0 +1,4 @@
+source: supabase/tests/phase_7_m12_trusted_handoff_acceptance.sql (Gate B W.4)
+primary_result: PASS (Gate B)
+expected_next_due: 2026-11-04
+note: Gate E does not add Phase 8 UI; primary proof remains W.4 SQL consume.

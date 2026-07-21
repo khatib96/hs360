@@ -1,0 +1,12 @@
+{
+  "p6m13_counters_all_zero": true,
+  "p7m12_counters_all_zero": true,
+  "baseline_gone": true,
+  "leftover_tagged": {
+    "p7m12_customers": 0,
+    "p7m12_events": 0,
+    "p7m12_wde": 0,
+    "p6m13_customers": 0
+  },
+  "note": "See h1_p6m13_cleanup.txt, h1_p7m12_cleanup.txt, h1_counters.txt"
+}

@@ -84,6 +84,30 @@ void main() {
       expect(result.mappedPoints, hasLength(1));
     });
 
+    test('live-shaped pending event with execution_summary JSON null maps', () {
+      final event = validCalendarEventRpc(executionSummary: null);
+      expect(event.containsKey('execution_summary'), isTrue);
+      expect(event['execution_summary'], isNull);
+
+      final result = mapRouteDayResult(
+        _routeDayRpc(
+          points: [
+            {'event': event, 'location_state': 'missing'},
+            _routePointRpc(),
+          ],
+        ),
+      );
+
+      expect(result.points, hasLength(2));
+      expect(
+        result.points.first.locationState,
+        CalendarRouteLocationState.missing,
+      );
+      expect(result.points.first.event.executionSummary, isNull);
+      expect(result.points.first.isMapped, isFalse);
+      expect(result.mappedPoints, hasLength(1));
+    });
+
     test('throws malformed when points is not a list', () {
       final raw = _routeDayRpc();
       raw['points'] = 'not-a-list';
@@ -118,9 +142,8 @@ void main() {
     for (final state in ['url_only', 'invalid', 'missing']) {
       test('$state state rejects a present latitude', () {
         expect(
-          () => mapRoutePoint(
-            _routePointRpc(state: state, includeLngKey: false),
-          ),
+          () =>
+              mapRoutePoint(_routePointRpc(state: state, includeLngKey: false)),
           throwsA(_malformed()),
         );
       });

@@ -67,18 +67,17 @@ WorkingDateException _closureException() => sampleWorkingDateException(
   titleEn: 'Company closure — annual maintenance',
 );
 
-WorkingDateException _exceptionalHoursException() =>
-    sampleWorkingDateException(
-      id: 'wde-exceptional-hours',
-      kind: CalendarWorkingDateExceptionKind.exceptionalWorkingDay,
-      startDate: DateTime(2026, 7, 30),
-      endDate: DateTime(2026, 7, 30),
-      titleAr: 'يوم عمل استثنائي - جرد',
-      titleEn: 'Exceptional working day — inventory count',
-      dayMode: TenantWorkingDayMode.workingHours,
-      workStart: '08:00',
-      workEnd: '13:00',
-    );
+WorkingDateException _exceptionalHoursException() => sampleWorkingDateException(
+  id: 'wde-exceptional-hours',
+  kind: CalendarWorkingDateExceptionKind.exceptionalWorkingDay,
+  startDate: DateTime(2026, 7, 30),
+  endDate: DateTime(2026, 7, 30),
+  titleAr: 'يوم عمل استثنائي - جرد',
+  titleEn: 'Exceptional working day — inventory count',
+  dayMode: TenantWorkingDayMode.workingHours,
+  workStart: '08:00',
+  workEnd: '13:00',
+);
 
 WorkingDateException _exceptional24hException() => sampleWorkingDateException(
   id: 'wde-exceptional-24h',
@@ -149,10 +148,9 @@ Future<void> _pumpSettings(
             () => _TestAuth(_settingsSession()),
           ),
           calendarSettingsRepositoryProvider.overrideWith(
-            (ref) =>
-                FakeCalendarSettingsRepository(
-                  settings: _configuredCalendarSettings(),
-                ),
+            (ref) => FakeCalendarSettingsRepository(
+              settings: _configuredCalendarSettings(),
+            ),
           ),
           calendarWorkingDateExceptionRepositoryProvider.overrideWith(
             (ref) => wdeRepo,
@@ -447,17 +445,11 @@ Future<void> _loadFonts() async {
       'assets/fonts/noto/NotoSansArabic-Regular.ttf',
       'assets/fonts/noto/NotoSansArabic-Bold.ttf',
     ],
-    'MaterialIcons': [
-      'assets/fonts/material/MaterialIcons-Regular.otf',
-    ],
+    'MaterialIcons': ['assets/fonts/material/MaterialIcons-Regular.otf'],
     // IconData from flutter_lucide uses fontPackage, so tests must register
     // the package-prefixed family name used at paint time.
-    'packages/flutter_lucide/lucide': [
-      'assets/fonts/lucide/lucide.ttf',
-    ],
-    'lucide': [
-      'assets/fonts/lucide/lucide.ttf',
-    ],
+    'packages/flutter_lucide/lucide': ['assets/fonts/lucide/lucide.ttf'],
+    'lucide': ['assets/fonts/lucide/lucide.ttf'],
   };
   for (final entry in families.entries) {
     final loader = FontLoader(entry.key);

@@ -1,0 +1,8 @@
+token=android.browser
+foreground:
+    topResumedActivity=ActivityRecord{306fe29 u0 com.android.chrome/org.chromium.chrome.browser.firstrun.FirstRunActivity t9}
+PASS browser_foreground
+restored_foreground:
+    topResumedActivity=ActivityRecord{2bf589 u0 com.hs360.hs360/.MainActivity t7}
+PASS app_restored
+PASS device_shot bytes=91927

@@ -1,0 +1,5 @@
+ baseline_gone 
+---------------
+ t
+(1 row)
+

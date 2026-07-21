@@ -67,14 +67,15 @@ void main() {
       final holdSummary = Completer<void>();
       final holdAgenda = Completer<void>();
       final holdOverdue = Completer<void>();
-      final repo = FakeCalendarRepository(
-        listResult: sampleEventList(
-          inRangeRows: [sampleCalendarEvent(id: 'tenant-a-event')],
-        ),
-      )
-        ..holdSummaryUntil = holdSummary
-        ..holdAgendaUntil = holdAgenda
-        ..holdOverdueUntil = holdOverdue;
+      final repo =
+          FakeCalendarRepository(
+              listResult: sampleEventList(
+                inRangeRows: [sampleCalendarEvent(id: 'tenant-a-event')],
+              ),
+            )
+            ..holdSummaryUntil = holdSummary
+            ..holdAgendaUntil = holdAgenda
+            ..holdOverdueUntil = holdOverdue;
 
       final customerId = '11111111-1111-4111-8111-111111111111';
       final router = GoRouter(
@@ -108,7 +109,10 @@ void main() {
       await tester.pump(const Duration(milliseconds: 50));
 
       expect(router.state.uri.queryParameters['customerId'], customerId);
-      expect(find.byKey(const Key('calendar-route-scope-banner')), findsOneWidget);
+      expect(
+        find.byKey(const Key('calendar-route-scope-banner')),
+        findsOneWidget,
+      );
 
       // Release initial loads so the controller settles before the switch.
       holdSummary.complete();
@@ -120,14 +124,23 @@ void main() {
       auth.setSession(_session(tenantId: 'tenant-b', userId: 'user-b'));
       await tester.pumpAndSettle();
 
-      expect(router.state.uri.queryParameters.containsKey('customerId'), isFalse);
+      expect(
+        router.state.uri.queryParameters.containsKey('customerId'),
+        isFalse,
+      );
       expect(router.state.uri.path, AppRoutes.calendar);
-      expect(find.byKey(const Key('calendar-route-scope-banner')), findsNothing);
+      expect(
+        find.byKey(const Key('calendar-route-scope-banner')),
+        findsNothing,
+      );
 
       final container = ProviderScope.containerOf(
         tester.element(find.byType(CalendarScreen)),
       );
-      expect(container.read(calendarControllerProvider).routeScope.isEmpty, isTrue);
+      expect(
+        container.read(calendarControllerProvider).routeScope.isEmpty,
+        isTrue,
+      );
       // Stale scoped responses must not keep driving reads for the old scope.
       expect(repo.listEventsCount >= beforeList, isTrue);
     },
@@ -154,7 +167,9 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          authControllerProvider.overrideWith(() => _TestAuthController(_session())),
+          authControllerProvider.overrideWith(
+            () => _TestAuthController(_session()),
+          ),
           calendarRepositoryProvider.overrideWith((ref) => repo),
         ],
         child: MaterialApp.router(

@@ -1,0 +1,4 @@
+token=ios.browser
+note=ios_external_capture
+PASS browser_launchUrl_true
+PASS device_shot_optional_tool_missing

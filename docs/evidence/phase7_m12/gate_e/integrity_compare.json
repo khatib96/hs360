@@ -1,0 +1,48 @@
+{
+  "item21_equal": true,
+  "rows": [
+    {
+      "metric": "inventory_balances",
+      "pre": 1,
+      "post": 1,
+      "equal": true
+    },
+    {
+      "metric": "inventory_movements",
+      "pre": 0,
+      "post": 0,
+      "equal": true
+    },
+    {
+      "metric": "invoices",
+      "pre": 0,
+      "post": 0,
+      "equal": true
+    },
+    {
+      "metric": "vouchers",
+      "pre": 0,
+      "post": 0,
+      "equal": true
+    },
+    {
+      "metric": "journal_entries",
+      "pre": 0,
+      "post": 0,
+      "equal": true
+    },
+    {
+      "metric": "journal_lines",
+      "pre": 0,
+      "post": 0,
+      "equal": true
+    },
+    {
+      "metric": "completed_visits",
+      "pre": 0,
+      "post": 0,
+      "equal": true
+    }
+  ],
+  "note": "pre taken after P7M12 fixtures; calendar UI must not change finance/stock/visits"
+}

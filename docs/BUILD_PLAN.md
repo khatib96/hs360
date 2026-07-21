@@ -19,7 +19,7 @@
 | **4 - Customers, Suppliers & CoA** | Engineering complete | 2026-06-06 |
 | **5 - Invoices, Vouchers & Journal** | Done | M1–M10 closed through migration `076` |
 | **6 - Contracts** | Complete | M0–M13 closed (2026-07-12) |
-| **7 - Calendar & Company Appointments** | M11 closed / accepted | M9–M11 CLOSED/ACCEPTED (2026-07-19); M8 Flutter re-acceptance still pending; M12 not started |
+| **7 - Calendar & Company Appointments** | **Complete / accepted** | M1–M12 CLOSED/ACCEPTED; Gates D/E/F owner-accepted, G/H passed through migration `104`; physical Android smoke deferred but required before production |
 | **8 - Mobile Field Ops** | Not started | - |
 | **9 - POS, Maintenance & HR** | Not started | - |
 | **10 - Reports & Close** | Not started | - |
@@ -652,19 +652,13 @@ The core of the system: contracts can be created, billed, refilled, and closed.
 > estimate is a legacy roadmap estimate; use the detailed plan for professional
 > delivery sizing.
 >
-> Current status: **M11 CLOSED / ACCEPTED (2026-07-19).**
-> M1–M7B are closed/accepted. M8 migration `101` exists; Flutter live assignment
-> UI was correctively closed for automation on 2026-07-18
-> (`M8 FLUTTER CORRECTED — OWNER RE-ACCEPTANCE PENDING`). M9 mobile calendar is
-> **CLOSED / ACCEPTED** (2026-07-19). M10 Route View and Directions closed with
-> migration `102`. M11 Final Corrective Pass completed (invalid scope, date-only
-> banner, session URL clear, mutation identity guards, single entry points,
-> production screenshots ×13, strict pre/post pollution gate); the owner
-> accepted M11 on 2026-07-19. List P95≈1023ms is under the enforced 3000ms
-> ceiling; the unmet 800ms target is non-blocking optimization backlog.
-> Migration `103` is unchanged. M12 and
-> Phase 8 have not started. Operations Map for rented/trial devices remains
-> Phase 10.
+> Current status: **Phase 7 and M12 `CLOSED / ACCEPTED` (2026-07-22).**
+> M8 and Gates D/E/F are **`PASS / OWNER ACCEPTED`**; Gate F used physical
+> iOS + Android Emulator. Gate G **PASS** (P95 ≈1066ms), and Final Gate H
+> **PASS** through `104`. Migrations `093`–`103` remain checksum-locked;
+> `104` is the M12 route contract fix. **Physical Android smoke is required
+> before production** under the owner-approved deferral. Phase 8 has not
+> started. Operations Map remains Phase 10.
 
 ### Goal
 A unified company appointment-management calendar showing contract-generated

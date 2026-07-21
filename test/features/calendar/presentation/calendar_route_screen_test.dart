@@ -135,9 +135,7 @@ void main() {
     expect(_markerColor(tester, 'a'), beforeA);
   });
 
-  testWidgets('tapping a marker selects the matching list row', (
-    tester,
-  ) async {
+  testWidgets('tapping a marker selects the matching list row', (tester) async {
     final repo = FakeCalendarRepository()
       ..routeDayResult = CalendarRouteResult(
         date: DateTime(2026, 7, 14),
@@ -173,6 +171,11 @@ void main() {
             locationState: CalendarRouteLocationState.missing,
             directionsAvailable: false,
           ),
+          sampleRoutePoint(
+            eventId: 'mapped-1',
+            latitude: 29.3,
+            longitude: 48.0,
+          ),
         ],
         hasMore: false,
       );
@@ -185,6 +188,61 @@ void main() {
       find.byKey(const Key('calendar-route-directions-missing-1')),
       findsNothing,
     );
+    expect(
+      find.byKey(const Key('calendar-route-directions-mapped-1')),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('AR locale shows Arabic location-unavailable copy', (
+    tester,
+  ) async {
+    final repo = FakeCalendarRepository()
+      ..routeDayResult = CalendarRouteResult(
+        date: DateTime(2026, 7, 14),
+        employeeId: 'tu-1',
+        points: [
+          sampleRoutePoint(
+            eventId: 'missing-ar',
+            locationState: CalendarRouteLocationState.missing,
+            directionsAvailable: false,
+          ),
+        ],
+        hasMore: false,
+      );
+
+    tester.view.physicalSize = const Size(1200, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          authControllerProvider.overrideWith(
+            () => _TestAuth(_assignedSession()),
+          ),
+          calendarRepositoryProvider.overrideWith((ref) => repo),
+          calendarMapAppResolverProvider.overrideWithValue(
+            CalendarMapAppResolver(canLaunch: (_) async => true),
+          ),
+        ],
+        child: MaterialApp(
+          locale: const Locale('ar'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: CalendarRouteScreen(
+            dateQueryParam: '2026-07-14',
+            mapSurfaceBuilder: _fakeMapSurfaceBuilder,
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pumpAndSettle();
+
+    final l10n = lookupAppLocalizations(const Locale('ar'));
+    expect(find.text(l10n.calendarRouteLocationUnavailable), findsOneWidget);
   });
 
   testWidgets('overflow button opens the full event actions dialog', (
@@ -235,9 +293,7 @@ void main() {
       ..routeDayResult = CalendarRouteResult(
         date: DateTime(2026, 7, 14),
         employeeId: 'tu-1',
-        points: [
-          sampleRoutePoint(eventId: 'a', latitude: 1, longitude: 1),
-        ],
+        points: [sampleRoutePoint(eventId: 'a', latitude: 1, longitude: 1)],
         hasMore: false,
       );
 
@@ -266,15 +322,15 @@ void main() {
                   required onTileFailure,
                   required tileSessionId,
                 }) {
-              sessions.add(tileSessionId);
-              return _RuntimeFailMapSurface(
-                points: points,
-                selectedEventId: selectedEventId,
-                onSelectEvent: onSelectEvent,
-                onTileFailure: onTileFailure,
-                tileSessionId: tileSessionId,
-              );
-            },
+                  sessions.add(tileSessionId);
+                  return _RuntimeFailMapSurface(
+                    points: points,
+                    selectedEventId: selectedEventId,
+                    onSelectEvent: onSelectEvent,
+                    onTileFailure: onTileFailure,
+                    tileSessionId: tileSessionId,
+                  );
+                },
           ),
         ),
       ),
@@ -283,7 +339,10 @@ void main() {
     await tester.pumpAndSettle();
 
     final l10n = lookupAppLocalizations(const Locale('en'));
-    expect(find.byKey(const Key('calendar-route-tile-failure')), findsOneWidget);
+    expect(
+      find.byKey(const Key('calendar-route-tile-failure')),
+      findsOneWidget,
+    );
     expect(find.text(l10n.calendarRouteMapTilesUnavailable), findsOneWidget);
     expect(find.byKey(const Key('calendar-route-point-a')), findsOneWidget);
 
@@ -324,15 +383,19 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const Key('calendar-route-day-error')), findsNothing);
-    expect(find.byKey(const Key('calendar-route-point-route-event-1')), findsOneWidget);
+    expect(
+      find.byKey(const Key('calendar-route-point-route-event-1')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('employees error shows Retry and recovers on success', (
     tester,
   ) async {
     final repo = FakeCalendarRepository()
-      ..routeEmployeesError =
-          const CalendarException(code: CalendarException.unknown)
+      ..routeEmployeesError = const CalendarException(
+        code: CalendarException.unknown,
+      )
       ..routeEmployeesResult = const CalendarRouteEmployeeListResult(
         employees: [
           CalendarRouteEmployee(
@@ -380,8 +443,14 @@ void main() {
     await tester.tap(find.byKey(const Key('calendar-route-employees-retry')));
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const Key('calendar-route-employees-error')), findsNothing);
-    expect(find.byKey(const Key('calendar-route-employee-emp-1')), findsOneWidget);
+    expect(
+      find.byKey(const Key('calendar-route-employees-error')),
+      findsNothing,
+    );
+    expect(
+      find.byKey(const Key('calendar-route-employee-emp-1')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('Directions opens Open-with sheet without auto-launch', (

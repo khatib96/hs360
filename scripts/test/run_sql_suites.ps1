@@ -169,6 +169,9 @@ Write-Host "Phase W: Phase 7 M11 cross-module + performance"
 Invoke-SqlSuite -SuitePath "supabase/tests/phase_7_m11_cross_module.sql"
 Invoke-SqlSuite -SuitePath "supabase/tests/phase_7_m11_performance.sql"
 
+Write-Host "Phase W.4: Phase 7 M12 trusted Phase 8 handoff acceptance"
+Invoke-SqlSuite -SuitePath "supabase/tests/phase_7_m12_trusted_handoff_acceptance.sql"
+
 Write-Host "Phase W.5: Phase 7 M11 Phase 6/7 audit-journal reclaim (pre pollution gate)"
 Invoke-SqlSuite -SuitePath "supabase/tests/phase_7_m11_phase67_audit_reclaim.sql"
 

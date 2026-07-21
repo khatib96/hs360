@@ -1,0 +1,5 @@
+H1 PASS
+p6m13: P6M13 cleanup passed: all counters are 0.
+p7m12: P7M12 cleanup passed: all counters are 0.
+baseline_gone: true
+leftover tagged fixtures: see h1_counters.txt (all 0 expected)

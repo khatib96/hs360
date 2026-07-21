@@ -1,0 +1,12 @@
+Gate F device detection — 2026-07-22 (redacted)
+physical_ios: YES (USB)
+device_label: redacted
+os_version: iOS 26.5.2
+physical_android: NO
+android_emulator: YES (Google Play system image, API 34 / Android 14)
+emulator_label: hs360_gate_f_api34
+physical_android_waiver: PHYSICAL ANDROID SMOKE — DEFERRED BY OWNER TO PRE-PRODUCTION
+status: GATE F PASS / OWNER ACCEPTED — PHYSICAL IOS + ANDROID EMULATOR
+physical_android_obligation: REQUIRED BEFORE PRODUCTION — OWNER-APPROVED DEFERRAL
+ios_ar_note: First AR attempt hung on Dart VM Service after EN PASS; AR re-run alone succeeded; Android + iOS EN preserved
+note: No UDID, serial, personal IP, or secrets stored in this file.

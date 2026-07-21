@@ -21,6 +21,7 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<!-- NSLocalNetworkUsageDescription is Debug-only via ios/Flutter/Debug.xcconfig. -->
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>

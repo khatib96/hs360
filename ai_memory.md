@@ -1,11 +1,205 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-19 (Session: Phase 7 **`M11 CLOSED / ACCEPTED`** after owner
-> acceptance of the Final Corrective and SQL Pollution Micro-Corrective passes;
-> **`M10 CLOSED /
-> ACCEPTED`** and **`M9 CLOSED / ACCEPTED`** preserved; M8 Flutter still
-> **`OWNER RE-ACCEPTANCE PENDING`**; migration `103` unchanged; migrations
-> `093`–`102` checksum-unchanged; no commit/push unless requested).
+> Updated 2026-07-22 (Session: **PHASE 7 CLOSED / ACCEPTED**).
+> Gates D/E/F **`PASS / OWNER ACCEPTED`**; Gate F acceptance uses physical iOS
+> + Android Emulator evidence. Gate G and Final Gate H **PASS** through `104`.
+> M12 and Phase 7 **`CLOSED / ACCEPTED`**. Phase 8 **NOT STARTED**.
+> Permanent pre-production constraint: **physical Android smoke is required**
+> under the owner-approved deferral. No commit/push performed.
+
+---
+
+## Session 2026-07-22 - Phase 7 CLOSED / ACCEPTED
+
+**Owner decision:** accepted the remaining Gate F evidence and authorized the
+remaining documentation/final-close work. Gate F is **PASS / OWNER ACCEPTED**
+using physical iPhone EN+AR and Android Emulator (Google Play) EN+AR. Physical
+Android smoke remains a mandatory pre-production check and is not claimed as
+executed.
+
+**Final Gate H:** P6M13/P7M12 cleanup counters were all zero; the M11 pollution
+baseline was absent; local Supabase reset cleanly through migration `104`;
+checksums `093`–`104` matched the locked evidence; Gate E/F durable evidence
+checksums passed; repository-wide Dart format was normalized and rechecked;
+`flutter analyze` returned no issues; the full `flutter test` suite passed; and
+`git diff --check` was clean.
+
+**Final state:** Gates D/E/F **PASS / OWNER ACCEPTED**, Gate G **PASS**, Gate H
+**FINAL PASS**, M12 **CLOSED / ACCEPTED**, **PHASE 7 CLOSED / ACCEPTED**. Phase
+8 remains **NOT STARTED**. Migration boundary is `104`.
+
+**Evidence:** `docs/evidence/phase7_m12/gate_h/H_FINAL_SUMMARY.txt` and
+`h_final_checksums.txt`. No commit/push performed; GitHub commands are handed
+to the owner separately.
+
+---
+
+## Session 2026-07-22 - Gate F READY FOR OWNER REVIEW (packet)
+
+**Executed:** physical iOS USB EN+AR + Android Emulator Google Play EN+AR
+(`flutter drive`, `DRY_LAUNCH=false`, extended screenshots, real Maps/Browser).
+
+**iOS AR:** hung once on Dart VM Service after EN PASS; Android + iOS EN
+preserved; AR re-run alone succeeded.
+
+**Updated:** `gate_f/EVIDENCE_INDEX.md`, `SHA256SUMS.txt`,
+`GATE_F_EXECUTION_SUMMARY.md`, `DEVICE_PENDING.txt`,
+`PHASE_7_M12_DEVICE_OPENWITH.md`, Evidence Manifest, Verification Matrix,
+status banners (README / BUILD_PLAN / CALENDAR_PLAN / runbook).
+
+**Did not:** auto OWNER ACCEPTED, Final Gate H, Phase 7 close, commit/push.
+
+---
+
+## Session 2026-07-20 - Gate E PASS / OWNER ACCEPTED + Gate F doc fix
+
+**Owner decision:** Accept Gate E (explicit).
+
+**Doc-only Gate F micro-corrective:**
+- Restored full F1–F16 checklist in `PHASE_7_M12_DEVICE_OPENWITH.md`
+- Fixed physical-device Supabase URLs (no iOS `127.0.0.1`; no physical Android `10.0.2.2`)
+- Redacted UDID from `gate_f/DEVICE_PENDING.txt`
+- Marked `gate_h/H_SUMMARY.txt` as `SUPERSEDED — PRIOR REHEARSAL THROUGH 103`
+
+**Did not:** re-run Gate E, edit migration 104, Final Gate H, Phase 7 close, commit/push.
+
+---
+
+## Session 2026-07-20 - Item 20 fix + consolidated remaining gates
+
+**Root cause / fix:** migration `104` (route `execution_summary` contract). Superseded
+owner-facing Gate E status is now **PASS / OWNER ACCEPTED**.
+---
+
+## Session 2026-07-20 - M12 Gates D–H completion (plan todos)
+
+Superseded by Item 20 corrective pass above. Prior claim that all gates were
+“done” was inaccurate while Item 20 was PARTIAL and H ran only through 103.
+
+---
+
+## Session 2026-07-19 - Gate E evidence corrective pass (RE-REVIEW)
+
+**Decision:** Corrected Gate E evidence gaps (Item 2 AR unconfigured, successful
+manuals 6/8, live WDE 9/10, overdue UI 15, route 20). Did **not** auto-PASS
+Gate E. Item 19 deferred to Gate F. Item 20 left **PARTIAL** with documented
+defect `P7M12-GE-I20-EXECUTION-SUMMARY` (no product fix without owner ack).
+No migration; no Phase 8.
+
+**Status string:** `GATE E READY FOR OWNER RE-REVIEW`
+
+---
+
+## Session 2026-07-19 - Gate E manual AR/EN evidence packet
+
+**Decision:** Collected Gate E live EN+AR evidence via real `App()` against
+local Supabase. Did **not** auto-PASS Gate E. Item 19 deferred to Gate F.
+No product/SQL migration changes. Superseded by corrective RE-REVIEW pass.
+
+**Status string (superseded):** `GATE E READY FOR OWNER REVIEW`
+
+---
+
+## Session 2026-07-19 - Gate D M8 owner acceptance
+
+**Decision:** Owner explicitly accepted Gate D evidence `m8-01`…`m8-11`.
+
+**Status strings:**
+- `M8 FLUTTER CLOSED / ACCEPTED`
+- Gate D: `PASS / OWNER ACCEPTED`
+- Unchanged: `M12 VERIFICATION COMPLETE — DEVICE AND OWNER ACCEPTANCE PENDING`
+- Phase 7: not closed
+- Gates E / F / H: still pending (not started)
+
+**Docs updated:** `PHASE_7_M8_OWNER_REACCEPTANCE.md`, Evidence Manifest,
+README, BUILD_PLAN, PHASE_7 plan, verification matrix, runbook gate table,
+ai_memory.
+
+**Stopped.** Start Gate E only on a separate explicit request.
+
+---
+
+## Session 2026-07-19 - Gate D M8 owner re-acceptance packet
+
+**Decision:** Regenerated approved M8 harness evidence only. No product/SQL/
+migration changes. (Superseded by owner acceptance session above.)
+
+**Evidence:**
+- `flutter test` M8 screenshots + actions: **17 passed**
+- 11 PNGs → `docs/evidence/phase7_m12/m8/` (+ `SHA256SUMS.txt`)
+- Owner checklist: `docs/PHASE_7_M8_OWNER_REACCEPTANCE.md`
+- Linked in `docs/PHASE_7_M12_EVIDENCE_MANIFEST.md` as `m8-01`…`m8-11`
+
+---
+
+## Session 2026-07-19 - M12 Integration Corrective Pass
+
+**Decision:** Full P6M13 EN+AR is not the M12 Gate C bar after PDF
+`pumpAndSettle` timeout (PDF out of Calendar scope — do not waive as env
+success and do not fix PDF in M12). Added calendar-only mode
+`P7M12_CALENDAR_ONLY=true` on the shared P6M13 driver + wrapper
+`scripts/test/p7m12_calendar_acceptance.sh`. Default full P6M13 path stays
+intact. Schedule truth uses authorized `get_contract_detail.upcoming_schedule`
+(not revoked list RPC / direct `calendar_events` SELECT). Incidental
+`dart format` churn on ~35 lib/test files is mechanical line-wrap only
+(documented in Evidence Manifest); intentional logic remains route guards,
+settings back-nav test, and P6M13/P7M12 driver.
+
+**Results:**
+- EN calendar-only: Flutter exit **0**; cleanup counters **all 0**
+- AR calendar-only: Flutter exit **0**; cleanup counters **all 0**
+- Wrapper overall: exit **0**
+- `dart format --set-exit-if-changed`: exit **0**
+- `flutter analyze`: **0** issues
+- full `flutter test`: **1421** passed
+- `git diff --check`: clean
+
+**Status string:** `M12 VERIFICATION COMPLETE — DEVICE AND OWNER ACCEPTANCE PENDING`
+
+**Next:** Owner Gates D/E/F (not Gate H until after D/E/F).
+
+---
+
+## Session 2026-07-19 - M12 automated verification (owner/device pending)
+
+**Decision:** Executed Phase 7 M12 Verification and Phase Close automated gates
+per the locked plan. Do **not** mark Phase 7 or M12 closed without explicit
+owner acceptance. Do not change M8 off `OWNER RE-ACCEPTANCE PENDING`.
+
+**Automated evidence:**
+- Gate 0: `main` @ `1fd3844`; working tree was clean at start; migrations
+  `093`–`103` checksums matched the locked table.
+- Gate B: `npx supabase db reset` through `103`; full
+  `bash scripts/test/run_sql_suites.sh supabase_db_hs360` → **exit 0**;
+  Phase W.4 `phase_7_m12_trusted_handoff_acceptance.sql` passed (Phase 7
+  consumes trusted confirmed fact only; Phase 8 math is test-simulated);
+  pollution gate passed after Phase R case68 committed P7R seed cleanup;
+  `to_regclass('public._m11_pollution_baseline') IS NULL`.
+- Perf (inside runner): list P95≈1089ms under 3000ms hard ceiling; 800ms still
+  non-blocking backlog.
+- Gate C: `dart format` clean; `flutter analyze` 0 issues; full `flutter test`
+  **1421 passed**; `/calendar/route` guards added; settings dirty PopScope
+  back-nav test added.
+- P6M13 wrapper hardened with `trap EXIT`, preserved Flutter exit, cleanup
+  failure reporting, no key logging; cleanup deletes reminder plans before
+  events. Full P6M13 EN run failed at PDF `pumpAndSettle` (AR never started);
+  cleanup counters 0. Superseded for M12 Gate C by calendar-only driver (see
+  Integration Corrective Pass session above).
+- Docs created: `docs/PHASE_7_M12_VERIFICATION_MATRIX.md`,
+  `docs/PHASE_7_M12_ACCEPTANCE_RUNBOOK.md`,
+  `docs/PHASE_7_M12_EVIDENCE_MANIFEST.md`.
+
+**Owner / device stops (required):**
+- Gate D — M8 Flutter re-acceptance
+- Gate E — Runbook 21× EN/AR on real app UI (local/test DB)
+- Gate F — real iOS+Android Open-with (or keep DEVICE PENDING)
+- Gate H — post-acceptance cleanup + final `db reset`/checksums after E/F
+
+**Status string:** `M12 VERIFICATION COMPLETE — DEVICE AND OWNER ACCEPTANCE PENDING`
+
+**Forbidden:** `PHASE 7 CLOSED / ACCEPTED` until all gates + explicit owner accept.
+
+**Next:** Owner Gates D/E/F, then Gate H.
 
 ---
 

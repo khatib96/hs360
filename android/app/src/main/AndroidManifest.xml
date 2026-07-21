@@ -62,7 +62,12 @@
             <action android:name="android.intent.action.VIEW"/>
             <data android:scheme="http"/>
         </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="googlechrome"/>
+        </intent>
         <package android:name="com.google.android.apps.maps"/>
+        <package android:name="com.android.chrome"/>
         <package android:name="com.waze"/>
     </queries>
 </manifest>

@@ -1,0 +1,84 @@
+db_reset_exit: 0
+migrations_through: 103
+note: secrets redacted if present
+---
+NOTICE (00000): trigger "trg_enforce_contract_line_source_warehouse" for relation "public.contract_lines" does not exist, skipping
+Applying migration 088_phase_6_schedule_consumable_change_rpc.sql...
+NOTICE (00000): trigger "trg_contract_oil_changes_single_open_tail" for relation "public.contract_oil_changes" does not exist, skipping
+Applying migration 089_phase_6_contract_pdf.sql...
+NOTICE (00000): trigger "trg_contract_lines_snapshot_unit_primary" for relation "public.contract_lines" does not exist, skipping
+Applying migration 090_phase_6_contract_calendar_handoff_schema.sql...
+NOTICE (00000): constraint "chk_calendar_events_source_key_pair" of relation "calendar_events" does not exist, skipping
+NOTICE (00000): constraint "chk_calendar_events_source_metadata_object" of relation "calendar_events" does not exist, skipping
+NOTICE (00000): constraint "fk_calendar_events_tenant_contract" of relation "calendar_events" does not exist, skipping
+NOTICE (00000): constraint "fk_calendar_events_tenant_contract_line" of relation "calendar_events" does not exist, skipping
+NOTICE (00000): index "ux_calendar_events_contract_source" does not exist, skipping
+NOTICE (00000): trigger "trg_calendar_events_provenance_guard" for relation "public.calendar_events" does not exist, skipping
+NOTICE (00000): trigger "trg_calendar_events_tenant_integrity" for relation "public.calendar_events" does not exist, skipping
+Applying migration 091_phase_6_contract_calendar_handoff_functions.sql...
+NOTICE (00000): trigger "trg_contracts_status_calendar_handoff" for relation "public.contracts" does not exist, skipping
+Applying migration 092_phase_6_list_covered_rental_months_rpc.sql...
+Applying migration 093_phase_7_calendar_working_schedule.sql...
+NOTICE (00000): trigger "trg_initialize_tenant_calendar_settings" for relation "public.tenants" does not exist, skipping
+NOTICE (00000): trigger "trg_tenant_calendar_settings_configured_state" for relation "public.tenant_calendar_settings" does not exist, skipping
+NOTICE (00000): trigger "trg_tenant_working_days_configured_state" for relation "public.tenant_working_days" does not exist, skipping
+NOTICE (00000): trigger "trg_tenant_working_days_delete_guard" for relation "public.tenant_working_days" does not exist, skipping
+NOTICE (00000): policy "tenant_calendar_settings_select" for relation "public.tenant_calendar_settings" does not exist, skipping
+NOTICE (00000): policy "tenant_working_days_select" for relation "public.tenant_working_days" does not exist, skipping
+NOTICE (00000): trigger "trg_touch_tenant_calendar_settings" for relation "public.tenant_calendar_settings" does not exist, skipping
+NOTICE (00000): trigger "trg_touch_tenant_working_days" for relation "public.tenant_working_days" does not exist, skipping
+Applying migration 094_phase_7_calendar_event_model.sql...
+NOTICE (00000): trigger "trg_calendar_events_original_due_date_insert" for relation "public.calendar_events" does not exist, skipping
+NOTICE (00000): trigger "trg_calendar_events_original_due_date_immutable" for relation "public.calendar_events" does not exist, skipping
+NOTICE (00000): constraint "fk_calendar_refill_execution_facts_event" of relation "calendar_refill_execution_facts" does not exist, skipping
+NOTICE (00000): constraint "fk_calendar_refill_execution_facts_contract" of relation "calendar_refill_execution_facts" does not exist, skipping
+NOTICE (00000): constraint "fk_calendar_refill_execution_facts_contract_line" of relation "calendar_refill_execution_facts" does not exist, skipping
+NOTICE (00000): constraint "fk_calendar_refill_execution_facts_product" of relation "calendar_refill_execution_facts" does not exist, skipping
+NOTICE (00000): constraint "fk_calendar_refill_execution_facts_visit" of relation "calendar_refill_execution_facts" does not exist, skipping
+NOTICE (00000): trigger "trg_calendar_refill_execution_fact_integrity" for relation "public.calendar_refill_execution_facts" does not exist, skipping
+NOTICE (00000): trigger "trg_calendar_events_post_execution_immutable" for relation "public.calendar_events" does not exist, skipping
+NOTICE (00000): trigger "trg_visits_post_execution_immutable" for relation "public.visits" does not exist, skipping
+Applying migration 095_phase_7_calendar_event_generation_engine.sql...
+NOTICE (00000): constraint "chk_contract_oil_changes_materialization_state" of relation "contract_oil_changes" does not exist, skipping
+NOTICE (00000): constraint "ux_calendar_refill_execution_facts_tenant_id" of relation "calendar_refill_execution_facts" does not exist, skipping
+NOTICE (00000): constraint "fk_contract_oil_changes_calendar_event" of relation "contract_oil_changes" does not exist, skipping
+NOTICE (00000): constraint "fk_contract_oil_changes_queued_after_event" of relation "contract_oil_changes" does not exist, skipping
+NOTICE (00000): constraint "fk_contract_oil_changes_conflict_event" of relation "contract_oil_changes" does not exist, skipping
+NOTICE (00000): constraint "fk_calendar_events_generated_from_fact" of relation "calendar_events" does not exist, skipping
+NOTICE (00000): function public.build_contract_calendar_source_key(uuid,text,uuid,date,date,uuid) does not exist, skipping
+NOTICE (00000): trigger "trg_calendar_events_execution_fact_linkage" for relation "public.calendar_events" does not exist, skipping
+Applying migration 096_phase_7_calendar_reminders.sql...
+NOTICE (00000): migration_preflight: legacy_missed_calendar_events (0)
+NOTICE (00000): trigger "trg_calendar_reminder_plans_snapshot_immutability" for relation "public.calendar_reminder_plans" does not exist, skipping
+NOTICE (00000): trigger "trg_touch_calendar_reminder_plans" for relation "public.calendar_reminder_plans" does not exist, skipping
+NOTICE (00000): trigger "trg_tenant_calendar_settings_reminder_enqueue" for relation "public.tenant_calendar_settings" does not exist, skipping
+NOTICE (00000): trigger "trg_tenant_working_days_reminder_enqueue" for relation "public.tenant_working_days" does not exist, skipping
+NOTICE (00000): trigger "trg_employees_reminder_enqueue" for relation "public.employees" does not exist, skipping
+NOTICE (00000): trigger "trg_tenant_users_reminder_enqueue" for relation "public.tenant_users" does not exist, skipping
+NOTICE (00000): trigger "trg_user_permissions_reminder_enqueue" for relation "public.user_permissions" does not exist, skipping
+NOTICE (00000): trigger "trg_calendar_events_reminder_refresh" for relation "public.calendar_events" does not exist, skipping
+Applying migration 097_phase_7_calendar_read_rpc.sql...
+NOTICE (42710): extension "pgcrypto" already exists, skipping
+Applying migration 098_phase_7_manual_business_event_types.sql...
+Applying migration 099_phase_7_manual_business_events.sql...
+NOTICE (42710): extension "pgcrypto" already exists, skipping
+NOTICE (00000): constraint "chk_calendar_events_time_window_triple" of relation "calendar_events" does not exist, skipping
+NOTICE (00000): constraint "chk_calendar_events_meeting_fields" of relation "calendar_events" does not exist, skipping
+NOTICE (00000): index "ux_calendar_reminder_plans_occurrence" does not exist, skipping
+NOTICE (00000): trigger "trg_calendar_event_participants_reminder_refresh" for relation "public.calendar_event_participants" does not exist, skipping
+Applying migration 100_phase_7_working_date_exceptions.sql...
+NOTICE (42710): extension "pgcrypto" already exists, skipping
+NOTICE (00000): trigger "trg_touch_tenant_working_date_exceptions" for relation "public.tenant_working_date_exceptions" does not exist, skipping
+NOTICE (00000): trigger "trg_tenant_working_date_exceptions_reminder_enqueue" for relation "public.tenant_working_date_exceptions" does not exist, skipping
+Applying migration 101_phase_7_calendar_assignment_rpc.sql...
+NOTICE (42710): extension "pgcrypto" already exists, skipping
+NOTICE (00000): constraint "fk_calendar_events_assigned_agent" of relation "calendar_events" does not exist, skipping
+NOTICE (00000): constraint "fk_calendar_meeting_notices_schedule_operation" of relation "calendar_meeting_notices" does not exist, skipping
+NOTICE (00000): constraint "chk_calendar_meeting_notices_operation_xor" of relation "calendar_meeting_notices" does not exist, skipping
+Applying migration 102_phase_7_calendar_route_view.sql...
+Applying migration 103_phase_7_calendar_m11_hardening.sql...
+WARN: no files matched pattern: supabase/seed.sql
+Restarting containers...
+Finished supabase db reset on branch main.
+A new version of Supabase CLI is available: v2.109.1 (currently installed v2.106.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli

@@ -64,126 +64,142 @@ ProviderContainer _container({
 
 void main() {
   group('CalendarRouteController assigned-only isolation', () {
-    test('assigned-only session loads the day without an employee picker', () async {
-      final repo = FakeCalendarRepository()
-        ..routeDayResult = sampleRouteResult(employeeId: 'self-emp');
-      final container = _container(
-        session: _session(permissions: {'calendar.view_assigned'}),
-        repo: repo,
-      );
-      addTearDown(container.dispose);
+    test(
+      'assigned-only session loads the day without an employee picker',
+      () async {
+        final repo = FakeCalendarRepository()
+          ..routeDayResult = sampleRouteResult(employeeId: 'self-emp');
+        final container = _container(
+          session: _session(permissions: {'calendar.view_assigned'}),
+          repo: repo,
+        );
+        addTearDown(container.dispose);
 
-      await container
-          .read(calendarRouteControllerProvider.notifier)
-          .ensureInitialized(date: DateTime(2026, 7, 14));
+        await container
+            .read(calendarRouteControllerProvider.notifier)
+            .ensureInitialized(date: DateTime(2026, 7, 14));
 
-      final state = container.read(calendarRouteControllerProvider);
-      expect(state.isTenantWide, isFalse);
-      expect(state.awaitingEmployeeSelection, isFalse);
-      expect(state.points, hasLength(1));
-      expect(repo.getRouteDayCount, 1);
-      expect(repo.lastRouteDayEmployeeId, isNull);
-      expect(repo.listRouteEmployeesCount, 0);
-    });
+        final state = container.read(calendarRouteControllerProvider);
+        expect(state.isTenantWide, isFalse);
+        expect(state.awaitingEmployeeSelection, isFalse);
+        expect(state.points, hasLength(1));
+        expect(repo.getRouteDayCount, 1);
+        expect(repo.lastRouteDayEmployeeId, isNull);
+        expect(repo.listRouteEmployeesCount, 0);
+      },
+    );
 
-    test('tenant-wide session waits for an explicit employee before loading the day', () async {
-      final repo = FakeCalendarRepository();
-      final container = _container(
-        session: _session(permissions: {'calendar.view'}),
-        repo: repo,
-      );
-      addTearDown(container.dispose);
+    test(
+      'tenant-wide session waits for an explicit employee before loading the day',
+      () async {
+        final repo = FakeCalendarRepository();
+        final container = _container(
+          session: _session(permissions: {'calendar.view'}),
+          repo: repo,
+        );
+        addTearDown(container.dispose);
 
-      await container
-          .read(calendarRouteControllerProvider.notifier)
-          .ensureInitialized(date: DateTime(2026, 7, 14));
+        await container
+            .read(calendarRouteControllerProvider.notifier)
+            .ensureInitialized(date: DateTime(2026, 7, 14));
 
-      final state = container.read(calendarRouteControllerProvider);
-      expect(state.isTenantWide, isTrue);
-      expect(state.awaitingEmployeeSelection, isTrue);
-      expect(repo.getRouteDayCount, 0);
-      expect(repo.listRouteEmployeesCount, 1);
+        final state = container.read(calendarRouteControllerProvider);
+        expect(state.isTenantWide, isTrue);
+        expect(state.awaitingEmployeeSelection, isTrue);
+        expect(repo.getRouteDayCount, 0);
+        expect(repo.listRouteEmployeesCount, 1);
 
-      await container
-          .read(calendarRouteControllerProvider.notifier)
-          .selectEmployee('emp-5');
+        await container
+            .read(calendarRouteControllerProvider.notifier)
+            .selectEmployee('emp-5');
 
-      expect(repo.getRouteDayCount, 1);
-      expect(repo.lastRouteDayEmployeeId, 'emp-5');
-      expect(
-        container.read(calendarRouteControllerProvider).awaitingEmployeeSelection,
-        isFalse,
-      );
-    });
+        expect(repo.getRouteDayCount, 1);
+        expect(repo.lastRouteDayEmployeeId, 'emp-5');
+        expect(
+          container
+              .read(calendarRouteControllerProvider)
+              .awaitingEmployeeSelection,
+          isFalse,
+        );
+      },
+    );
 
-    test('invalid ?date= is reported without touching the repository', () async {
-      final repo = FakeCalendarRepository();
-      final container = _container(
-        session: _session(),
-        repo: repo,
-      );
-      addTearDown(container.dispose);
+    test(
+      'invalid ?date= is reported without touching the repository',
+      () async {
+        final repo = FakeCalendarRepository();
+        final container = _container(session: _session(), repo: repo);
+        addTearDown(container.dispose);
 
-      container.read(calendarRouteControllerProvider.notifier).reportInvalidDate();
+        container
+            .read(calendarRouteControllerProvider.notifier)
+            .reportInvalidDate();
 
-      final state = container.read(calendarRouteControllerProvider);
-      expect(state.dateInvalid, isTrue);
-      expect(repo.getRouteDayCount, 0);
-    });
+        final state = container.read(calendarRouteControllerProvider);
+        expect(state.dateInvalid, isTrue);
+        expect(repo.getRouteDayCount, 0);
+      },
+    );
   });
 
   group('CalendarRouteController stale-response protection', () {
-    test('a slow first request does not clobber a faster later request', () async {
-      final repo = FakeCalendarRepository();
-      final container = _container(
-        session: _session(permissions: {'calendar.view_assigned'}),
-        repo: repo,
-      );
-      addTearDown(container.dispose);
-      final notifier = container.read(calendarRouteControllerProvider.notifier);
+    test(
+      'a slow first request does not clobber a faster later request',
+      () async {
+        final repo = FakeCalendarRepository();
+        final container = _container(
+          session: _session(permissions: {'calendar.view_assigned'}),
+          repo: repo,
+        );
+        addTearDown(container.dispose);
+        final notifier = container.read(
+          calendarRouteControllerProvider.notifier,
+        );
 
-      final hold = Completer<void>();
-      repo.holdRouteDayUntil = hold;
-      repo.routeDayResult = sampleRouteResult(
-        date: DateTime(2026, 7, 1),
-        points: [sampleRoutePoint(eventId: 'stale-event')],
-      );
+        final hold = Completer<void>();
+        repo.holdRouteDayUntil = hold;
+        repo.routeDayResult = sampleRouteResult(
+          date: DateTime(2026, 7, 1),
+          points: [sampleRoutePoint(eventId: 'stale-event')],
+        );
 
-      final firstLoad = notifier.ensureInitialized(date: DateTime(2026, 7, 1));
+        final firstLoad = notifier.ensureInitialized(
+          date: DateTime(2026, 7, 1),
+        );
 
-      // Second selection completes before the first (held) request resolves.
-      repo.holdRouteDayUntil = null;
-      repo.routeDayResult = sampleRouteResult(
-        date: DateTime(2026, 7, 2),
-        points: [sampleRoutePoint(eventId: 'fresh-event')],
-      );
-      await notifier.selectDate(DateTime(2026, 7, 2));
+        // Second selection completes before the first (held) request resolves.
+        repo.holdRouteDayUntil = null;
+        repo.routeDayResult = sampleRouteResult(
+          date: DateTime(2026, 7, 2),
+          points: [sampleRoutePoint(eventId: 'fresh-event')],
+        );
+        await notifier.selectDate(DateTime(2026, 7, 2));
 
-      hold.complete();
-      await firstLoad;
+        hold.complete();
+        await firstLoad;
 
-      final state = container.read(calendarRouteControllerProvider);
-      expect(state.selectedDate, DateTime(2026, 7, 2));
-      expect(state.points, hasLength(1));
-      expect(state.points.single.event.id, 'fresh-event');
-    });
+        final state = container.read(calendarRouteControllerProvider);
+        expect(state.selectedDate, DateTime(2026, 7, 2));
+        expect(state.points, hasLength(1));
+        expect(state.points.single.event.id, 'fresh-event');
+      },
+    );
 
     test('resets to a fresh state when the session logs out', () async {
       final repo = FakeCalendarRepository();
       final auth = _TestAuthController(
         _session(permissions: {'calendar.view_assigned'}),
       );
-      final container = _container(
-        session: null,
-        repo: repo,
-        auth: auth,
-      );
+      final container = _container(session: null, repo: repo, auth: auth);
       addTearDown(container.dispose);
 
       await container
           .read(calendarRouteControllerProvider.notifier)
           .ensureInitialized(date: DateTime(2026, 7, 14));
-      expect(container.read(calendarRouteControllerProvider).points, isNotEmpty);
+      expect(
+        container.read(calendarRouteControllerProvider).points,
+        isNotEmpty,
+      );
 
       auth.setSession(null);
       await Future<void>.delayed(Duration.zero);
@@ -197,8 +213,9 @@ void main() {
   group('CalendarRouteController errors and tiles', () {
     test('day-load failure then retry succeeds; stale gen discarded', () async {
       final repo = FakeCalendarRepository()
-        ..routeDayError =
-            const CalendarException(code: CalendarException.unknown);
+        ..routeDayError = const CalendarException(
+          code: CalendarException.unknown,
+        );
       final container = _container(
         session: _session(permissions: {'calendar.view_assigned'}),
         repo: repo,
@@ -226,8 +243,9 @@ void main() {
 
     test('employees failure then retry succeeds', () async {
       final repo = FakeCalendarRepository()
-        ..routeEmployeesError =
-            const CalendarException(code: CalendarException.unknown)
+        ..routeEmployeesError = const CalendarException(
+          code: CalendarException.unknown,
+        )
         ..routeEmployeesResult = const CalendarRouteEmployeeListResult(
           employees: [
             CalendarRouteEmployee(
@@ -283,8 +301,9 @@ void main() {
 
     test('loadDirectionsTarget does not launch and surfaces errors', () async {
       final repo = FakeCalendarRepository()
-        ..directionsError =
-            const CalendarException(code: CalendarException.unknown);
+        ..directionsError = const CalendarException(
+          code: CalendarException.unknown,
+        );
       final container = _container(
         session: _session(permissions: {'calendar.view_assigned'}),
         repo: repo,

@@ -1,0 +1,7 @@
+source: supabase/tests/phase_7_calendar_reminders.sql (Gate B Phase Q)
+asserts:
+  - policies off => deliverable count 0
+  - scheduler re-run => no duplicate notifications
+  - unconfigured schedule => no working-hour reminder plans
+note: No external message delivery claimed.
+links_item2: unconfigured live banners + reminders suite unconfigured case.

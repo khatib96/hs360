@@ -156,9 +156,8 @@ class _CustomerOpenInCalendarButton extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     return TextButton.icon(
       key: const Key('customer-view-in-calendar'),
-      onPressed: () => context.push(
-        AppRoutes.calendarPath(customerId: customerId),
-      ),
+      onPressed: () =>
+          context.push(AppRoutes.calendarPath(customerId: customerId)),
       icon: const Icon(Icons.calendar_month_outlined, size: 18),
       label: Text(l10n.calendarOpenInCalendar),
     );

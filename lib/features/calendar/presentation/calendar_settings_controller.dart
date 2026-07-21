@@ -166,7 +166,12 @@ class CalendarSettingsController extends _$CalendarSettingsController {
             remindPreviousWorkdayStart: state.remindPreviousWorkdayStart,
             days: state.days,
           );
-      if (!_isCurrentSave(gen, capturedUserId, capturedTenantId, capturedTenantUserId)) {
+      if (!_isCurrentSave(
+        gen,
+        capturedUserId,
+        capturedTenantId,
+        capturedTenantUserId,
+      )) {
         return false;
       }
       state = CalendarSettingsState.fromSettings(
@@ -174,13 +179,23 @@ class CalendarSettingsController extends _$CalendarSettingsController {
       ).copyWith(isSaving: false, saveSuccess: true, isDirty: false);
       return true;
     } on FinanceException catch (e) {
-      if (!_isCurrentSave(gen, capturedUserId, capturedTenantId, capturedTenantUserId)) {
+      if (!_isCurrentSave(
+        gen,
+        capturedUserId,
+        capturedTenantId,
+        capturedTenantUserId,
+      )) {
         return false;
       }
       state = state.copyWith(isSaving: false, errorCode: e.code);
       return false;
     } catch (_) {
-      if (!_isCurrentSave(gen, capturedUserId, capturedTenantId, capturedTenantUserId)) {
+      if (!_isCurrentSave(
+        gen,
+        capturedUserId,
+        capturedTenantId,
+        capturedTenantUserId,
+      )) {
         return false;
       }
       state = state.copyWith(

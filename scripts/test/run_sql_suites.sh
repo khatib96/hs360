@@ -192,6 +192,9 @@ printf 'Phase W: Phase 7 M11 cross-module + performance\n'
 run_suite "supabase/tests/phase_7_m11_cross_module.sql"
 run_suite "supabase/tests/phase_7_m11_performance.sql"
 
+printf 'Phase W.4: Phase 7 M12 trusted Phase 8 handoff acceptance\n'
+run_suite "supabase/tests/phase_7_m12_trusted_handoff_acceptance.sql"
+
 printf 'Phase W.5: Phase 7 M11 Phase 6/7 audit-journal reclaim (pre pollution gate)\n'
 run_suite "supabase/tests/phase_7_m11_phase67_audit_reclaim.sql"
 

@@ -28,55 +28,79 @@ void main() {
     defaultValue: 'en',
   );
   final tag = const String.fromEnvironment('P6M13_TAG', defaultValue: 'EN');
+  // Phase 7 M12: stop after contract→calendar handoff (before PDF/finance close).
+  final calendarOnly = const bool.fromEnvironment(
+    'P7M12_CALENDAR_ONLY',
+    defaultValue: false,
+  );
 
-  testWidgets('P6M13 manual acceptance ($localeCode)', (tester) async {
-    if (Env.supabaseAnonKey.isEmpty) {
-      fail('SUPABASE_ANON_KEY is required for P6M13 manual acceptance');
-    }
+  testWidgets(
+    calendarOnly
+        ? 'P7M12 calendar-only acceptance ($localeCode)'
+        : 'P6M13 manual acceptance ($localeCode)',
+    (tester) async {
+      if (Env.supabaseAnonKey.isEmpty) {
+        fail('SUPABASE_ANON_KEY is required for P6M13 manual acceptance');
+      }
 
-    final serial = 'P6M13-$tag-SN001';
+      final serial = 'P6M13-$tag-SN001';
 
-    SharedPreferences.setMockInitialValues({preferredLocaleKey: localeCode});
+      SharedPreferences.setMockInitialValues({preferredLocaleKey: localeCode});
 
-    await SupabaseClientProvider.initialize();
-    await tester.binding.setSurfaceSize(const Size(1440, 1200));
-    addTearDown(() => tester.binding.setSurfaceSize(null));
+      await SupabaseClientProvider.initialize();
+      await tester.binding.setSurfaceSize(const Size(1440, 1200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
 
-    await tester.pumpWidget(const ProviderScope(child: App()));
-    await tester.pumpAndSettle(const Duration(seconds: 3));
+      await tester.pumpWidget(const ProviderScope(child: App()));
+      await tester.pumpAndSettle(const Duration(seconds: 3));
 
-    final l10n = lookupAppLocalizations(Locale(localeCode));
+      final l10n = lookupAppLocalizations(Locale(localeCode));
 
-    await _signIn(tester, l10n);
-    await _openContractsNew(tester, l10n);
-    await _createTrial(tester, l10n, tag: tag, serial: serial);
-    final context = await _convertTrial(tester, l10n);
-    await _assertUpcomingScheduleFromServer(
-      tester,
-      l10n,
-      contractId: context.contractId,
-      expectPendingEvents: true,
-    );
-    final collectedMonthKey = await _collectRental(tester, l10n);
-    await _assertContractPdfPreview(tester, l10n, context.contractId);
-    await _assertUpcomingScheduleFromServer(
-      tester,
-      l10n,
-      contractId: context.contractId,
-      expectPendingEvents: false,
-      collectedMonthKey: collectedMonthKey,
-    );
-    await _assertCustomerStatement(
-      tester,
-      l10n,
-      customerId: context.customerId,
-      contractId: context.contractId,
-      collectedMonthKey: collectedMonthKey,
-    );
-    await _navigateToContractDetail(tester, context.contractId);
-    await _closeRental(tester, l10n);
-    await _assertCollectedInvoicePaid(context.contractId);
-  });
+      await _signIn(tester, l10n);
+      await _openContractsNew(tester, l10n);
+      await _createTrial(tester, l10n, tag: tag, serial: serial);
+      final context = await _convertTrial(tester, l10n);
+      final scheduleEvents = await _assertUpcomingScheduleFromServer(
+        tester,
+        l10n,
+        contractId: context.contractId,
+        expectPendingEvents: true,
+      );
+
+      if (calendarOnly) {
+        final first = scheduleEvents.first;
+        await _assertCalendarHandoffInApp(
+          tester,
+          l10n,
+          customerId: context.customerId,
+          contractId: context.contractId,
+          eventId: first['id'] as String,
+          scheduledDate: DateTime.parse(first['scheduled_date'] as String),
+        );
+        return;
+      }
+
+      final collectedMonthKey = await _collectRental(tester, l10n);
+      await _assertContractPdfPreview(tester, l10n, context.contractId);
+      await _assertUpcomingScheduleFromServer(
+        tester,
+        l10n,
+        contractId: context.contractId,
+        expectPendingEvents: false,
+        collectedMonthKey: collectedMonthKey,
+      );
+      await _assertCustomerStatement(
+        tester,
+        l10n,
+        customerId: context.customerId,
+        contractId: context.contractId,
+        collectedMonthKey: collectedMonthKey,
+      );
+      await _navigateToContractDetail(tester, context.contractId);
+      await _closeRental(tester, l10n);
+      await _assertCollectedInvoicePaid(context.contractId);
+    },
+  );
 }
 
 class _P6M13ContractContext {
@@ -193,13 +217,13 @@ Future<_P6M13ContractContext> _convertTrial(
   final path = GoRouter.of(element).state.uri.path;
   final contractId = path.split('/').last;
   final customerId = await _fetchContractCustomerId(contractId);
-  return _P6M13ContractContext(
-    contractId: contractId,
-    customerId: customerId,
-  );
+  return _P6M13ContractContext(contractId: contractId, customerId: customerId);
 }
 
-Future<String> _collectRental(WidgetTester tester, AppLocalizations l10n) async {
+Future<String> _collectRental(
+  WidgetTester tester,
+  AppLocalizations l10n,
+) async {
   final collectButton = find.byKey(const Key('contract-detail-collect-rental'));
   await tester.ensureVisible(collectButton);
   await tester.pumpAndSettle();
@@ -212,7 +236,8 @@ Future<String> _collectRental(WidgetTester tester, AppLocalizations l10n) async 
     (widget) => widget is FilterChip && widget.selected,
   );
   expect(selectedMonth, findsOneWidget);
-  final monthKey = (tester.widget<FilterChip>(selectedMonth).label as Text).data!;
+  final monthKey =
+      (tester.widget<FilterChip>(selectedMonth).label as Text).data!;
   expect(monthKey, isNotEmpty);
 
   await tester.tap(find.byKey(const Key('collect-rental-submit')));
@@ -275,65 +300,154 @@ Future<void> _assertContractPdfPreview(
 
   await tester.tap(find.byType(BackButton));
   await tester.pumpAndSettle(const Duration(seconds: 3));
-  expect(find.byKey(const Key('contract-detail-collect-rental')), findsOneWidget);
+  expect(
+    find.byKey(const Key('contract-detail-collect-rental')),
+    findsOneWidget,
+  );
 }
 
-Future<void> _assertUpcomingScheduleFromServer(
+/// Schedule truth for authenticated clients comes through security-definer
+/// `get_contract_detail.upcoming_schedule` (and the Contract Detail UI that
+/// renders it) — not direct `calendar_events` SELECT or revoked list RPC EXECUTE.
+Future<List<Map<String, dynamic>>> _assertUpcomingScheduleFromServer(
   WidgetTester tester,
   AppLocalizations l10n, {
   required String contractId,
   required bool expectPendingEvents,
   String? collectedMonthKey,
 }) async {
-  final serverEvents = await _fetchUpcomingSchedule(contractId);
+  final serverEvents = await _fetchUpcomingScheduleViaContractDetail(
+    contractId,
+  );
 
   await tester.ensureVisible(
     find.byKey(const Key('contract-upcoming-schedule-section')),
   );
   await tester.pumpAndSettle();
 
-  expect(find.byKey(const Key('contract-upcoming-schedule-section')), findsOneWidget);
+  expect(
+    find.byKey(const Key('contract-upcoming-schedule-section')),
+    findsOneWidget,
+  );
 
   if (expectPendingEvents) {
-    expect(serverEvents, isNotEmpty, reason: 'server must return pending schedule rows');
-    expect(find.byKey(const Key('contract-upcoming-schedule-empty')), findsNothing);
-    expect(find.byKey(const Key('contract-upcoming-schedule-event-0')), findsOneWidget);
+    expect(
+      serverEvents,
+      isNotEmpty,
+      reason: 'get_contract_detail must return pending schedule rows',
+    );
+    expect(
+      find.byKey(const Key('contract-upcoming-schedule-empty')),
+      findsNothing,
+    );
+    expect(
+      find.byKey(const Key('contract-upcoming-schedule-event-0')),
+      findsOneWidget,
+    );
     expect(find.text(l10n.contractScheduleEventBillingDue), findsWidgets);
-    return;
+    final hasBillingDue = serverEvents.any(
+      (row) => row['type'] == 'billing_due',
+    );
+    expect(
+      hasBillingDue,
+      isTrue,
+      reason:
+          'generated schedule must include a real billing_due calendar event',
+    );
+    return serverEvents;
+  }
+
+  if (collectedMonthKey != null) {
+    final stillPending = serverEvents.any(
+      (row) => row['coverage_month_key'] == collectedMonthKey,
+    );
+    expect(
+      stillPending,
+      isFalse,
+      reason:
+          'collected month must not remain pending in get_contract_detail '
+          'upcoming_schedule (authorized substitute for done calendar_events)',
+    );
   }
 
   if (serverEvents.isEmpty) {
-    expect(find.byKey(const Key('contract-upcoming-schedule-empty')), findsOneWidget);
-    if (collectedMonthKey != null) {
-      final doneBilling = await Supabase.instance.client
-          .from('calendar_events')
-          .select('status, source_metadata')
-          .eq('contract_id', contractId)
-          .eq('type', 'billing_due');
-      expect(doneBilling, isNotEmpty);
-      final covered = doneBilling.any((row) {
-        final metadata = Map<String, dynamic>.from(row['source_metadata'] as Map);
-        return metadata['coverage_month_key'] == collectedMonthKey &&
-            row['status'] == 'done';
-      });
-      expect(covered, isTrue, reason: 'collected month billing event should be done');
-    }
-    return;
+    expect(
+      find.byKey(const Key('contract-upcoming-schedule-empty')),
+      findsOneWidget,
+    );
+    return serverEvents;
   }
 
-  expect(find.byKey(const Key('contract-upcoming-schedule-empty')), findsNothing);
-  expect(find.byKey(const Key('contract-upcoming-schedule-event-0')), findsOneWidget);
+  expect(
+    find.byKey(const Key('contract-upcoming-schedule-empty')),
+    findsNothing,
+  );
+  expect(
+    find.byKey(const Key('contract-upcoming-schedule-event-0')),
+    findsOneWidget,
+  );
+  return serverEvents;
 }
 
-Future<List<Map<String, dynamic>>> _fetchUpcomingSchedule(
+Future<List<Map<String, dynamic>>> _fetchUpcomingScheduleViaContractDetail(
   String contractId,
 ) async {
   final raw = await Supabase.instance.client.rpc(
-    'list_contract_upcoming_events_json',
-    params: {'p_contract_id': contractId, 'p_limit': 10},
+    'get_contract_detail',
+    params: {'p_contract_id': contractId},
   );
-  if (raw is! List) return const [];
-  return raw.map((row) => Map<String, dynamic>.from(row as Map)).toList();
+  final detail = Map<String, dynamic>.from(raw as Map);
+  final schedule = detail['upcoming_schedule'];
+  if (schedule is! List) return const [];
+  return schedule.map((row) => Map<String, dynamic>.from(row as Map)).toList();
+}
+
+Future<void> _assertCalendarHandoffInApp(
+  WidgetTester tester,
+  AppLocalizations l10n, {
+  required String customerId,
+  required String contractId,
+  required String eventId,
+  required DateTime scheduledDate,
+}) async {
+  final viewInCalendar = find.byKey(const Key('contract-view-in-calendar'));
+  expect(viewInCalendar, findsOneWidget);
+  await tester.ensureVisible(viewInCalendar);
+  await tester.tap(viewInCalendar);
+  await tester.pumpAndSettle(const Duration(seconds: 10));
+
+  expect(
+    find.byKey(const Key('calendar-route-scope-banner')),
+    findsOneWidget,
+    reason: 'calendar must open with contract route scope from detail handoff',
+  );
+  expect(
+    find.byKey(const Key('calendar-route-scope-contract-chip')),
+    findsOneWidget,
+  );
+
+  // Focus the generated event day so agenda cards mount (detail link omits date).
+  final scopeElement = tester.element(
+    find.byKey(const Key('calendar-route-scope-banner')),
+  );
+  GoRouter.of(scopeElement).go(
+    AppRoutes.calendarPath(
+      customerId: customerId,
+      contractId: contractId,
+      date: scheduledDate,
+    ),
+  );
+  await tester.pumpAndSettle(const Duration(seconds: 10));
+
+  expect(
+    find.byKey(Key('calendar-event-$eventId')),
+    findsOneWidget,
+    reason: 'scoped calendar must show the generated contract event',
+  );
+
+  // Stop after contract→calendar handoff — before PDF / statement / payment / close.
+  expect(find.text(l10n.navCalendar), findsWidgets);
+  expect(find.byKey(const Key('contract-detail-preview')), findsNothing);
 }
 
 Future<void> _assertCustomerStatement(
@@ -399,10 +513,15 @@ Future<void> _navigateToContractDetail(
   WidgetTester tester,
   String contractId,
 ) async {
-  final element = tester.element(find.byKey(const Key('customer-statement-loaded')));
+  final element = tester.element(
+    find.byKey(const Key('customer-statement-loaded')),
+  );
   GoRouter.of(element).go(AppRoutes.contractDetailPath(contractId));
   await tester.pumpAndSettle(const Duration(seconds: 5));
-  expect(find.byKey(const Key('contract-detail-collect-rental')), findsOneWidget);
+  expect(
+    find.byKey(const Key('contract-detail-collect-rental')),
+    findsOneWidget,
+  );
 }
 
 Future<void> _closeRental(WidgetTester tester, AppLocalizations l10n) async {

@@ -28,15 +28,13 @@ Future<void> _pump(
 
 void main() {
   testWidgets('renders nothing for an empty scope', (tester) async {
-    await _pump(
-      tester,
-      scope: CalendarRouteScope.empty,
-      onClear: () {},
-    );
+    await _pump(tester, scope: CalendarRouteScope.empty, onClear: () {});
     expect(find.byKey(const Key('calendar-route-scope-banner')), findsNothing);
   });
 
-  testWidgets('renders nothing for a date-only scope (focus only)', (tester) async {
+  testWidgets('renders nothing for a date-only scope (focus only)', (
+    tester,
+  ) async {
     final scope = CalendarRouteScope.fromQueryParameters(const {
       'date': '2026-08-20',
     });
@@ -53,7 +51,10 @@ void main() {
     });
     await _pump(tester, scope: scope, onClear: () {});
 
-    expect(find.byKey(const Key('calendar-route-scope-banner')), findsOneWidget);
+    expect(
+      find.byKey(const Key('calendar-route-scope-banner')),
+      findsOneWidget,
+    );
     expect(
       find.byKey(const Key('calendar-route-scope-customer-chip')),
       findsOneWidget,
@@ -118,7 +119,10 @@ void main() {
     });
     await _pump(tester, scope: scope, onClear: () {});
 
-    expect(find.byKey(const Key('calendar-route-scope-banner')), findsOneWidget);
+    expect(
+      find.byKey(const Key('calendar-route-scope-banner')),
+      findsOneWidget,
+    );
     expect(
       find.byKey(const Key('calendar-route-scope-customer-chip')),
       findsNothing,
@@ -144,7 +148,10 @@ void main() {
       locale: const Locale('ar'),
     );
 
-    expect(find.byKey(const Key('calendar-route-scope-banner')), findsOneWidget);
+    expect(
+      find.byKey(const Key('calendar-route-scope-banner')),
+      findsOneWidget,
+    );
     expect(
       find.byKey(const Key('calendar-route-scope-customer-chip')),
       findsOneWidget,

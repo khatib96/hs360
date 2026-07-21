@@ -5,11 +5,16 @@
 > customer visits, tasks, reminders, activities, and other controlled manual
 > business appointments in one operational calendar.
 >
-> Status: **M0–M11 complete / accepted** (M8 Flutter still
-> `OWNER RE-ACCEPTANCE PENDING`). Migrations `093`–`102` remain byte-unchanged.
-> **M11 CLOSED / ACCEPTED** (2026-07-19) with evidence-gated
-> migration `103` (date-bounded reads + summary facts + composite index).
-> M12 / Phase 8 not started. Map provider decision: `docs/PHASE_7_M10_MAP_PROVIDER.md`.
+> Status: **M0–M12 complete / accepted — `PHASE 7 CLOSED / ACCEPTED`** including
+> **`M8 FLUTTER CLOSED / ACCEPTED`** (Gate D **PASS / OWNER ACCEPTED**,
+> 2026-07-19). Migrations `093`–`102` remain byte-unchanged
+> relative to pre-`103`; **`103`** is the evidence-gated M11 migration and must
+> stay byte-identical through M12. **M11 CLOSED / ACCEPTED** (2026-07-19).
+> **M12 `CLOSED / ACCEPTED`** — Gates D/E/F **`PASS / OWNER ACCEPTED`**,
+> Gate G **PASS**, and Final Gate H **PASS** through migration `104`. Gate F
+> used physical iOS + Android Emulator. **Physical Android smoke is required
+> before production** under the owner-approved deferral. Phase 8 not started.
+> Map provider decision: `docs/PHASE_7_M10_MAP_PROVIDER.md`.
 >
 > Owner direction (revised 2026-07-15): HS360 Calendar is the company's shared
 > appointment-management surface, not only a contract-follow-up calendar. The
@@ -1870,7 +1875,9 @@ full Flutter **1417**; SQL runner green; perf 2+20 passed; `093`–`102`
 checksums unchanged. **Pollution micro-corrective (same day):** strict count
 equality for all 11 tables, Phase W.5 audit-journal reclaim, baseline table
 dropped after success + runner EXIT/finally cleanup. The owner explicitly
-accepted M11 on 2026-07-19. M8 Flutter re-acceptance remains independent.
+accepted M11 on 2026-07-19. M8 Flutter was later accepted independently
+(**`M8 FLUTTER CLOSED / ACCEPTED`**, Gate D **PASS / OWNER ACCEPTED**,
+2026-07-19).
 
 ### Goal
 
@@ -2216,14 +2223,17 @@ Phase 6 foundation can be reused without corrective work.
 
 ## Starting Point For Implementation
 
-M0–M11 are closed/accepted for their scopes (M8 Flutter still
-`OWNER RE-ACCEPTANCE PENDING`). **M11 is `CLOSED / ACCEPTED`** (2026-07-19).
-Migrations `093`–`102` remain byte-unchanged /
-checksummed; evidence-gated `103` was created. M12 and Phase 8 are not started.
-
-Next milestone: **M12 Verification and Phase Close** (not started) — begin only
-after an explicit owner request.
-Do not start Phase 8 until Phase 7 is closed.
+M0–M12 are closed/accepted for their scopes, including
+**`M8 FLUTTER CLOSED / ACCEPTED`** (Gate D **PASS / OWNER ACCEPTED**,
+2026-07-19). **M11 is `CLOSED / ACCEPTED`** (2026-07-19).
+Migrations `093`–`103` remain byte-unchanged / checksummed; M12 adds evidence-
+gated **`104`** (route event contract fix for Item 20).
+**M12 and Phase 7 status:** `CLOSED / ACCEPTED`.
+Gates D/E/F are **`PASS / OWNER ACCEPTED`**; Gate G and Final Gate H are
+**PASS** through migration `104`. Gate F acceptance is based on physical iOS
+and Android Emulator evidence. Physical Android smoke remains a required
+pre-production obligation and is not claimed by this packet. Phase 8 is not
+started.
 Operations Map for rented/trial devices remains Phase 10.
 
 Do not begin external reminder delivery until:

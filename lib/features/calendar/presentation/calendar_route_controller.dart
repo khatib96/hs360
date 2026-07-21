@@ -136,7 +136,10 @@ class CalendarRouteController extends _$CalendarRouteController {
       final trimmed = query.trim();
       final result = await ref
           .read(calendarRepositoryProvider)
-          .listRouteEmployees(session, search: trimmed.isEmpty ? null : trimmed);
+          .listRouteEmployees(
+            session,
+            search: trimmed.isEmpty ? null : trimmed,
+          );
       if (gen != _employeesGeneration) return;
       state = state.copyWith(
         isLoadingEmployees: false,
@@ -146,7 +149,10 @@ class CalendarRouteController extends _$CalendarRouteController {
       );
     } on CalendarException catch (e) {
       if (gen != _employeesGeneration) return;
-      state = state.copyWith(isLoadingEmployees: false, employeesErrorCode: e.code);
+      state = state.copyWith(
+        isLoadingEmployees: false,
+        employeesErrorCode: e.code,
+      );
     } catch (_) {
       if (gen != _employeesGeneration) return;
       state = state.copyWith(

@@ -103,9 +103,7 @@ void main() {
     await _capture(tester, 'm7b_03_create_company_closure_range_en_ltr');
   });
 
-  testWidgets('4. exceptional working day with limited hours', (
-    tester,
-  ) async {
+  testWidgets('4. exceptional working day with limited hours', (tester) async {
     await _pumpSettings(
       tester,
       size: _desktop,

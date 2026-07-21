@@ -1,0 +1,6 @@
+gate_g_note | list_calendar_events P95 hard ceiling 3000ms; 800ms target non-blocking
+source_suite | supabase/tests/phase_7_m11_performance.sql
+gate_b_recorded_p95_ms | 1089
+post_104_rerun_p95_ms | 1066.16
+hard_ceiling_hold | true
+route_day_p95_ms | 27.66

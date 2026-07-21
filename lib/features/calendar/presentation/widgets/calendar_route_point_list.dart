@@ -173,9 +173,9 @@ class _CalendarRoutePointTile extends ConsumerWidget {
         .loadDirectionsTarget(point.event.id);
     if (!host.mounted) return;
     if (target == null) {
-      ScaffoldMessenger.of(host).showSnackBar(
-        SnackBar(content: Text(l10n.calendarDirectionsFailed)),
-      );
+      ScaffoldMessenger.of(
+        host,
+      ).showSnackBar(SnackBar(content: Text(l10n.calendarDirectionsFailed)));
       return;
     }
     final result = await presentCalendarDirectionsChooser(

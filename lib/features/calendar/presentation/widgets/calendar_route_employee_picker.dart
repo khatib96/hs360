@@ -122,7 +122,9 @@ class _CalendarRouteEmployeePickerState
                     final selected =
                         employee.employeeId == widget.selectedEmployeeId;
                     return ListTile(
-                      key: Key('calendar-route-employee-${employee.employeeId}'),
+                      key: Key(
+                        'calendar-route-employee-${employee.employeeId}',
+                      ),
                       dense: true,
                       selected: selected,
                       leading: Icon(

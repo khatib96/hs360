@@ -1,0 +1,7 @@
+rpc: get_calendar_route_day (migration 104 contract fix)
+result: points[].location_state = missing for P7M12 Unmapped Route Visit
+        points keep event.execution_summary key (JSON null when no fact)
+        mapped companion P7M12 Mapped Route Visit retains latitude/longitude
+live_ui: ge_*_15_route_missing_coords.png
+status: READY / PASS EVIDENCE (Item 20 corrected)
+prior_defect: P7M12-GE-I20-EXECUTION-SUMMARY FIXED by 104_phase_7_m12_route_event_contract_fix.sql

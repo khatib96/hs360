@@ -83,7 +83,10 @@ class _CalendarRouteScreenState extends ConsumerState<CalendarRouteScreen> {
         key: const Key('calendar-route-invalid-date'),
         child: Padding(
           padding: const EdgeInsets.all(24),
-          child: Text(l10n.calendarRouteInvalidDate, textAlign: TextAlign.center),
+          child: Text(
+            l10n.calendarRouteInvalidDate,
+            textAlign: TextAlign.center,
+          ),
         ),
       );
     }
@@ -120,7 +123,8 @@ class _CalendarRouteScreenState extends ConsumerState<CalendarRouteScreen> {
               errorMessage: state.employeesErrorCode == null
                   ? null
                   : l10n.calendarRouteEmployeesLoadFailed,
-              onRetry: () => notifier.loadEmployees(search: state.employeeSearch),
+              onRetry: () =>
+                  notifier.loadEmployees(search: state.employeeSearch),
               onSearchChanged: (search) =>
                   notifier.loadEmployees(search: search),
               onSelect: notifier.selectEmployee,

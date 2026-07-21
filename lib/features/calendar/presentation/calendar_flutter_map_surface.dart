@@ -70,7 +70,9 @@ class _FlutterMapCalendarMapSurfaceBodyState
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final mapped = widget.points.where((p) => p.isMapped).toList(growable: false);
+    final mapped = widget.points
+        .where((p) => p.isMapped)
+        .toList(growable: false);
     if (mapped.isEmpty) {
       return _MapPlaceholder(
         placeholderKey: const Key('calendar-map-empty'),

@@ -48,8 +48,14 @@ void main() {
       size: _phone360,
       customerId: _customerId,
     );
-    expect(find.byKey(const Key('calendar-route-scope-banner')), findsOneWidget);
-    expect(find.byKey(const Key('calendar-route-scope-customer-chip')), findsOneWidget);
+    expect(
+      find.byKey(const Key('calendar-route-scope-banner')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const Key('calendar-route-scope-customer-chip')),
+      findsOneWidget,
+    );
     await _capture(tester, 'm11_01_customer_scope_mobile_360_en_ltr');
   });
 
@@ -71,7 +77,10 @@ void main() {
       customerId: _customerId,
       contractId: _contractId,
     );
-    expect(find.byKey(const Key('calendar-route-scope-contract-chip')), findsOneWidget);
+    expect(
+      find.byKey(const Key('calendar-route-scope-contract-chip')),
+      findsOneWidget,
+    );
     await _capture(tester, 'm11_03_contract_scope_mobile_412_en_ltr');
   });
 

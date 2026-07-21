@@ -1488,7 +1488,10 @@ set local role postgres;
 do $$
 declare v_pending uuid; v_delivered uuid; v_event_pending uuid; v_event_delivered uuid;
 begin
-  v_event_pending := pg_temp.p7m3_create_pending_event(current_date + 5, '00000000-0000-0000-0000-000000000602');
+  v_event_pending := pg_temp.p7m3_create_pending_event(
+    pg_temp.p7m3_next_iso_weekday(1, current_date + 1),
+    '00000000-0000-0000-0000-000000000602'
+  );
   perform public.refresh_calendar_event_reminder_plans(v_event_pending);
   v_pending := (pg_temp.p7m3_plan_row(v_event_pending, 'event_workday_start')).id;
   v_delivered := pg_temp.p7m3_setup_delivery_case(

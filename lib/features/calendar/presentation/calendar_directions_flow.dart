@@ -1,4 +1,5 @@
-import 'package:flutter/foundation.dart' show TargetPlatform, defaultTargetPlatform;
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
@@ -24,9 +25,9 @@ Future<CalendarDirectionsResult> presentCalendarDirectionsChooser({
   );
   if (!context.mounted) return CalendarDirectionsResult.cancelled;
   if (options.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.calendarDirectionsFailed)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(l10n.calendarDirectionsFailed)));
     return CalendarDirectionsResult.invalidTarget;
   }
 
@@ -39,9 +40,9 @@ Future<CalendarDirectionsResult> presentCalendarDirectionsChooser({
 
   final result = await launcher.launch(selected);
   if (result == CalendarDirectionsResult.launchFailed && context.mounted) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.calendarDirectionsFailed)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(l10n.calendarDirectionsFailed)));
   }
   return result;
 }

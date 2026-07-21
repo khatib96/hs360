@@ -120,9 +120,7 @@ class CalendarSectionLoader {
     final requestedKey = requestedFilters.canonicalQueryKey;
     // Route scope (customer/contract deep link) is merged into the RPC
     // payload only; requestedFilters (UI-facing) stays untouched.
-    final requestFilters = _state.routeScope.mergeIntoFilters(
-      requestedFilters,
-    );
+    final requestFilters = _state.routeScope.mergeIntoFilters(requestedFilters);
     _state = _state.copyWith(isLoadingSummary: true, clearSummaryError: true);
 
     try {

@@ -66,7 +66,8 @@ class CalendarMapTileConfig {
       return 'missing_zxy';
     }
 
-    if (template.contains('{key}') && (apiKey == null || apiKey!.trim().isEmpty)) {
+    if (template.contains('{key}') &&
+        (apiKey == null || apiKey!.trim().isEmpty)) {
       return 'missing_key';
     }
 

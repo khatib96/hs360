@@ -147,83 +147,94 @@ void main() {
     expect(state.hasExplicitSelectedDate, isTrue);
   });
 
-  test('clearRouteScope drops the merged IDs from subsequent repo calls', () async {
-    final repo = FakeCalendarRepository();
-    final container = _container(session: _session(), repo: repo);
-    addTearDown(container.dispose);
-    await _boot(container);
+  test(
+    'clearRouteScope drops the merged IDs from subsequent repo calls',
+    () async {
+      final repo = FakeCalendarRepository();
+      final container = _container(session: _session(), repo: repo);
+      addTearDown(container.dispose);
+      await _boot(container);
 
-    final scope = CalendarRouteScope.fromQueryParameters(const {
-      'customerId': _customerId,
-    });
-    await container
-        .read(calendarControllerProvider.notifier)
-        .applyRouteScope(scope);
-    await _waitForIdle(container);
-    expect(repo.lastRangeFilters?.customerId, _customerId);
+      final scope = CalendarRouteScope.fromQueryParameters(const {
+        'customerId': _customerId,
+      });
+      await container
+          .read(calendarControllerProvider.notifier)
+          .applyRouteScope(scope);
+      await _waitForIdle(container);
+      expect(repo.lastRangeFilters?.customerId, _customerId);
 
-    await container.read(calendarControllerProvider.notifier).clearRouteScope();
-    await _waitForIdle(container);
+      await container
+          .read(calendarControllerProvider.notifier)
+          .clearRouteScope();
+      await _waitForIdle(container);
 
-    final state = container.read(calendarControllerProvider);
-    expect(state.routeScope.isEmpty, isTrue);
-    expect(repo.lastRangeFilters?.customerId, isNull);
-    expect(repo.lastListFilters?.customerId, isNull);
-  });
+      final state = container.read(calendarControllerProvider);
+      expect(state.routeScope.isEmpty, isTrue);
+      expect(repo.lastRangeFilters?.customerId, isNull);
+      expect(repo.lastListFilters?.customerId, isNull);
+    },
+  );
 
-  test('an invalid scope is stored without any IDs and never reaches the repo', () async {
-    final repo = FakeCalendarRepository();
-    final container = _container(session: _session(), repo: repo);
-    addTearDown(container.dispose);
-    await _boot(container);
+  test(
+    'an invalid scope is stored without any IDs and never reaches the repo',
+    () async {
+      final repo = FakeCalendarRepository();
+      final container = _container(session: _session(), repo: repo);
+      addTearDown(container.dispose);
+      await _boot(container);
 
-    final scope = CalendarRouteScope.fromQueryParameters(const {
-      'customerId': 'not-a-uuid',
-    });
-    await container
-        .read(calendarControllerProvider.notifier)
-        .applyRouteScope(scope);
-    await _waitForIdle(container);
+      final scope = CalendarRouteScope.fromQueryParameters(const {
+        'customerId': 'not-a-uuid',
+      });
+      await container
+          .read(calendarControllerProvider.notifier)
+          .applyRouteScope(scope);
+      await _waitForIdle(container);
 
-    final state = container.read(calendarControllerProvider);
-    expect(state.routeScope.isInvalid, isTrue);
-    expect(state.routeScopeInvalid, isTrue);
-    expect(repo.lastRangeFilters?.customerId, isNull);
-  });
+      final state = container.read(calendarControllerProvider);
+      expect(state.routeScope.isInvalid, isTrue);
+      expect(state.routeScopeInvalid, isTrue);
+      expect(repo.lastRangeFilters?.customerId, isNull);
+    },
+  );
 
-  test('identity change (tenantUserId only) clears any active route scope', () async {
-    final auth = _TestAuthController(_session(tenantUserId: 'tu-1'));
-    final repo = FakeCalendarRepository();
-    final container = _container(
-      session: _session(tenantUserId: 'tu-1'),
-      repo: repo,
-      auth: auth,
-    );
-    addTearDown(container.dispose);
-    await _boot(container);
+  test(
+    'identity change (tenantUserId only) clears any active route scope',
+    () async {
+      final auth = _TestAuthController(_session(tenantUserId: 'tu-1'));
+      final repo = FakeCalendarRepository();
+      final container = _container(
+        session: _session(tenantUserId: 'tu-1'),
+        repo: repo,
+        auth: auth,
+      );
+      addTearDown(container.dispose);
+      await _boot(container);
 
-    final scope = CalendarRouteScope.fromQueryParameters(const {
-      'customerId': _customerId,
-    });
-    await container
-        .read(calendarControllerProvider.notifier)
-        .applyRouteScope(scope);
-    await _waitForIdle(container);
-    expect(
-      container.read(calendarControllerProvider).routeScope.isEmpty,
-      isFalse,
-    );
+      final scope = CalendarRouteScope.fromQueryParameters(const {
+        'customerId': _customerId,
+      });
+      await container
+          .read(calendarControllerProvider.notifier)
+          .applyRouteScope(scope);
+      await _waitForIdle(container);
+      expect(
+        container.read(calendarControllerProvider).routeScope.isEmpty,
+        isFalse,
+      );
 
-    // Same userId/tenantId, only tenantUserId changes (e.g. re-provisioned
-    // membership row) — must still reset like any other identity change.
-    auth.setSession(_session(tenantUserId: 'tu-2'));
-    await _waitForIdle(container);
+      // Same userId/tenantId, only tenantUserId changes (e.g. re-provisioned
+      // membership row) — must still reset like any other identity change.
+      auth.setSession(_session(tenantUserId: 'tu-2'));
+      await _waitForIdle(container);
 
-    expect(
-      container.read(calendarControllerProvider).routeScope.isEmpty,
-      isTrue,
-    );
-  });
+      expect(
+        container.read(calendarControllerProvider).routeScope.isEmpty,
+        isTrue,
+      );
+    },
+  );
 
   test(
     'delayed response from a stale tenant does not write after switching tenants mid-scope',
@@ -299,34 +310,39 @@ void main() {
     },
   );
 
-  test('invalid route scope performs zero repository reads and clears rows', () async {
-    final repo = FakeCalendarRepository(
-      listResult: sampleEventList(
-        inRangeRows: [sampleCalendarEvent(id: 'should-not-appear')],
-      ),
-    );
-    final container = _container(session: _session(), repo: repo);
-    addTearDown(container.dispose);
-    await _boot(container);
-    final beforeSummary = repo.getRangeSummaryCount;
-    final beforeList = repo.listEventsCount;
+  test(
+    'invalid route scope performs zero repository reads and clears rows',
+    () async {
+      final repo = FakeCalendarRepository(
+        listResult: sampleEventList(
+          inRangeRows: [sampleCalendarEvent(id: 'should-not-appear')],
+        ),
+      );
+      final container = _container(session: _session(), repo: repo);
+      addTearDown(container.dispose);
+      await _boot(container);
+      final beforeSummary = repo.getRangeSummaryCount;
+      final beforeList = repo.listEventsCount;
 
-    await container.read(calendarControllerProvider.notifier).applyRouteScope(
-      CalendarRouteScope.fromQueryParameters(const {
-        'customerId': 'not-a-uuid',
-      }),
-    );
-    await _waitForIdle(container);
+      await container
+          .read(calendarControllerProvider.notifier)
+          .applyRouteScope(
+            CalendarRouteScope.fromQueryParameters(const {
+              'customerId': 'not-a-uuid',
+            }),
+          );
+      await _waitForIdle(container);
 
-    final state = container.read(calendarControllerProvider);
-    expect(state.routeScope.isInvalid, isTrue);
-    expect(state.routeScope.showsBanner, isTrue);
-    expect(state.days, isEmpty);
-    expect(state.agendaEvents, isEmpty);
-    expect(state.overdueEvents, isEmpty);
-    expect(repo.getRangeSummaryCount, beforeSummary);
-    expect(repo.listEventsCount, beforeList);
-  });
+      final state = container.read(calendarControllerProvider);
+      expect(state.routeScope.isInvalid, isTrue);
+      expect(state.routeScope.showsBanner, isTrue);
+      expect(state.days, isEmpty);
+      expect(state.agendaEvents, isEmpty);
+      expect(state.overdueEvents, isEmpty);
+      expect(repo.getRangeSummaryCount, beforeSummary);
+      expect(repo.listEventsCount, beforeList);
+    },
+  );
 
   test('date-only scope focuses the day without entity banner state', () async {
     final repo = FakeCalendarRepository();
@@ -334,9 +350,11 @@ void main() {
     addTearDown(container.dispose);
     await _boot(container);
 
-    await container.read(calendarControllerProvider.notifier).applyRouteScope(
-      CalendarRouteScope.fromQueryParameters(const {'date': '2026-08-20'}),
-    );
+    await container
+        .read(calendarControllerProvider.notifier)
+        .applyRouteScope(
+          CalendarRouteScope.fromQueryParameters(const {'date': '2026-08-20'}),
+        );
     await _waitForIdle(container);
 
     final state = container.read(calendarControllerProvider);

@@ -69,7 +69,8 @@ CalendarDirectionsTarget sampleDirectionsTarget({
   CalendarRouteLocationState locationState = CalendarRouteLocationState.mapped,
   double? latitude = 29.3759,
   double? longitude = 47.9774,
-  String? mapsUrl = 'https://www.google.com/maps/dir/?api=1&destination=29.3759,47.9774',
+  String? mapsUrl =
+      'https://www.google.com/maps/dir/?api=1&destination=29.3759,47.9774',
 }) {
   return CalendarDirectionsTarget(
     eventId: eventId,

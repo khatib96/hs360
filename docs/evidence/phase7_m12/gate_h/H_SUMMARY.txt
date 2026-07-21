@@ -1,0 +1,13 @@
+SUPERSEDED — PRIOR REHEARSAL THROUGH 103
+
+gate_h_completed_at: 2026-07-20T00:07:42Z
+head: 1fd3844f158e366d37c66f499ac2502f56c659fc
+branch: main
+status: SUPERSEDED — PRIOR REHEARSAL THROUGH 103
+phase7_closed: false
+h1: PASS (historical)
+h2_reset: PASS through 103 only (historical)
+h2_checksums: PASS match Gate 0 (historical)
+authoritative_status: FINAL PASS THROUGH 104
+see: H_FINAL_SUMMARY.txt and h_final_checksums.txt
+do_not_treat_as: Final Gate H PASS

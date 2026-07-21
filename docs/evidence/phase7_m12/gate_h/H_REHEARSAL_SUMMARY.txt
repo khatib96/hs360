@@ -1,0 +1,8 @@
+gate_h_kind: SUPERSEDED — PRE-CLOSE REHEARSAL PASS THROUGH 104
+migrations_through: 104
+093_103: unchanged vs Gate 0
+prior_h_103: SUPERSEDED
+final_h: PASS (see H_FINAL_SUMMARY.txt; physical Android smoke remains pre-production obligation)
+gate_e: PASS / OWNER ACCEPTED
+phase7_closed: true
+m12: CLOSED / ACCEPTED

@@ -5,19 +5,17 @@ businesses. It is being built first for Hayat Secret and is designed around
 serialized rental assets, recurring consumables, field service, customer debt,
 and double-entry accounting.
 
-> Repository status updated: **2026-07-19**
+> Repository status updated: **2026-07-22**
 >
-> Current milestone: **Phase 7 M11 CLOSED / ACCEPTED**
-> — M7A/M7B closed/accepted; M8 SQL/`101` accepted historically; M8 Flutter
-> corrective pass green (`M8 FLUTTER CORRECTED — OWNER RE-ACCEPTANCE PENDING`);
-> M9 mobile calendar **CLOSED / ACCEPTED**; M10 Route View + Directions
-> **CLOSED / ACCEPTED** (migration `102`); M11 **CLOSED / ACCEPTED** after its
-> Final Corrective and SQL Pollution Micro-Corrective passes
-> (Flutter **1417**, SQL runner green, list P95≈1023ms, 13 `m11_*.png`);
-> evidence-gated migration `103` unchanged; M12 not started
+> Current milestone: **Phase 7 — `CLOSED / ACCEPTED`**
+> — M12 **`CLOSED / ACCEPTED`**. Gates D/E/F are **`PASS / OWNER ACCEPTED`**,
+> Gate G is **PASS**, and Final Gate H is **PASS** through migration `104`.
+> Gate F acceptance is based on physical iOS + Android Emulator evidence.
+> **Physical Android smoke remains required before production** as an
+> owner-approved deferred obligation. Phase 8 has not started.
 >
-> Latest migrations on disk: **`103`** (M11 read hardening); `093`–`102`
-> unchanged / checksummed through M11.
+> Latest migrations on disk: **`104`** (M12 route event contract fix);
+> `093`–`103` checksum-locked / unchanged.
 
 ---
 
@@ -32,7 +30,7 @@ and double-entry accounting.
 | 4 | Engineering complete | Customers, suppliers, CoA, service locations, coordinates |
 | 5 | Complete | Invoices, returns, vouchers, journal, inventory accounting, PDFs |
 | 6 | Complete | Trial/rental contracts, lifecycle, billing, PDF, calendar handoff |
-| 7 | M11 closed / accepted | M1–M7B/M9–M11 closed/accepted; M8 Flutter re-acceptance pending; M12 not started |
+| 7 | Complete / accepted | M1–M12 closed/accepted; bilingual calendar, assignments, mobile calendar, route/directions, integration, performance, device acceptance, and final cleanliness gates passed through migration `104` |
 | 8-12 | Not started | Field execution and later operational/reporting/production phases |
 
 Phase 6 closed through M13/migration `092` on 2026-07-12. Phase 7 M1 closed on
@@ -54,8 +52,9 @@ corrective pass covering RPC ACLs, strict validation, unconfigured-schedule
 warnings, explicit year windows, tenant-switch race protection, and stable
 pagination. The owner accepted the corrected visuals on 2026-07-17, so **M7B
 is closed / accepted**. M8 Assignment & Rescheduling landed with migration
-`101`; the Flutter live wiring was corrected on 2026-07-18
-(**`M8 FLUTTER CORRECTED — OWNER RE-ACCEPTANCE PENDING`**). M9 Mobile Calendar
+`101`; the Flutter live wiring was corrected on 2026-07-18 and owner-accepted
+on 2026-07-19 (**`M8 FLUTTER CLOSED / ACCEPTED`**; Gate D
+**PASS / OWNER ACCEPTED**). M9 Mobile Calendar
 passed its final corrective, automated, and visual gates and was accepted by
 the owner on 2026-07-19 (**`M9 CLOSED / ACCEPTED`**). M10 Route View and
 Directions passed its final corrective, automated, and owner visual gates on
@@ -64,8 +63,17 @@ flutter_map display-only map, and privacy-scoped directions RPCs. See
 [PHASE_7_M10_MAP_PROVIDER.md](docs/PHASE_7_M10_MAP_PROVIDER.md). M11 Integration,
 Performance, and Hardening was accepted by the owner on 2026-07-19 after the
 Final Corrective and strict SQL pollution passes (**`M11 CLOSED / ACCEPTED`**).
-Its list P95≈1023ms passes the 3000ms hard ceiling; the 800ms optimization target
-remains a non-blocking future improvement. M12 and Phase 8 have not started.
+Its list P95≈1023ms (M11) / ≈1089ms (M12 re-measure) passes the 3000ms hard
+ceiling; the 800ms optimization target remains a non-blocking future
+improvement. **M12 and Phase 7 are `CLOSED / ACCEPTED`** (Gates D/E/F
+**`PASS / OWNER ACCEPTED`**; Gate F used physical iOS + Android Emulator;
+Gate G and Final Gate H **PASS** through `104`; Gate C integration via
+`scripts/test/p7m12_calendar_acceptance.sh` calendar-only EN+AR; Gate D M8
+accepted). Physical Android smoke is still required before production under
+the owner-approved deferral. Phase 8 has not started. See
+[PHASE_7_M12_ACCEPTANCE_RUNBOOK.md](docs/PHASE_7_M12_ACCEPTANCE_RUNBOOK.md) and
+[PHASE_7_M12_EVIDENCE_MANIFEST.md](docs/PHASE_7_M12_EVIDENCE_MANIFEST.md).
+See also [PHASE_7_M8_OWNER_REACCEPTANCE.md](docs/PHASE_7_M8_OWNER_REACCEPTANCE.md).
 
 Detailed roadmap: [BUILD_PLAN.md](docs/BUILD_PLAN.md)
 
@@ -96,8 +104,9 @@ Phase 7 source of truth: [PHASE_7_CALENDAR_PLAN.md](docs/PHASE_7_CALENDAR_PLAN.m
 
 ## Planned, Not Yet Implemented
 
-- Remaining Phase 7 work after M7B closure: assignment/reschedule,
-  mobile calendar, maps/directions, and Day/Week presentations (M8–M10).
+- Pre-production physical Android smoke for Gate F. Phase 7 acceptance used
+  physical iOS + Android Emulator; this deferred obligation does not reopen
+  Phase 7 unless the smoke exposes a defect.
 - Phase 8 field execution: GPS proof, live-camera photo, actual consumable
   delivery, coverage confirmation, stock-out, and optional payment collection.
 - Offline mobile synchronization. Drift is deliberately not a current
@@ -311,8 +320,8 @@ Before implementing a milestone:
   reminder reconciliation, and AR/EN desktop UI.
 - Phase 7 M7B Working Calendar Holidays & Exceptions is **closed / owner-accepted**
   with migration `100`.
-- Phase 7 M8 SQL/`101` is accepted historically; Flutter corrective is green
-  (`M8 FLUTTER CORRECTED — OWNER RE-ACCEPTANCE PENDING`).
+- Phase 7 M8 Assignment & Rescheduling is **closed / owner-accepted**
+  (`M8 FLUTTER CLOSED / ACCEPTED`; Gate D **PASS / OWNER ACCEPTED**).
 - Phase 7 M9 Mobile Calendar is **closed / owner-accepted** after its final
   responsive-layout, assigned-only, FAB-clearance, and visual gates.
 - Phase 7 M10 Route View and Directions is **closed / owner-accepted** after
@@ -371,8 +380,9 @@ Before implementing a milestone:
   overflow.
 - **M7A closed / accepted.**
 - Historical note at that snapshot: M7B–M10 were still ahead. See current
-  header / Phase 7 status for M7B–M9 closed/accepted, M8 Flutter re-acceptance
-  pending, and M10 closed/accepted.
+  header / Phase 7 status for M7B–M12 and Phase 7 **CLOSED / ACCEPTED**;
+  Gate F was accepted using physical iOS + Android Emulator, with physical
+  Android smoke still required before production.
 
 ---
 

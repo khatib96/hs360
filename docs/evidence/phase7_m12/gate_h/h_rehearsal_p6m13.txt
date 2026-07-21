@@ -1,0 +1,2 @@
+P6M13 cleanup counters: {"units": 0, "invoices": 0, "products": 0, "vouchers": 0, "contracts": 0, "coverages": 0, "customers": 0, "locations": 0, "lifecycle_ops": 0, "calendar_events": 0}
+P6M13 cleanup passed: all counters are 0.

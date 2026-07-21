@@ -24,45 +24,54 @@ AppSession _session({
 
 void main() {
   group('CalendarRepository Route View (M10) exact RPC contracts', () {
-    test('getRouteDay calls get_calendar_route_day with p_date/p_employee_id', () async {
-      String? capturedName;
-      Map<String, dynamic>? capturedParams;
-      final repo = CalendarRepository(
-        null,
-        rpcInvoker: (name, params) async {
-          capturedName = name;
-          capturedParams = Map<String, dynamic>.from(params);
-          return sampleRouteDayRpc();
-        },
-      );
+    test(
+      'getRouteDay calls get_calendar_route_day with p_date/p_employee_id',
+      () async {
+        String? capturedName;
+        Map<String, dynamic>? capturedParams;
+        final repo = CalendarRepository(
+          null,
+          rpcInvoker: (name, params) async {
+            capturedName = name;
+            capturedParams = Map<String, dynamic>.from(params);
+            return sampleRouteDayRpc();
+          },
+        );
 
-      await repo.getRouteDay(
-        _session(permissions: {'calendar.view_assigned'}),
-        date: DateTime(2026, 7, 14),
-        employeeId: 'emp-9',
-      );
+        await repo.getRouteDay(
+          _session(permissions: {'calendar.view_assigned'}),
+          date: DateTime(2026, 7, 14),
+          employeeId: 'emp-9',
+        );
 
-      expect(capturedName, 'get_calendar_route_day');
-      expect(capturedParams, {'p_date': '2026-07-14', 'p_employee_id': 'emp-9'});
-    });
+        expect(capturedName, 'get_calendar_route_day');
+        expect(capturedParams, {
+          'p_date': '2026-07-14',
+          'p_employee_id': 'emp-9',
+        });
+      },
+    );
 
-    test('getRouteDay omits employee_id (null) for assigned-only callers', () async {
-      Map<String, dynamic>? capturedParams;
-      final repo = CalendarRepository(
-        null,
-        rpcInvoker: (name, params) async {
-          capturedParams = Map<String, dynamic>.from(params);
-          return sampleRouteDayRpc();
-        },
-      );
+    test(
+      'getRouteDay omits employee_id (null) for assigned-only callers',
+      () async {
+        Map<String, dynamic>? capturedParams;
+        final repo = CalendarRepository(
+          null,
+          rpcInvoker: (name, params) async {
+            capturedParams = Map<String, dynamic>.from(params);
+            return sampleRouteDayRpc();
+          },
+        );
 
-      await repo.getRouteDay(
-        _session(permissions: {'calendar.view_assigned'}),
-        date: DateTime(2026, 7, 14),
-      );
+        await repo.getRouteDay(
+          _session(permissions: {'calendar.view_assigned'}),
+          date: DateTime(2026, 7, 14),
+        );
 
-      expect(capturedParams!['p_employee_id'], isNull);
-    });
+        expect(capturedParams!['p_employee_id'], isNull);
+      },
+    );
 
     test('getRouteDay rejects sessions without calendar access', () async {
       final repo = CalendarRepository(

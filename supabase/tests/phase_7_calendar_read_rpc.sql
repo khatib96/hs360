@@ -1277,5 +1277,35 @@ begin
   );
   if v_seed < 5 then raise exception 'case67 failed: seed rows missing %', v_seed; end if;
 end $$;
+rollback;
 
 do $$ begin raise notice 'phase_7_calendar_read_rpc_verification_passed (68 cases)'; end $$;
+
+-- Case 68: remove durable P7R seed rows (and reminder plans) so the Phase C.7
+-- strict pollution gate sees baseline equality. Must run outside a transaction
+-- so deletes commit (seeds were inserted outside transactions earlier).
+reset role;
+do $$
+declare
+  v_ids uuid[] := array[
+    '00000000-0000-0000-0000-00000000a001'::uuid,
+    '00000000-0000-0000-0000-00000000a002'::uuid,
+    '00000000-0000-0000-0000-00000000a003'::uuid,
+    '00000000-0000-0000-0000-00000000a004'::uuid,
+    '00000000-0000-0000-0000-00000000b001'::uuid
+  ];
+begin
+  delete from public.calendar_reminder_plans
+  where calendar_event_id = any (v_ids);
+
+  delete from public.calendar_events
+  where id = any (v_ids);
+
+  if exists (
+    select 1 from public.calendar_events where id = any (v_ids)
+  ) then
+    raise exception 'case68 failed: P7R seed events still present';
+  end if;
+
+  raise notice 'phase_7_calendar_read_rpc_case68_p7r_seeds_cleaned';
+end $$;

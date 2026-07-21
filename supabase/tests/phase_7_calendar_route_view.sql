@@ -268,6 +268,54 @@ begin
     raise exception 'm10 fail: missing';
   end if;
 
+  -- M12 Item 20: pending route events must keep execution_summary key
+  -- (JSON null) even though route points are not strip-nulled recursively.
+  if exists (
+    select 1
+    from jsonb_array_elements(v_route -> 'points') p
+    where not ((p -> 'event') ? 'execution_summary')
+  ) then
+    raise exception 'm10 fail: route event missing execution_summary key';
+  end if;
+
+  if exists (
+    select 1
+    from jsonb_array_elements(v_route -> 'points') p
+    where jsonb_typeof(p -> 'event' -> 'execution_summary') is distinct from 'null'
+      and (p -> 'event' ->> 'status') = 'pending'
+  ) then
+    raise exception 'm10 fail: pending route event execution_summary must be JSON null';
+  end if;
+
+  if exists (
+    select 1
+    from jsonb_array_elements(v_route -> 'points') p
+    where not ((p -> 'event') ? 'time_window')
+       or not ((p -> 'event') ? 'participants')
+       or not ((p -> 'event') ? 'schedule_version')
+  ) then
+    raise exception 'm10 fail: route event missing required contract keys';
+  end if;
+
+  -- Non-mapped states must omit coordinate keys (not null values).
+  if exists (
+    select 1
+    from jsonb_array_elements(v_route -> 'points') p
+    where p ->> 'location_state' in ('missing', 'invalid', 'url_only')
+      and (p ? 'latitude' or p ? 'longitude' or p ? 'google_maps_url')
+  ) then
+    raise exception 'm10 fail: non-mapped route point leaked coordinates/url';
+  end if;
+
+  if exists (
+    select 1
+    from jsonb_array_elements(v_route -> 'points') p
+    where p ->> 'location_state' = 'mapped'
+      and (not (p ? 'latitude') or not (p ? 'longitude') or p ? 'google_maps_url')
+  ) then
+    raise exception 'm10 fail: mapped route point coords/url contract';
+  end if;
+
   if exists (
     select 1 from jsonb_array_elements(v_route -> 'points') p
     where p -> 'event' ->> 'id' in (v_evt_unassigned::text, v_evt_creator::text)

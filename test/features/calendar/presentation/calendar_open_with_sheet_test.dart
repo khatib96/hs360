@@ -24,63 +24,75 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
   }
 
-  testWidgets('Open-with sheet appears before launch; cancel launches nothing', (
-    tester,
-  ) async {
-    await prepareSurface(tester);
-    var launched = false;
-    final resolver = CalendarMapAppResolver(canLaunch: (_) async => true);
-    final launcher = CalendarDirectionsLauncher(
-      launcher: (uri, {mode = LaunchMode.platformDefault}) async {
-        launched = true;
-        return true;
-      },
-    );
+  testWidgets(
+    'Open-with sheet appears before launch; cancel launches nothing',
+    (tester) async {
+      await prepareSurface(tester);
+      var launched = false;
+      final resolver = CalendarMapAppResolver(canLaunch: (_) async => true);
+      final launcher = CalendarDirectionsLauncher(
+        launcher: (uri, {mode = LaunchMode.platformDefault}) async {
+          launched = true;
+          return true;
+        },
+      );
 
-    await tester.pumpWidget(
-      MaterialApp(
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: Scaffold(
-          body: Builder(
-            builder: (context) {
-              return TextButton(
-                key: const Key('open-chooser'),
-                onPressed: () {
-                  presentCalendarDirectionsChooser(
-                    context: context,
-                    target: _mapped,
-                    resolver: resolver,
-                    launcher: launcher,
-                    platform: TargetPlatform.iOS,
-                  );
-                },
-                child: const Text('go'),
-              );
-            },
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(
+            body: Builder(
+              builder: (context) {
+                return TextButton(
+                  key: const Key('open-chooser'),
+                  onPressed: () {
+                    presentCalendarDirectionsChooser(
+                      context: context,
+                      target: _mapped,
+                      resolver: resolver,
+                      launcher: launcher,
+                      platform: TargetPlatform.iOS,
+                    );
+                  },
+                  child: const Text('go'),
+                );
+              },
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    await tester.tap(find.byKey(const Key('open-chooser')));
-    await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('open-chooser')));
+      await tester.pumpAndSettle();
 
-    expect(find.byKey(const Key('calendar-open-with-title')), findsOneWidget);
-    expect(find.text('Open with'), findsOneWidget);
-    expect(launched, isFalse);
+      expect(find.byKey(const Key('calendar-open-with-title')), findsOneWidget);
+      expect(find.text('Open with'), findsOneWidget);
+      expect(launched, isFalse);
 
-    expect(find.byKey(const Key('calendar-open-with-appleMaps')), findsOneWidget);
-    expect(find.byKey(const Key('calendar-open-with-googleMaps')), findsOneWidget);
-    expect(find.byKey(const Key('calendar-open-with-waze')), findsOneWidget);
-    expect(find.byKey(const Key('calendar-open-with-browser')), findsOneWidget);
+      expect(
+        find.byKey(const Key('calendar-open-with-appleMaps')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('calendar-open-with-googleMaps')),
+        findsOneWidget,
+      );
+      expect(find.byKey(const Key('calendar-open-with-waze')), findsOneWidget);
+      expect(
+        find.byKey(const Key('calendar-open-with-browser')),
+        findsOneWidget,
+      );
 
-    await tester.ensureVisible(find.byKey(const Key('calendar-open-with-cancel')));
-    await tester.tap(find.byKey(const Key('calendar-open-with-cancel')));
-    await tester.pumpAndSettle();
-    expect(launched, isFalse);
-    expect(find.byKey(const Key('calendar-open-with-title')), findsNothing);
-  });
+      await tester.ensureVisible(
+        find.byKey(const Key('calendar-open-with-cancel')),
+      );
+      await tester.tap(find.byKey(const Key('calendar-open-with-cancel')));
+      await tester.pumpAndSettle();
+      expect(launched, isFalse);
+      expect(find.byKey(const Key('calendar-open-with-title')), findsNothing);
+    },
+  );
 
   testWidgets('selecting an option launches that URI', (tester) async {
     await prepareSurface(tester);

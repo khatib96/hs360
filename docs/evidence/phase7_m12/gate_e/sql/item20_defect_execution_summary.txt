@@ -1,0 +1,9 @@
+defect_id: P7M12-GE-I20-EXECUTION-SUMMARY
+status: FIXED (migration 104)
+resolved: 2026-07-20
+summary:
+  jsonb_strip_nulls on route points recursively removed execution_summary:null
+  from nested event_json. Flutter required the key → day load failed.
+fix:
+  get_calendar_route_day builds points via base {event, location_state}
+  || mapped-coords object only when location_state=mapped. No recursive strip.

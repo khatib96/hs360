@@ -113,18 +113,20 @@ CalendarDirectionsTarget mapDirectionsTarget(dynamic raw) {
 CalendarRouteEmployeeListResult mapRouteEmployeesResult(dynamic raw) {
   final map = requireMap(raw, 'route_employees root');
   final rowsRaw = requireList(map['rows'], 'route_employees.rows');
-  final employees = rowsRaw.map((item) {
-    final row = requireMap(item, 'route_employees.rows[]');
-    return CalendarRouteEmployee(
-      employeeId: requireString(
-        row['employee_id'],
-        'route_employees.employee_id',
-      ),
-      nameAr: requireString(row['name_ar'], 'route_employees.name_ar'),
-      nameEn: optionalString(row['name_en']),
-      isActive: requireBool(row['is_active'], 'route_employees.is_active'),
-    );
-  }).toList(growable: false);
+  final employees = rowsRaw
+      .map((item) {
+        final row = requireMap(item, 'route_employees.rows[]');
+        return CalendarRouteEmployee(
+          employeeId: requireString(
+            row['employee_id'],
+            'route_employees.employee_id',
+          ),
+          nameAr: requireString(row['name_ar'], 'route_employees.name_ar'),
+          nameEn: optionalString(row['name_en']),
+          isActive: requireBool(row['is_active'], 'route_employees.is_active'),
+        );
+      })
+      .toList(growable: false);
 
   return CalendarRouteEmployeeListResult(
     employees: employees,
