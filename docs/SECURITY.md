@@ -1,7 +1,9 @@
 # SECURITY.md — Security, RBAC & Multi-Tenant Isolation
 
 > Security is not a phase. It's built in from line one of SQL.
-> Updated 2026-05-16 to resolve conflicts: access control is Manager/User + explicit permissions, not fixed roles.
+> Updated 2026-07-22: access control remains Manager/User + explicit
+> permissions. Employee job/work profile and adaptive mobile presentation are
+> never authorization roles; record correction is lifecycle-specific.
 
 ---
 
@@ -28,6 +30,9 @@ The system must protect against:
 ### 2.1 Supabase Auth
 - Email + password login
 - Optional: phone OTP for field agents (often simpler than passwords)
+- A future tenant-scoped employee-code login experience may resolve a linked
+  account alias, but it must still authenticate securely to Supabase Auth and
+  must never use the employee code itself as authority or a password.
 - JWT issued on login, includes `user_id` and (via custom hook) `tenant_id`
 - Token TTL: 1 hour for access, 30 days for refresh
 - Refresh token rotates on each use
@@ -112,6 +117,11 @@ create policy "T_delete_with_permission" on T
   );
 ```
 
+The generic delete example is not valid for immutable or referenced business
+history. Each table must explicitly choose one of: no delete, safe unused-draft
+discard, soft deactivation, lifecycle cancellation, or service-role tenant
+erasure. Confirmed financial records never expose client hard delete.
+
 ### 3.2 Permission Matrix
 
 | Table | Read | Insert | Update | Delete |
@@ -119,26 +129,26 @@ create policy "T_delete_with_permission" on T
 | `tenants` | own | service-role only | service-role only | service-role only |
 | `tenant_users` | `settings.users.view` | `settings.users.invite` | `settings.users.edit` | `settings.users.deactivate` |
 | `tenant_settings` | `settings.company.view` | none (init only) | `settings.company.edit` | `settings.company.delete` |
-| `employees` | `hr.employees.view` | `hr.employees.create` | `hr.employees.edit` | `hr.employees.delete` |
+| `employees` | `hr.employees.view` with protected-field shaping | `hr.employees.create` | `hr.employees.edit` | deactivate when referenced |
 | `commission_rules` | `hr.commissions.view` | `hr.commissions.create` | `hr.commissions.edit` | `hr.commissions.delete` |
 | `salaries` | `hr.salaries.view`; employee self-view via scoped RPC | `hr.salaries.create` | `hr.salaries.edit` | `hr.salaries.delete` |
 | `advances` | `hr.advances.view`; employee self-view via scoped RPC | `hr.advances.create` | `hr.advances.edit` | `hr.advances.delete` |
-| `warehouses` | `warehouses.view` | `warehouses.create` | `warehouses.edit` | `warehouses.delete` |
+| `warehouses` | `warehouses.view` | `warehouses.create` | `warehouses.edit` | deactivate when safely allowed |
 | `chart_of_accounts` | `chart_of_accounts.view` | `chart_of_accounts.create` | `chart_of_accounts.edit` | `chart_of_accounts.delete` (system rows blocked) |
-| `product_groups` | `product_groups.view` | `product_groups.create` | `product_groups.edit` | `product_groups.delete` |
-| `products` | `products.view` | `products.create` | `products.edit` | `products.delete` |
+| `product_groups` | `product_groups.view` | `product_groups.create` | `product_groups.edit` | deactivate when referenced |
+| `products` | `products.view` | `products.create` | `products.edit` | deactivate when referenced |
 | `products.cost_columns` | field permissions such as `products.field.avg_cost` | field permission required | field permission required | n/a |
-| `product_units` | `product_units.view` | `product_units.create` | `product_units.edit` | `product_units.delete` |
+| `product_units` | `product_units.view` | controlled RPCs | controlled lifecycle RPCs | retire/lifecycle action; no history erasure |
 | `maintenance_records` | `maintenance.view` | `maintenance.create` | `maintenance.edit` | `maintenance.delete` |
 | `inventory_balances` | `inventory.view` | system functions only | system functions only | n/a |
-| `inventory_movements` | `inventory_movements.view` | system functions or `inventory_movements.create` | n/a (immutable) | `inventory_movements.delete` |
-| `customers` | `customers.view` | `customers.create` | `customers.edit` | `customers.delete` |
+| `inventory_movements` | `inventory_movements.view` | system functions only | n/a (immutable) | never through the app |
+| `customers` | `customers.view` | `customers.create` | `customers.edit` | deactivate when referenced |
 | `customer_service_locations` | `customers.view` | `customers.edit` | `customers.edit` | `customers.edit` (deactivate only) |
-| `suppliers` | `suppliers.view` | `suppliers.create` | `suppliers.edit` | `suppliers.delete` |
-| `contracts` | `contracts.view` | `contracts.create` | `contracts.edit` | `contracts.delete` |
+| `suppliers` | `suppliers.view` | `suppliers.create` | `suppliers.edit` | deactivate when referenced |
+| `contracts` | `contracts.view` | `contracts.create` | `contracts.edit` | unused-draft discard only; active/used rows use lifecycle RPCs |
 | `contract_lines` | `contracts.view` | `contracts.create` | `contracts.edit` | n/a |
 | `contract_oil_changes` | `contracts.view` | `contracts.oil_change` | `contracts.oil_change` | `contracts.oil_change.delete` |
-| `visits` | `visits.view` or `visits.view_assigned` | `visits.create` | `visits.edit` or `visits.edit_assigned` | `visits.delete` |
+| `visits` | `visits.view` or `visits.view_assigned` | `visits.create` / separately permitted unplanned visit | `visits.edit` or `visits.edit_assigned` | audited cancel; execution evidence is never erased |
 | `invoices` | `invoices.view` | system functions or `invoices.create` | `invoices.edit` | `invoices.cancel` |
 | `invoice_lines` | `invoices.view` | system functions or `invoices.create` | `invoices.edit` | n/a |
 | `vouchers` | `vouchers.view` | `vouchers.create_receipt` or `vouchers.create_payment` | `vouchers.edit` | `vouchers.cancel` |
@@ -146,9 +156,15 @@ create policy "T_delete_with_permission" on T
 | `journal_entries` | `journal.view` | system functions only | n/a | n/a |
 | `journal_lines` | `journal.view` | system functions only | n/a | n/a |
 | `quotations` | `quotations.view` | `quotations.create` | `quotations.edit` | `quotations.delete` |
-| `calendar_events` | M4 RPCs only (`get_calendar_range_summary`, `list_calendar_events`); direct `SELECT` revoked for `authenticated`/`anon` | `calendar.create` | `calendar.edit` | `calendar.delete` |
+| `calendar_events` | M4 RPCs only (`get_calendar_range_summary`, `list_calendar_events`); direct `SELECT` revoked for `authenticated`/`anon` | `calendar.create` | `calendar.edit` | audited cancel/lifecycle RPC; no hard delete for accepted workflows |
 | `notifications` | own row (`recipient_user_id = auth.uid()`) or `notifications.view` | system functions or `notifications.create` | n/a | `notifications.delete` |
-| `audit_log` | `audit_log.view` | trigger only | n/a | never |
+| `audit_log` | `audit_log.view` through a permission-shaped/redacted RPC | trigger only | n/a | never |
+
+Phase 8 Requests & Approvals tables must be RPC-first for lifecycle decisions.
+Self-service users may read their own safe request projection; team/all review,
+protected attachments, decision, and application each require explicit
+permissions. Approval application rechecks tenant, request version/status,
+current target state, and idempotency inside one transaction.
 
 Calendar reminder delivery is additionally fail-closed: it waits for the
 tenant's reconcile cursor to finish, refreshes the event occurrence, and
@@ -388,8 +404,13 @@ Triggers on these tables write to `audit_log`:
 | `tenant_users` | account type changes, permission changes, deactivation |
 | `tenant_settings` | all updates |
 | `products` | price changes, cost recalcs |
+| `employees` / employee documents | create, protected-field update, user link, deactivate, document lifecycle |
+| `employee_requests` / decisions | submit, review, approve, reject, cancel, apply |
 
 Audit log entries are immutable. There is no UPDATE or DELETE policy on `audit_log`.
+The Phase 7.5 audit-review RPC must redact protected before/after fields when the
+viewer lacks the corresponding source permission; `audit_log.view` does not
+automatically grant all sensitive business fields.
 
 ---
 
@@ -406,6 +427,13 @@ Some actions require a `reason` field as part of the request:
 - Manual journal entry → description required
 - Discrepancy in van reconciliation → reason required
 - Visit marked with location_mismatch → reason required when manually proceeding
+- Unplanned visit → purpose/reason required
+- Visit reschedule or delegation request → reason required
+- Employee leave/advance/letter request → reason required
+- Request rejection, sensitive approval/override, or cancellation → decision
+  reason required according to request policy
+- Confirmed-document cancel/reversal or referenced-master deactivation → reason
+  required
 
 The frontend enforces presence; the backend rejects empty values.
 
@@ -439,7 +467,10 @@ The frontend enforces presence; the backend rejects empty values.
 ## 12. Data Retention & Deletion
 
 ### 12.1 Soft Delete by Default
-Customers, customer service locations, products, employees, contracts: never hard-deleted. `is_active = false` instead.
+Customers, suppliers, customer service locations, products, product groups,
+employees, warehouses, and used contracts are never hard-deleted through normal
+UI. Use deactivation or the accepted lifecycle instead. Immutable inventory,
+finance, visit evidence, request decisions, and audit history are never erased.
 
 ### 12.2 Tenant Deletion
 Per request, an admin tool can:

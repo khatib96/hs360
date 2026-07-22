@@ -20,9 +20,10 @@
 | **5 - Invoices, Vouchers & Journal** | Done | M1–M10 closed through migration `076` |
 | **6 - Contracts** | Complete | M0–M13 closed (2026-07-12) |
 | **7 - Calendar & Company Appointments** | **Complete / accepted** | M1–M12 CLOSED/ACCEPTED; Gates D/E/F owner-accepted, G/H passed through migration `104`; physical Android smoke deferred but required before production |
-| **8 - Mobile Field Ops** | Not started | - |
-| **9 - POS, Maintenance & HR** | Not started | - |
-| **10 - Reports & Close** | Not started | - |
+| **7.5 - Product Structure & Stabilization** | Planned | Navigation/modules, dashboard/daily activity, record actions, audit, and integrity gate before Phase 8 |
+| **8 - Adaptive Mobile, Requests & Field Ops** | Not started | - |
+| **9 - POS, Maintenance & Full HR** | Not started | - |
+| **10 - Finance, Reports, Dashboards & Close** | Not started | - |
 | **11 - Communications** | Not started | - |
 | **12 - Polish & Production** | Not started | - |
 
@@ -31,6 +32,8 @@
 > Phase 5 execution plan: `docs/PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md`.
 > Phase 6 execution plan: `docs/PHASE_6_CONTRACTS_PLAN.md`.
 > Phase 7 execution plan: `docs/PHASE_7_CALENDAR_PLAN.md`.
+> Phase 7.5 execution plan: `docs/PHASE_7_5_PRODUCT_STRUCTURE_AND_STABILIZATION_PLAN.md`.
+> Canonical module/navigation brief: `docs/NAVIGATION_AND_MODULES_BRIEF.md`.
 
 ---
 
@@ -718,20 +721,106 @@ the tenant's confirmed IANA timezone.
 
 ---
 
-## Phase 8 — Mobile Field Operations (≈ 4 weeks)
+## Phase 7.5 — Product Structure, Navigation & Stabilization
+
+> Detailed execution plan:
+> `docs/PHASE_7_5_PRODUCT_STRUCTURE_AND_STABILIZATION_PLAN.md`.
+> This phase is a new checkpoint; it does not reopen Phase 7 or renumber any
+> completed phase.
 
 ### Goal
-Field agents can do their full daily workflow on the mobile app, online and offline.
+
+Turn the existing feature screens into a coherent bilingual ERP product before
+Phase 8 expands mobile and field workflows. Replace the flat implementation-
+level navigation with permission-shaped modules, expose existing record-safety
+workflows consistently, and prove finance/inventory integrity.
 
 ### Tasks
 
-**8.1 Mobile Shell**
-- Bottom nav (5 tabs)
-- Today screen (default home)
-- Calendar screen (mobile version)
-- Customers screen with service locations
-- Van Stock screen
-- More screen
+1. Lock the desktop information architecture:
+   - primary sidebar modules: Dashboard, Daily Activity, Customers & Suppliers,
+     Contracts, Appointments & Visits, Inventory, Finance, POS, and HR;
+   - Audit, Settings, and signed-in user profile in the lower system area;
+   - global top bar for search, quick create, notifications, locale, and context;
+   - contextual horizontal navigation inside the active module.
+2. Consolidate existing routes under module shells:
+   - Products, Warehouses, Balances, Documents, Movements, Transfers, Counts,
+     and Reconciliation under Inventory;
+   - Invoices, Vouchers, Cash & Bank, Chart of Accounts, Journal Entries,
+     General Ledger placeholder/placement, Reports, and Close under Finance;
+   - Calendar, Today Agenda, Visits, Follow-up, and future maps under
+     Appointments & Visits;
+   - Customers and Suppliers under one party-facing module without merging
+     their records or accounting semantics.
+3. Replace the placeholder Dashboard with permission-safe operational widgets
+   and drill-down.
+4. Add Daily Activity / `ملخص اليوم` as a selected-date cross-module timeline;
+   keep accounting Journal Entries / `القيود اليومية` inside Finance.
+5. Standardize draft edit/discard, confirmed cancel/reverse, master-data
+   deactivate, reason capture, consequence preview, and actionable errors.
+6. Add a basic permission-gated Audit Log review surface.
+7. Run a finance/inventory integrity gate for journal balance, cancellation,
+   stock effects, period locks, and serialized-unit guards.
+8. Pass Arabic/English, RTL/LTR, responsive, accessibility, deep-link/back,
+   zero-permission, and Manager acceptance.
+
+### Deliverables
+
+- Module-based desktop shell with user identity/profile footer
+- Contextual module navigation and permission-filtered commands
+- Dashboard v1 and Daily Activity
+- Consolidated Inventory, Finance, Customers, Operations, and Settings surfaces
+- Consistent record action/correction policy and basic Audit Log review
+- Phase 8 handoff for adaptive mobile, employee/work-profile identity, requests,
+  and visit execution
+
+### Acceptance
+
+- The sidebar contains modules rather than every route/action.
+- Every existing route remains reachable with reliable back navigation.
+- Dashboard and Daily Activity show only authorized data and drill into source
+  records.
+- Inventory and Finance are coherent modules without collapsing distinct
+  entities.
+- Calendar events remain plans; visits remain execution evidence.
+- Posted financial documents cannot be hard-deleted and safe cancellations
+  reverse all accepted effects atomically.
+- Audit history is permission-gated and immutable.
+- Phase 5-7 automated and owner-accepted behavior does not regress.
+
+---
+
+## Phase 8 — Adaptive Mobile, Requests & Field Operations (≈ 6-9 weeks)
+
+### Goal
+Administrative, field, and hybrid employees receive a permission-shaped mobile
+experience. Field users can perform their full daily workflow online and
+offline, while request/approval and employee identity foundations remain shared
+with later HR.
+
+### Tasks
+
+**8.0 Employee Link, Work Profile & Request Foundation**
+- Keep Employee, tenant User, Manager/User account type, permissions, work
+  profile, and employee code as distinct concepts.
+- Link a user to an employee when applicable; not every employee needs login.
+- Add administrative / field / hybrid work profile for default presentation
+  only; it never grants access.
+- Keep Supabase `auth.users.id` as the underlying identity. A future employee-
+  code sign-in experience is an alias, not authorization.
+- Add the generic audited request lifecycle and approval history.
+- Initial field-critical requests: visit reschedule, one-time/standing
+  delegation, van-stock refill/transfer, and accepted contract override paths.
+
+**8.1 Adaptive Mobile Shell**
+- Build permission-shaped bottom navigation rather than one fixed role menu.
+- Field/hybrid defaults: Today, Appointments & Visits, Requests, permitted
+  Contracts/Invoices/Collections, and More.
+- Administrative defaults: alerts/dashboard, approvals, calendar, and permitted
+  customer/finance views.
+- Customers, service locations, van stock, profile, settings, and sign out are
+  reachable according to permission and space constraints.
+- Cache permissions for offline presentation; the server remains authoritative.
 
 **8.2 Refill Flow**
 - Visit detail → Begin Visit → Refill form → Complete
@@ -740,6 +829,17 @@ Field agents can do their full daily workflow on the mobile app, online and offl
 - GPS check-in
 - Visit detail uses the selected service location for address, map, and GPS verification
 - GPS mismatch uses configurable radius + proceed-with-reason; flagged visits feed Suspicious Visits Report
+
+**8.2B Visits Hub and Unplanned Visits**
+- Appointments and visits appear in one user-facing operations module.
+- Keep the data boundary: a calendar event is a plan; a visit stores execution
+  facts.
+- Allow an authorized agent to record an unplanned sales/service visit with a
+  required purpose/reason, GPS/photo rules appropriate to its type, outcome,
+  and follow-up.
+- Link any trial/rental contract created from the visit back to that visit.
+- Performance/commission credit requires accepted completion facts, not merely
+  an appointment or draft visit.
 
 **8.3 New Contract on Mobile**
 - Multi-step flow optimized for phone
@@ -777,15 +877,22 @@ Field agents can do their full daily workflow on the mobile app, online and offl
 - Offline visits sync when online
 - Photos verified via EXIF
 - Visit risk flags are stored consistently for reporting
+- Employees can submit and track permitted requests; authorized approvers see a
+  controlled inbox
+- Administrative/field/hybrid shells differ in defaults without bypassing
+  explicit permissions
 
 ### Acceptance
 - Complete 5 refills offline → all sync correctly when online
 - Take a 3-day-old photo → visit flagged in Manager report
 - GPS 1km from service location or contract snapshot → visit flagged
+- Record an unplanned visit, optionally create a linked trial/rental contract,
+  and preserve the visit outcome/audit chain
+- Submit, approve/reject, and apply one field-critical request idempotently
 
 ---
 
-## Phase 9 — POS, Maintenance & HR (≈ 3 weeks)
+## Phase 9 — POS, Maintenance & Full HR (≈ 5-8 weeks)
 
 ### Goal
 Add-on modules that round out the system.
@@ -806,8 +913,22 @@ Add-on modules that round out the system.
 - Per-unit maintenance history
 
 **9.3 HR**
-- Employee CRUD
-- Commission rules per role/employee
+- Employee CRUD with automatic tenant-scoped employee code
+- Personal/employment profile: names, phone, birth date, nationality, join/end
+  dates, work profile, notes, and active state
+- Passport/residency data: numbers, issue/expiry dates, company-sponsored versus
+  external status, and expiry alerts
+- Employment contract and temporary assignment/secondment records with
+  controlled attachments
+- Optional link to tenant user/login; employees without application access
+  remain valid HR records
+- Complete Requests & Approvals: leave, advances, official letters/
+  certificates (including recipient organization and requested document name),
+  delegation, visit-change requests, and other accepted types
+- Employee and manager request inboxes with reason, attachments, decision
+  history, and permissions
+- Commission rules per accepted job/work category and/or employee; never use
+  the category as an access-control role
 - Monthly salary generation
 - Advances tracking & auto-deduction
 - Salary voucher creation
@@ -815,16 +936,19 @@ Add-on modules that round out the system.
 ### Deliverables
 - POS works for cash sales
 - Maintenance workflow tracks device repairs
-- Salaries generate monthly
+- Employee files, requests, approvals, advances, commissions, and salaries are
+  auditable and permission-gated
 
 ### Acceptance
 - Sell a perfume at POS → inventory drops, cash receipt generated
 - Mark a device as broken → unit status changes, maintenance record created
 - Generate January salaries → vouchers created
+- Submit leave/advance/letter requests → only an authorized approver can decide,
+  with immutable history and no hidden direct side effect
 
 ---
 
-## Phase 10 — Reports, Dashboards & Financial Close (≈ 3-4 weeks)
+## Phase 10 — Finance, Reports, Dashboards & Financial Close (≈ 5-7 weeks)
 
 ### Goal
 All key reports work. Managers can answer business questions in under a minute.
@@ -851,9 +975,17 @@ All key reports work. Managers can answer business questions in under a minute.
     treatment (color and/or icon plus legend) from rented devices; choose the
     exact palette during Phase 10 design rather than expanding Phase 7 M10.
 17. Document Template Editor: visual/settings-based editor on top of the Phase 5 JSON template model
-18. Trial Balance: opening, period debits/credits, and closing balance by account
-19. Inventory-to-GL Reconciliation: compare inventory valuation with account `1301`
-20. Fiscal Period & Year-End Close:
+18. General Ledger: posted account-by-account opening, debit, credit, running,
+    and closing balances with source drill-down
+19. Accounting Day Book / Journal report, distinct from operational Daily
+    Activity
+20. Trial Balance: opening, period debits/credits, and closing balance by account
+21. Balance Sheet, Cash Flow Statement, and accepted financial statements in
+    addition to P&L
+22. Budget foundation and budget-versus-actual reporting after account/period
+    definitions are accepted
+23. Inventory-to-GL Reconciliation: compare inventory valuation with account `1301`
+24. Fiscal Period & Year-End Close:
    - `fiscal_years` and `accounting_periods` with open/closed state
    - close preflight for balanced journals, unposted documents, and inventory/GL reconciliation
    - period close that blocks posting/cancellation through the closed date
@@ -865,6 +997,8 @@ All key reports work. Managers can answer business questions in under a minute.
 - All reports per `PROJECT.md` 3.1 working
 - Each exportable to PDF and CSV
 - Smart operational dashboards are available to Managers
+- General Ledger, account statements, accounting day book, trial balance,
+  balance sheet, cash flow, and P&L agree with posted journal sources
 - Trial balance and inventory/GL reconciliation support a controlled annual close
 - Fiscal years can be closed and reopened only through audited workflows
 
@@ -979,15 +1113,18 @@ These are out of v1 scope but worth noting for the roadmap:
 | 5 — Invoices & Vouchers | 10-14 wk | 17-21 wk |
 | 6 — Contracts | 4 wk | 21-25 wk |
 | 7 — Calendar & Company Appointments | 6-10 wk | 27-35 wk |
-| 8 — Mobile | 4 wk | 31-39 wk |
-| 9 — POS + Maint + HR | 3 wk | 34-42 wk |
-| 10 — Reports & Close | 3-4 wk | 37-46 wk |
-| 11 — Comms | 2 wk | 39-48 wk |
-| 12 — Polish & Launch | 3 wk | **42-51 wk** |
+| 7.5 — Product Structure & Stabilization | 3-5 wk | 30-40 wk |
+| 8 — Adaptive Mobile, Requests & Field Ops | 6-9 wk | 36-49 wk |
+| 9 — POS + Maintenance + Full HR | 5-8 wk | 41-57 wk |
+| 10 — Finance, Reports, Dashboards & Close | 5-7 wk | 46-64 wk |
+| 11 — Comms | 2 wk | 48-66 wk |
+| 12 — Polish & Launch | 3 wk | **51-69 wk** |
 
-**Total: ~42-51 weeks (~10-12 months)** of focused work. The Phase 7 range now
-includes the owner-approved company appointment-management expansion; delivery
-can be faster if non-essential later-phase features are deferred.
+**Total: ~51-69 weeks (~12-16 months)** of focused work. This revised range
+includes the owner-approved product-structure stabilization, adaptive mobile,
+request/approval foundation, expanded HR records, and complete core accounting
+reporting. Delivery can be faster only by explicitly deferring accepted scope,
+not by hiding it inside later phases.
 
 ---
 
@@ -997,6 +1134,7 @@ If you want a minimal working version fast, cut to:
 - Phase 0, 1, 2 (setup + DB + auth)
 - Phase 3, 4 (products + customers)
 - Phase 6 (contracts — partial: no oil switching, no trial workflow)
+- Phase 7.5 partial (module navigation and safe record actions)
 - Phase 8 partial (mobile: just refills, no offline, no advanced flows)
 - Manual invoicing instead of automated
 

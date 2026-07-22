@@ -14,6 +14,9 @@
 > Gate G **PASS**, and Final Gate H **PASS** through migration `104`. Gate F
 > used physical iOS + Android Emulator. **Physical Android smoke is required
 > before production** under the owner-approved deferral. Phase 8 not started.
+> A new documentation-approved Phase 7.5 product-structure/navigation
+> stabilization checkpoint is planned before Phase 8; it does not reopen Phase
+> 7 or change any accepted calendar semantics.
 > Map provider decision: `docs/PHASE_7_M10_MAP_PROVIDER.md`.
 >
 > Owner direction (revised 2026-07-15): HS360 Calendar is the company's shared
@@ -2233,7 +2236,8 @@ Gates D/E/F are **`PASS / OWNER ACCEPTED`**; Gate G and Final Gate H are
 **PASS** through migration `104`. Gate F acceptance is based on physical iOS
 and Android Emulator evidence. Physical Android smoke remains a required
 pre-production obligation and is not claimed by this packet. Phase 8 is not
-started.
+started. Phase 7.5 is the next planned product-structure/navigation checkpoint
+and must preserve the plan-versus-execution boundary locked here.
 Operations Map for rented/trial devices remains Phase 10.
 
 Do not begin external reminder delivery until:

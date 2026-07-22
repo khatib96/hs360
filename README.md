@@ -7,8 +7,8 @@ and double-entry accounting.
 
 > Repository status updated: **2026-07-22**
 >
-> Current milestone: **Phase 7 — `CLOSED / ACCEPTED`**
-> — M12 **`CLOSED / ACCEPTED`**. Gates D/E/F are **`PASS / OWNER ACCEPTED`**,
+> Current milestone: **Phase 7.5 — `PLANNED / NOT STARTED`** after Phase 7
+> **`CLOSED / ACCEPTED`**. Phase 7 M12 Gates D/E/F are **`PASS / OWNER ACCEPTED`**,
 > Gate G is **PASS**, and Final Gate H is **PASS** through migration `104`.
 > Gate F acceptance is based on physical iOS + Android Emulator evidence.
 > **Physical Android smoke remains required before production** as an
@@ -31,7 +31,8 @@ and double-entry accounting.
 | 5 | Complete | Invoices, returns, vouchers, journal, inventory accounting, PDFs |
 | 6 | Complete | Trial/rental contracts, lifecycle, billing, PDF, calendar handoff |
 | 7 | Complete / accepted | M1–M12 closed/accepted; bilingual calendar, assignments, mobile calendar, route/directions, integration, performance, device acceptance, and final cleanliness gates passed through migration `104` |
-| 8-12 | Not started | Field execution and later operational/reporting/production phases |
+| 7.5 | Planned / not started | Product modules/navigation, Dashboard/Daily Activity, safe record actions, basic Audit, and finance/inventory integrity gate |
+| 8-12 | Not started | Adaptive mobile/requests/field execution and later HR/POS/finance/reporting/production phases |
 
 Phase 6 closed through M13/migration `092` on 2026-07-12. Phase 7 M1 closed on
 2026-07-12 (`093`–`094`); M2 event generation engine (`095`) closed on
@@ -79,6 +80,12 @@ Detailed roadmap: [BUILD_PLAN.md](docs/BUILD_PLAN.md)
 
 Phase 7 source of truth: [PHASE_7_CALENDAR_PLAN.md](docs/PHASE_7_CALENDAR_PLAN.md)
 
+Phase 7.5 source of truth:
+[PHASE_7_5_PRODUCT_STRUCTURE_AND_STABILIZATION_PLAN.md](docs/PHASE_7_5_PRODUCT_STRUCTURE_AND_STABILIZATION_PLAN.md)
+
+Canonical module tree:
+[NAVIGATION_AND_MODULES_BRIEF.md](docs/NAVIGATION_AND_MODULES_BRIEF.md)
+
 ---
 
 ## Implemented Capabilities
@@ -104,17 +111,24 @@ Phase 7 source of truth: [PHASE_7_CALENDAR_PLAN.md](docs/PHASE_7_CALENDAR_PLAN.m
 
 ## Planned, Not Yet Implemented
 
+- Phase 7.5 module-based desktop shell, contextual module navigation, user
+  profile footer, Dashboard v1, Daily Activity, consistent record-action UX,
+  basic Audit review, and integrity gate.
 - Pre-production physical Android smoke for Gate F. Phase 7 acceptance used
   physical iOS + Android Emulator; this deferred obligation does not reopen
   Phase 7 unless the smoke exposes a defect.
-- Phase 8 field execution: GPS proof, live-camera photo, actual consumable
-  delivery, coverage confirmation, stock-out, and optional payment collection.
+- Phase 8 employee/work-profile link, adaptive mobile, Requests & Approvals
+  foundation, field execution, unplanned visits, GPS/photo evidence, actual
+  delivery/coverage, stock-out, optional collection, and offline sync.
 - Offline mobile synchronization. Drift is deliberately not a current
   dependency and is outside v1 unless scope changes.
 - External WhatsApp/email/SMS delivery automation. The schema/foundations do not
   mean production messaging is active.
-- POS, maintenance operations UI, HR/payroll, advanced reports, communications,
-  and production polish from later roadmap phases.
+- Phase 9 POS, maintenance, full employee/passport/residency/employment file,
+  HR requests, payroll, advances, and commissions.
+- Phase 10 General Ledger/accounting day book/trial balance/P&L/balance sheet,
+  close, advanced dashboards/audit review, and Operations Map.
+- Communications and production polish from later roadmap phases.
 
 ---
 

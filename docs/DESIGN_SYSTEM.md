@@ -215,36 +215,40 @@ Example for empty contracts list:
 ### 6.1 Desktop
 
 ```
-┌──────────────────────────────────────────────────────┐
-│  Top bar: logo · tenant name · search · profile      │
-├──────────┬───────────────────────────────────────────┤
-│          │                                            │
-│  Side    │   Main content                            │
-│  nav     │                                            │
-│          │                                            │
-│  - Dash  │                                            │
-│  - Prod  │                                            │
-│  - Cust  │                                            │
-│  - Cont  │                                            │
-│  - Cal   │                                            │
-│  - Inv   │                                            │
-│  - Vch   │                                            │
-│  - Stk   │                                            │
-│  - POS   │                                            │
-│  - HR    │                                            │
-│  - Rpt   │                                            │
-│  - Set   │                                            │
-│          │                                            │
-└──────────┴───────────────────────────────────────────┘
+┌──────────────┬──────────────────────────────────────────┐
+│              │ Top bar: title/back · search · quick +  │
+│ Module       │ notifications · locale                  │
+│ sidebar      ├──────────────────────────────────────────┤
+│              │ Contextual module tabs                  │
+│ Dashboard    ├──────────────────────────────────────────┤
+│ Daily        │                                          │
+│ Parties      │ Main content                             │
+│ Contracts    │                                          │
+│ Operations   │                                          │
+│ Inventory    │                                          │
+│ Finance      │                                          │
+│ POS / HR     │                                          │
+│              │                                          │
+│ ───────────  │                                          │
+│ Audit        │                                          │
+│ Settings     │                                          │
+│ User/profile │                                          │
+└──────────────┴──────────────────────────────────────────┘
 ```
 
 - Sidebar width: 240px (collapsible to 64px icon-only)
-- Sidebar background: Charcoal (`#1A1A1A`)
-- Sidebar text: White / Off-White
-- Active item: Gold background, charcoal text
+- Sidebar uses the accepted HS360 neutral/white surface with restrained gold
+  brand accents; do not use decorative artwork that reduces label contrast.
+- Sidebar labels are business modules, not every route/action.
+- Audit, Settings, and user identity/profile are anchored at the bottom.
+- Active item: Gold treatment with contrast that passes accessibility.
 - Top bar: White, 64px tall, bottom border Neutral 100
+- Contextual module tabs sit below the global bar, scroll/collapse on narrow
+  widths, and omit unauthorized tabs.
+- Search, badges, Dashboard, and contextual counts must not leak unauthorized
+  records.
 
-### 6.2 Mobile (Field Agent)
+### 6.2 Adaptive Mobile
 
 ```
 ┌──────────────────────────┐
@@ -260,7 +264,11 @@ Example for empty contracts list:
 └──────────────────────────┘
 ```
 
-Bottom nav items: Today | Calendar | Customers | Van Stock | More
+Bottom navigation has at most five permission-shaped destinations. Field/hybrid
+defaults to Today | Appointments & Visits | Requests | primary permitted action
+| More. Administrative defaults to Home/Alerts | Approvals | Calendar | primary
+permitted module | More. Work profile changes ordering only; explicit
+permissions control visibility and access.
 
 ### 6.3 Direction Handling
 

@@ -1,206 +1,359 @@
-# NAVIGATION_AND_MODULES_BRIEF — تنظيم التبويبات والوحدات (Brief for Codex)
+# NAVIGATION_AND_MODULES_BRIEF — Canonical Module and Navigation Structure
 
-> الهدف من هذا الملف: تجميع أفكار صاحب المشروع حول **بنية التبويبات (Navigation)** وتنظيمها،
-> ومطابقتها مع ما هو **موجود فعلاً** في قاعدة البيانات والكود، ثم تقديم **مخطط نهائي مقترح** لتنفيذه.
+> Owner-revised 2026-07-22 after Phase 7.
 >
-> هذا الملف **لا يغيّر** القرارات النهائية في `CANONICAL_DECISIONS.md` ولا نطاق `MVP_SCOPE.md`.
-> هو فقط يحدد **الـ Information Architecture / Navigation** ويربطها بالـ permissions والجداول الموجودة.
+> Purpose: define how existing and planned HS360 capabilities are grouped into
+> user-facing modules. This brief supersedes the earlier flat/grouped menu draft
+> where it conflicts and is implemented through Phase 7.5.
 >
-> **For Codex:** Read `CANONICAL_DECISIONS.md` and `MVP_SCOPE.md` first. This file specifies the
-> sidebar/top-bar navigation tree, sub-tabs, and which existing tables/permissions back each tab.
+> This is an information-architecture contract. Data rules still come from
+> `CANONICAL_DECISIONS.md`; permissions from `PERMISSIONS.md`; execution order
+> from `BUILD_PLAN.md` and
+> `PHASE_7_5_PRODUCT_STRUCTURE_AND_STABILIZATION_PLAN.md`.
 
 ---
 
-## 0. ملخص الوضع الحالي (Reality Check — مهم)
+## 1. Product Navigation Principles
 
-الكثير من أفكارك **موجود مسبقاً** في تصميم النظام، وهذا ممتاز. باختصار:
-
-| فكرتك | الحالة في المشروع |
-|-------|-------------------|
-| تبويبات: لوحة تحكم، عقود، فواتير، حسابات، عملاء، مستودعات، نقطة بيع، موظفون، زيارات، سندات، سجل، إعدادات | كلها مدعومة كجداول/خطط. بعضها MVP وبعضها Phase 2 |
-| الزبائن نوعان: زبائن + موردون | موجود: جدولان منفصلان `customers` و `suppliers` |
-| كل زبون/مورد يمكن ربطه بحساب في شجرة الحسابات | موجود: `customers.account_id` و `suppliers.account_id` (nullable بعد M5.5؛ اختياري عند الإنشاء عبر `create_account` أو لاحقاً عبر `ensure_*_account`) |
-| العقود تتطلب زبوناً إجبارياً | موجود: `contracts.customer_id` هو `NOT NULL` |
-| فواتير البيع لا تتطلب اسم زبون | مدعوم: `invoices.customer_id` يمكن أن يكون NULL (بيع نقدي) |
-| فواتير الشراء تتطلب اختيار مورد | مدعوم: قيد `chk_party` يفرض إما عميل أو مورد |
-| الفواتير أنواع (بيع/شراء) | موجود: `invoice_type` فيه `sales, purchase, sales_return, purchase_return, rental_monthly, opening_balance_*` |
-| المواد داخل المستودعات أم تبويب مستقل؟ | **قرار تصميم navigation — هذا ما نحسمه في هذا الملف** |
-
-**الخلاصة:** سؤالك الحقيقي هو **كيف نرتّب التبويبات وتفرعاتها بشكل منطقي**، وليس "هل البيانات موجودة" — البيانات موجودة. لذلك هذا الملف يركّز على شجرة التنقل.
-
----
-
-## 1. المبدأ الحاكم لترتيب التبويبات
-
-نرتّب التبويبات حسب **رحلة المستخدم اليومية**، وليس حسب ترتيب الجداول. القاعدة:
-
-1. **مجموعات منطقية (Groups)** في الشريط الجانبي بدل قائمة طويلة مسطّحة.
-2. كل تبويب رئيسي قد يحتوي **تبويبات فرعية (Tabs داخل الشاشة)** بدل إنشاء عنصر جانبي لكل شيء.
-3. كل عنصر تنقّل **مربوط بصلاحية** (`module.view`) — يظهر فقط لمن يملك الإذن (Manager يرى الكل).
-4. التفريق **بيع/شراء** و **زبون/مورد** يكون عبر **فلتر/تبويب فرعي داخل الشاشة**، وليس عنصرين منفصلين في الشريط الجانبي.
+1. Navigation follows business work, not database tables or implementation
+   routes.
+2. The sidebar contains a small set of modules, never every page and action.
+3. The top global bar contains utilities; the active module owns its contextual
+   horizontal sub-navigation.
+4. Creation, transfer, count, adjustment, and similar operations are commands
+   inside their owning module, not primary navigation entries.
+5. Every module, tab, command, widget, count, and drill-down is permission-
+   filtered. The server remains authoritative.
+6. Grouping screens never merges distinct accounting or operational entities.
+7. Deep links and detail/create routes remain valid even when they are not menu
+   items.
+8. Arabic and English labels are equally canonical; `Daily Activity` and
+   `Journal Entries` must never share the ambiguous Arabic label `اليومية`.
 
 ---
 
-## 2. المخطط النهائي المقترح للشريط الجانبي (Sidebar)
+## 2. Desktop Shell
 
-مقسّم إلى 5 مجموعات. الأيقونة 🟢 = موجود/MVP، 🟡 = Phase 2، والصلاحية بين قوسين.
+### 2.1 Primary Sidebar
 
-```
-┌─ لوحة التحكم  Dashboard                         🟢  (dashboard.view)
-│
-├─ المبيعات والعملاء  Sales & Customers
-│   ├─ العملاء  Customers                          🟢  (customers.view)
-│   │     ├─ تبويب فرعي: زبائن  (customer)
-│   │     └─ تبويب فرعي: موردون Suppliers           🟢  (suppliers.view)
-│   ├─ العقود  Contracts                           🟢  (contracts.view)
-│   ├─ الفواتير  Invoices                          🟢  (invoices.view)
-│   │     ├─ تبويب فرعي: فواتير بيع   (sales)
-│   │     ├─ تبويب فرعي: فواتير شراء  (purchase)
-│   │     ├─ تبويب فرعي: مرتجعات     (returns)
-│   │     └─ تبويب فرعي: إيجار شهري  (rental_monthly)
-│   ├─ نقطة البيع  POS                             🟡  (pos.use)
-│   └─ عروض الأسعار  Quotations                     🟡  (quotations.view)
-│
-├─ المخزون  Inventory
-│   ├─ المواد  Products                            🟢  (products.view)
-│   │     └─ تبويب فرعي: مجموعات المواد (product_groups.view)
-│   ├─ المستودعات  Warehouses                       🟢  (warehouses.view)
-│   ├─ حركات المخزون  Stock Movements               🟢  (inventory.view)
-│   └─ التحويلات  Transfers                         🟢  (inventory.view)
-│
-├─ المالية  Finance
-│   ├─ الحسابات (شجرة الحسابات) Chart of Accounts    🟢  (accounts.view)
-│   ├─ السندات  Vouchers                            🟢  (vouchers.view)
-│   │     ├─ تبويب فرعي: سند قبض   (receipt)
-│   │     └─ تبويب فرعي: سند صرف   (payment)
-│   └─ القيود اليومية  Journal Entries              🟡  (journal.view)
-│
-├─ العمليات الميدانية  Field Operations
-│   ├─ الزيارات  Visits                             🟢  (visits.view)
-│   └─ التقويم  Calendar                            🟢  (calendar.view)
-│
-├─ الموارد البشرية  HR / Employees                  🟡  (employees.view)
-│   ├─ الموظفون  Employees
-│   ├─ الرواتب  Salaries                            🟡
-│   ├─ السلف  Advances                              🟡
-│   └─ العمولات  Commissions                        🟡
-│
-└─ النظام  System
-    ├─ السجل  Audit Log                             🟢  (audit.view)
-    └─ الإعدادات  Settings                          🟢  (settings.view)
+```text
+لوحة التحكم                 Dashboard
+ملخص اليوم                  Daily Activity
+العملاء والموردون           Customers & Suppliers
+العقود                      Contracts
+المواعيد والزيارات          Appointments & Visits
+المخزون                     Inventory
+المالية                     Finance
+نقطة البيع                  Point of Sale
+الموارد البشرية             Human Resources
+
+────────────────────────────────────────
+السجل                       Audit Log
+الإعدادات                   Settings
+[الصورة/الاسم/الرقم الوظيفي/الملف/الخروج]
 ```
 
-**ملاحظة عن الشريط العلوي (Top bar):** يُفضّل أن يبقى الشريط العلوي **خفيفاً** ولا يكرّر الشريط الجانبي:
-ضع فيه فقط: تبديل اللغة (ع/EN)، البحث الشامل، الإشعارات، اسم المستخدم/تسجيل الخروج، ومحدّد المستودع/الفرع النشط إن وُجد. التنقّل الرئيسي يبقى في الشريط الجانبي لتجنّب الازدواجية.
+- POS and HR appear only when their phase surfaces and permissions exist.
+- Audit and Settings are anchored in the lower system area.
+- The user block shows avatar/initials, display name, employee code when linked,
+  profile entry, and sign out.
+- The sidebar supports expanded and collapsed modes; collapsed icons require
+  accessible labels/tooltips.
+
+### 2.2 Global Top Bar
+
+The top bar contains:
+
+- module/page title;
+- breadcrumb or explicit back behavior;
+- global search/command palette;
+- permission-filtered quick-create menu;
+- notifications;
+- locale switch;
+- an active warehouse/operating context only for workflows that explicitly
+  support it.
+
+It does not repeat all sidebar modules.
+
+### 2.3 Contextual Module Bar
+
+When a module has multiple surfaces, a horizontal tab/sub-navigation appears
+below the title. It may scroll or collapse into a menu on narrow widths. Tabs
+the user cannot access are omitted, not disabled as information leaks.
 
 ---
 
-## 3. حسم سؤالك: "المواد تبويب مستقل أم داخل المستودعات؟"
+## 3. Canonical Module Tree
 
-**القرار المقترح: تبويب مستقل "المواد" تحت مجموعة "المخزون".**
+### 3.1 Dashboard / لوحة التحكم
 
-السبب:
-- المادة (Product) كيان مستقل له تعريف ووحدات (primary/secondary) وباركود وصورة وسعر إيجار، ويُستخدم في **البيع والشراء والعقود والزيارات** — وليس فقط داخل المستودع.
-- المستودع (Warehouse) هو **مكان**؛ والرصيد (`inventory_balances`) هو علاقة بين المادة والمستودع.
-- جعل "المواد" داخل "المستودعات" يخلط بين *تعريف المادة* و *مكان تخزينها*.
+Dashboard is a cross-module, permission-shaped summary of business condition:
 
-لذلك نضع **المواد، المستودعات، حركات المخزون، التحويلات** كأربعة عناصر **تحت مجموعة واحدة اسمها "المخزون"**. هذا يحقق رغبتك في التجميع دون دمج المفاهيم.
+- appointments and visits today, completed and remaining;
+- overdue work;
+- active/trial/rental contracts and rented/trial assets;
+- current-period sales, collections, and receivables when authorized;
+- inventory/data-quality warnings;
+- notifications and approval items;
+- quick actions;
+- later Phase 10 trends, comparisons, health scores, and owner analytics.
+
+Every data widget drills into its filtered source records. Motivational phrases
+are optional polish after alerts and trusted KPIs.
+
+### 3.2 Daily Activity / ملخص اليوم
+
+Daily Activity is a selected-date operational timeline of authorized events:
+appointments, visit outcomes, contracts, invoices/returns, vouchers, cash/bank,
+inventory documents/transfers/counts, and relevant administrative changes.
+
+It answers `what happened on this date?`. It is not the accounting day book,
+general ledger, or raw audit log.
+
+### 3.3 Customers & Suppliers / العملاء والموردون
+
+Contextual tabs:
+
+- Customers;
+- Suppliers.
+
+Customer detail owns:
+
+- profile and contacts;
+- service locations;
+- financial balance/account statement;
+- contracts and rented/trial assets;
+- invoices, vouchers, and credits;
+- appointments and visits;
+- communication and history when implemented.
+
+Customers and suppliers share navigation/search patterns but retain separate
+tables, permissions, and A/R versus A/P semantics.
+
+### 3.4 Contracts / العقود
+
+Contextual surfaces:
+
+- all contracts;
+- trials;
+- rentals;
+- lifecycle/due views when implemented.
+
+Create, convert, extend, change consumable, close, terminate, or return are
+permission-gated in-module actions. An active/used contract is not hard-deleted.
+
+### 3.5 Appointments & Visits / المواعيد والزيارات
+
+Contextual tabs:
+
+- Calendar;
+- Today Agenda;
+- Visits;
+- Follow-up;
+- Route View / Operations Map when its phase is implemented.
+
+The module unifies the user's operational experience but preserves the model:
+
+- calendar event = plan, assignment, participants, and scheduled date/time;
+- visit = execution, GPS/photo, quantities, collection, outcome, and evidence.
+
+An authorized user may add an unplanned field visit with purpose/reason. The
+visit may produce no sale, a follow-up, a trial contract, or a rental contract.
+Created contracts link back to the visit. Performance/commission credit requires
+accepted execution, not appointment creation.
+
+### 3.6 Inventory / المخزون
+
+Contextual tabs:
+
+- Overview / Balances;
+- Products and Product Groups;
+- Warehouses;
+- Inventory Documents;
+- Movements;
+- Transfers;
+- Stock Count / Reconciliation;
+- later maintenance/unit history links where appropriate.
+
+Rules:
+
+- Product is an item definition; Warehouse is a place; Balance connects them.
+- Movements remain immutable history.
+- Financial stock operations use controlled inventory documents.
+- Transfers remain non-financial at total-company GL level.
+- `Add product`, `Add warehouse`, `Transfer`, `Count`, and `Correct` are commands
+  inside Inventory.
+
+### 3.7 Finance / المالية
+
+Contextual tabs:
+
+- Finance Overview;
+- Invoices: Sales, Purchases, Rental, Sales Returns, Purchase Returns;
+- Vouchers: Receipt and Payment;
+- Cash & Bank;
+- Chart of Accounts;
+- Journal Entries / `القيود اليومية`;
+- General Ledger / `دفتر الأستاذ`;
+- Reports: account statements, accounting day book, trial balance, P&L,
+  balance sheet, cash flow, budgets/budget-versus-actual, debt aging, and
+  reconciliations;
+- Fiscal Period and Year-End Close.
+
+The current Phase 5 engines remain the posting truth. Navigation consolidation
+does not introduce direct journal editing or hard deletion. Phase 10 completes
+the missing ledger/report/close surfaces.
+
+### 3.8 Point of Sale / نقطة البيع
+
+Phase 9 module:
+
+- sale/cart;
+- barcode scan;
+- payment;
+- receipt/refund according to accepted accounting policy;
+- register/daily close.
+
+POS consumes the same product, inventory, invoice, voucher, tax, permission,
+and audit foundations; it is not a second accounting engine.
+
+### 3.9 Human Resources / الموارد البشرية
+
+Contextual tabs:
+
+- Employees;
+- Requests;
+- Approval Inbox;
+- Salaries;
+- Advances;
+- Commissions;
+- Employee Documents.
+
+Employee records include tenant-scoped employee code, contact/personal data,
+employment dates, work profile, passport/residency and sponsorship status,
+employment/temporary-assignment documents, alerts, and active state according
+to the Phase 9 accepted data model.
+
+Employee, tenant user, permissions, and work profile remain distinct. A work
+profile changes the default desktop/mobile presentation only and grants no
+access.
+
+### 3.10 Audit Log / السجل
+
+The basic surface filters by actor, date, module/entity, action, and reason and
+links to the source record. Before/after values are presented safely according
+to permissions. Audit rows are immutable. Phase 10 adds advanced review,
+anomaly, override, cancellation, and permission-change dashboards.
+
+### 3.11 Settings / الإعدادات
+
+Contextual sections:
+
+- Company and localization;
+- Users, employee links, permissions, and profile;
+- Finance, tax, accounts, fiscal defaults;
+- Document templates and branding;
+- Calendar working schedule, timezone, reminders, and exceptions;
+- Field operations, GPS, visit, and risk settings;
+- notification channels/templates when implemented.
+
+Settings permissions are per sub-area. A generic Settings entry must not grant
+visibility to every settings page.
 
 ---
 
-## 4. حسم منطق العملاء (زبائن/موردون) — مطابق للموجود
+## 4. Adaptive Mobile Navigation
 
-- **شاشة واحدة "العملاء"** فيها تبويبان فرعيان: **زبائن** و **موردون** (لأنهما جدولان منفصلان فعلاً).
-- عند إنشاء زبون/مورد: **حساب شجرة الحسابات اختياري** (`create_account`، افتراضي false). عند التفعيل يُنشأ A/R أو A/P ذرياً؛ ويمكن الربط لاحقاً بزر «إنشاء حساب محاسبي» (`ensure_customer_account` / `ensure_supplier_account`).
-  - يجب أن يتم ذلك داخل RPC واحدة (transaction) عند الإنشاء، لا يدوياً.
-- **إضافة زبون مباشرة من شاشة العقد:** أضف زر "+ زبون جديد" داخل خطوة اختيار الزبون في معالج العقد،
-  يفتح حوار إنشاء سريع ويُرجع الزبون المُنشأ ليُختار فوراً (inline create). هذا متوافق مع كون `contracts.customer_id` إجبارياً.
+The mobile shell is derived from work profile for ordering/defaults and from
+explicit permissions for visibility/access.
 
----
+### Field or Hybrid Default
 
-## 4.5 Customer Service Locations - M5.6 Update
+```text
+Today | Appointments & Visits | Requests | permitted primary action | More
+```
 
-Customer navigation must treat service locations as a sub-surface of the customer profile, not as a separate sidebar module and not as separate customers.
+`More` may contain Customers, Van Stock, Contracts, Invoices/Collections,
+profile, settings, and sign out according to permission.
 
-- Main sidebar stays `Customers`.
-- Customer detail includes an in-screen `Locations` tab/section.
-- A customer may have many service locations; customer count still counts only `customers`.
-- Contract creation selects a customer first, then a service location.
-- Field visits and calendar surfaces should show both customer name and service location name when available.
-- The table behind this surface is `customer_service_locations`, gated by `customers.view` for read and `customers.edit` for create/edit/deactivate unless a dedicated permission is introduced later.
+### Administrative Default
 
----
+```text
+Home/Alerts | Approvals | Calendar | permitted business module | More
+```
 
-## 5. حسم منطق الفواتير — مطابق للموجود
-
-| نوع الفاتورة | الطرف المطلوب | ملاحظة |
-|--------------|----------------|--------|
-| بيع `sales` | الزبون **إجباري** في Phase 5 v1 | البيع النقدي المباشر يبقى لمسار POS لاحقاً |
-| إيجار شهري `rental_monthly` | الزبون **إجباري** + مرتبطة بعقد | تُولّد آلياً من العقد/الزيارة |
-| شراء `purchase` | المورد **إجباري** | يفرضه قيد `chk_party` |
-| مرتجع بيع/شراء | نفس طرف الفاتورة الأصلية | Phase 5 M7.5، مرتبط بالأصل وليس إلغاءً |
-
-> **مهم للتنفيذ:** العقود وفواتير البيع تتطلب زبوناً، وفواتير الشراء
-> تتطلب مورداً في Phase 5. البيع النقدي بدون زبون يُنفذ لاحقاً ضمن POS بحساب
-> نقدي مضبوط، لا بكسر قيد الطرف في محرك الفواتير.
+The shell must handle mixed permissions without creating hardcoded security
+roles. Server checks and RLS remain authoritative offline and online.
 
 ---
 
-## 6. أفكار إضافية مقترحة (تحسينات تستحق الإضافة)
+## 5. Requests and Approval Placement
 
-هذه اقتراحات **خارج MVP** غالباً، رتّبها صاحب القرار حسب الأولوية:
+Requests use one audited lifecycle:
 
-1. **بحث شامل (Command palette / global search):** شريط بحث واحد يبحث في العملاء والعقود والفواتير والمواد بالاسم/الكود/الباركود. يسرّع العمل اليومي كثيراً.
-2. **شاشة "ملف العميل 360":** عند فتح أي زبون، تبويبات داخلية: الرصيد، العقود، الفواتير، السندات، الزيارات، الواتساب. (دفتر العميل موجود بالخطة — هذا يجمّعه في مكان واحد.)
-3. **مفضلة/إجراءات سريعة في لوحة التحكم:** أزرار "فاتورة بيع جديدة"، "سند قبض"، "عقد جديد"، "إضافة عميل" مباشرة من Dashboard.
-4. **حالة المستودع النشط في الشريط العلوي:** للشركات متعددة المستودعات، اختيار المستودع الافتراضي يقلّل الأخطاء.
-5. **شارات تنبيه على التبويبات (Badges):** عدد الفواتير المتأخرة على تبويب الفواتير، عدد زيارات اليوم على تبويب الزيارات.
-6. **تصدير PDF/مشاركة واتساب** من شاشات الفاتورة والسند ودفتر العميل (مذكور جزئياً بالخطة — وحّد التجربة).
-7. **سجل التدقيق (Audit) قابل للفلترة** حسب المستخدم/الوحدة/التاريخ بدل قائمة خام.
-8. **لوحة تحكم بمؤشرات (KPIs):** إجمالي المستحقات، عقود نشطة، إيراد الشهر، زيارات اليوم — بطاقات أعلى Dashboard.
+```text
+draft -> submitted -> under_review -> approved | rejected | cancelled
+```
 
-> أي فكرة تُعتمد منها يجب أن تُضاف رسمياً إلى `MVP_SCOPE.md` أو تُؤجَّل لـ Phase 2 صراحةً قبل التنفيذ.
+Initial families:
 
----
+- leave;
+- advance;
+- visit reschedule;
+- one-time or standing delegation;
+- official letter/certificate;
+- contract/price exception where accepted;
+- van-stock refill/transfer.
 
-## 7. تعليمات صريحة لـ Codex (Action Items)
-
-عند تنفيذ بنية التنقّل:
-
-1. **مصدر الحقيقة:** التزم بـ `CANONICAL_DECISIONS.md` و `MVP_SCOPE.md`. عناصر Phase 2 (🟡) **لا تُبنى الآن** — أنشئ فقط placeholders أو أخفِها خلف feature flag.
-2. **الراوتنغ:** وسّع `lib/core/routing/app_routes.dart` و `app_router.dart` بالمسارات الجديدة وفق الشجرة في القسم 2، مع الحفاظ على نمط الأسماء الحالي (`xxx` + `xxxName`).
-3. **الصلاحيات:** كل عنصر تنقّل خلف `PermissionGate` / `user_has_permission('module.view')`. لا تستخدم role checks.
-4. **التبويبات الفرعية:** نفّذها كـ in-screen Tabs (مثلاً TabBar) وليس كمسارات جانبية منفصلة، خصوصاً: بيع/شراء في الفواتير، قبض/صرف في السندات، زبائن/موردون في العملاء.
-5. **المواد مستقلة:** ضع `/products` تحت مجموعة "المخزون" كعنصر مستقل (القرار في القسم 3). لا تجعلها تحت `/warehouses`.
-6. **إضافة زبون من العقد:** نفّذ inline-create كما في القسم 4؛ مرّر `create_account: true` فقط عند الحاجة لحساب A/R فوراً.
-7. **الثنائية اللغوية وRTL:** كل تسميات التبويبات في ملفات ARB (`_ar`/`_en`)، لا نصوص ثابتة.
-8. **لا تغييرات على قاعدة البيانات** لتنفيذ التنقّل — البنية موجودة. أي حاجة لعمود/جدول جديد توقّف واطلب قراراً.
-9. **زر الرجوع إلزامي:** كل شاشة إنشاء/تفاصيل/تعديل/تحويل/معاينة أو عملية داخلية يجب أن تعرض زر رجوع واضحاً. يرجع إلى سجل التنقّل إن وُجد، وإلا يرجع إلى قائمة الوحدة الأم. غياب زر الرجوع يمنع اعتماد الشاشة.
-10. **المسودات كتجربة موحّدة:** عند تنفيذ حفظ المسودة لاحقاً، استخدم أمراً موحّداً في شريط الأوامر للعقود والفواتير والسندات، مع تنبيه تغييرات غير محفوظة وعدم إحداث أي أثر مخزني أو محاسبي قبل التأكيد.
+The mobile Requests tab serves the employee. HR/operations modules and an
+Approval Inbox serve authorized decision makers. Approval authority comes from
+permissions and request policy, never only from job type.
 
 ---
 
-## 8. جدول ربط: التبويب ↔ الجدول ↔ الصلاحية (مرجع سريع للتنفيذ)
+## 6. Record Actions in Navigation and UI
 
-| التبويب | الجدول/الجداول | الصلاحية المقترحة | المرحلة |
-|---------|-----------------|---------------------|---------|
-| لوحة التحكم | (تجميعي) | `dashboard.view` | MVP |
-| العملاء — زبائن | `customers` | `customers.view` | MVP |
-| العملاء — موردون | `suppliers` | `suppliers.view` | MVP |
-| العقود | `contracts`, `contract_lines`, `contract_oil_changes` | `contracts.view` | MVP |
-| الفواتير | `invoices`, `invoice_lines` | `invoices.view` | MVP |
-| نقطة البيع | (تستخدم invoices) | `pos.use` | Phase 2 |
-| عروض الأسعار | `quotations`, `quotation_lines` | `quotations.view` | Phase 2 |
-| المواد | `products`, `product_units`, `product_groups` | `products.view` | MVP |
-| المستودعات | `warehouses`, `inventory_balances` | `warehouses.view` | MVP |
-| حركات المخزون/التحويلات | `inventory_movements` | `inventory.view` | MVP |
-| الحسابات | `chart_of_accounts` | `accounts.view` | MVP |
-| السندات | `vouchers`, `voucher_invoice_allocations` | `vouchers.view` | MVP |
-| القيود | `journal_entries`, `journal_lines` | `journal.view` | Phase 2 |
-| الزيارات | `visits` | `visits.view` | MVP |
-| التقويم | `calendar_events` | `calendar.view` | MVP |
-| الموظفون/الرواتب/السلف/العمولات | `employees`, `salaries`, `advances`, `commission_rules` | `employees.view` | Phase 2 |
-| السجل | `audit_log` | `audit.view` | MVP |
-| الإعدادات | `tenant_settings`, `currencies` | `settings.view` | MVP |
+- Unposted draft: edit/discard according to its policy.
+- Confirmed financial document: cancel/reverse with permission and reason;
+  never hard-delete.
+- Return: linked return/credit document, not cancellation.
+- Posted journal: immutable.
+- Active/used contract: lifecycle action, not delete.
+- Referenced master record: deactivate rather than erase history.
+- Every sensitive action: consequence preview, specific rejection reason, and
+  immutable audit.
 
-> أسماء الصلاحيات أعلاه **مقترحة**؛ طابقها مع كتالوج الصلاحيات الفعلي في `PERMISSIONS.md` قبل الاستخدام، وإن لم توجد صلاحية، أضِفها للكتالوج بنفس النمط.
+The presence of a button never replaces server validation.
+
+---
+
+## 7. Route and Implementation Rules
+
+1. Preserve existing deep-link paths unless a separately accepted migration is
+   needed; module grouping does not require database changes.
+2. Use typed module/sub-navigation definitions, not ad-hoc lists repeated by
+   screen.
+3. All labels come from ARB localization files.
+4. Every detail/create/edit/operation route has a clear back/breadcrumb target.
+5. Keep unsaved-change protection and shared command patterns.
+6. Do not render empty module tabs that have neither an implemented surface nor
+   an accepted placeholder need.
+7. Keep widgets/counts permission-shaped; a hidden module cannot leak its count
+   through Dashboard, search, notifications, or Daily Activity.
+8. Desktop, narrow desktop/tablet, and mobile fallback must share module
+   semantics even when their chrome differs.
+
+---
+
+## 8. Capability Placement
+
+| Capability | Placement |
+|---|---|
+| Module shell, navigation, Dashboard v1, Daily Activity, record-action UX, basic Audit | Phase 7.5 |
+| Employee link/work profile minimum, adaptive mobile, generic requests foundation, field visits/offline | Phase 8 |
+| POS, maintenance, full employee file, HR requests, payroll, advances, commissions | Phase 9 |
+| General Ledger UI, accounting day book, trial balance, P&L, balance sheet, close, advanced dashboards/audit/map | Phase 10 |
+| External email/WhatsApp delivery | Phase 11 |
+
+No completed phase is renumbered. Future work is subdivided rather than hidden
+inside an unrelated milestone.

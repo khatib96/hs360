@@ -1,37 +1,83 @@
-# FIELD_OPS.md — Mobile App, Field Operations & Calendar
+# FIELD_OPS.md — Adaptive Mobile App, Field Operations & Requests
 
-> This document covers everything the field agent does, from the moment they wake up to the moment they reconcile their van at end of day.
-> Updated 2026-05-16 to resolve conflicts: field access is permission-based, not fixed-label-based; KWD examples use the tenant's default currency at runtime.
+> This document covers the Phase 8 adaptive mobile shell, field workflow,
+> visits, employee requests, and end-of-day work. Phase 7 calendar semantics are
+> canonical in `PHASE_7_CALENDAR_PLAN.md`.
+>
+> Updated 2026-07-22: administrative/field/hybrid are presentation work
+> profiles, not security roles. Access remains Manager/User plus explicit
+> permissions. KWD examples use the tenant's default currency at runtime.
 
 ---
 
 ## 1. Who Uses the Mobile App?
 
-Only users with field-operation permissions, such as `visits.view_assigned`, `visits.complete_refill`, or `contracts.create_mobile`.
+Any active tenant user may use the mobile app when at least one useful permitted
+mobile surface exists. The shell is ordered using the linked employee's work
+profile and filtered using explicit permissions.
 
-**Managers usually do not use the mobile app for daily work.** They use desktop. They may install mobile for occasional checks but their primary tools are on desktop.
+- Field/hybrid users typically receive Today and Appointments & Visits first.
+- Administrative users typically receive alerts/approvals/calendar first.
+- Managers may use mobile for oversight or approvals, while desktop remains the
+  primary full-management surface.
 
-The mobile app enables data entry only for users with the required mobile permissions. Other users see only the screens their permissions allow.
+Employee, tenant user, employee code, work profile, and permissions are
+distinct. Work profile never grants access. The server and RLS remain final.
 
 ---
 
-## 2. Bottom Navigation (Field Agent)
+## 2. Adaptive Bottom Navigation
 
-5 tabs:
+Mobile has at most five primary destinations. The fifth destination may be
+`More`; mixed permissions determine which feature receives the available slot.
 
-| Tab | Icon | Purpose |
-|-----|------|---------|
-| **Today** | calendar-day | List of today's tasks |
-| **Calendar** | calendar | Day/week/month views, future planning |
-| **Customers** | users | Search & view customer details |
-| **Van Stock** | box | Current stock in agent's van |
-| **More** | dots | Profile, settings, sign out |
+Field/hybrid default:
+
+| Destination | Purpose |
+|---|---|
+| **Today** | Today's appointments, visits, progress, collections, and alerts |
+| **Appointments & Visits** | Calendar/agenda plus execution and unplanned-visit entry |
+| **Requests** | Submit and track permitted employee/field requests |
+| **Primary permitted action** | Contracts, Collections/Invoices, or Van Stock according to actual permissions |
+| **More** | Customers, remaining permitted modules, profile, settings, sign out |
+
+Administrative default:
+
+| Destination | Purpose |
+|---|---|
+| **Home / Alerts** | Authorized operational/financial alerts and summaries |
+| **Approvals** | Requests the user is permitted to decide |
+| **Calendar** | Company calendar according to view scope |
+| **Primary permitted module** | Customers, Finance, Contracts, or another authorized surface |
+| **More** | Remaining modules, profile, settings, sign out |
+
+The mobile shell must not show an empty destination and must not leak hidden
+counts through badges.
+
+### 2.1 Requests
+
+The initial shared lifecycle is:
+
+```text
+draft -> submitted -> under_review -> approved | rejected | cancelled
+```
+
+Field-critical Phase 8 request types include visit/date reschedule,
+one-time/standing delegation, van-stock refill/transfer, and accepted contract
+override requests. Phase 9 adds full leave, advance, official letter/
+certificate, and HR document workflows.
+
+Every request requires a reason and shows its immutable decision history.
+Approval authority comes from permission and request policy, not job title. An
+approval changes an operational/financial record only through a dedicated
+idempotent application RPC that revalidates current state.
 
 ---
 
 ## 3. The "Today" Screen — The Default Home
 
-This is what the agent sees first thing in the morning.
+This is what a field/hybrid user normally sees first. Administrative users may
+have a different default landing page.
 
 ```
 ┌─────────────────────────────────────────┐
@@ -222,6 +268,33 @@ If the entered price triggers min-profit warning, the agent gets two options:
 - "Request Manager approval" (saves as draft + pending)
 - "Discuss with Manager and try again later" (saves as draft)
 
+When contract creation starts from a visit, the resulting trial/rental contract
+must keep a link to that visit and preserve the visit customer/service-location
+alignment. Draft creation alone does not earn visit or commission credit.
+
+### 5.1 Unplanned Field Visit
+
+An authorized field employee may record a real visit that did not originate
+from a calendar appointment, for example a sales presentation or prospect
+follow-up.
+
+Required flow:
+
+1. Select/create the customer and service location as permitted.
+2. Select visit purpose/type and enter a non-empty reason for the unplanned
+   visit.
+3. Capture check-in/time/GPS and photo/signature according to that visit type's
+   accepted evidence policy.
+4. Record outcome: no interest, follow-up required, trial proposed/created,
+   rental created, collection, service issue, or another controlled outcome.
+5. Optionally create a linked follow-up event or trial/rental contract through
+   its own permissioned workflow.
+6. Complete the visit with immutable execution evidence and audit.
+
+Appointments and visits remain distinct: the unplanned visit does not fabricate
+a prior calendar event. Performance/commission reporting counts only accepted
+completion/outcome facts.
+
 ---
 
 ## 6. Collections Flow (Mobile)
@@ -342,7 +415,9 @@ Discrepancies are flagged in Manager reports. Repeated discrepancies trigger an 
 └─────────────────────────────────────────┘
 ```
 
-Tap a day → opens that day's schedule.
+Tap a day → opens that day's agenda. Generated and untimed events never receive
+an invented clock time; explicitly timed manual events show their accepted
+same-day time range.
 
 ---
 
@@ -355,9 +430,9 @@ Tap a day → opens that day's schedule.
 | Refill due | Active rental contracts / confirmed field execution | Initial due from contract cadence; later due from actual completion + confirmed coverage |
 | Contract end | Fixed-term contracts | Yes |
 | Trial ending | Trial periods | Yes — 7 days before `trial_end_date` |
-| Maintenance due | High-use devices | Yes — triggered by maintenance rules |
-| Payment due | Overdue invoices | Yes — generated when invoice goes overdue |
-| Follow-up | Manual | No — sales agent sets |
+| Customer visit | Manual or linked operational planning | No unless an accepted workflow creates it |
+| Internal meeting/activity | Manual | No |
+| Task/reminder/follow-up | Manual | No |
 | Custom | Manual | No |
 
 ### 9.2 How Refill Events Are Generated
@@ -385,8 +460,10 @@ This way:
 
 ### 9.3 Reminders
 
-Phase 7 appointments are date-only. The old minute-offset field is legacy and
-must not create a fabricated midnight appointment.
+Contract-generated and untimed manual events are date-only. A manual event may
+optionally have an explicitly entered same-day start/end window. The old
+`scheduled_time` field remains compatibility-only and must not create a
+fabricated midnight appointment.
 
 The manager explicitly reviews an IANA timezone and all seven weekday working
 schedules. Until `working_schedule_configured` is true, no working-hours-based
@@ -409,41 +486,26 @@ Users with `calendar.reassign` can reassign a calendar event (move from agent A 
 
 ### 9.5 Manual Events
 
-Sales agents can add:
-- Follow-up reminders ("call customer next Tuesday")
-- Sales meetings
-- Custom tasks
-
-These are personal to the agent unless `assigned_agent_id` is set.
+Authorized users can add customer visits, internal meetings, tasks/reminders,
+activities/training, follow-ups, and custom items. Participants are distinct
+from the assigned/responsible employee. Visibility follows the accepted global
+or assigned/participant scope.
 
 ---
 
-## 10. The Calendar Screen (Desktop)
+## 10. Desktop Appointments & Visits Module
 
-A richer view than mobile. Three modes:
+The accepted Phase 7 desktop calendar uses an upper calendar and lower selected-
+day agenda with Day/Week/Month presentation. Month cells show counts rather than
+fabricated times. Selecting a date updates the agenda in place and shows the
+resolved working-day status/window.
 
-### 10.1 Month View
-A full calendar grid. Each day cell shows:
-- Number of events as a dot row
-- Color-coded by type (gold = refill, green = collection, blue = sales, red = overdue, etc.)
-- Tap a day → opens day detail panel on right
-
-### 10.2 Week View
-7-column grid, 24 rows (hours). Events appear as colored blocks. Drag-and-drop to reschedule.
-
-### 10.3 Day View
-Detailed list with hour-by-hour breakdown. Sidebar shows unassigned events that can be dragged onto an agent's column.
-
-### 10.4 Agent Columns (Desktop)
-On Day and Week views, users with `calendar.view_all_agents` can split by agent — multi-column view, one per agent. This shows workload distribution at a glance.
-
-### 10.5 Filters
-- By agent
-- By event type
-- By customer
-- By service location
-- By area
-- By status (pending / done / missed / etc.)
+Phase 7.5 places this calendar beside Today Agenda, Visits, Follow-up, and the
+future Route/Operations Map inside the Appointments & Visits module. Optional
+drag/drop, assignment, and rescheduling must call the same audited RPCs as the
+explicit actions. Phase 8 adds visit execution; Phase 10 adds the reusable
+Operations Map. See `PHASE_7_CALENDAR_PLAN.md` for the complete accepted UI and
+permission contract.
 
 ---
 
@@ -460,11 +522,10 @@ When refill day approaches, the customer can receive a heads-up message via What
 Tenant can edit template in settings.
 
 ### 11.2 When Sent
-Configurable per tenant:
-- 1 day before refill day, OR
-- 2 hours before scheduled visit, OR
-- Both, OR
-- Never
+The accepted Phase 7 in-app policies are independently configurable at the
+start of the event working day and at the start of the previous working day.
+Timed customer-channel delivery needs a separately accepted channel/template/
+recipient/retry contract in Phase 11 and must not be inferred from event type.
 
 ---
 
@@ -477,7 +538,7 @@ When the agent taps "End of day" or at a configured time (e.g. 18:00):
 │  Today's summary                        │
 ├─────────────────────────────────────────┤
 │  ✓ 6 visits completed                   │
-│  ⚠ 1 visit missed (will reschedule)    │
+│  ⚠ 1 visit missed (action required)    │
 │  📜 1 new contract signed                │
 │  💰 KWD 125.500 collected                │
 │                                         │
@@ -493,7 +554,10 @@ When the agent taps "End of day" or at a configured time (e.g. 18:00):
 └─────────────────────────────────────────┘
 ```
 
-The missed visit appears in tomorrow's Today screen, with a note "Rescheduled from yesterday."
+A missed/unexecuted due item remains pending/overdue on its original due date.
+It appears in the next day's overdue area but is not silently moved to tomorrow.
+An authorized reschedule or approved reschedule request records the new
+operational date and preserves `original_due_date` and audit history.
 
 ---
 
@@ -503,8 +567,9 @@ The missed visit appears in tomorrow's Today screen, with a note "Rescheduled fr
 Agent taps "Customer unavailable":
 - Records visit as `missed`
 - Photo not required
-- Optional note
-- System auto-schedules a follow-up calendar event for 2 days later
+- Reason/note required according to the accepted visit policy
+- Offers a reschedule/follow-up request or authorized audited reschedule; it
+  does not silently create or move work two days later
 
 ### 13.2 Device Broken at Site
 Agent taps "Device issue":

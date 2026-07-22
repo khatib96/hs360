@@ -105,7 +105,7 @@ lib/
 │   ├── vouchers/                   # collections
 │   ├── inventory/
 │   ├── maintenance/
-│   ├── field_ops/                  # mobile-only
+│   ├── field_ops/                  # mobile-first execution; permission-shaped
 │   ├── pos/
 │   ├── hr/
 │   ├── reports/
@@ -209,6 +209,7 @@ GoRouter with permission-aware redirects.
 
 # Admin / Accountant / Warehouse (desktop)
 /dashboard
+/daily-activity
 /products
 /products/:id
 /customers
@@ -222,7 +223,13 @@ GoRouter with permission-aware redirects.
 /vouchers
 /vouchers/:id
 /inventory
+/inventory/warehouses
+/inventory/movements
+/inventory/transfers
 /inventory/maintenance
+/finance
+/finance/general-ledger
+/finance/reports
 /pos
 /reports
 /reports/profit-and-loss
@@ -231,19 +238,26 @@ GoRouter with permission-aware redirects.
 /reports/agent-performance
 /hr
 /hr/employees
+/hr/requests
+/hr/approvals
 /hr/salaries
 /hr/commissions
+/audit
 /settings
 /settings/company
 /settings/users
 /settings/min-profit
 /settings/templates
 
-# Field agents (mobile)
+# Adaptive mobile (routes still permission-gated)
 /field/today
 /field/calendar
+/field/visits
+/field/visits/new-unplanned
 /field/visit/:id
 /field/visit/:id/refill
+/requests
+/approvals
 /field/new-contract
 /field/customers
 /field/van-stock
@@ -256,6 +270,12 @@ On every navigation:
 1. Authenticated? Else → `/login`
 2. Tenant resolved? Else → `/select-tenant` (or auto-pick if only one)
 3. Current route allowed by user's permissions? Else → first permitted home route
+
+The desktop shell groups routes into modules and contextual tabs; route paths do
+not need to mirror the visible menu tree. The mobile shell uses linked employee
+work profile only to choose ordering/default landing. Manager/User plus explicit
+permissions remain authoritative. Dashboard, search, badges, notifications, and
+Daily Activity must use permission-shaped read contracts.
 
 ---
 

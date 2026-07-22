@@ -1,7 +1,8 @@
 # MVP_SCOPE.md — Strict v1 Scope
 
-> Updated 2026-05-16 to resolve conflicts before Phase 0.
-> This file defines the first shippable version. Do not add Phase 2 work unless the scope is explicitly changed.
+> Updated 2026-07-22 after the owner-approved Phase 7.5 roadmap correction.
+> This file defines the first shippable version. Later accepted ideas belong in
+> their assigned roadmap phase unless explicitly promoted here.
 
 ---
 
@@ -15,6 +16,21 @@
 - Permission catalog and explicit `user_permissions`.
 - `PermissionGate` in Flutter.
 - RLS policies based on `user_has_permission()`.
+
+### Product Structure and Safe Navigation
+
+- Module-based desktop navigation rather than a flat list of pages/actions.
+- Primary modules: Dashboard, Daily Activity, Customers & Suppliers, Contracts,
+  Appointments & Visits, Inventory, and Finance; later POS/HR modules remain
+  hidden until implemented.
+- Lower system area for permission-gated Audit, Settings, and user profile.
+- Global top bar utilities plus contextual navigation inside the active module.
+- Dashboard v1 with permission-shaped operational widgets and drill-down.
+- Daily Activity / `ملخص اليوم` as a selected-date operational timeline,
+  distinct from accounting Journal Entries / `القيود اليومية`.
+- Consistent draft/edit/cancel/reverse/deactivate commands matching backend
+  safety rules; posted financial records are never hard-deleted.
+- Basic permission-gated Audit Log review.
 
 ### Products
 
@@ -84,10 +100,10 @@
 
 ### Calendar and Company Appointments
 
-> Implementation status (2026-07-17): the desktop calendar, M7A manual company
-> appointments (`098`/`099`), and M7B working-date exceptions (`100`) are closed
-> / accepted after automated and owner visual acceptance. Assignment/reschedule
-> (M8) and mobile/route work remain deferred.
+> Implementation status (2026-07-22): Phase 7 M0-M12 is CLOSED / ACCEPTED
+> through migration `104`. Assignment/reschedule, assigned mobile calendar,
+> route view/native directions, and the accepted verification gates are closed.
+> Physical Android smoke remains a pre-production obligation.
 
 - Hybrid company calendar with an upper calendar and lower selected-day agenda:
   contract-generated/untimed events are date-based, while manual appointments
@@ -115,10 +131,13 @@
 
 ---
 
-## Out of v1 (Phase 2+)
+## Out of v1 (Later Roadmap Phases)
 
 - POS.
-- Full HR: salaries, advances, commissions.
+- Full employee personal/passport/residency/employment-document records.
+- Full HR: leave/letter requests, salaries, advances, commissions, and payroll.
+- Administrative/field/hybrid adaptive mobile beyond the minimum v1 field
+  workflow and the complete generic request/approval catalog.
 - WhatsApp campaigns and two-way conversation inbox.
 - Maintenance module.
 - Quotations.
@@ -126,6 +145,9 @@
 - Visual document template editor.
 - Internal operations map with clustering.
 - Full P&L reports.
+- Full General Ledger UI, accounting day book, trial balance, balance sheet,
+  inventory-to-GL reconciliation, and financial close.
+- Advanced owner Dashboard and Audit Review Dashboard.
 - Fiscal-period management and year-end closing workflow (Phase 10).
 - Contract profitability dashboard beyond stored snapshots.
 - Certificate pinning.
@@ -140,8 +162,12 @@ v1 is acceptable when:
 
 - A Manager can configure products, customers, users, and permissions.
 - A User sees only granted modules and actions.
+- Navigation groups screens into coherent modules and does not leak hidden
+  counts through Dashboard, Daily Activity, search, or notifications.
 - A customer can have multiple service locations without being counted as multiple customers.
 - A rental contract can be created with correct snapshots and minimum-profit validation.
 - Monthly rental invoices and receipt vouchers post balanced journal entries.
+- Confirmed financial records cannot be hard-deleted; accepted cancellation
+  paths reverse their effects safely and preserve audit history.
 - A field user can complete a refill with GPS and camera proof.
 - Customer balance is answerable without Google Sheets.

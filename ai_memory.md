@@ -1,11 +1,54 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-22 (Session: **PHASE 7 CLOSED / ACCEPTED**).
+> Updated 2026-07-22 (Session: **PHASE 7.5 PRODUCT STRUCTURE PLAN LOCK**).
 > Gates D/E/F **`PASS / OWNER ACCEPTED`**; Gate F acceptance uses physical iOS
 > + Android Emulator evidence. Gate G and Final Gate H **PASS** through `104`.
-> M12 and Phase 7 **`CLOSED / ACCEPTED`**. Phase 8 **NOT STARTED**.
+> M12 and Phase 7 **`CLOSED / ACCEPTED`**. Phase 7.5 is **PLANNED / NOT
+> STARTED**. Phase 8 **NOT STARTED**.
 > Permanent pre-production constraint: **physical Android smoke is required**
 > under the owner-approved deferral. No commit/push performed.
+
+---
+
+## Session 2026-07-22 - Phase 7.5 Product Structure Plan Lock
+
+**Owner decision:** pause before Phase 8 and incorporate the owner's complete
+navigation/product-structure correction plus the earlier navigation brief into
+the canonical roadmap. Do not reopen or renumber completed Phases 0-7. Add a
+new Phase 7.5 for module navigation, Dashboard/Daily Activity, record-action
+UX, basic Audit review, and finance/inventory integrity.
+
+**Locked structure:** desktop sidebar modules are Dashboard, Daily Activity,
+Customers & Suppliers, Contracts, Appointments & Visits, Inventory, Finance,
+POS, and HR, with Audit/Settings/user profile in the lower system area. The
+global top bar carries utilities; the active module carries contextual tabs.
+Inventory/warehouse pages and finance/accounting pages are grouped without
+merging distinct entities. `ملخص اليوم` is operational; `القيود اليومية` and
+`دفتر الأستاذ` remain accounting surfaces.
+
+**Future placement:** Phase 8 adds minimum employee link/work profile, adaptive
+permission-shaped mobile, generic Requests & Approvals foundation, unplanned
+and scheduled visit execution, optional linked trial/rental contract, and
+offline field work. Phase 9 adds POS, maintenance, full employee personal/
+passport/residency/employment records, HR request types, payroll, advances, and
+commissions. Phase 10 adds General Ledger, accounting day book, trial balance,
+P&L, balance sheet, reconciliation, close, advanced dashboards/audit, and the
+Operations Map.
+
+**Safety:** work profile is presentation-only and never authorization;
+employee code may be a login alias but `auth.users.id` remains identity. Posted
+financial records are never hard-deleted; correction uses permissioned,
+reason-required cancellation/reversal. Active/used contracts use lifecycle
+actions. Audit history remains immutable and permission-shaped.
+
+**Documentation:** added
+`PHASE_7_5_PRODUCT_STRUCTURE_AND_STABILIZATION_PLAN.md`; rewrote
+`NAVIGATION_AND_MODULES_BRIEF.md`; updated `BUILD_PLAN.md`,
+`CANONICAL_DECISIONS.md`, `MVP_SCOPE.md`, `PROJECT.md`, `PERMISSIONS.md`,
+`FIELD_OPS.md`, `DATABASE_SCHEMA.md`, `SECURITY.md`, `DESIGN_SYSTEM.md`,
+`ARCHITECTURE.md`, `ENGINEERING_QUALITY.md`, `PHASE_7_CALENDAR_PLAN.md`, and
+`README.md`. Documentation only; no application/database implementation,
+migration, commit, or push.
 
 ---
 

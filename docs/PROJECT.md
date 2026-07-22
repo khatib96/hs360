@@ -1,6 +1,9 @@
 # PROJECT.md — Vision & Scope
 
-> Updated 2026-05-16 to resolve conflicts: operational job names are examples only. Access control is Manager/User + explicit permissions. KWD is the first tenant's default currency, not a hardcoded system rule.
+> Updated 2026-07-22 with the owner-approved Phase 7.5 product structure,
+> adaptive mobile, employee/request, and record-correction direction.
+> Operational job names/work profiles are descriptive presentation inputs only.
+> Access control remains Manager/User + explicit permissions.
 
 ## 1. Vision
 
@@ -32,6 +35,9 @@ The system must:
 5. Cannot prove that a refill visit actually happened
 6. Customer debt aging is invisible until too late
 7. Switching oil types mid-contract is undocumented
+8. A flat list of screens hides the business workflow and makes related
+   inventory, finance, customer, and operations tasks feel disconnected
+9. Employee requests and management approvals have no controlled shared trail
 
 ### 2.3 Operational Roles
 - **Owner / Admin** — sees everything, sets policies, owns financial visibility
@@ -40,6 +46,10 @@ The system must:
 - **Hybrid agents** — do both
 - **Accountant** — manages invoices, vouchers, statements
 - **Warehouse keeper** — manages stock, van assignments, transfers
+
+An employee may have an administrative, field, or hybrid work profile for
+default desktop/mobile presentation. This is not an authorization role;
+explicit permissions remain final.
 
 ---
 
@@ -52,6 +62,17 @@ The system must:
 - RLS isolation between tenants
 - Per-tenant settings (currency, locale, fiscal year, branding)
 - User invitations limited to tenant scope
+
+**Product Structure & Navigation**
+- Module-based desktop shell: Dashboard, Daily Activity, Customers & Suppliers,
+  Contracts, Appointments & Visits, Inventory, Finance, POS, and HR
+- Global top bar for search/quick create/notifications/locale and contextual
+  horizontal navigation inside the active module
+- Permission-gated Audit, Settings, and signed-in user profile in the lower
+  system area
+- Dashboard KPIs/alerts drill into authorized source records
+- Daily Activity is a selected-date operational timeline and is distinct from
+  accounting journal/day-book views
 
 **Product Management**
 - Product groups (hierarchical)
@@ -81,6 +102,7 @@ The system must:
   confirmed coverage rather than blindly repeating the old planned day.
 
 **Field Operations (Mobile)**
+- Permission-shaped administrative/field/hybrid mobile shell
 - Daily visit schedule per agent
 - Visit address/map/GPS comes from the customer service location tied to the contract/visit
 - Live-camera-only photo proof (gallery uploads blocked)
@@ -89,6 +111,10 @@ The system must:
 - Daily reconciliation
 - On-the-spot oil-type swap with reason capture
 - Mobile receipt voucher issuance with auto-send to customer
+- Authorized unplanned visits with reason, outcome, evidence rules, follow-up,
+  and optional linked trial/rental contract
+- Employee Requests surface and approval status; field-critical requests include
+  visit reschedule/delegation and van-stock refill/transfer
 
 **Accounting**
 - Full chart of accounts (double-entry)
@@ -97,6 +123,11 @@ The system must:
 - Inventory adjustments
 - Customer/supplier statements
 - Debt aging reports (30/60/90/120+)
+- General Ledger, accounting day book, trial balance, P&L, balance sheet,
+  cash flow, budgets/budget-versus-actual, inventory-to-GL reconciliation,
+  fiscal periods, and controlled year-end close
+- Lifecycle-safe correction: drafts may be edited/discarded; posted documents
+  use permissioned, reason-required cancellation/reversal and are never erased
 
 **Customers & Service Locations**
 - Customer is the main company/account and is counted once.
@@ -126,8 +157,13 @@ The system must:
 - Active contracts dashboard
 
 **HR**
-- Employee records
-- Role assignment
+- Employee records with automatic tenant-scoped employee code
+- Personal/contact, nationality, birth/join/end, passport, residency,
+  sponsorship, employment-contract, temporary-assignment, and document data
+- Optional tenant-user link; employees without program access remain valid
+- Administrative/field/hybrid work profile for presentation only
+- Requests and approvals: leave, advances, visit changes, delegation, official
+  letters/certificates, and other accepted types with immutable decision history
 - Salaries via vouchers
 - Advances with auto-deduction
 - Commission engine (per-role configurable)
@@ -199,13 +235,18 @@ not merely on elapsed idle time.
 
 The oil a contract uses is **a time-bounded record**, not a fixed column. A contract can switch oils any number of times. Each switch creates a new record with `effective_from` set. Visits look up "current oil" by finding the row where `effective_to is null`. Reports can reconstruct what oil was used in any past month.
 
-### 4.5 The Five Hard Rules
+### 4.5 The Hard Rules
 
 1. **No price below threshold** — system blocks save; Manager/approver override logged.
 2. **Live capture only** — refill photos from camera, never gallery; enforced at OS level.
 3. **GPS must match** — within `gps_accuracy_threshold_m` (tenant setting, default 200m) of the service location, falling back to the contract snapshot when needed.
 4. **Costs are permission-only** — RLS and safe views enforce it at the database level.
 5. **Money is exact** — `numeric(15,3)` and `Decimal`, never `float` or `double`.
+6. **Plans are not execution** — appointments/assignment/reschedule never prove
+   a visit; GPS/photo/quantity/outcome belong to trusted execution.
+7. **History is not deleted** — posted financial records and used contracts are
+   corrected through lifecycle/reversal paths with permission, reason, and
+   immutable audit.
 
 ---
 
@@ -217,6 +258,8 @@ The system is successful when:
 - [ ] Owner answers "is contract X profitable?" in <5 seconds
 - [ ] 100% of refills have GPS + photo + agent identity recorded
 - [ ] Monthly P&L generates in <30 seconds
+- [ ] A user finds every daily task through a coherent module in <5 clicks
+- [ ] Every sensitive edit/cancellation/approval is attributable with a reason
 - [ ] No data entry happens in Sheets anymore
 - [ ] A second tenant can be onboarded by Admin without code changes
 

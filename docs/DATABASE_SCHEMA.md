@@ -369,6 +369,36 @@ create table advances (
 );
 ```
 
+### 4.3 Phase 8/9 Employee and Requests Extension (Planned)
+
+The existing `employees.code` is the tenant-scoped employee number. It must be
+generated/validated by a controlled write path and may be presented as a login
+alias only when the employee is linked to a tenant user; `auth.users.id` remains
+the underlying identity.
+
+Do not repurpose `job_type` as authorization. Phase 8 may add a separate
+presentation-only `work_profile` (`administrative`, `field`, `hybrid`) plus the
+minimum user/employee link needed by adaptive mobile. Phase 9 extends the
+employee model with reviewed personal/contact, birth/nationality, passport,
+residency/sponsorship, employment contract, temporary assignment/secondment,
+document, expiry-alert, and lifecycle fields/tables. Sensitive fields require
+field-level permission-shaped reads and audit.
+
+Requests/Approvals require a new reviewed schema before implementation, with at
+least:
+
+- `employee_requests` for tenant, requester/employee, type, reason, structured
+  payload, entity links, version, and lifecycle;
+- `employee_request_decisions` for immutable submission/review/approval/
+  rejection/cancellation history;
+- controlled attachment metadata where required;
+- an idempotency ledger/application contract for request types that mutate an
+  operational or financial record after approval.
+
+The shared lifecycle is `draft -> submitted -> under_review -> approved |
+rejected | cancelled`. Approver resolution uses permissions/request policy, not
+job type. Detailed design belongs to Phase 8 before migrations are written.
+
 ---
 
 ## 5. Warehouses
@@ -1082,6 +1112,13 @@ create index idx_visits_date on visits(scheduled_date);
 create index idx_visits_status on visits(status);
 ```
 
+> **Phase 8 extension (planned):** visits and calendar events remain distinct.
+> A visit may reference its originating calendar event when one exists; an
+> authorized unplanned visit must store its purpose/reason without fabricating a
+> prior event. The reviewed Phase 8 schema must capture controlled outcome,
+> evidence/risk fields, follow-up/linkage, and any trial/rental contract created
+> from the visit. Performance/commission credit uses accepted completion facts.
+
 ---
 
 ## 12. Invoices
@@ -1646,6 +1683,11 @@ create index idx_audit_tenant on audit_log(tenant_id);
 create index idx_audit_at on audit_log(at desc);
 create index idx_audit_entity on audit_log(entity_type, entity_id);
 ```
+
+Audit rows are immutable. Phase 7.5 exposes them through a permission-shaped
+read contract that can redact protected before/after fields; direct raw table
+visibility must not bypass source-record permissions. Phase 10 adds advanced
+audit review and anomaly dashboards.
 
 ---
 

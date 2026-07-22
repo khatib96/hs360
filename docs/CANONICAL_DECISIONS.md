@@ -1,7 +1,7 @@
 # CANONICAL_DECISIONS.md — Source of Truth
 
-> Updated 2026-06-15 with inventory-accounting, return-document, and
-> year-end-close placement decisions.
+> Updated 2026-07-22 with Phase 7.5 product structure, adaptive mobile,
+> employee/request boundaries, and record-correction policy decisions.
 > If this file conflicts with any older document, this file wins.
 
 ---
@@ -289,6 +289,101 @@ The detailed source of truth is `PHASE_7_CALENDAR_PLAN.md`.
 
 ---
 
+## 4.10 Product Modules, Navigation, Dashboard, and Daily Activity
+
+Phase 7.5 is a new stabilization phase between accepted Phase 7 and Phase 8. It
+does not reopen or renumber completed work.
+
+- Desktop primary modules are Dashboard, Daily Activity, Customers & Suppliers,
+  Contracts, Appointments & Visits, Inventory, Finance, POS, and HR.
+- Audit, Settings, and the signed-in user identity/profile belong in the lower
+  system area of the sidebar.
+- The global top bar is for title/back/breadcrumb, global search, quick create,
+  notifications, locale, and explicitly supported operating context. It does
+  not duplicate all modules.
+- The active module may own permission-filtered horizontal contextual tabs.
+- Standalone actions such as Add Product, Transfer, Stock Count, and individual
+  Settings pages are in-module commands/surfaces, not primary navigation.
+- Inventory groups products, warehouses, balances, documents, movements,
+  transfers, and counts without merging their entity semantics.
+- Finance groups invoices, vouchers, cash/bank, chart of accounts, journal,
+  ledger, reports, and close without creating a second posting engine.
+- Customers and Suppliers share a module shell but remain separate parties with
+  separate permissions and A/R/A/P behavior.
+- Appointments and Visits share one user-facing module, but a calendar event is
+  a plan and a visit is execution evidence.
+
+`Dashboard / لوحة التحكم` shows permission-shaped current condition, alerts,
+KPIs, and drill-down. `Daily Activity / ملخص اليوم` shows what happened on a
+selected date across authorized operational sources. `Journal Entries / القيود
+اليومية` remains an accounting surface inside Finance. Do not reuse the bare
+Arabic label `اليومية` for both.
+
+The detailed source of truth is
+`PHASE_7_5_PRODUCT_STRUCTURE_AND_STABILIZATION_PLAN.md`; the canonical tree is
+`NAVIGATION_AND_MODULES_BRIEF.md`.
+
+---
+
+## 4.11 Employee Identity, Work Profile, Mobile, and Requests
+
+Employee, tenant user, permissions, work profile, and employee code are
+distinct:
+
+- Employee is the HR/business record and may exist without application access.
+- Tenant user is the authenticated tenant membership using Manager/User account
+  type.
+- Explicit permissions remain the final authorization authority.
+- Work profile (`administrative`, `field`, or `hybrid`) changes default shell,
+  ordering, and landing experience only; it grants no permissions.
+- Employee code is unique within a tenant and may become a user-facing sign-in
+  alias when linked, but Supabase `auth.users.id` remains the underlying secure
+  identity.
+
+Phase 8 introduces the minimum employee link/work profile and a generic audited
+request/approval foundation needed by adaptive mobile and field work. Phase 9
+completes personal/employment, passport/residency, sponsorship, employment
+contract/temporary-assignment documents, leave, advances, letters, payroll, and
+commissions.
+
+Requests share a lifecycle:
+
+```text
+draft -> submitted -> under_review -> approved | rejected | cancelled
+```
+
+Every request requires a reason, structured payload, requester/employee,
+version, entity links where relevant, optional attachments, permission-resolved
+decision authority, and immutable decision history. Approval alone cannot
+silently mutate a financial or operational record; a dedicated atomic
+application RPC must revalidate the approved request.
+
+---
+
+## 4.12 Record Correction, Cancellation, Deactivation, and Audit
+
+The user-visible `delete` concept is lifecycle-specific:
+
+- unposted drafts may be edited/discarded only through their accepted policy;
+- confirmed invoices, vouchers, returns, and inventory documents are never
+  hard-deleted and use safe cancel/reversal with permission, non-empty reason,
+  idempotency, period/downstream checks, and audit;
+- a return is a linked financial document, not a cancellation alias;
+- posted journal entries are immutable and corrected by an authorized source
+  reversal/correcting document;
+- active/used contracts use close/terminate/cancel/return lifecycle paths, not
+  hard delete;
+- referenced customers, suppliers, products, employees, warehouses, and other
+  masters are deactivated rather than erased;
+- audit rows are immutable and never deleted through the application.
+
+The UI must show only actions allowed by permission and state, preview material
+stock/money/allocation/journal consequences where possible, capture reasons,
+and display specific backend rejection reasons. Audit visibility does not grant
+visibility to protected before/after field values.
+
+---
+
 ## 5. RLS
 
 Every business table has:
@@ -311,14 +406,17 @@ v1 is intentionally narrow:
 - Basic invoices and vouchers
 - Mobile refill flow with GPS and live photo
 - Date-based calendar planning per section 4.9
+- Coherent module navigation and safe record-action presentation per section
+  4.10/4.12
 - Basic reports: customer balance and contract list
 
-Phase 2+:
+Later phases:
 
 - POS
-- Full HR payroll and commissions
+- Full employee records, HR requests, payroll, and commissions
 - WhatsApp campaigns
 - Maintenance module
 - Quotations
 - Offline sync
-- Full P&L reporting
+- General Ledger/reporting UI, P&L, balance sheet, and financial close
+- Advanced configurable dashboards, audit review, and Operations Map

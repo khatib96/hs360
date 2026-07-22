@@ -80,6 +80,21 @@ lib/core/routing/
 
 `app_router.dart` should compose routing. Guards and permission logic should live outside it once they become non-trivial.
 
+### Module and Shell Rules (Phase 7.5+)
+
+- Define the module tree and contextual navigation as typed data; do not repeat
+  ad-hoc route lists in desktop sidebar, mobile drawer, Dashboard, and tests.
+- Separate global shell chrome, module contextual navigation, route guards, and
+  feature screens.
+- Work profile may choose ordering/default landing but must never be mixed into
+  authorization checks.
+- Counts/badges/search/Dashboard/Daily Activity use permission-shaped read
+  contracts and tests; hiding a navigation item alone is insufficient.
+- In-module commands such as create/transfer/count/cancel remain feature-owned;
+  the shell discovers only their safe command metadata.
+- Preserve deep links and deterministic parent/back targets when moving a route
+  under a module shell.
+
 ---
 
 ## UI Component Reuse

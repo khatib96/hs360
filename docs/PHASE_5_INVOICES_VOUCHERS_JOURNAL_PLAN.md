@@ -9,7 +9,10 @@
 > M5 Purchase Invoice Engine is closed (2026-06-15). M6–M7.5 and M8 are complete.
 > **M9 Batch 1 (inventory financial documents UI) is complete** (2026-06-17).
 > **M9 Batch 2 remainder (vouchers/journal/cash-bank UI) is complete** (2026-06-17).
-> **M9 desktop finance UI/workflow scope complete. Backend/template/mobile/report/edit-delete gaps moved to post-M9/M10.** (audited 2026-07-01).
+> **M9 desktop finance UI/workflow scope complete.** The former post-M9/M10
+> backlog was re-placed on 2026-07-22: module consolidation and safe record-
+> action UX belong to Phase 7.5; adaptive mobile finance to Phase 8; full
+> ledger/report/close surfaces to Phase 10. Historical M9 acceptance is unchanged.
 > **M10 core verification and Phase 5 close complete** through migration `076`
 > (2026-07-05). SQL regression, Dart analysis, Flutter unit tests, and the
 > configured local Supabase seeded-template integration gate passed. macOS
@@ -602,7 +605,7 @@ zeroed at year end.
 | M7 | Voucher, Allocation, and Payment Engine | Receipt/payment cycle with reversals |
 | M7.5 | Sales/Purchase Return and Credit Engine | Partial linked returns, credits, refunds, and snapshot reversals |
 | M8 | Dart Finance Layer, Routes, and Localization | Testable application layer and guarded navigation |
-| M9 | Finance UI and Cross-Module Integration | **M9 desktop finance UI/workflow scope complete. Backend/template/mobile/report/edit-delete gaps moved to post-M9/M10.** — Batches 1–3 + Final Closure + live UX corrections (inventory docs, invoices/vouchers/journal/cash-bank UI, print/preview, Customer 360, supplier detail, product/unit links, cash-bank CSV, invoice/voucher workflow fixes); deferred safely: advanced edit/delete, mobile redesign, voucher/report/PDF polish, payment voucher print, serialized opening/count, supplier statement, cash-bank PDF |
+| M9 | Finance UI and Cross-Module Integration | **M9 desktop finance UI/workflow scope complete.** — Batches 1–3 + Final Closure + live UX corrections (inventory docs, invoices/vouchers/journal/cash-bank UI, print/preview, Customer 360, supplier detail, product/unit links, cash-bank CSV, invoice/voucher workflow fixes); deferred items are now explicitly placed in Phase 7.5/8/10 rather than an unnamed post-M9/M10 backlog |
 | M10 | Hardening, Verification, and Phase Close | **Complete (2026-07-05).** Migration `076` protected direct voucher postings against control/inventory/tax accounts; SQL suites passed, `dart analyze .` passed, `flutter test` passed with 702 tests, local Supabase seeded-template integration passed; macOS-only PDF golden/benchmark exceptions documented |
 
 ---
@@ -3299,3 +3302,10 @@ post-Phase 5 backlog unless Phase 6 explicitly needs them: payment-voucher print
 template support, cash-bank PDF/report polish, supplier statement RPC/UI,
 serialized opening/count enablement beyond the current safe guard, mobile
 finance redesign, and advanced edit/delete/cancel-policy UX.
+
+> **Roadmap placement update (2026-07-22):** Phase 7.5 owns Finance module
+> consolidation, consistent draft/cancel/reverse/deactivate UX, basic Audit
+> review, and the finance/inventory integrity gate. Phase 8 owns adaptive mobile
+> finance/collection surfaces when permitted. Phase 10 owns General Ledger,
+> accounting day book, trial balance, P&L, balance sheet, reconciliation, and
+> financial close. This placement does not change Phase 5 closure.

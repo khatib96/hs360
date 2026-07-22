@@ -2,7 +2,8 @@
 
 > **No roles. No templates. Pure custom permissions per user.**
 > Two account types: Manager (full access, no checks) and User (every permission grant is explicit).
-> Updated 2026-05-16 to resolve conflicts: field-level hiding uses `security_invoker` safe views or permission-shaped RPCs, not RLS policies on views.
+> Updated 2026-07-22 for the Phase 7.5 module shell, employee/work-profile
+> boundary, Requests & Approvals, and lifecycle-specific correction policy.
 
 ---
 
@@ -34,6 +35,17 @@ Roles cause maintenance pain over time:
 ### 1.3 The Trade-off
 Setting up a new User takes 5–10 minutes (clicking checkboxes for each capability). This is intentional. The Manager thinks deliberately about what each person should access.
 
+### 1.4 Employee and Work Profile Are Not Roles
+
+- An Employee is a business/HR record and may exist without a login.
+- A tenant User is an authenticated membership and may link to one employee.
+- `administrative`, `field`, and `hybrid` are work-profile values used only to
+  select the default desktop/mobile presentation and ordering.
+- Employee code may be a tenant-scoped user-facing login alias when linked, but
+  the underlying identity remains `auth.users.id`.
+- Neither job type, work profile, employee code, nor mobile shell grants access.
+  Manager/User plus explicit permissions remain authoritative.
+
 ---
 
 ## 2. Permission Granularity — Three Levels
@@ -53,7 +65,10 @@ Within a module, fine-grained control:
 - `view_list` — see the list but not full details (rare; separate if needed)
 - `create` — create new records
 - `edit` — modify existing records
-- `delete` — soft-delete records
+- `delete` — legacy/catalog verb only where a safe delete/deactivate policy is
+  explicitly defined; never assume it means physical deletion
+- `deactivate` — deactivate a referenced master record while preserving history
+- `cancel` / `reverse` — lifecycle correction for confirmed documents
 - `export` — download PDFs / Excel
 - `approve` — approve overrides (min-profit, etc.)
 - `send` — send notifications/messages
@@ -100,14 +115,14 @@ insert into permissions values
   ('customers.view',        'customers', 'view',   'action', null, 'عرض الزبائن', 'View customers', null, null, false, 'sales', 10),
   ('customers.create',      'customers', 'create', 'action', null, 'إضافة زبون', 'Create customers', null, null, false, 'sales', 11),
   ('customers.edit',        'customers', 'edit',   'action', null, 'تعديل زبون', 'Edit customers', null, null, false, 'sales', 12),
-  ('customers.delete',      'customers', 'delete', 'action', null, 'حذف زبون', 'Delete customers', null, null, false, 'sales', 13),
+  ('customers.delete',      'customers', 'delete', 'action', null, 'تعطيل زبون', 'Deactivate customers', null, null, false, 'sales', 13),
   ('customers.view_ledger', 'customers', 'view',   'action', null, 'عرض دفتر حسابات الزبون', 'View customer ledger', null, null, true, 'sales', 14),
   ('customers.export',      'customers', 'export', 'action', null, 'تصدير بيانات الزبائن', 'Export customer data', null, null, false, 'sales', 15),
 
   ('products.view',                 'products', 'view',   'action', null, 'عرض المنتجات', 'View products', null, null, false, 'inventory', 20),
   ('products.create',               'products', 'create', 'action', null, 'إضافة منتج', 'Create products', null, null, false, 'inventory', 21),
   ('products.edit',                 'products', 'edit',   'action', null, 'تعديل منتج', 'Edit products', null, null, false, 'inventory', 22),
-  ('products.delete',               'products', 'delete', 'action', null, 'حذف منتج', 'Delete products', null, null, false, 'inventory', 23),
+  ('products.delete',               'products', 'delete', 'action', null, 'تعطيل منتج', 'Deactivate products', null, null, false, 'inventory', 23),
 
   -- Field-level permissions on products
   ('products.field.avg_cost',           'products', 'view', 'field', 'avg_cost',           'عرض متوسط التكلفة', 'View average cost', null, null, true, 'inventory', 24),
@@ -119,7 +134,9 @@ insert into permissions values
   ('contracts.view',           'contracts', 'view',    'action', null, 'عرض العقود',        'View contracts',          null, null, false, 'sales', 30),
   ('contracts.create',         'contracts', 'create',  'action', null, 'إنشاء عقد',         'Create contracts',        null, null, false, 'sales', 31),
   ('contracts.edit',           'contracts', 'edit',    'action', null, 'تعديل عقد',         'Edit contracts',          null, null, false, 'sales', 32),
-  ('contracts.delete',         'contracts', 'delete',  'action', null, 'حذف عقد',           'Delete contracts',        null, null, true,  'sales', 33),
+  -- Legacy ID retained for compatibility; active/used contracts must use
+  -- explicit lifecycle actions and are never hard-deleted.
+  ('contracts.delete',         'contracts', 'delete',  'action', null, 'التصرف في مسودة عقد غير مستخدمة', 'Discard an unused contract draft', null, null, true, 'sales', 33),
   ('contracts.close',          'contracts', 'close',   'action', null, 'إغلاق عقد',         'Close contracts',         null, null, false, 'sales', 34),
   ('contracts.approve_override', 'contracts','approve','action', null, 'الموافقة على تجاوز الحد الأدنى', 'Approve min-profit overrides', null, null, true, 'sales', 35),
 
@@ -138,13 +155,14 @@ insert into permissions values
 The full catalog includes permissions for:
 
 - `dashboard`
+- `daily_activity` (permission-shaped cross-module date feed)
 - `customers`, `customers.ledger`, `customer_service_locations` (read via `customers.view`, mutate via `customers.edit` unless dedicated permissions are introduced)
 - `suppliers`
 - `products`, `product_units`, `product_groups`
 - `inventory`, `warehouses`, `inventory_movements`, `inventory_documents`,
   `inventory_adjustment_reasons`
 - `contracts`, `contract_lines`, `contract_oil_changes`
-- `visits` (field operations)
+- `visits` (field operations, including separately permitted unplanned visits)
 - `invoices` (with sub-types: sales, purchase, rental, returns)
 - `vouchers` (receipt, payment)
 - `quotations`
@@ -152,8 +170,11 @@ The full catalog includes permissions for:
 - `chart_of_accounts`
 - `maintenance`
 - `pos`
-- `hr` (employees, salaries, advances, commissions)
+- `hr` (employees, employee documents, salaries, advances, commissions)
+- `requests` (create/view/cancel own requests and typed request actions)
+- `approvals` (view/decide/apply approved requests by explicit policy)
 - `reports` (each report is its own permission)
+- `audit_log` (basic and later advanced review; rows remain immutable)
 - `calendar`
 - `messaging` (whatsapp, email)
 - `settings` (company, users, currencies, templates, etc.)
@@ -183,6 +204,23 @@ as payment destinations, A/R, A/P, inventory, tax-reserved accounts,
 inactive/entity-linked accounts, and same source/counter-account postings.
 
 Each module has its own set of actions and (where relevant) field-level permissions.
+
+Phase 7.5 navigation rule: sidebar/module/tab/command visibility is derived from
+these underlying capability permissions. A module shell does not introduce a
+single broad permission that bypasses its children. Dashboard, Daily Activity,
+search, notifications, badges, and drill-down must not reveal counts or labels
+from data the user cannot view.
+
+Planned Requests & Approvals permission families must distinguish at least:
+
+- submit/view/cancel own request;
+- view team/all requests when accepted;
+- decide a request type;
+- apply an approved request through its dedicated atomic handler;
+- view protected employee or attachment fields.
+
+Approval authority is never inferred only from employee job type or work
+profile. Every decision and permission change is audited.
 
 ---
 
@@ -435,7 +473,7 @@ Khalid with 0 permissions is flagged — he can log in but sees nothing useful.
 │    [✓] View customers                                    │
 │    [✓] Create customer                                   │
 │    [ ] Edit customer                                     │
-│    [ ] Delete customer                                   │
+│    [ ] Deactivate customer                               │
 │    [✓] View customer ledger ⚠                            │
 │    [ ] Export customer data                              │
 │                                                          │
@@ -451,7 +489,7 @@ Khalid with 0 permissions is flagged — he can log in but sees nothing useful.
 │    [✓] View contracts                                    │
 │    [✓] Create contracts                                  │
 │    [ ] Edit contracts                                    │
-│    [ ] Delete contracts                                  │
+│    [ ] Discard unused contract draft ⚠                   │
 │    [ ] Close contracts                                   │
 │    [ ] Approve min-profit overrides ⚠                    │
 │    [ ] View device cost snapshot ⚠                       │
