@@ -5,6 +5,9 @@ import 'package:hs360/l10n/app_localizations.dart';
 
 import '../../../core/localization/locale_controller.dart';
 import '../../../core/routing/app_routes.dart';
+import '../../../shared/widgets/app_filter_bar.dart';
+import '../../../shared/widgets/app_state_view.dart';
+import '../../../shared/widgets/app_table_frame.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../domain/customer.dart';
 import '../domain/customer_permissions.dart';
@@ -33,20 +36,14 @@ class CustomersTabBody extends ConsumerWidget {
 
     Widget body;
     if (state.isLoading && state.customers.isEmpty) {
-      body = Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const CircularProgressIndicator(),
-            const SizedBox(height: 16),
-            Text(l10n.loading),
-          ],
-        ),
-      );
+      body = AppStateView.loading(message: l10n.loading);
     } else if (state.hasError && state.customers.isEmpty) {
-      body = _ErrorState(
+      body = AppStateView.error(
         message: customerErrorMessage(l10n, state.errorCode!),
-        onRetry: controller.refresh,
+        action: FilledButton(
+          onPressed: controller.refresh,
+          child: Text(l10n.retry),
+        ),
       );
     } else if (!state.isLoading && state.customers.isEmpty) {
       body = CustomerListEmptyState(
@@ -57,17 +54,19 @@ class CustomersTabBody extends ConsumerWidget {
       body = Column(
         children: [
           Expanded(
-            child: CustomerTable(
-              customers: state.customers,
-              languageCode: languageCode,
-              canEdit: canEdit,
-              canDeactivate: canDeactivate,
-              onView: (customer) =>
-                  context.go(AppRoutes.customerDetailPath(customer.id)),
-              onEdit: (customer) =>
-                  _showFormDialog(context, ref, initial: customer),
-              onDeactivate: (customer) =>
-                  _confirmDeactivate(context, ref, customer),
+            child: AppTableFrame(
+              child: CustomerTable(
+                customers: state.customers,
+                languageCode: languageCode,
+                canEdit: canEdit,
+                canDeactivate: canDeactivate,
+                onView: (customer) =>
+                    context.go(AppRoutes.customerDetailPath(customer.id)),
+                onEdit: (customer) =>
+                    _showFormDialog(context, ref, initial: customer),
+                onDeactivate: (customer) =>
+                    _confirmDeactivate(context, ref, customer),
+              ),
             ),
           ),
           if (state.loadMoreErrorCode != null)
@@ -108,49 +107,26 @@ class CustomersTabBody extends ConsumerWidget {
       children: [
         Padding(
           padding: const EdgeInsetsDirectional.all(16),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final filters = CustomerFiltersBar(
-                filters: state.filters,
-                onSearchSubmitted: controller.setSearch,
-                onActiveChanged: controller.setIsActive,
-                onVipChanged: controller.setIsVip,
-                onTypeChanged: controller.setCustomerType,
-                onGovernorateChanged: controller.setGovernorate,
-                onAreaSubmitted: controller.setArea,
-                onClear: controller.clearFilters,
-              );
-              final createButton = FilledButton.icon(
-                key: const Key('customer-create-button'),
-                onPressed: () => _showFormDialog(context, ref),
-                icon: const Icon(Icons.add),
-                label: Text(l10n.customerAdd),
-              );
-
-              if (constraints.maxWidth < 720) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    filters,
-                    if (canCreate) ...[
-                      const SizedBox(height: 12),
-                      Align(
-                        alignment: AlignmentDirectional.centerEnd,
-                        child: createButton,
-                      ),
-                    ],
-                  ],
-                );
-              }
-
-              return Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(child: filters),
-                  if (canCreate) ...[const SizedBox(width: 12), createButton],
-                ],
-              );
-            },
+          child: AppFilterBar(
+            compact: true,
+            trailing: canCreate
+                ? FilledButton.icon(
+                    key: const Key('customer-create-button'),
+                    onPressed: () => _showFormDialog(context, ref),
+                    icon: const Icon(Icons.add),
+                    label: Text(l10n.customerAdd),
+                  )
+                : null,
+            child: CustomerFiltersBar(
+              filters: state.filters,
+              onSearchSubmitted: controller.setSearch,
+              onActiveChanged: controller.setIsActive,
+              onVipChanged: controller.setIsVip,
+              onTypeChanged: controller.setCustomerType,
+              onGovernorateChanged: controller.setGovernorate,
+              onAreaSubmitted: controller.setArea,
+              onClear: controller.clearFilters,
+            ),
           ),
         ),
         Expanded(
@@ -234,28 +210,6 @@ class CustomersTabBody extends ConsumerWidget {
               ? messageL10n.customerDeactivated
               : customerErrorMessage(messageL10n, errorCode),
         ),
-      ),
-    );
-  }
-}
-
-class _ErrorState extends StatelessWidget {
-  const _ErrorState({required this.message, required this.onRetry});
-
-  final String message;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(message, textAlign: TextAlign.center),
-          const SizedBox(height: 16),
-          FilledButton(onPressed: onRetry, child: Text(l10n.retry)),
-        ],
       ),
     );
   }

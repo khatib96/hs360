@@ -2,6 +2,7 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
+import '../../../../shared/widgets/app_detail_surface.dart';
 import '../../../auth/domain/app_session.dart';
 import '../../../finance_shared/presentation/money_display.dart';
 import '../../../invoices/presentation/widgets/invoice_design.dart';
@@ -100,40 +101,14 @@ class ContractOverviewSection extends StatelessWidget {
               value: durationLabel,
             ),
           if (detail.monthlyRentalValue != null)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 180,
-                    child: Text(
-                      l10n.contractFieldMonthlyRentalValue,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ),
-                  MoneyDisplay(amount: detail.monthlyRentalValue!),
-                ],
-              ),
+            AppInfoRow(
+              label: l10n.contractFieldMonthlyRentalValue,
+              value: MoneyDisplay(amount: detail.monthlyRentalValue!),
             ),
           if (totalValue != null)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 180,
-                    child: Text(
-                      l10n.contractFieldTotalContractValue,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ),
-                  MoneyDisplay(amount: totalValue),
-                ],
-              ),
+            AppInfoRow(
+              label: l10n.contractFieldTotalContractValue,
+              value: MoneyDisplay(amount: totalValue),
             ),
           if (detail.billingDay != null)
             ContractInfoRow(

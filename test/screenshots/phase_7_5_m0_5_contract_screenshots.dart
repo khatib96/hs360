@@ -1,4 +1,4 @@
-// Phase 7.5 M0.5 pre-shell contract-detail baseline.
+// Phase 7.5 contract-detail regression capture.
 //
 // Renders the production ContractDetailScreen with the accepted fake
 // repository fixture in AR/EN at desktop and narrow widths. PNGs are written
@@ -34,22 +34,12 @@ void main() {
     final localeTag = locale.languageCode == 'ar' ? 'ar_rtl' : 'en_ltr';
 
     testWidgets('contract detail desktop $localeTag', (tester) async {
-      await _pumpContract(
-        tester,
-        locale: locale,
-        size: const Size(1280, 900),
-        expectKnownNarrowOverflow: false,
-      );
+      await _pumpContract(tester, locale: locale, size: const Size(1280, 900));
       await _capture(tester, 'm0_5_contract_detail_desktop_$localeTag');
     });
 
     testWidgets('contract detail narrow $localeTag', (tester) async {
-      await _pumpContract(
-        tester,
-        locale: locale,
-        size: const Size(390, 844),
-        expectKnownNarrowOverflow: true,
-      );
+      await _pumpContract(tester, locale: locale, size: const Size(390, 844));
       await _capture(tester, 'm0_5_contract_detail_narrow_$localeTag');
     });
   }
@@ -59,7 +49,6 @@ Future<void> _pumpContract(
   WidgetTester tester, {
   required Locale locale,
   required Size size,
-  required bool expectKnownNarrowOverflow,
 }) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = size;
@@ -80,63 +69,39 @@ Future<void> _pumpContract(
   );
 
   final theme = AppTheme.light();
-  final expectedOverflows = <FlutterErrorDetails>[];
-  final previousErrorHandler = FlutterError.onError;
-  if (expectKnownNarrowOverflow) {
-    FlutterError.onError = (details) {
-      if (details.exceptionAsString().contains('A RenderFlex overflowed')) {
-        expectedOverflows.add(details);
-        return;
-      }
-      previousErrorHandler?.call(details);
-    };
-  }
-
-  try {
-    await tester.pumpWidget(
-      RepaintBoundary(
-        key: _captureKey,
-        child: ProviderScope(
-          overrides: [
-            authControllerProvider.overrideWith(
-              () => _BaselineAuthController(session),
-            ),
-            contractRepositoryProvider.overrideWith(
-              (ref) => FakeContractRepository(
-                detailById: {
-                  'contract-m0-5': sampleContractDetail(
-                    id: 'contract-m0-5',
-                    billingDay: 5,
-                    refillDay: 10,
-                  ),
-                },
-              ),
-            ),
-          ],
-          child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            locale: locale,
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            theme: theme,
-            home: const ContractDetailScreen(contractId: 'contract-m0-5'),
+  await tester.pumpWidget(
+    RepaintBoundary(
+      key: _captureKey,
+      child: ProviderScope(
+        overrides: [
+          authControllerProvider.overrideWith(
+            () => _BaselineAuthController(session),
           ),
+          contractRepositoryProvider.overrideWith(
+            (ref) => FakeContractRepository(
+              detailById: {
+                'contract-m0-5': sampleContractDetail(
+                  id: 'contract-m0-5',
+                  billingDay: 5,
+                  refillDay: 10,
+                ),
+              },
+            ),
+          ),
+        ],
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          locale: locale,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: theme,
+          home: const ContractDetailScreen(contractId: 'contract-m0-5'),
         ),
       ),
-    );
-    await tester.pumpAndSettle();
-  } finally {
-    FlutterError.onError = previousErrorHandler;
-  }
-
-  if (expectKnownNarrowOverflow) {
-    // M0.5 baseline debt: two overview rows overflow at 390 px in both
-    // locales. Keep the screenshot reproducible until M1/M3 corrects it.
-    expect(expectedOverflows, hasLength(2));
-    expect(tester.takeException(), isNull);
-  } else {
-    expect(tester.takeException(), isNull);
-  }
+    ),
+  );
+  await tester.pumpAndSettle();
+  expect(tester.takeException(), isNull);
 }
 
 Future<void> _capture(WidgetTester tester, String name) async {

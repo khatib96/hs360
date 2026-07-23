@@ -1,7 +1,7 @@
 # Phase 7.5 - Product Structure, Navigation, and Stabilization Plan
 
-> Status: **IN PROGRESS — M0 AND M0.5 CLOSED / ACCEPTED; M1 NEXT** (started
-> 2026-07-24).
+> Status: **IN PROGRESS — M0, M0.5, AND M1 CLOSED / ACCEPTED; M2 NEXT**
+> (started 2026-07-24).
 >
 > Purpose: pause feature expansion after Phase 7, turn the existing collection
 > of screens into a coherent ERP product, expose existing safety workflows
@@ -460,7 +460,11 @@ behavior or migration was added.
 **Goal:** create the reusable visual language used by every following
 milestone.
 
-**State:** `NEXT / NOT STARTED`.
+**State:** `CLOSED / ACCEPTED` on 2026-07-24. The semantic light-theme
+foundation, accepted Option C surfaces, reusable presentation patterns, and
+representative feature adoption are implemented. Automated contrast,
+keyboard-focus, RTL/LTR, 200% text-scale, regression, and screenshot gates
+passed. Evidence is under `docs/phase_7_5/m1/`.
 
 **Work:**
 
@@ -488,9 +492,24 @@ milestone.
   scale checks;
 - no mass font migration or dark-mode implementation is introduced.
 
+**Closure evidence:**
+
+- `docs/phase_7_5/m1/M1_ACCEPTANCE_REPORT.md`;
+- `docs/phase_7_5/m1/M1_SCREENSHOT_MANIFEST.md` and 12 durable AR/EN desktop
+  and narrow images;
+- `flutter analyze` clean and the complete Flutter suite at 1431 passed;
+- 7 focused foundation tests plus representative Inventory, Finance,
+  Contracts, and Customers regression coverage;
+- the M0.5 contract-detail overflow at 390 px is resolved without changing
+  contract behavior;
+- no RPC, migration, data contract, dark theme, or font-family replacement was
+  introduced.
+
 ### M2 - Desktop Shell and Typed Navigation
 
 **Goal:** replace the flat shell with the accepted product structure.
+
+**State:** `NEXT / NOT STARTED`.
 
 **Work:**
 

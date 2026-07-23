@@ -1,13 +1,42 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-24 (Session: **PHASE 7.5 M0 AND M0.5 CLOSED / ACCEPTED; M1 NEXT**).
+> Updated 2026-07-24 (Session: **PHASE 7.5 M0, M0.5, AND M1 CLOSED / ACCEPTED; M2 NEXT**).
 > Gates D/E/F **`PASS / OWNER ACCEPTED`**; Gate F acceptance uses physical iOS
 > + Android Emulator evidence. Gate G and Final Gate H **PASS** through `104`.
-> M12 and Phase 7 **`CLOSED / ACCEPTED`**. Phase 7.5 **M0 AND M0.5 ARE CLOSED /
-> ACCEPTED; M1 IS NEXT / NOT STARTED**. Phase 8
+> M12 and Phase 7 **`CLOSED / ACCEPTED`**. Phase 7.5 **M0, M0.5, AND M1 ARE
+> CLOSED / ACCEPTED; M2 IS NEXT / NOT STARTED**. Phase 8
 > **NOT STARTED**.
 > Permanent pre-production constraint: **physical Android smoke is required**
 > under the owner-approved deferral. No commit/push performed.
+
+---
+
+## Session 2026-07-24 - Phase 7.5 M1 Closed / Accepted
+
+**Decision:** implemented and closed the semantic light-theme and shared UI
+foundation. The accepted Option C warm stone/cream direction now has separate
+brand and accessible action roles, semantic status pairs, centralized spacing/
+radii/control tokens, and locale-aware bundled Noto typography.
+
+**Shared adoption:** page header, filter/search, loading/error/empty, status,
+table/list frame, detail section/rows, sensitive action dialog, and money
+patterns were created or standardized. Representative Inventory, Finance,
+Contracts, and Customers screens consume them without changing feature-owned
+queries, permissions, columns, or business behavior.
+
+**Corrective result:** the M0.5 contract-detail overflow at 390 px was removed
+by making label/value rows responsive. Contract closure behavior remains
+unchanged.
+
+**Gates:** `flutter analyze` clean; complete Flutter suite **1431 passed**; 7
+new foundation checks passed; 38 representative feature checks passed; contract
+and invoice regression captures passed; 12 final AR/EN desktop/narrow images
+and SHA-256 hashes are under `docs/phase_7_5/m1/`.
+
+**Boundary:** no RPC, migration, database contract, business workflow, dark
+theme, or font-family replacement was introduced.
+
+**Next:** M2 Desktop Shell and Typed Navigation. No commit/push performed.
 
 ---
 

@@ -5,11 +5,13 @@ import 'package:hs360/l10n/app_localizations.dart';
 
 import '../../../core/localization/locale_controller.dart';
 import '../../../core/routing/app_routes.dart';
+import '../../../shared/widgets/app_filter_bar.dart';
 import '../../../shared/widgets/app_shell.dart';
+import '../../../shared/widgets/app_state_view.dart';
+import '../../../shared/widgets/app_table_frame.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../../finance_shared/presentation/finance_placeholder_screen.dart';
 import '../../invoices/presentation/widgets/invoice_design.dart';
-import '../../invoices/presentation/widgets/invoice_shared_widgets.dart';
 import '../domain/contract_permissions.dart';
 import 'contract_display_helpers.dart';
 import 'contract_list_controller.dart';
@@ -50,32 +52,21 @@ class ContractListScreen extends ConsumerWidget {
     final isWide = InvoiceDesign.isDesktop(context);
     Widget tableArea;
     if (state.isLoading && state.contracts.isEmpty) {
-      tableArea = _InTableMessage(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const CircularProgressIndicator(),
-            const SizedBox(height: 16),
-            Text(l10n.loading),
-          ],
-        ),
-      );
+      tableArea = AppStateView.loading(message: l10n.loading);
     } else if (state.hasError && state.contracts.isEmpty) {
-      tableArea = _InTableMessage(
-        child: InvoiceErrorState(
-          message: contractErrorMessage(l10n, state.errorCode!),
-          onRetry: controller.refresh,
+      tableArea = AppStateView.error(
+        message: contractErrorMessage(l10n, state.errorCode!),
+        action: FilledButton(
+          onPressed: controller.refresh,
+          child: Text(l10n.retry),
         ),
       );
     } else if (!state.isLoading && state.contracts.isEmpty) {
-      tableArea = _InTableMessage(
-        child: Text(
-          state.filters.hasActiveFilters
-              ? l10n.contractListEmptyFiltered
-              : l10n.contractListEmpty,
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodyLarge,
-        ),
+      tableArea = AppStateView.empty(
+        icon: Icons.assignment_outlined,
+        message: state.filters.hasActiveFilters
+            ? l10n.contractListEmptyFiltered
+            : l10n.contractListEmpty,
       );
     } else {
       tableArea = isWide
@@ -92,26 +83,21 @@ class ContractListScreen extends ConsumerWidget {
     final body = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        ContractFiltersBar(
-          key: const Key('contract-filters-bar'),
-          filters: state.filters,
-          onTypeChanged: controller.setType,
-          onStatusChanged: controller.setStatus,
-          onSearchChanged: controller.setSearch,
-          onDateFromChanged: controller.setDateFrom,
-          onDateToChanged: controller.setDateTo,
-          onLowProfitOverrideChanged: controller.setLowProfitOverrideOnly,
-        ),
-        const SizedBox(height: 12),
-        Expanded(
-          child: DecoratedBox(
-            decoration: InvoiceDesign.panel,
-            child: ClipRRect(
-              borderRadius: InvoiceDesign.radius,
-              child: tableArea,
-            ),
+        AppFilterBar(
+          compact: true,
+          child: ContractFiltersBar(
+            key: const Key('contract-filters-bar'),
+            filters: state.filters,
+            onTypeChanged: controller.setType,
+            onStatusChanged: controller.setStatus,
+            onSearchChanged: controller.setSearch,
+            onDateFromChanged: controller.setDateFrom,
+            onDateToChanged: controller.setDateTo,
+            onLowProfitOverrideChanged: controller.setLowProfitOverrideOnly,
           ),
         ),
+        const SizedBox(height: 12),
+        Expanded(child: AppTableFrame(child: tableArea)),
         if (state.hasMore)
           Padding(
             padding: const EdgeInsets.only(top: 10),
@@ -139,22 +125,6 @@ class ContractListScreen extends ConsumerWidget {
       currentRoute: AppRoutes.contracts,
       actions: actions,
       body: Padding(padding: InvoiceDesign.pagePadding, child: body),
-    );
-  }
-}
-
-class _InTableMessage extends StatelessWidget {
-  const _InTableMessage({required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsetsDirectional.all(32),
-        child: child,
-      ),
     );
   }
 }

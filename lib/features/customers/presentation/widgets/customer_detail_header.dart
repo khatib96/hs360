@@ -6,7 +6,7 @@ import 'package:hs360/l10n/app_localizations.dart';
 import '../../../../core/localization/locale_controller.dart';
 import '../../../../core/location/kuwait_locations.dart';
 import '../../../../core/routing/app_routes.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../../../shared/widgets/app_status_badge.dart';
 import '../../../auth/presentation/auth_controller.dart';
 import '../../../calendar/domain/calendar_permissions.dart';
 import '../../domain/customer.dart';
@@ -108,16 +108,19 @@ class CustomerDetailHeader extends ConsumerWidget {
             spacing: 8,
             runSpacing: 8,
             children: [
-              _StatusChip(
+              AppStatusBadge(
                 label: customer.isActive
                     ? l10n.customerStatusActive
                     : l10n.customerStatusInactive,
-                color: customer.isActive
-                    ? theme.colorScheme.primary
-                    : theme.colorScheme.outline,
+                tone: customer.isActive
+                    ? AppStatusTone.success
+                    : AppStatusTone.neutral,
               ),
               if (customer.isVip)
-                _StatusChip(label: l10n.customerVip, color: AppColors.gold),
+                AppStatusBadge(
+                  label: l10n.customerVip,
+                  tone: AppStatusTone.brand,
+                ),
             ],
           ),
           const SizedBox(height: 8),
@@ -160,34 +163,6 @@ class _CustomerOpenInCalendarButton extends ConsumerWidget {
           context.push(AppRoutes.calendarPath(customerId: customerId)),
       icon: const Icon(Icons.calendar_month_outlined, size: 18),
       label: Text(l10n.calendarOpenInCalendar),
-    );
-  }
-}
-
-class _StatusChip extends StatelessWidget {
-  const _StatusChip({required this.label, required this.color});
-
-  final String label;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsetsDirectional.symmetric(
-        horizontal: 8,
-        vertical: 4,
-      ),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: color,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
     );
   }
 }

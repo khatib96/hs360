@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
+import '../../../../shared/widgets/app_sensitive_action_dialog.dart';
 import '../../../invoices/presentation/widgets/invoice_design.dart';
 import '../../domain/closure_draft.dart';
 import '../../domain/contract_detail.dart';
@@ -59,8 +60,13 @@ class _ContractClosureDialogState
     final controller = ref.read(contractLifecycleControllerProvider.notifier);
     final material = MaterialLocalizations.of(context);
 
-    return AlertDialog(
-      title: Text(l10n.contractCloseRentalTitle),
+    return AppSensitiveActionDialog(
+      title: l10n.contractCloseRentalTitle,
+      cancelLabel: material.cancelButtonLabel,
+      confirmLabel: l10n.contractCloseRentalAction,
+      isBusy: lifecycle.isSubmitting,
+      onCancel: () => Navigator.pop(context, null),
+      onConfirm: () => _submit(controller),
       content: SizedBox(
         width: 420,
         child: Column(
@@ -167,24 +173,6 @@ class _ContractClosureDialogState
           ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: lifecycle.isSubmitting
-              ? null
-              : () => Navigator.pop(context, null),
-          child: Text(material.cancelButtonLabel),
-        ),
-        FilledButton(
-          onPressed: lifecycle.isSubmitting ? null : () => _submit(controller),
-          child: lifecycle.isSubmitting
-              ? const SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : Text(l10n.contractCloseRentalAction),
-        ),
-      ],
     );
   }
 

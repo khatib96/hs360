@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 
+import '../../../../shared/widgets/app_state_view.dart';
+
 /// Empty state for the customer list, with an optional create hint.
 class CustomerListEmptyState extends StatelessWidget {
   const CustomerListEmptyState({
@@ -15,28 +17,14 @@ class CustomerListEmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.people_outline,
-            size: 48,
-            color: theme.colorScheme.outline,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            isFiltered
-                ? l10n.customerListEmptyFiltered
-                : l10n.customerListEmpty,
-          ),
-          if (canCreate && !isFiltered) ...[
-            const SizedBox(height: 8),
-            Text(l10n.customerAdd, style: theme.textTheme.bodySmall),
-          ],
-        ],
-      ),
+    return AppStateView.empty(
+      icon: isFiltered ? Icons.filter_alt_off_outlined : Icons.people_outline,
+      message: isFiltered
+          ? l10n.customerListEmptyFiltered
+          : l10n.customerListEmpty,
+      action: canCreate && !isFiltered
+          ? Text(l10n.customerAdd, style: Theme.of(context).textTheme.bodySmall)
+          : null,
     );
   }
 }

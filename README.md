@@ -7,7 +7,7 @@ and double-entry accounting.
 
 > Repository status updated: **2026-07-24**
 >
-> Current milestone: **Phase 7.5 M0 and M0.5 — `CLOSED / ACCEPTED`; M1 `NEXT`**
+> Current milestone: **Phase 7.5 M0, M0.5, and M1 — `CLOSED / ACCEPTED`; M2 `NEXT`**
 > after Phase 7
 > **`CLOSED / ACCEPTED`**. Phase 7 M12 Gates D/E/F are **`PASS / OWNER ACCEPTED`**,
 > Gate G is **PASS**, and Final Gate H is **PASS** through migration `104`.
@@ -32,7 +32,7 @@ and double-entry accounting.
 | 5 | Complete | Invoices, returns, vouchers, journal, inventory accounting, PDFs |
 | 6 | Complete | Trial/rental contracts, lifecycle, billing, PDF, calendar handoff |
 | 7 | Complete / accepted | M1–M12 closed/accepted; bilingual calendar, assignments, mobile calendar, route/directions, integration, performance, device acceptance, and final cleanliness gates passed through migration `104` |
-| 7.5 | M0 and M0.5 closed / accepted; M1 next | Option C accepted; regression, SQL/integration, pollution, route/deep-link, screenshot, performance, and migration baselines recorded |
+| 7.5 | M0, M0.5, and M1 closed / accepted; M2 next | Option C light theme and shared UI foundation accepted; regression, route/deep-link, screenshot, performance, and migration baselines preserved |
 | 8-12 | Not started | Adaptive mobile/requests/field execution and later HR/POS/finance/reporting/production phases |
 
 Phase 6 closed through M13/migration `092` on 2026-07-12. Phase 7 M1 closed on
@@ -94,6 +94,8 @@ Canonical module tree:
 - Multi-tenant PostgreSQL model with tenant isolation and RLS.
 - Manager/full access and explicit per-user permission grants.
 - Arabic-first UI with English toggle and RTL/LTR support.
+- Phase 7.5 Option C semantic light theme and shared page/filter/state/status/
+  table/detail/sensitive-action presentation foundation.
 - Products, groups, dual units, serialized assets, barcode/QR resolution, and
   product-unit timeline foundation.
 - Warehouses, van-warehouse rules, stock balances, adjustments, transfers, and
@@ -112,8 +114,7 @@ Canonical module tree:
 
 ## Planned, Not Yet Implemented
 
-- Phase 7.5 accepted M0 direction and planned implementation:
-  shared light-theme UI foundation, module-based desktop shell, contextual
+- Remaining Phase 7.5 implementation: module-based desktop shell, contextual
   navigation, user profile footer, bounded global search, quick create,
   in-app notification center, four-slot Dashboard v1, Daily Activity,
   consistent record-action UX, basic Audit review, and integrity gate.
@@ -279,6 +280,21 @@ Latest **Phase 7.5 M0.5** baseline on 2026-07-24:
 - Migration count and applied boundary: **104**; `093`–`104` checksums match the
   accepted Phase 7 Gate H manifest.
 
+Latest **Phase 7.5 M1** acceptance on 2026-07-24:
+
+- Semantic light theme and Option C warm canvas implemented with accessible
+  brand/action/semantic roles and retained bundled Noto fonts.
+- Shared page, filter, state, status, list/table, detail, sensitive-action, and
+  money patterns adopted by representative Inventory, Finance, Contracts, and
+  Customers surfaces.
+- Flutter analysis: no issues; complete Flutter suite: **1431 passed**;
+  focused representative screen suite: **38 passed**.
+- Automated RTL/LTR, keyboard focus, 200% text scale, semantic contrast, and
+  destructive-state checks passed; 12 durable AR/EN desktop/narrow images
+  recorded.
+- The recorded 390 px contract-detail overflow is resolved. No migration, RPC,
+  business-data contract, dark theme, or font-family replacement was added.
+
 Historical **Phase 7 M0.5** baseline on 2026-07-12:
 
 - Full SQL suite: passed.
@@ -320,6 +336,8 @@ Start with these sources:
 | [M0_5_BASELINE_REPORT.md](docs/phase_7_5/m0_5/M0_5_BASELINE_REPORT.md) | Closed Phase 7.5 regression, integration, pollution, performance, and migration baseline |
 | [M0_5_ROUTE_BASELINE_AND_ZERO_LOSS_CHECKLIST.md](docs/phase_7_5/m0_5/M0_5_ROUTE_BASELINE_AND_ZERO_LOSS_CHECKLIST.md) | Exact pre-shell route, deep-link, menu, guard, and back-target inventory |
 | [M0_5_SCREENSHOT_MANIFEST.md](docs/phase_7_5/m0_5/M0_5_SCREENSHOT_MANIFEST.md) | Durable Phase 5–7 AR/EN desktop and narrow visual baseline |
+| [M1_ACCEPTANCE_REPORT.md](docs/phase_7_5/m1/M1_ACCEPTANCE_REPORT.md) | Closed Phase 7.5 semantic theme, shared UI foundation, adoption, and verification record |
+| [M1_SCREENSHOT_MANIFEST.md](docs/phase_7_5/m1/M1_SCREENSHOT_MANIFEST.md) | Durable M1 foundation and representative feature screenshot evidence |
 
 Feature references include `PRODUCTS_DETAIL.md`, `CONTRACTS_LOGIC.md`,
 `PAYMENT_SYSTEM.md`, `CUSTOMER_LEDGER.md`, `FIELD_OPS.md`,

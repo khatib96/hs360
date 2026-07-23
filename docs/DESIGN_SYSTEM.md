@@ -31,17 +31,22 @@ The system is white-label-ready. Tenant logo and primary color can be customized
 | **Gold Deep Accent** | `#9C8240` | Darker brand accent on contrast-safe surfaces |
 | **Charcoal** | `#1A1A1A` | Logo background, primary text on light surfaces |
 | **Ink** | `#2C2C2C` | Body text on white |
-| **Pure White** | `#FFFFFF` | App background |
-| **Off-White** | `#FAF8F3` | Card backgrounds, subtle sections |
+| **Pure White** | `#FFFFFF` | Cards, dialogs, controls, and top-level surfaces |
+| **Warm Canvas** | `#F5F1E8` | Accepted Option C application canvas |
+| **Off-White** | `#FAF8F3` | Subtle sections and low-emphasis surface containers |
 
 ### 2.2 Semantic Palette
 
 | Name | Hex | Usage |
 |------|-----|-------|
-| **Success** | `#2D7A4F` | Confirmed payments, completed visits |
-| **Warning** | `#C8861A` | Below-minimum alerts, trial expiring |
+| **Success** | `#276B45` | Confirmed payments, completed visits |
+| **Success Container** | `#DDEDE4` | Accessible success badge/state background |
+| **Warning** | `#875307` | Below-minimum alerts, trial expiring |
+| **Warning Container** | `#FFEBC8` | Accessible warning badge/state background |
 | **Error** | `#A8362F` | Validation errors, missing data |
-| **Info** | `#3A6F8F` | Informational toasts |
+| **Error Container** | `#F7E2DF` | Accessible destructive/error state background |
+| **Info** | `#32627F` | Informational toasts |
+| **Info Container** | `#DCEAF2` | Accessible informational state background |
 
 ### 2.3 Neutral Scale
 
@@ -58,6 +63,15 @@ Color names are semantic roles, not a command to use one gold everywhere.
 `#C9A961` on white is not acceptable for normal-size text. Components must test
 the exact foreground/background pair; use dark text on Brand Gold or the darker
 Action Gold with a verified light foreground as appropriate.
+
+M1 locks the following WCAG AA pairs for normal text:
+
+| Foreground / background | Contrast |
+|-------------------------|----------|
+| Pure White / Action Gold | 4.83:1 |
+| Pure White / Action Gold Hover | 6.97:1 |
+| Charcoal / Brand Gold | 7.73:1 |
+| Semantic foreground / matching container | At least 4.5:1 |
 
 ### 2.4 Dark Mode (Deferred to Phase 12)
 
@@ -170,7 +184,7 @@ Required indicator: small red dot `•` after label (RTL-aware).
 
 ### 5.3 Cards
 
-- Background: Off-White (`#FAF8F3`)
+- Background: Pure White (`#FFFFFF`) on the Warm Canvas
 - Border: 1px Neutral 100
 - Radius: 12
 - Shadow: very subtle `0 1px 2px rgba(0,0,0,0.04)`
@@ -220,6 +234,26 @@ Example for empty contracts list:
 > 📜 *No contracts yet*
 > Start by creating your first rental contract.
 > **[+ New Contract]**
+
+### 5.8 Phase 7.5 Shared Primitives
+
+M1 implements the reusable foundation below. Feature-owned queries, columns,
+permissions, and business behavior stay outside these widgets:
+
+| Pattern | Implementation |
+|---------|----------------|
+| Page title, context, subtitle, actions | `AppPageHeader` |
+| Search and filter surface | `AppFilterBar` |
+| Loading, error, and empty states | `AppStateView` |
+| Semantic status label | `AppStatusBadge` |
+| List/table boundary | `AppTableFrame` |
+| Detail section and responsive label/value rows | `AppDetailSection`, `AppInfoRow` |
+| Sensitive/destructive confirmation | `AppSensitiveActionDialog` |
+| Money formatting | `MoneyDisplay` |
+
+Spacing, radii, control heights, and semantic colors are defined in
+`lib/core/theme/app_tokens.dart`; Material component states are centralized in
+`lib/core/theme/app_theme.dart`.
 
 ---
 
@@ -410,7 +444,8 @@ When Cursor builds widgets:
 
 1. Use `Theme.of(context).colorScheme` for colors — define the scheme once.
 2. Use `Theme.of(context).textTheme` for text — define type scale once.
-3. Create a `core/theme/app_theme.dart` that builds both light and dark themes.
+3. Keep the accepted light theme in `core/theme/app_theme.dart`; Phase 12 owns
+   dark-mode design and implementation.
 4. Never hardcode hex values in widget files — always reference theme tokens.
 5. Use `Directionality.of(context)` to make direction-aware icons.
 6. Wrap any text containing money in the `MoneyDisplay` widget.

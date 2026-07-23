@@ -24,6 +24,9 @@ class MoneyDisplay extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(localeProvider);
     final currencyAsync = ref.watch(tenantCurrencyFormatProvider);
+    final effectiveStyle = const TextStyle(
+      fontFeatures: [FontFeature.tabularFigures()],
+    ).merge(style);
 
     return currencyAsync.when(
       data: (format) => Text(
@@ -33,7 +36,7 @@ class MoneyDisplay extends ConsumerWidget {
           languageCode: locale.languageCode,
           includeSymbol: includeSymbol,
         ),
-        style: style,
+        style: effectiveStyle,
       ),
       loading: () => Text(
         formatDocumentMoney(
@@ -42,7 +45,7 @@ class MoneyDisplay extends ConsumerWidget {
           languageCode: locale.languageCode,
           includeSymbol: includeSymbol,
         ),
-        style: style,
+        style: effectiveStyle,
       ),
       error: (_, _) => Text(
         formatDocumentMoney(
@@ -51,7 +54,7 @@ class MoneyDisplay extends ConsumerWidget {
           languageCode: locale.languageCode,
           includeSymbol: includeSymbol,
         ),
-        style: style,
+        style: effectiveStyle,
       ),
     );
   }

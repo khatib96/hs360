@@ -5,7 +5,10 @@ import 'package:hs360/l10n/app_localizations.dart';
 
 import '../../../core/localization/locale_controller.dart';
 import '../../../core/routing/app_routes.dart';
+import '../../../shared/widgets/app_filter_bar.dart';
 import '../../../shared/widgets/app_shell.dart';
+import '../../../shared/widgets/app_state_view.dart';
+import '../../../shared/widgets/app_table_frame.dart';
 import '../../auth/domain/app_session.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../../finance_shared/domain/finance_permissions.dart';
@@ -51,32 +54,21 @@ class InvoiceListScreen extends ConsumerWidget {
 
     Widget tableArea;
     if (state.isLoading && state.invoices.isEmpty) {
-      tableArea = _InTableMessage(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const CircularProgressIndicator(),
-            const SizedBox(height: 12),
-            Text(l10n.loading),
-          ],
-        ),
-      );
+      tableArea = AppStateView.loading(message: l10n.loading);
     } else if (state.hasError && state.invoices.isEmpty) {
-      tableArea = _InTableMessage(
-        child: InvoiceErrorState(
-          message: invoiceErrorMessage(l10n, state.errorCode!),
-          onRetry: controller.refresh,
+      tableArea = AppStateView.error(
+        message: invoiceErrorMessage(l10n, state.errorCode!),
+        action: FilledButton(
+          onPressed: controller.refresh,
+          child: Text(l10n.retry),
         ),
       );
     } else if (!state.isLoading && state.invoices.isEmpty) {
-      tableArea = _InTableMessage(
-        child: Text(
-          state.filters.hasActiveFilters
-              ? l10n.invoiceListEmptyFiltered
-              : l10n.invoiceListEmpty,
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodyLarge,
-        ),
+      tableArea = AppStateView.empty(
+        icon: Icons.receipt_long_outlined,
+        message: state.filters.hasActiveFilters
+            ? l10n.invoiceListEmptyFiltered
+            : l10n.invoiceListEmpty,
       );
     } else {
       tableArea = isWide
@@ -90,24 +82,24 @@ class InvoiceListScreen extends ConsumerWidget {
             );
     }
 
-    final tableContainer = DecoratedBox(
-      decoration: InvoiceDesign.panel,
-      child: ClipRRect(borderRadius: InvoiceDesign.radius, child: tableArea),
-    );
+    final tableContainer = AppTableFrame(child: tableArea);
 
     final body = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (availableTypes.isNotEmpty) ...[
-          InvoiceFiltersBar(
-            key: const Key('invoice-filters-bar'),
-            filters: state.filters,
-            availableTypes: availableTypes,
-            onTypeChanged: controller.setType,
-            onStatusChanged: controller.setStatus,
-            onSearchChanged: controller.setSearch,
-            onDateFromChanged: controller.setDateFrom,
-            onDateToChanged: controller.setDateTo,
+          AppFilterBar(
+            compact: true,
+            child: InvoiceFiltersBar(
+              key: const Key('invoice-filters-bar'),
+              filters: state.filters,
+              availableTypes: availableTypes,
+              onTypeChanged: controller.setType,
+              onStatusChanged: controller.setStatus,
+              onSearchChanged: controller.setSearch,
+              onDateFromChanged: controller.setDateFrom,
+              onDateToChanged: controller.setDateTo,
+            ),
           ),
           const SizedBox(height: 12),
         ],
@@ -207,22 +199,5 @@ class InvoiceListScreen extends ConsumerWidget {
         ),
       ),
     ];
-  }
-}
-
-/// Centers a message/placeholder INSIDE the bordered table container.
-class _InTableMessage extends StatelessWidget {
-  const _InTableMessage({required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsetsDirectional.all(32),
-        child: child,
-      ),
-    );
   }
 }

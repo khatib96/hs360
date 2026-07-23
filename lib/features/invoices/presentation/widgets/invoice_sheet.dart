@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../shared/widgets/app_detail_surface.dart';
 import 'invoice_design.dart';
 
 /// Document sheet used by the invoice FORM and DETAIL screens.
@@ -80,45 +81,11 @@ class InvoiceSectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: InvoiceDesign.panel,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (title != null)
-            Container(
-              decoration: const BoxDecoration(
-                color: InvoiceDesign.headerFill,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                ),
-                border: Border(
-                  bottom: BorderSide(color: InvoiceDesign.borderColor),
-                ),
-              ),
-              padding: const EdgeInsetsDirectional.symmetric(
-                horizontal: 14,
-                vertical: 10,
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      title!,
-                      style: InvoiceDesign.columnHeaderStyle(context),
-                    ),
-                  ),
-                  ?trailing,
-                ],
-              ),
-            ),
-          Padding(
-            padding: padding ?? InvoiceDesign.sectionPadding,
-            child: child,
-          ),
-        ],
-      ),
+    return AppDetailSection(
+      title: title,
+      trailing: trailing,
+      padding: padding ?? InvoiceDesign.sectionPadding,
+      child: child,
     );
   }
 }

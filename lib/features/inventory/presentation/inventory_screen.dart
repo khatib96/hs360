@@ -7,7 +7,10 @@ import 'package:hs360/l10n/app_localizations.dart';
 import '../../../core/localization/locale_controller.dart';
 import '../../../core/routing/app_routes.dart';
 import '../../../core/utils/quantity_formatter.dart';
+import '../../../shared/widgets/app_filter_bar.dart';
 import '../../../shared/widgets/app_shell.dart';
+import '../../../shared/widgets/app_state_view.dart';
+import '../../../shared/widgets/app_table_frame.dart';
 import '../../../shared/widgets/message_banner.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../domain/inventory_balance_row.dart';
@@ -50,23 +53,20 @@ class InventoryScreen extends ConsumerWidget {
 
     Widget body;
     if (state.isLoading && state.allRows.isEmpty) {
-      body = Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const CircularProgressIndicator(),
-            const SizedBox(height: 16),
-            Text(l10n.loading),
-          ],
+      body = AppStateView.loading(message: l10n.loading);
+    } else if (state.hasError && state.allRows.isEmpty) {
+      body = AppStateView.error(
+        message: inventoryErrorMessage(l10n, state.errorCode!),
+        action: FilledButton(
+          onPressed: controller.refresh,
+          child: Text(l10n.retry),
         ),
       );
-    } else if (state.hasError && state.allRows.isEmpty) {
-      body = _InventoryErrorState(
-        message: inventoryErrorMessage(l10n, state.errorCode!),
-        onRetry: controller.refresh,
-      );
     } else if (!state.isLoading && state.allRows.isEmpty) {
-      body = Center(child: Text(l10n.inventoryBalancesEmpty));
+      body = AppStateView.empty(
+        icon: Icons.inventory_2_outlined,
+        message: l10n.inventoryBalancesEmpty,
+      );
     } else {
       body = Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -87,26 +87,36 @@ class InventoryScreen extends ConsumerWidget {
                 message: l10n.inventoryBalancesWarehouseLabelsFailed,
               ),
             ),
-          InventoryBalancesFiltersBar(
-            search: state.search,
-            warehouseId: state.warehouseId,
-            lowStockOnly: state.lowStockOnly,
-            activeWarehouses: state.activeWarehouses,
-            languageCode: languageCode,
-            onSearchCommitted: controller.setSearch,
-            onWarehouseChanged: controller.setWarehouseId,
-            onLowStockChanged: controller.setLowStockOnly,
+          AppFilterBar(
+            compact: true,
+            child: InventoryBalancesFiltersBar(
+              search: state.search,
+              warehouseId: state.warehouseId,
+              lowStockOnly: state.lowStockOnly,
+              activeWarehouses: state.activeWarehouses,
+              languageCode: languageCode,
+              onSearchCommitted: controller.setSearch,
+              onWarehouseChanged: controller.setWarehouseId,
+              onLowStockChanged: controller.setLowStockOnly,
+            ),
           ),
           const SizedBox(height: 16),
           if (filtered.isEmpty)
-            Expanded(child: Center(child: Text(l10n.inventoryBalancesEmpty)))
+            Expanded(
+              child: AppStateView.empty(
+                icon: Icons.filter_alt_off_outlined,
+                message: l10n.inventoryBalancesEmpty,
+              ),
+            )
           else ...[
             _SummaryBar(rows: filtered, l10n: l10n),
             const SizedBox(height: 12),
             Expanded(
-              child: InventoryBalanceTable(
-                rows: filtered,
-                languageCode: languageCode,
+              child: AppTableFrame(
+                child: InventoryBalanceTable(
+                  rows: filtered,
+                  languageCode: languageCode,
+                ),
               ),
             ),
           ],
@@ -226,27 +236,5 @@ Future<void> _openManualAdjustment(
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(l10n.inventoryAdjustmentSuccess)));
-  }
-}
-
-class _InventoryErrorState extends StatelessWidget {
-  const _InventoryErrorState({required this.message, required this.onRetry});
-
-  final String message;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(message, textAlign: TextAlign.center),
-          const SizedBox(height: 16),
-          FilledButton(onPressed: onRetry, child: Text(l10n.retry)),
-        ],
-      ),
-    );
   }
 }
