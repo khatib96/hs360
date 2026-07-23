@@ -1,6 +1,6 @@
 # NAVIGATION_AND_MODULES_BRIEF — Canonical Module and Navigation Structure
 
-> Owner-revised 2026-07-22 after Phase 7.
+> Owner-approved revision 2026-07-24 before Phase 7.5 M0.
 >
 > Purpose: define how existing and planned HS360 capabilities are grouped into
 > user-facing modules. This brief supersedes the earlier flat/grouped menu draft
@@ -39,11 +39,11 @@
 ```text
 لوحة التحكم                 Dashboard
 ملخص اليوم                  Daily Activity
-العملاء والموردون           Customers & Suppliers
-العقود                      Contracts
 المواعيد والزيارات          Appointments & Visits
-المخزون                     Inventory
+العقود                      Contracts
+العملاء والموردون           Customers & Suppliers
 المالية                     Finance
+المخزون                     Inventory
 نقطة البيع                  Point of Sale
 الموارد البشرية             Human Resources
 
@@ -75,6 +75,14 @@ The top bar contains:
 
 It does not repeat all sidebar modules.
 
+Phase 7.5 implements global search over customers/suppliers, contracts,
+invoices, products/serialized units, and stable implemented document
+identifiers. Results are grouped, capped, permission-shaped, and linked to the
+canonical detail route. The notification bell is functional and shows the
+signed-in user's existing in-app notifications/calendar reminders with
+unread/read state and safe deep-links. Neither control may be a decorative
+placeholder.
+
 ### 2.3 Contextual Module Bar
 
 When a module has multiple surfaces, a horizontal tab/sub-navigation appears
@@ -87,16 +95,16 @@ the user cannot access are omitted, not disabled as information leaks.
 
 ### 3.1 Dashboard / لوحة التحكم
 
-Dashboard is a cross-module, permission-shaped summary of business condition:
+Dashboard v1 uses four fixed, permission-shaped priority slots:
 
-- appointments and visits today, completed and remaining;
-- overdue work;
-- active/trial/rental contracts and rented/trial assets;
-- current-period sales, collections, and receivables when authorized;
-- inventory/data-quality warnings;
-- notifications and approval items;
-- quick actions;
-- later Phase 10 trends, comparisons, health scores, and owner analytics.
+1. today's appointments/visits, completed and remaining where trusted;
+2. overdue operational items;
+3. active/trial/rental contracts and asset condition;
+4. current-month collections and outstanding amount when authorized.
+
+Inventory/data-quality warnings, approval items, trends, comparisons, health
+scores, configurable placement, and owner analytics remain Phase 10 unless
+separately promoted.
 
 Every data widget drills into its filtered source records. Motivational phrases
 are optional polish after alerts and trusted KPIs.
@@ -349,7 +357,7 @@ The presence of a button never replaces server validation.
 
 | Capability | Placement |
 |---|---|
-| Module shell, navigation, Dashboard v1, Daily Activity, record-action UX, basic Audit | Phase 7.5 |
+| Module shell, shared UI foundation, bounded global search, quick create, in-app notification center, Dashboard v1, Daily Activity, record-action UX, basic Audit | Phase 7.5 |
 | Employee link/work profile minimum, adaptive mobile, generic requests foundation, field visits/offline | Phase 8 |
 | POS, maintenance, full employee file, HR requests, payroll, advances, commissions | Phase 9 |
 | General Ledger UI, accounting day book, trial balance, P&L, balance sheet, close, advanced dashboards/audit/map | Phase 10 |

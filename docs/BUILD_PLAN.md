@@ -20,7 +20,7 @@
 | **5 - Invoices, Vouchers & Journal** | Done | M1–M10 closed through migration `076` |
 | **6 - Contracts** | Complete | M0–M13 closed (2026-07-12) |
 | **7 - Calendar & Company Appointments** | **Complete / accepted** | M1–M12 CLOSED/ACCEPTED; Gates D/E/F owner-accepted, G/H passed through migration `104`; physical Android smoke deferred but required before production |
-| **7.5 - Product Structure & Stabilization** | Planned | Navigation/modules, dashboard/daily activity, record actions, audit, and integrity gate before Phase 8 |
+| **7.5 - Product Structure & Stabilization** | M0 and M0.5 closed / accepted; M1 next | Option C accepted; full regression/safety snapshot and zero-lost-route baseline recorded on 2026-07-24 |
 | **8 - Adaptive Mobile, Requests & Field Ops** | Not started | - |
 | **9 - POS, Maintenance & Full HR** | Not started | - |
 | **10 - Finance, Reports, Dashboards & Close** | Not started | - |
@@ -721,7 +721,7 @@ the tenant's confirmed IANA timezone.
 
 ---
 
-## Phase 7.5 — Product Structure, Navigation & Stabilization
+## Phase 7.5 — Product Structure, Navigation & Stabilization (≈ 5-7 weeks)
 
 > Detailed execution plan:
 > `docs/PHASE_7_5_PRODUCT_STRUCTURE_AND_STABILIZATION_PLAN.md`.
@@ -738,8 +738,9 @@ workflows consistently, and prove finance/inventory integrity.
 ### Tasks
 
 1. Lock the desktop information architecture:
-   - primary sidebar modules: Dashboard, Daily Activity, Customers & Suppliers,
-     Contracts, Appointments & Visits, Inventory, Finance, POS, and HR;
+   - primary sidebar modules, in order: Dashboard, Daily Activity,
+     Appointments & Visits, Contracts, Customers & Suppliers, Finance,
+     Inventory, POS, and HR;
    - Audit, Settings, and signed-in user profile in the lower system area;
    - global top bar for search, quick create, notifications, locale, and context;
    - contextual horizontal navigation inside the active module.
@@ -752,22 +753,30 @@ workflows consistently, and prove finance/inventory integrity.
      Appointments & Visits;
    - Customers and Suppliers under one party-facing module without merging
      their records or accounting semantics.
-3. Replace the placeholder Dashboard with permission-safe operational widgets
-   and drill-down.
-4. Add Daily Activity / `ملخص اليوم` as a selected-date cross-module timeline;
+3. Build the shared light-theme UI foundation and accept reference screens
+   before broad screen migration; dark mode remains Phase 12.
+4. Implement bounded, permission-safe global search, quick create, and a
+   functional in-app notification center using existing notifications/reminders.
+5. Replace the placeholder Dashboard with four fixed priority widgets and
+   source-record drill-down.
+6. Add Daily Activity / `ملخص اليوم` as a selected-date cross-module timeline;
    keep accounting Journal Entries / `القيود اليومية` inside Finance.
-5. Standardize draft edit/discard, confirmed cancel/reverse, master-data
+7. Standardize draft edit/discard, confirmed cancel/reverse, master-data
    deactivate, reason capture, consequence preview, and actionable errors.
-6. Add a basic permission-gated Audit Log review surface.
-7. Run a finance/inventory integrity gate for journal balance, cancellation,
+8. Add a basic permission-gated Audit Log review surface.
+9. Run a finance/inventory integrity gate for journal balance, cancellation,
    stock effects, period locks, and serialized-unit guards.
-8. Pass Arabic/English, RTL/LTR, responsive, accessibility, deep-link/back,
-   zero-permission, and Manager acceptance.
+10. Pass Arabic/English, RTL/LTR, responsive, accessibility, visual,
+    deep-link/back, permission, and performance-baseline acceptance.
+11. Close with a read-only data mapping and disposable local import rehearsal;
+    production data migration remains Phase 12.
 
 ### Deliverables
 
 - Module-based desktop shell with user identity/profile footer
+- Accepted reference screens and reusable UI foundation
 - Contextual module navigation and permission-filtered commands
+- Global search, quick create, and in-app notification center
 - Dashboard v1 and Daily Activity
 - Consolidated Inventory, Finance, Customers, Operations, and Settings surfaces
 - Consistent record action/correction policy and basic Audit Log review
@@ -1056,6 +1065,9 @@ Production-ready system.
    - Create customer + contract + first refill + payment
    - Purchase → WAC update → sale → profit recognized
 2. Migrate live data from existing Google Sheets (one-time script)
+   - consume the Phase 7.5 read-only mapping, local rehearsal, and documented
+     data-quality findings;
+   - rerun against a disposable production-like environment before live import;
 3. Production Supabase setup (Pro tier)
 4. Signed installer builds:
    - Windows MSIX
@@ -1068,6 +1080,7 @@ Production-ready system.
 8. User training (the team)
 9. Soft launch with parallel running (Sheets + new system) for 1 month
 10. Cutover
+11. Design, implement, and accept dark mode only if still required by the owner
 
 ### Deliverables
 - Production system live
@@ -1113,14 +1126,14 @@ These are out of v1 scope but worth noting for the roadmap:
 | 5 — Invoices & Vouchers | 10-14 wk | 17-21 wk |
 | 6 — Contracts | 4 wk | 21-25 wk |
 | 7 — Calendar & Company Appointments | 6-10 wk | 27-35 wk |
-| 7.5 — Product Structure & Stabilization | 3-5 wk | 30-40 wk |
-| 8 — Adaptive Mobile, Requests & Field Ops | 6-9 wk | 36-49 wk |
-| 9 — POS + Maintenance + Full HR | 5-8 wk | 41-57 wk |
-| 10 — Finance, Reports, Dashboards & Close | 5-7 wk | 46-64 wk |
-| 11 — Comms | 2 wk | 48-66 wk |
-| 12 — Polish & Launch | 3 wk | **51-69 wk** |
+| 7.5 — Product Structure & Stabilization | 5-7 wk | 32-42 wk |
+| 8 — Adaptive Mobile, Requests & Field Ops | 6-9 wk | 38-51 wk |
+| 9 — POS + Maintenance + Full HR | 5-8 wk | 43-59 wk |
+| 10 — Finance, Reports, Dashboards & Close | 5-7 wk | 48-66 wk |
+| 11 — Comms | 2 wk | 50-68 wk |
+| 12 — Polish & Launch | 3 wk | **53-71 wk** |
 
-**Total: ~51-69 weeks (~12-16 months)** of focused work. This revised range
+**Total: ~53-71 weeks (~12-17 months)** of focused work. This revised range
 includes the owner-approved product-structure stabilization, adaptive mobile,
 request/approval foundation, expanded HR records, and complete core accounting
 reporting. Delivery can be faster only by explicitly deferring accepted scope,

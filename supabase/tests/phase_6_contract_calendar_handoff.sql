@@ -1219,18 +1219,18 @@ declare
   v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
   v_contract_id uuid;
   v_start date;
-  v_billing_day int := 5;
+  v_billing_day int;
   v_first date;
   v_expected date;
 begin
-v_start := make_date(
-    extract(year from current_date)::int,
-    extract(month from current_date)::int,
-    20
-  );
-if v_start < current_date then
-    v_start := (v_start + interval '1 month')::date;
-end if;
+  v_start := current_date;
+  -- Keep the first valid billing occurrence inside the default 30-day
+  -- materialization horizon on every calendar date. On day 1, use a later day
+  -- in the same month; otherwise use the previous day in the following month.
+  v_billing_day := case
+    when extract(day from v_start)::int = 1 then 28
+    else least(extract(day from v_start)::int - 1, 28)
+  end;
 v_contract_id := pg_temp.p6m12_create_rental(
     v_fixture,
     v_start,
@@ -1281,13 +1281,19 @@ begin
   v_fixture := nullif(current_setting('test.p6m12.ctx.v_fixture', true), '')::jsonb;
   v_billing_day := nullif(current_setting('test.p6m12.ctx.v_billing_day', true), '')::int;
   v_first := nullif(current_setting('test.p6m12.ctx.v_first', true), '')::date;
-v_expected := public.calendar_make_day_in_month(
-    (date_trunc('month', v_start) + interval '1 month')::date,
+  v_expected := public.calendar_make_day_in_month(
+    date_trunc('month', v_start)::date,
     v_billing_day
   );
-if v_first is null or v_first <> v_expected then
+  if v_expected < v_start then
+    v_expected := public.calendar_make_day_in_month(
+      (date_trunc('month', v_start) + interval '1 month')::date,
+      v_billing_day
+    );
+  end if;
+  if v_first is null or v_first <> v_expected then
     raise exception 'case11 failed: first=% expected=% start=%', v_first, v_expected, v_start;
-end if;
+  end if;
   perform set_config('test.p6m12.ctx.v_expected', v_expected::text, true);
   perform set_config('test.p6m12.ctx.v_start', v_start::text, true);
   perform set_config('test.p6m12.ctx.v_billing_day', v_billing_day::text, true);

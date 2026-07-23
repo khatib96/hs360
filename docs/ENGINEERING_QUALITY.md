@@ -101,15 +101,28 @@ lib/core/routing/
 
 Move repeated UI into focused widgets:
 
-- primary/secondary buttons
-- loading states
-- empty states
-- error banners
-- text fields
-- dashboard stat cards
-- permission-gated wrappers
+- page header and result/action region
+- filter/search bar
+- loading, empty, error, and retry states
+- primary/secondary/destructive buttons
+- status badges
+- money display
+- table/list frame
+- detail header and information section
+- sensitive-action confirmation dialog
+- dashboard stat cards and permission-gated wrappers
 
 Use `lib/shared/widgets/` for components reused across features. Keep feature-specific widgets inside the feature.
+
+Shared UI means shared presentation and interaction contracts, not one
+configuration-heavy mega-table or mega-form. Feature-owned columns, queries,
+validation, and business actions stay inside the feature.
+
+For Phase 7.5, splitting the existing shell is required because its
+responsibilities are being replaced. Other large controllers and repositories
+are refactored only when touched by the milestone or when a concrete defect or
+testability problem justifies it; line count alone does not authorize unrelated
+scope expansion.
 
 ---
 

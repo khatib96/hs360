@@ -1,6 +1,7 @@
 # MVP_SCOPE.md — Strict v1 Scope
 
-> Updated 2026-07-22 after the owner-approved Phase 7.5 roadmap correction.
+> Updated 2026-07-24 after the owner-approved Phase 7.5 M0-M10 roadmap
+> correction.
 > This file defines the first shippable version. Later accepted ideas belong in
 > their assigned roadmap phase unless explicitly promoted here.
 
@@ -20,12 +21,15 @@
 ### Product Structure and Safe Navigation
 
 - Module-based desktop navigation rather than a flat list of pages/actions.
-- Primary modules: Dashboard, Daily Activity, Customers & Suppliers, Contracts,
-  Appointments & Visits, Inventory, and Finance; later POS/HR modules remain
-  hidden until implemented.
+- Primary modules, in order: Dashboard, Daily Activity, Appointments & Visits,
+  Contracts, Customers & Suppliers, Finance, and Inventory; later POS/HR
+  modules remain hidden until implemented.
 - Lower system area for permission-gated Audit, Settings, and user profile.
 - Global top bar utilities plus contextual navigation inside the active module.
-- Dashboard v1 with permission-shaped operational widgets and drill-down.
+- Bounded permission-safe global search, permission-filtered quick create, and
+  a functional recipient-scoped in-app notification center.
+- Dashboard v1 with four fixed permission-shaped priority widgets and
+  source-record drill-down.
 - Daily Activity / `ملخص اليوم` as a selected-date operational timeline,
   distinct from accounting Journal Entries / `القيود اليومية`.
 - Consistent draft/edit/cancel/reverse/deactivate commands matching backend

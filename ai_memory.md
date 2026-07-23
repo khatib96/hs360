@@ -1,12 +1,130 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-22 (Session: **PHASE 7.5 PRODUCT STRUCTURE PLAN LOCK**).
+> Updated 2026-07-24 (Session: **PHASE 7.5 M0 AND M0.5 CLOSED / ACCEPTED; M1 NEXT**).
 > Gates D/E/F **`PASS / OWNER ACCEPTED`**; Gate F acceptance uses physical iOS
 > + Android Emulator evidence. Gate G and Final Gate H **PASS** through `104`.
-> M12 and Phase 7 **`CLOSED / ACCEPTED`**. Phase 7.5 is **PLANNED / NOT
-> STARTED**. Phase 8 **NOT STARTED**.
+> M12 and Phase 7 **`CLOSED / ACCEPTED`**. Phase 7.5 **M0 AND M0.5 ARE CLOSED /
+> ACCEPTED; M1 IS NEXT / NOT STARTED**. Phase 8
+> **NOT STARTED**.
 > Permanent pre-production constraint: **physical Android smoke is required**
 > under the owner-approved deferral. No commit/push performed.
+
+---
+
+## Session 2026-07-24 - Phase 7.5 M0.5 Closed / Accepted
+
+**Decision:** executed and closed the regression baseline and safety snapshot.
+M1 is now next but has not started. No production Flutter behavior, RPC, or
+migration was added.
+
+**Application gates:** `flutter analyze` clean; complete Flutter suite 1424
+passed; focused route/shell suite 96 passed. Invoice, contract, and calendar
+screenshot harnesses passed with 12 durable Phase 5–7 AR/EN desktop/narrow/
+mobile images. The current 390 px contract-detail overflow is deliberately
+recorded as M1/M3 debt.
+
+**Database gates:** full SQL/concurrency/performance/pollution runner passed;
+calendar-only macOS integration passed EN+AR and returned all fixture counters
+to zero after each locale. Two date-dependent SQL tests were made tenant-local
+and horizon-safe without changing production behavior. Exact technical residue
+from the earlier interrupted attempts was removed; final domain and calendar
+run/queue counts are zero.
+
+**Performance:** 5,000-event list median 1074.81 ms / P95 1095.42 ms; range
+summary P95 66.20 ms; selected agenda P95 26.12 ms; route day P95 27.03 ms.
+The list remains below the 3000 ms hard gate and near the accepted Phase 7
+baseline; 800 ms remains an optimization target.
+
+**Safety evidence:** root resolver + 50 named routes inventoried with menu,
+guard, deep-link, and back behavior. Migration disk/applied boundary is 104;
+093–104 checksums match final Phase 7 Gate H. Evidence lives under
+`docs/phase_7_5/m0_5/`.
+
+**Next:** M1 Theme Tokens and Shared UI Foundation. No commit/push performed.
+
+---
+
+## Session 2026-07-24 - Phase 7.5 M0 Closed / Accepted
+
+**Owner decision:** accepted the complete Option C — Executive Warmth /
+`الدفء الإداري` direction and authorized M0 closure.
+
+**Expanded reference contract:** warm stone sidebar, cream canvas, calm rounded
+surfaces, pill contextual tabs, and restrained brand color. Finance and
+Inventory intentionally borrow Option B's compact table/filter density so the
+selected direction remains operationally efficient.
+
+**Prepared references:** Arabic RTL expanded Dashboard, collapsed/narrow shell,
+Inventory, Finance, representative contract detail, English LTR Dashboard,
+field/hybrid mobile, and administrative mobile. Sources, rendered JPG evidence,
+and the acceptance checklist live under `docs/phase_7_5/m0/`.
+
+**Closure evidence:** the visual set, acceptance checklist, acceptance record,
+canonical route/module/back-target matrix, and permission visibility matrix
+live under `docs/phase_7_5/m0/`. Existing URLs are preserved; module visibility,
+contextual tabs, search, quick create, notifications, Dashboard, Daily Activity,
+Audit, and drill-down are explicitly fail-closed and source-permission-shaped.
+
+**Historical next at M0 closure:** M0.5 regression baseline and safety
+snapshot. It is now closed by the session above.
+
+---
+
+## Session 2026-07-24 - Phase 7.5 M0 Visual Selection Started
+
+**Owner decision:** start Phase 7.5 M0.
+
+**Prepared:** three comparable Arabic RTL desktop shell/Dashboard directions
+with identical information architecture and data:
+
+- A — Quiet Luxury: charcoal navigation, warm canvas, balanced premium/ERP
+  hierarchy;
+- B — Operational Clarity: light navigation, compact high-density professional
+  ERP treatment;
+- C — Executive Warmth: stone/cream surfaces, pill tabs, friendlier spacious
+  treatment.
+
+Sources and rendered references live under `docs/phase_7_5/m0/`. Option A is
+the planning recommendation, with Option B density borrowed later for Finance
+and Inventory if A is selected. M0 is not closed: owner selection is required
+before creating the collapsed/narrow, Inventory, Finance, detail, mobile
+direction, and AR/EN reference set. No Flutter/database implementation started.
+
+---
+
+## Session 2026-07-24 - Phase 7.5 M0-M10 Execution Plan Ready
+
+**Owner decision:** accepted the suitable improvements from
+`PRODUCT_UI_VISION.md` and `PROJECT_REVIEW_REPORT_2026-07-24.md` and requested
+that the roadmap and dedicated Phase 7.5 file be updated before implementation.
+
+**Locked Phase 7.5 additions:** sidebar order is Dashboard, Daily Activity,
+Appointments & Visits, Contracts, Customers & Suppliers, Finance, Inventory,
+then future POS/HR. Dashboard v1 has four fixed priority slots. Bounded global
+search, permission-filtered quick create, and a functional recipient-scoped
+in-app notification center are Phase 7.5 deliverables. Dark mode is deferred to
+Phase 12. Brand and action gold use separate semantic tokens; bundled Noto
+fonts remain the default unless M0 prototypes justify a replacement.
+
+**Execution structure:** Phase 7.5 is split into M0 scope/visual acceptance,
+M0.5 regression baseline, M1 theme/shared UI foundation, M2 shell/navigation,
+M3 module consolidation, M4 search/quick-create/notifications, M5 Dashboard/
+Daily Activity, M6 lifecycle actions/Audit, M7 integrity, M8 responsive/
+bilingual/accessibility/performance acceptance, M9 visual owner acceptance,
+and M10 final close/local migration rehearsal/Phase 8 handoff.
+
+**Scope control:** `app_shell.dart` is split as required by the shell rebuild;
+unrelated large files are not refactored for line count alone. The 800ms
+calendar target is non-blocking, but performance may not materially regress.
+The Google Sheets work in M10 is read-only mapping plus disposable local
+rehearsal; live import remains Phase 12. External notification channels remain
+Phase 11. Physical Android smoke remains mandatory before production.
+
+**Diagnostic corrections:** the report now records that not every write is an
+RPC, ARB user-facing keys are 1,455 EN/1,455 AR with no Arabic gaps, safe
+cancellation is conditional on downstream/period/serialized guards, and file/
+test counts are dated snapshots rather than canonical facts. Documentation
+only; no application/database implementation, migration, commit, or push.
 
 ---
 
@@ -18,10 +136,11 @@ the canonical roadmap. Do not reopen or renumber completed Phases 0-7. Add a
 new Phase 7.5 for module navigation, Dashboard/Daily Activity, record-action
 UX, basic Audit review, and finance/inventory integrity.
 
-**Locked structure:** desktop sidebar modules are Dashboard, Daily Activity,
-Customers & Suppliers, Contracts, Appointments & Visits, Inventory, Finance,
-POS, and HR, with Audit/Settings/user profile in the lower system area. The
-global top bar carries utilities; the active module carries contextual tabs.
+**Historical structure (superseded by the 2026-07-24 ordering decision):**
+desktop sidebar modules were listed as Dashboard, Daily Activity, Customers &
+Suppliers, Contracts, Appointments & Visits, Inventory, Finance, POS, and HR,
+with Audit/Settings/user profile in the lower system area. The three-layer
+navigation model remains accepted; only the primary ordering was superseded.
 Inventory/warehouse pages and finance/accounting pages are grouped without
 merging distinct entities. `ملخص اليوم` is operational; `القيود اليومية` and
 `دفتر الأستاذ` remain accounting surfaces.

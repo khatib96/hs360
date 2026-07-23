@@ -1,0 +1,517 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HS360 M0 Selected Direction C Reference Set</title>
+<style>
+  @font-face {
+    font-family: "Noto";
+    src: url("../../../assets/fonts/noto/NotoSans-Regular.ttf");
+    font-weight: 400;
+  }
+  @font-face {
+    font-family: "Noto";
+    src: url("../../../assets/fonts/noto/NotoSans-Bold.ttf");
+    font-weight: 700;
+  }
+  @font-face {
+    font-family: "Noto Arabic";
+    src: url("../../../assets/fonts/noto/NotoSansArabic-Regular.ttf");
+    font-weight: 400;
+  }
+  @font-face {
+    font-family: "Noto Arabic";
+    src: url("../../../assets/fonts/noto/NotoSansArabic-Bold.ttf");
+    font-weight: 700;
+  }
+
+  :root {
+    --brand: #c9a961;
+    --action: #a86010;
+    --action-dark: #874a0c;
+    --ink: #2a251f;
+    --muted: #756d63;
+    --line: #e4d9c9;
+    --canvas: #f3eee6;
+    --surface: #fffdf9;
+    --soft: #f8f2e9;
+    --sidebar: #e7dccd;
+    --success: #2d7a4f;
+    --warning: #b06d11;
+    --error: #a8362f;
+    --info: #3a6f8f;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #ddd; color: var(--ink); }
+  body { font-family: "Noto Arabic", "Noto", sans-serif; }
+  button, input { font: inherit; }
+  .sym { width: 22px; text-align: center; font-weight: 700; }
+
+  .desktop {
+    width: 1440px;
+    height: 900px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 252px;
+    direction: ltr;
+    background: var(--canvas);
+  }
+  .desktop.collapsed { grid-template-columns: 1fr 76px; width: 1180px; height: 820px; }
+  .desktop.ltr { grid-template-columns: 252px 1fr; }
+  .desktop.ltr .side { grid-column: 1; grid-row: 1; direction: ltr; }
+  .desktop.ltr .workspace { grid-column: 2; grid-row: 1; direction: ltr; }
+  .workspace { min-width: 0; display: grid; grid-template-rows: 72px 54px 1fr; direction: rtl; }
+  .top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 28px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+  }
+  .top-title { margin-inline-end: auto; min-width: 220px; }
+  .top-title small { display: block; color: var(--muted); font-size: 11px; margin-bottom: 3px; }
+  .top-title strong { font-size: 19px; }
+  .search {
+    width: 290px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 13px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--soft);
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .quick, .outline-btn, .icon-btn {
+    height: 40px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+  }
+  .quick { border: 0; padding: 0 15px; color: #fff; background: var(--action); font-weight: 700; }
+  .outline-btn { padding: 0 13px; border: 1px solid var(--line); color: var(--ink); background: var(--surface); }
+  .icon-btn { width: 40px; border: 1px solid var(--line); color: var(--ink); background: var(--surface); position: relative; }
+  .unread { position: absolute; width: 7px; height: 7px; border-radius: 50%; background: var(--error); top: 7px; inset-inline-start: 8px; outline: 2px solid var(--surface); }
+  .tabs {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0 28px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .tab { padding: 8px 13px; border-radius: 18px; color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .tab.on { color: #fff; background: var(--action); font-weight: 700; }
+  .page { padding: 24px 28px 28px; overflow: hidden; }
+  .page-head { display: flex; align-items: end; gap: 12px; margin-bottom: 17px; }
+  .page-head h1 { margin: 0 0 3px; font-size: 24px; }
+  .page-head p { margin: 0; color: var(--muted); font-size: 12px; }
+  .page-actions { margin-inline-start: auto; display: flex; gap: 8px; }
+  .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 13px; margin-bottom: 16px; }
+  .card, .panel {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    border-radius: 18px;
+  }
+  .card { padding: 15px 17px; min-height: 112px; }
+  .card-label { color: var(--muted); font-size: 11px; display: flex; align-items: center; gap: 8px; }
+  .card-value { font-size: 24px; font-weight: 700; margin: 10px 0 2px; }
+  .card-note { color: var(--muted); font-size: 11px; }
+  .good { color: var(--success); font-weight: 700; }
+  .warn { color: var(--warning); font-weight: 700; }
+  .bad { color: var(--error); font-weight: 700; }
+  .toolbar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--surface);
+  }
+  .field {
+    min-width: 210px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0 11px;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    color: var(--muted);
+    background: var(--soft);
+    font-size: 11px;
+  }
+  .field.small { min-width: 130px; }
+  .result-count { margin-inline-start: auto; color: var(--muted); font-size: 11px; }
+  .table-wrap { border: 1px solid var(--line); border-radius: 18px; background: var(--surface); overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  th { padding: 11px 13px; color: var(--muted); background: var(--soft); text-align: start; font-weight: 700; }
+  td { padding: 12px 13px; border-top: 1px solid var(--line); vertical-align: middle; }
+  td strong { font-size: 12px; }
+  .sub { display: block; color: var(--muted); font-size: 10px; margin-top: 2px; }
+  .status { display: inline-flex; padding: 4px 8px; border-radius: 999px; font-size: 9px; font-weight: 700; }
+  .status.ok { color: var(--success); background: rgba(45,122,79,.1); }
+  .status.wait { color: var(--warning); background: rgba(176,109,17,.1); }
+  .status.info { color: var(--info); background: rgba(58,111,143,.1); }
+  .status.off { color: var(--muted); background: var(--soft); }
+  .two-col { display: grid; grid-template-columns: 1.45fr .75fr; gap: 15px; direction: ltr; }
+  .panel { padding: 17px; direction: rtl; }
+  .panel-title { display: flex; align-items: center; margin-bottom: 12px; font-size: 14px; font-weight: 700; }
+  .panel-link { margin-inline-start: auto; color: var(--action); font-size: 10px; }
+  .line-item { display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+  .line-item:last-child { border-bottom: 0; }
+  .line-item strong { font-size: 11px; }
+  .line-item small { display: block; color: var(--muted); font-size: 10px; margin-top: 3px; }
+
+  .side {
+    direction: rtl;
+    padding: 18px 14px 15px;
+    display: flex;
+    flex-direction: column;
+    background: var(--sidebar);
+    border-inline-start: 1px solid rgba(100,80,55,.15);
+  }
+  .brand { height: 58px; display: flex; align-items: center; gap: 10px; padding: 0 9px 13px; border-bottom: 1px solid rgba(100,80,55,.14); margin-bottom: 13px; }
+  .brand img { width: 39px; height: 39px; object-fit: contain; }
+  .brand strong { display: block; font-family: "Noto"; font-size: 15px; }
+  .brand small { display: block; color: var(--muted); font-size: 9px; margin-top: 2px; }
+  .nav { display: flex; flex-direction: column; gap: 3px; }
+  .nav-row { min-height: 42px; display: flex; align-items: center; gap: 11px; padding: 0 11px; border-radius: 13px; color: var(--muted); font-size: 12px; }
+  .nav-row.on { color: #fff; background: var(--action); font-weight: 700; }
+  .nav-row.dim { opacity: .42; }
+  .later { margin-inline-start: auto; font-size: 8px; border: 1px solid currentColor; border-radius: 10px; padding: 1px 5px; }
+  .side-bottom { margin-top: auto; }
+  .side-line { height: 1px; background: rgba(100,80,55,.14); margin: 9px 7px; }
+  .profile { display: grid; grid-template-columns: 36px 1fr 18px; gap: 8px; align-items: center; padding: 10px; border-radius: 15px; background: rgba(201,169,97,.11); }
+  .avatar { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; color: #1a1a1a; background: var(--brand); font-weight: 700; }
+  .profile strong { font-size: 11px; }
+  .profile small { display: block; color: var(--muted); font-size: 9px; direction: ltr; text-align: right; }
+
+  .collapsed .workspace { grid-template-rows: 68px 50px 1fr; }
+  .collapsed .top { padding: 0 22px; }
+  .collapsed .page { padding: 20px 22px; }
+  .collapsed .side { padding: 13px 9px; }
+  .collapsed .brand { justify-content: center; padding: 0 0 10px; }
+  .collapsed .brand img { width: 36px; height: 36px; }
+  .collapsed .brand div, .collapsed .nav-row span:not(.sym), .collapsed .profile div:not(.avatar), .collapsed .profile > .sym { display: none; }
+  .collapsed .nav-row { justify-content: center; padding: 0; }
+  .collapsed .profile { display: flex; justify-content: center; padding: 8px 0; }
+  .collapsed .search { width: 240px; }
+
+  .detail-title { display: flex; align-items: center; gap: 10px; }
+  .detail-code { font-family: "Noto"; direction: ltr; }
+  .detail-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 15px; direction: ltr; }
+  .info-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 0 18px; }
+  .info { padding: 12px 0; border-bottom: 1px solid var(--line); direction: rtl; }
+  .info small { display: block; color: var(--muted); font-size: 10px; margin-bottom: 4px; }
+  .info strong { font-size: 12px; }
+  .timeline { position: relative; padding-inline-start: 18px; }
+  .timeline::before { content: ""; position: absolute; inset-inline-start: 4px; top: 6px; bottom: 8px; width: 1px; background: var(--line); }
+  .event { position: relative; padding: 0 0 18px; }
+  .event::before { content: ""; position: absolute; inset-inline-start: -17px; top: 5px; width: 9px; height: 9px; border-radius: 50%; background: var(--action); outline: 4px solid var(--soft); }
+  .event strong { font-size: 11px; }
+  .event small { display: block; color: var(--muted); font-size: 9px; margin-top: 3px; }
+
+  .mobile {
+    width: 390px;
+    height: 844px;
+    position: relative;
+    overflow: hidden;
+    direction: rtl;
+    background: var(--canvas);
+    border-radius: 34px;
+    color: var(--ink);
+  }
+  .mobile-head { height: 96px; padding: 22px 20px 13px; display: flex; align-items: end; background: var(--sidebar); }
+  .mobile-head small { display: block; color: var(--muted); font-size: 10px; margin-bottom: 3px; }
+  .mobile-head strong { font-size: 17px; }
+  .mobile-head .avatar { margin-inline-start: auto; }
+  .mobile-content { height: 676px; padding: 18px 17px 100px; overflow: hidden; }
+  .mobile-summary { padding: 15px; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); margin-bottom: 14px; }
+  .mobile-summary h2 { margin: 0 0 4px; font-size: 19px; }
+  .mobile-summary p { margin: 0; color: var(--muted); font-size: 10px; }
+  .progress { display: flex; height: 7px; border-radius: 5px; overflow: hidden; background: var(--soft); margin-top: 13px; }
+  .progress span { width: 58%; background: var(--success); }
+  .mobile-card { padding: 14px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); margin-bottom: 10px; }
+  .mobile-card-top { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; }
+  .mobile-time { color: var(--action); font-family: "Noto"; font-size: 11px; }
+  .mobile-card strong { font-size: 12px; }
+  .mobile-card p { margin: 4px 0 11px; color: var(--muted); font-size: 10px; }
+  .mobile-actions { display: flex; gap: 7px; }
+  .mobile-action { flex: 1; height: 34px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 11px; background: var(--soft); color: var(--ink); font-size: 10px; font-weight: 700; }
+  .mobile-action.primary { color: #fff; background: var(--action); border-color: var(--action); }
+  .bottom {
+    position: absolute;
+    inset: auto 0 0;
+    height: 72px;
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    padding: 8px 8px 7px;
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+  }
+  .bottom-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--muted); font-size: 8px; }
+  .bottom-item .sym { font-size: 16px; }
+  .bottom-item.on { color: var(--action); font-weight: 700; }
+  .approval { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .approval:last-child { border-bottom: 0; }
+  .approval strong { font-size: 11px; }
+  .approval small { display: block; color: var(--muted); font-size: 9px; margin-top: 3px; }
+  .approval .status { align-self: center; }
+  .reference-mark { position: absolute; left: 15px; bottom: 10px; color: var(--muted); font-family: "Noto"; font-size: 8px; letter-spacing: .4px; }
+  .mobile-pair { width: 820px; height: 844px; display: flex; gap: 40px; background: #ded7cd; }
+</style>
+
+<div id="reference-root"></div>
+
+<script>
+  const q = new URLSearchParams(location.search);
+  const screen = q.get("screen") || "inventory";
+
+  const arNav = `
+    <div class="nav-row"><span class="sym">▦</span><span>لوحة التحكم</span></div>
+    <div class="nav-row"><span class="sym">◷</span><span>ملخص اليوم</span></div>
+    <div class="nav-row"><span class="sym">◉</span><span>المواعيد والزيارات</span></div>
+    <div class="nav-row"><span class="sym">▤</span><span>العقود</span></div>
+    <div class="nav-row"><span class="sym">◎</span><span>العملاء والموردون</span></div>
+    <div class="nav-row"><span class="sym">◈</span><span>المالية</span></div>
+    <div class="nav-row"><span class="sym">▣</span><span>المخزون</span></div>
+    <div class="nav-row dim"><span class="sym">▧</span><span>نقطة البيع</span><span class="later">لاحقاً</span></div>
+    <div class="nav-row dim"><span class="sym">♙</span><span>الموارد البشرية</span><span class="later">لاحقاً</span></div>`;
+
+  const enNav = `
+    <div class="nav-row on"><span class="sym">▦</span><span>Dashboard</span></div>
+    <div class="nav-row"><span class="sym">◷</span><span>Daily Activity</span></div>
+    <div class="nav-row"><span class="sym">◉</span><span>Appointments & Visits</span></div>
+    <div class="nav-row"><span class="sym">▤</span><span>Contracts</span></div>
+    <div class="nav-row"><span class="sym">◎</span><span>Customers & Suppliers</span></div>
+    <div class="nav-row"><span class="sym">◈</span><span>Finance</span></div>
+    <div class="nav-row"><span class="sym">▣</span><span>Inventory</span></div>
+    <div class="nav-row dim"><span class="sym">▧</span><span>Point of Sale</span><span class="later">Later</span></div>
+    <div class="nav-row dim"><span class="sym">♙</span><span>Human Resources</span><span class="later">Later</span></div>`;
+
+  function side(active, english = false, collapsed = false) {
+    const nav = english ? enNav : arNav;
+    const adjusted = english
+      ? nav
+      : nav.replace(`<div class="nav-row"><span class="sym">${active.icon}</span><span>${active.label}</span></div>`,
+                    `<div class="nav-row on"><span class="sym">${active.icon}</span><span>${active.label}</span></div>`);
+    return `<aside class="side">
+      <div class="brand"><img src="../../../assets/brand/hs-logo-gold.png" alt=""><div><strong>HS360</strong><small>Hayat Secret ERP</small></div></div>
+      <nav class="nav">${adjusted}</nav>
+      <div class="side-bottom"><div class="side-line"></div>
+        <div class="nav-row"><span class="sym">↶</span><span>${english ? "Audit Log" : "السجل"}</span></div>
+        <div class="nav-row"><span class="sym">⚙</span><span>${english ? "Settings" : "الإعدادات"}</span></div>
+        <div class="profile"><div class="avatar">${english ? "AK" : "أخ"}</div><div><strong>${english ? "Ahmad Al-Khatib" : "أحمد الخطيب"}</strong><small>EMP-002</small></div><span class="sym">⌄</span></div>
+      </div>
+    </aside>`;
+  }
+
+  function topbar(title, crumb, english = false) {
+    return `<header class="top">
+      <div class="top-title"><small>${crumb}</small><strong>${title}</strong></div>
+      <div class="search"><span class="sym">⌕</span><span>${english ? "Search customer, contract, invoice or product" : "ابحث عن عميل، عقد، فاتورة أو منتج"}</span></div>
+      <button class="quick"><span class="sym">＋</span>${english ? "Quick create" : "إنشاء سريع"}</button>
+      <button class="icon-btn"><span class="unread"></span>◌</button>
+      <button class="icon-btn">${english ? "ع" : "EN"}</button>
+    </header>`;
+  }
+
+  const inventory = `
+    <div class="desktop">
+      <main class="workspace">${topbar("المخزون", "المخزون ‹ نظرة عامة")}
+        <nav class="tabs"><span class="tab on">نظرة عامة</span><span class="tab">المنتجات</span><span class="tab">المستودعات</span><span class="tab">مستندات المخزون</span><span class="tab">الحركات</span><span class="tab">التحويلات</span><span class="tab">الجرد والتسوية</span></nav>
+        <section class="page">
+          <div class="page-head"><div><h1>نظرة المخزون</h1><p>الأرصدة الحالية والتنبيهات حسب المستودعات المسموح بها</p></div><div class="page-actions"><button class="outline-btn">بدء جرد</button><button class="outline-btn">تحويل مخزون</button><button class="quick">＋ منتج جديد</button></div></div>
+          <div class="cards">
+            <div class="card"><div class="card-label"><span class="sym">▣</span>المنتجات النشطة</div><div class="card-value">248</div><div class="card-note">18 مجموعة منتجات</div></div>
+            <div class="card"><div class="card-label"><span class="sym">⌂</span>المستودعات</div><div class="card-value">7</div><div class="card-note">3 رئيسية · 4 سيارات</div></div>
+            <div class="card"><div class="card-label"><span class="sym">△</span>تحت الحد الأدنى</div><div class="card-value">14</div><div class="card-note"><span class="warn">6 تحتاج إجراء اليوم</span></div></div>
+            <div class="card"><div class="card-label"><span class="sym">◉</span>وحدات مسلسلة</div><div class="card-value">132</div><div class="card-note">118 مؤجرة · 14 متاحة</div></div>
+          </div>
+          <div class="toolbar"><div class="field"><span class="sym">⌕</span>ابحث بالاسم أو SKU أو الباركود</div><div class="field small">كل المستودعات⌄</div><div class="field small">كل الحالات⌄</div><span class="result-count">248 نتيجة</span></div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>المنتج</th><th>SKU</th><th>المجموعة</th><th>المستودع</th><th>المتاح</th><th>المحجوز</th><th>التكلفة</th><th>الحالة</th></tr></thead>
+            <tbody>
+              <tr><td><strong>زيت بلاك أوركيد 1 لتر</strong><span class="sub">مستهلك إيجار · وحدة مل</span></td><td>OIL-BLK-01</td><td>زيوت فاخرة</td><td>الرئيسي</td><td><strong>28,500 مل</strong></td><td>3,000</td><td>0.018 د.ك</td><td><span class="status ok">متوفر</span></td></tr>
+              <tr><td><strong>جهاز HS Aroma Pro</strong><span class="sub">أصل إيجاري · مسلسل</span></td><td>DEV-PRO-02</td><td>أجهزة</td><td>الرئيسي</td><td><strong>14</strong></td><td>2</td><td>42.500 د.ك</td><td><span class="status ok">متوفر</span></td></tr>
+              <tr><td><strong>زيت مسك أبيض 1 لتر</strong><span class="sub">مستهلك إيجار · وحدة مل</span></td><td>OIL-MSK-03</td><td>زيوت أساسية</td><td>الفروانية</td><td><strong>2,300 مل</strong></td><td>1,500</td><td>0.012 د.ك</td><td><span class="status wait">منخفض</span></td></tr>
+              <tr><td><strong>جهاز HS Mini</strong><span class="sub">أصل إيجاري · مسلسل</span></td><td>DEV-MINI-01</td><td>أجهزة</td><td>سيارة أحمد</td><td><strong>3</strong></td><td>0</td><td>28.750 د.ك</td><td><span class="status info">ميداني</span></td></tr>
+              <tr><td><strong>عبوة تنظيف 500 مل</strong><span class="sub">منتج بيع</span></td><td>CLN-500</td><td>صيانة</td><td>الرئيسي</td><td><strong>0</strong></td><td>0</td><td>1.120 د.ك</td><td><span class="status off">نفد</span></td></tr>
+            </tbody>
+          </table></div>
+        </section>
+      </main>${side({icon:"▣",label:"المخزون"})}
+    </div>`;
+
+  const finance = `
+    <div class="desktop">
+      <main class="workspace">${topbar("المالية", "المالية ‹ نظرة عامة")}
+        <nav class="tabs"><span class="tab on">نظرة عامة</span><span class="tab">الفواتير</span><span class="tab">السندات</span><span class="tab">الصندوق والبنك</span><span class="tab">دليل الحسابات</span><span class="tab">القيود اليومية</span><span class="tab">دفتر الأستاذ</span></nav>
+        <section class="page">
+          <div class="page-head"><div><h1>المالية</h1><p>ملخص الشهر الحالي · يظهر فقط ضمن الصلاحيات المالية</p></div><div class="page-actions"><button class="outline-btn">سند قبض</button><button class="quick">＋ فاتورة مبيعات</button></div></div>
+          <div class="cards">
+            <div class="card"><div class="card-label"><span class="sym">◈</span>مبيعات الشهر</div><div class="card-value">8,740 د.ك</div><div class="card-note"><span class="good">+9.4%</span> عن الشهر الماضي</div></div>
+            <div class="card"><div class="card-label"><span class="sym">✓</span>المحصل</div><div class="card-value">6,220 د.ك</div><div class="card-note">71% من مبيعات الشهر</div></div>
+            <div class="card"><div class="card-label"><span class="sym">◷</span>المستحق</div><div class="card-value">2,520 د.ك</div><div class="card-note"><span class="bad">680 د.ك متأخر</span></div></div>
+            <div class="card"><div class="card-label"><span class="sym">≡</span>قيود الشهر</div><div class="card-value">184</div><div class="card-note"><span class="good">متوازنة بالكامل</span></div></div>
+          </div>
+          <div class="two-col">
+            <section class="panel">
+              <div class="panel-title">أحدث المستندات <span class="panel-link">عرض كل الفواتير</span></div>
+              <div class="table-wrap"><table>
+                <thead><tr><th>المستند</th><th>الطرف</th><th>التاريخ</th><th>المبلغ</th><th>الرصيد</th><th>الحالة</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>INV-2026-0048</strong><span class="sub">فاتورة مبيعات</span></td><td>شركة النور</td><td>24 يوليو</td><td>420.000</td><td>420.000</td><td><span class="status wait">مستحقة</span></td></tr>
+                  <tr><td><strong>RV-2026-0121</strong><span class="sub">سند قبض</span></td><td>مقهى بلوم</td><td>24 يوليو</td><td>180.000</td><td>—</td><td><span class="status ok">مرحّل</span></td></tr>
+                  <tr><td><strong>INV-2026-0047</strong><span class="sub">فاتورة إيجار</span></td><td>مطعم لافندر</td><td>23 يوليو</td><td>260.000</td><td>80.000</td><td><span class="status info">جزئي</span></td></tr>
+                  <tr><td><strong>PV-2026-0038</strong><span class="sub">سند صرف</span></td><td>مورد العطور</td><td>23 يوليو</td><td>710.000</td><td>—</td><td><span class="status ok">مرحّل</span></td></tr>
+                </tbody>
+              </table></div>
+            </section>
+            <aside class="panel">
+              <div class="panel-title">يحتاج متابعة <span class="panel-link">عرض التفاصيل</span></div>
+              <div class="line-item"><div><strong>فواتير متأخرة</strong><small>11 فاتورة عبر 7 عملاء</small></div><span class="bad">680.000</span></div>
+              <div class="line-item"><div><strong>دفعات غير مخصصة</strong><small>سندان يحتاجان مراجعة</small></div><span class="warn">95.000</span></div>
+              <div class="line-item"><div><strong>صندوق الشركة</strong><small>رصيد اليوم</small></div><span>1,840.500</span></div>
+              <div class="line-item"><div><strong>الحساب البنكي</strong><small>آخر مطابقة 23 يوليو</small></div><span>12,430.000</span></div>
+            </aside>
+          </div>
+        </section>
+      </main>${side({icon:"◈",label:"المالية"})}
+    </div>`;
+
+  const detail = `
+    <div class="desktop">
+      <main class="workspace">${topbar("عقد إيجار RNT-0096", "العقود ‹ الإيجارية ‹ RNT-0096")}
+        <nav class="tabs"><span class="tab on">الملخص</span><span class="tab">الأجهزة والمواد</span><span class="tab">الفواتير والتحصيل</span><span class="tab">المواعيد والزيارات</span><span class="tab">السجل</span></nav>
+        <section class="page">
+          <div class="page-head"><div><div class="detail-title"><h1 class="detail-code">RNT-0096</h1><span class="status ok">نشط</span></div><p>عقد إيجار · مقهى بلوم · السالمية</p></div><div class="page-actions"><button class="outline-btn">⋯ المزيد</button><button class="outline-btn">تسجيل تحصيل</button><button class="quick">＋ موعد</button></div></div>
+          <div class="cards">
+            <div class="card"><div class="card-label">القيمة الشهرية</div><div class="card-value">180.000 د.ك</div><div class="card-note">الفوترة يوم 1 من كل شهر</div></div>
+            <div class="card"><div class="card-label">الأجهزة لدى العميل</div><div class="card-value">2</div><div class="card-note">HS-PRO-018 · HS-MINI-044</div></div>
+            <div class="card"><div class="card-label">الموعد القادم</div><div class="card-value">3 أغسطس</div><div class="card-note">تغيير زيت · 09:00</div></div>
+            <div class="card"><div class="card-label">الرصيد المستحق</div><div class="card-value">180.000 د.ك</div><div class="card-note"><span class="warn">فاتورة واحدة مفتوحة</span></div></div>
+          </div>
+          <div class="detail-grid">
+            <section class="panel">
+              <div class="panel-title">بيانات العقد <span class="panel-link">تعديل البيانات المسموحة</span></div>
+              <div class="info-grid">
+                <div class="info"><small>العميل</small><strong>مقهى بلوم</strong></div>
+                <div class="info"><small>موقع الخدمة</small><strong>فرع السالمية الرئيسي</strong></div>
+                <div class="info"><small>تاريخ البداية</small><strong>1 فبراير 2026</strong></div>
+                <div class="info"><small>مدة العقد</small><strong>12 شهراً</strong></div>
+                <div class="info"><small>المستهلك الشهري</small><strong>2,000 مل · بلاك أوركيد</strong></div>
+                <div class="info"><small>المسؤول الميداني</small><strong>أحمد الخطيب</strong></div>
+                <div class="info"><small>آخر تحصيل</small><strong>180.000 د.ك · 1 يوليو</strong></div>
+                <div class="info"><small>الربح الشهري المجمّد</small><strong>92.400 د.ك</strong></div>
+              </div>
+            </section>
+            <aside class="panel">
+              <div class="panel-title">آخر النشاط <span class="panel-link">ملخص اليوم</span></div>
+              <div class="timeline">
+                <div class="event"><strong>أُنشئت فاتورة يوليو</strong><small>INV-2026-0039 · 1 يوليو 2026</small></div>
+                <div class="event"><strong>تم تحصيل الفاتورة بالكامل</strong><small>RV-2026-0108 · بواسطة أحمد</small></div>
+                <div class="event"><strong>اكتملت زيارة تغيير الزيت</strong><small>30 يونيو · 2,000 مل · GPS مؤكد</small></div>
+                <div class="event"><strong>أُسند الموعد القادم</strong><small>3 أغسطس · أحمد الخطيب</small></div>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </main>${side({icon:"▤",label:"العقود"})}
+    </div>`;
+
+  const collapsed = `
+    <div class="desktop collapsed">
+      <main class="workspace">${topbar("المخزون", "المخزون ‹ المنتجات")}
+        <nav class="tabs"><span class="tab">نظرة عامة</span><span class="tab on">المنتجات</span><span class="tab">المستودعات</span><span class="tab">المستندات</span><span class="tab">الحركات</span><span class="tab">التحويلات</span></nav>
+        <section class="page">
+          <div class="page-head"><div><h1>المنتجات</h1><p>الشريط مطوي تلقائياً على العرض المتوسط مع تلميحات للأيقونات</p></div><div class="page-actions"><button class="quick">＋ منتج جديد</button></div></div>
+          <div class="toolbar"><div class="field"><span class="sym">⌕</span>ابحث بالاسم أو SKU أو الباركود</div><div class="field small">كل المجموعات⌄</div><span class="result-count">248 نتيجة</span></div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>المنتج</th><th>النوع</th><th>SKU</th><th>وحدة القياس</th><th>المتاح</th><th>السعر</th><th>الحالة</th></tr></thead>
+            <tbody>
+              <tr><td><strong>زيت بلاك أوركيد</strong><span class="sub">زيوت فاخرة</span></td><td>مستهلك إيجار</td><td>OIL-BLK-01</td><td>مل</td><td>28,500</td><td>—</td><td><span class="status ok">نشط</span></td></tr>
+              <tr><td><strong>جهاز HS Aroma Pro</strong><span class="sub">أجهزة</span></td><td>أصل إيجاري</td><td>DEV-PRO-02</td><td>قطعة</td><td>14</td><td>120.000</td><td><span class="status ok">نشط</span></td></tr>
+              <tr><td><strong>زيت مسك أبيض</strong><span class="sub">زيوت أساسية</span></td><td>مستهلك إيجار</td><td>OIL-MSK-03</td><td>مل</td><td>2,300</td><td>—</td><td><span class="status wait">منخفض</span></td></tr>
+              <tr><td><strong>جهاز HS Mini</strong><span class="sub">أجهزة</span></td><td>أصل إيجاري</td><td>DEV-MINI-01</td><td>قطعة</td><td>3</td><td>75.000</td><td><span class="status ok">نشط</span></td></tr>
+              <tr><td><strong>عبوة تنظيف</strong><span class="sub">صيانة</span></td><td>بيع فقط</td><td>CLN-500</td><td>عبوة</td><td>0</td><td>3.500</td><td><span class="status off">نفد</span></td></tr>
+            </tbody>
+          </table></div>
+        </section>
+      </main>${side({icon:"▣",label:"المخزون"}, false, true)}
+    </div>`;
+
+  const dashboardEn = `
+    <div class="desktop ltr">
+      ${side({icon:"▦",label:"Dashboard"}, true)}
+      <main class="workspace">${topbar("Good morning, Ahmad", "Dashboard", true)}
+        <nav class="tabs"><span class="tab on">Overview</span><span class="tab">Today's appointments</span><span class="tab">Alerts</span></nav>
+        <section class="page">
+          <div class="page-head"><div><h1>Today's business overview</h1><p>Thursday, 24 July 2026 · Numbers follow your permissions</p></div><span class="result-count">Updated 2 minutes ago</span></div>
+          <div class="cards">
+            <div class="card"><div class="card-label"><span class="sym">◷</span>Today's appointments</div><div class="card-value">12</div><div class="card-note"><span class="good">7 complete</span> · 5 remaining</div></div>
+            <div class="card"><div class="card-label"><span class="sym">△</span>Overdue operations</div><div class="card-value">8</div><div class="card-note"><span class="bad">3 urgent</span> · 5 follow-ups</div></div>
+            <div class="card"><div class="card-label"><span class="sym">▤</span>Contracts & assets</div><div class="card-value">107</div><div class="card-note">96 active · <span class="warn">11 trial</span></div></div>
+            <div class="card"><div class="card-label"><span class="sym">◈</span>Collected this month</div><div class="card-value">KWD 2,340</div><div class="card-note"><span class="good">+12% collected</span> · 680 due</div></div>
+          </div>
+          <div class="two-col">
+            <section class="panel" style="direction:ltr"><div class="panel-title">Today's agenda <span class="panel-link">Open calendar</span></div>
+              <div class="line-item"><div><strong>09:00 · Oil change — Cafe Bloom</strong><small>Salmiya · Ahmad Al-Khatib · RNT-0096</small></div><span class="status ok">Done</span></div>
+              <div class="line-item"><div><strong>11:30 · Trial follow-up — Al Noor Co.</strong><small>Shuwaikh · Mohammad Salem · TRY-0011</small></div><span class="status info">Upcoming</span></div>
+              <div class="line-item"><div><strong>14:00 · Invoice collection — Lavender</strong><small>Hawally · INV-2026-0045 · KWD 180</small></div><span class="status info">Upcoming</span></div>
+              <div class="line-item"><div><strong>Yesterday · Scheduled visit not completed</strong><small>Farwaniya · RNT-0073</small></div><span class="status wait">Overdue</span></div>
+            </section>
+            <aside class="panel" style="direction:ltr"><div class="panel-title">Needs attention <span class="panel-link">View all</span></div>
+              <div class="line-item"><div><strong>Overdue visits</strong><small>Require rescheduling or assignment</small></div><span>3</span></div>
+              <div class="line-item"><div><strong>Contracts ending this month</strong><small>Review renewal or close</small></div><span>8</span></div>
+              <div class="line-item"><div><strong>Locations without coordinates</strong><small>Affects directions</small></div><span>4</span></div>
+              <div class="line-item"><div><strong>Incomplete inventory data</strong><small>Two products lack trusted cost</small></div><span>2</span></div>
+            </aside>
+          </div>
+        </section>
+      </main>
+    </div>`;
+
+  const fieldMobile = `
+    <div class="mobile">
+      <header class="mobile-head"><div><small>الخميس، 24 يوليو</small><strong>يومك الميداني</strong></div><div class="avatar">أخ</div></header>
+      <main class="mobile-content">
+        <section class="mobile-summary"><h2>7 مهام اليوم</h2><p>أنجزت 4 مهام · 3 متبقية</p><div class="progress"><span></span></div></section>
+        <article class="mobile-card"><div class="mobile-card-top"><span class="mobile-time">09:00</span><span class="status wait">الآن</span></div><strong>زيارة تغيير زيت — مقهى بلوم</strong><p>السالمية · عقد RNT-0096 · 2,000 مل</p><div class="mobile-actions"><span class="mobile-action primary">بدء الزيارة</span><span class="mobile-action">الاتجاهات</span></div></article>
+        <article class="mobile-card"><div class="mobile-card-top"><span class="mobile-time">11:30</span><span class="status info">قادمة</span></div><strong>متابعة عقد تجريبي — شركة النور</strong><p>الشويخ · عقد TRY-0011 · محمد سالم</p><div class="mobile-actions"><span class="mobile-action">فتح العقد</span><span class="mobile-action">الاتجاهات</span></div></article>
+        <article class="mobile-card"><div class="mobile-card-top"><span class="mobile-time">14:00</span><span class="status info">تحصيل</span></div><strong>تحصيل فاتورة — مطعم لافندر</strong><p>حولي · INV-2026-0045 · 180.000 د.ك</p></article>
+      </main>
+      <nav class="bottom"><span class="bottom-item on"><span class="sym">⌂</span>اليوم</span><span class="bottom-item"><span class="sym">◉</span>المواعيد</span><span class="bottom-item"><span class="sym">▤</span>العقود</span><span class="bottom-item"><span class="sym">✓</span>الطلبات</span><span class="bottom-item"><span class="sym">•••</span>المزيد</span></nav>
+      <span class="reference-mark">FIELD / HYBRID</span>
+    </div>`;
+
+  const adminMobile = `
+    <div class="mobile">
+      <header class="mobile-head"><div><small>الخميس، 24 يوليو</small><strong>صباح الخير، أحمد</strong></div><div class="avatar">أخ</div></header>
+      <main class="mobile-content">
+        <section class="mobile-summary"><h2>تحتاج انتباهك</h2><p>5 عناصر ضمن صلاحياتك</p></section>
+        <section class="mobile-card"><div class="mobile-card-top"><strong>صندوق الموافقات</strong><span class="status wait">3 جديدة</span></div>
+          <div class="approval"><div><strong>طلب تغيير موعد زيارة</strong><small>محمد سالم · عقد RNT-0073</small></div><span class="status info">مراجعة</span></div>
+          <div class="approval"><div><strong>استثناء سعر عقد</strong><small>أحمد الخطيب · شركة النور</small></div><span class="status wait">عاجل</span></div>
+          <div class="approval"><div><strong>طلب تعبئة مخزون سيارة</strong><small>خالد يوسف · 4 منتجات</small></div><span class="status info">مراجعة</span></div>
+        </section>
+        <section class="mobile-card"><div class="mobile-card-top"><strong>تنبيهات اليوم</strong></div>
+          <div class="approval"><div><strong>3 زيارات متأخرة</strong><small>تحتاج إسناداً أو إعادة جدولة</small></div><span>3</span></div>
+          <div class="approval"><div><strong>عقدان ينتهيان هذا الأسبوع</strong><small>راجع التجديد أو الإغلاق</small></div><span>2</span></div>
+        </section>
+      </main>
+      <nav class="bottom"><span class="bottom-item on"><span class="sym">⌂</span>الرئيسية</span><span class="bottom-item"><span class="sym">✓</span>الموافقات</span><span class="bottom-item"><span class="sym">◉</span>التقويم</span><span class="bottom-item"><span class="sym">◎</span>العملاء</span><span class="bottom-item"><span class="sym">•••</span>المزيد</span></nav>
+      <span class="reference-mark">ADMINISTRATIVE</span>
+    </div>`;
+
+  const mobilePair = `<div class="mobile-pair">${fieldMobile}${adminMobile}</div>`;
+  const screens = {inventory, finance, detail, collapsed, "dashboard-en": dashboardEn, "field-mobile": fieldMobile, "admin-mobile": adminMobile, "mobile-pair": mobilePair};
+  document.getElementById("reference-root").innerHTML = screens[screen] || inventory;
+</script>

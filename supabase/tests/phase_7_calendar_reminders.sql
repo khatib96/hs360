@@ -714,11 +714,16 @@ set local role postgres;
 do $$
 declare v_event_id uuid; v_plan public.calendar_reminder_plans; v_result jsonb;
 begin
-  v_event_id := pg_temp.p7m3_create_pending_event(current_date - 5);
+  v_event_id := pg_temp.p7m3_create_pending_event(
+    pg_temp.p7m3_next_iso_weekday(1, current_date - 10)
+  );
   perform public.refresh_calendar_event_reminder_plans(v_event_id);
   v_plan := pg_temp.p7m3_plan_row(v_event_id, 'event_workday_start');
   if v_plan.id is null then raise exception 'case15 failed: no plan for overdue event'; end if;
-  update public.calendar_reminder_plans set anchor_utc = now() - interval '2 days', anchor_local_date = current_date - 2 where id = v_plan.id;
+  update public.calendar_reminder_plans
+  set anchor_utc = now() - interval '2 days',
+      anchor_local_date = public.try_tenant_local_today(tenant_id) - 2
+  where id = v_plan.id;
   v_result := pg_temp.p7m3_run_scheduler();
   v_plan := pg_temp.p7m3_assert_plan_state(v_event_id, 'event_workday_start', 'expired', null, 'anchor_local_day_passed');
   if v_plan.notification_id is not null then raise exception 'case15 failed: notification created for expired'; end if;
@@ -1186,7 +1191,8 @@ begin
   v_expired := pg_temp.p7m3_setup_delivery_case();
   update public.calendar_reminder_plans set
     status = 'expired', resolution_code = 'anchor_local_day_passed',
-    anchor_local_date = current_date - 1, anchor_local_time = make_time(8,0,0),
+    anchor_local_date = public.try_tenant_local_today(tenant_id) - 1,
+    anchor_local_time = make_time(8,0,0),
     anchor_utc = now() - interval '1 day', timezone_name = 'Asia/Kuwait',
     dst_resolution_code = 'none', recipient_user_id = '00000000-0000-0000-0000-000000000201'
   where id = v_expired;
@@ -1448,7 +1454,10 @@ begin
   perform public.refresh_calendar_event_reminder_plans(v_event_id);
   v_plan := pg_temp.p7m3_plan_row(v_event_id, 'event_workday_start');
   if v_plan.anchor_local_date >= public.try_tenant_local_today('00000000-0000-0000-0000-000000000101') then
-    update public.calendar_reminder_plans set anchor_local_date = current_date - 3, anchor_utc = now() - interval '3 days' where id = v_plan.id;
+    update public.calendar_reminder_plans
+    set anchor_local_date = public.try_tenant_local_today(tenant_id) - 3,
+        anchor_utc = now() - interval '3 days'
+    where id = v_plan.id;
   end if;
   perform pg_temp.p7m3_run_scheduler();
   if exists (select 1 from public.calendar_reminder_plans where id = v_plan.id and status = 'delivered') then
@@ -1747,12 +1756,14 @@ begin
   perform pg_temp.p7m3_deliver_plan(v_delivered);
   v_expired := pg_temp.p7m3_setup_delivery_case();
   update public.calendar_reminder_plans set status = 'expired', resolution_code = 'anchor_local_day_passed',
-    anchor_local_date = current_date - 1, anchor_local_time = make_time(8,0,0), anchor_utc = now() - interval '1 day',
+    anchor_local_date = public.try_tenant_local_today(tenant_id) - 1,
+    anchor_local_time = make_time(8,0,0), anchor_utc = now() - interval '1 day',
     timezone_name = 'Asia/Kuwait', dst_resolution_code = 'none', recipient_user_id = '00000000-0000-0000-0000-000000000201'
   where id = v_expired;
   v_failed := pg_temp.p7m3_setup_delivery_case();
   update public.calendar_reminder_plans set status = 'failed', attempt_count = 5,
-    anchor_local_date = current_date, anchor_local_time = make_time(8,0,0), anchor_utc = now() - interval '1 hour',
+    anchor_local_date = public.try_tenant_local_today(tenant_id),
+    anchor_local_time = make_time(8,0,0), anchor_utc = now() - interval '1 hour',
     timezone_name = 'Asia/Kuwait', dst_resolution_code = 'none', recipient_user_id = '00000000-0000-0000-0000-000000000201'
   where id = v_failed;
   perform public.reconcile_tenant_calendar_reminder_plans('00000000-0000-0000-0000-000000000101', 500);
@@ -2233,14 +2244,16 @@ declare v_failed uuid; v_expired uuid;
 begin
   v_failed := pg_temp.p7m3_setup_delivery_case();
   update public.calendar_reminder_plans set status = 'failed', attempt_count = 5,
-    anchor_local_date = current_date, anchor_local_time = make_time(8,0,0), anchor_utc = now() - interval '1 hour',
+    anchor_local_date = public.try_tenant_local_today(tenant_id),
+    anchor_local_time = make_time(8,0,0), anchor_utc = now() - interval '1 hour',
     timezone_name = 'Asia/Kuwait', dst_resolution_code = 'none', recipient_user_id = '00000000-0000-0000-0000-000000000201'
   where id = v_failed;
   perform pg_temp.p7m3_expect_validation_failed(format(
     'update public.calendar_reminder_plans set anchor_utc = now() where id = %L', v_failed));
   v_expired := pg_temp.p7m3_setup_delivery_case();
   update public.calendar_reminder_plans set status = 'expired', resolution_code = 'anchor_local_day_passed',
-    anchor_local_date = current_date - 1, anchor_local_time = make_time(8,0,0), anchor_utc = now() - interval '1 day',
+    anchor_local_date = public.try_tenant_local_today(tenant_id) - 1,
+    anchor_local_time = make_time(8,0,0), anchor_utc = now() - interval '1 day',
     timezone_name = 'Asia/Kuwait', dst_resolution_code = 'none', recipient_user_id = '00000000-0000-0000-0000-000000000201'
   where id = v_expired;
   perform pg_temp.p7m3_expect_validation_failed(format(

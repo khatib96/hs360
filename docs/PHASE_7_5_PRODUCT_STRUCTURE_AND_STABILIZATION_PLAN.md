@@ -1,6 +1,7 @@
 # Phase 7.5 - Product Structure, Navigation, and Stabilization Plan
 
-> Status: **PLANNED / NOT STARTED** (2026-07-22).
+> Status: **IN PROGRESS — M0 AND M0.5 CLOSED / ACCEPTED; M1 NEXT** (started
+> 2026-07-24).
 >
 > Purpose: pause feature expansion after Phase 7, turn the existing collection
 > of screens into a coherent ERP product, expose existing safety workflows
@@ -13,6 +14,10 @@
 > Canonical companions: `CANONICAL_DECISIONS.md`, `MVP_SCOPE.md`,
 > `NAVIGATION_AND_MODULES_BRIEF.md`, `PERMISSIONS.md`, `FIELD_OPS.md`, and
 > `PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md`.
+>
+> Supporting M0 inputs: `PRODUCT_UI_VISION.md` and
+> `PROJECT_REVIEW_REPORT_2026-07-24.md`. They explain the visual direction and
+> diagnosis; this file remains the execution source of truth.
 
 ---
 
@@ -44,11 +49,11 @@ The desktop sidebar contains business modules, not every route or action:
 
 1. Dashboard / `لوحة التحكم`
 2. Daily Activity / `ملخص اليوم`
-3. Customers & Suppliers / `العملاء والموردون`
+3. Appointments & Visits / `المواعيد والزيارات`
 4. Contracts / `العقود`
-5. Appointments & Visits / `المواعيد والزيارات`
-6. Inventory / `المخزون`
-7. Finance / `المالية`
+5. Customers & Suppliers / `العملاء والموردون`
+6. Finance / `المالية`
+7. Inventory / `المخزون`
 8. Point of Sale / `نقطة البيع` - hidden until its phase and permission exist
 9. Human Resources / `الموارد البشرية` - hidden until its surfaces exist
 
@@ -67,7 +72,7 @@ standalone actions such as `Add product` or individual settings pages.
 The global top bar is intentionally small:
 
 - page/module title and breadcrumb/back behavior;
-- global search/command palette when implemented;
+- bounded global search/command palette;
 - permission-filtered quick-create menu;
 - notifications;
 - locale switch;
@@ -112,17 +117,19 @@ their permissions.
 Phase 7.5 replaces the placeholder dashboard with a permission-shaped,
 read-only operational dashboard using existing trusted data contracts.
 
-Initial widgets may include:
+Dashboard v1 has four fixed priority slots:
 
-- today's appointments and completed/remaining visits;
-- overdue calendar items;
-- active/trial/rental contract counts;
-- rented/trial asset summaries;
-- current-period sales and collections only where accounting definitions are
-  accepted and queryable safely;
-- inventory or data-quality warnings;
-- notifications and items requiring attention;
-- permission-filtered quick actions.
+1. today's appointments/visits, including completed and remaining when those
+   facts exist;
+2. overdue operational items;
+3. active/trial/rental contract and asset condition;
+4. current-month collections and outstanding amount for users allowed to view
+   the underlying financial records.
+
+If a slot has no accepted trusted read contract, it shows a truthful
+permission-safe unavailable/empty state rather than a fabricated KPI.
+Inventory/data-quality warnings, approval items, trends, comparisons, and
+configurable placement remain later enhancements.
 
 Every KPI or chart that represents records must drill into the filtered source
 list. A widget must not show totals derived from data the user cannot view.
@@ -131,7 +138,30 @@ Motivational text is optional polish and cannot displace operational alerts.
 Advanced trends, owner analytics, contract-health scoring, and configurable
 dashboards remain Phase 10.
 
-### 3.2 Daily Activity
+### 3.2 Global Search and In-App Notifications
+
+Phase 7.5 includes a bounded global search over:
+
+- customers and suppliers;
+- contracts;
+- invoices;
+- products and serialized units;
+- implemented document types that have a stable number/identifier.
+
+Search is permission-shaped on the server, returns a capped number of grouped
+results, never includes protected fields merely to improve matching, and opens
+the canonical detail route. Empty, loading, partial-error, keyboard-selection,
+RTL/LTR, and narrow-width behavior are part of acceptance. This is navigation
+search, not a universal data export or reporting engine.
+
+The top-bar notification bell is functional in Phase 7.5. It exposes existing
+in-app notifications and calendar reminders with unread/read state, unread
+badge, safe deep-link, and own-notification visibility. If a notification's
+source is no longer visible, the UI must fail closed without revealing its
+label. Email, WhatsApp, SMS, push delivery, templates, and channel settings
+remain Phase 11 unless already required by a later accepted workflow.
+
+### 3.3 Daily Activity
 
 Daily Activity answers: **what happened on the selected business date?**
 
@@ -331,88 +361,374 @@ and defaults only; permissions decide visibility and server access.
 
 ---
 
-## 10. Milestones
+## 10. Execution Rules
 
-### M0 - Documentation and Scope Lock
-
-- Update all canonical and roadmap documents.
-- Reconcile old `Phase 2` labels with current Phase 8-10 placement.
-- Lock Arabic/English module names and entity boundaries.
-- Approve low-fidelity desktop and mobile navigation maps before code changes.
-
-### M1 - Shell and Navigation Model
-
-- Introduce typed module/navigation definitions.
-- Implement desktop module sidebar, contextual module navigation, lower system
-  area, and user identity footer.
-- Keep visibility permission-derived.
-- Preserve deep links and reliable back targets.
-
-### M2 - Existing Screen Consolidation
-
-- Move current routes under Customers, Contracts, Operations, Inventory,
-  Finance, and Settings module shells without changing trusted backend behavior.
-- Replace standalone create/actions in navigation with in-module commands.
-- Add breadcrumbs and consistent empty/loading/error states.
-
-### M3 - Dashboard v1 and Daily Activity
-
-- Define bounded, permission-safe read contracts.
-- Replace the placeholder dashboard.
-- Add selected-date Daily Activity with source-record drill-down.
-- Prove totals do not leak hidden data.
-
-### M4 - Record Actions and Audit Surface
-
-- Standardize draft/edit/cancel/reverse/deactivate command presentation.
-- Expose already implemented safe cancellation workflows consistently.
-- Add reason capture, consequence preview, and actionable rejection messages.
-- Add basic filterable audit-log review.
-
-### M5 - Finance and Inventory Integrity Gate
-
-- Verify document-to-journal links and balanced entries.
-- Verify safe cancellation/reversal effects.
-- Verify inventory movements/balances and serialized-unit guards.
-- Add a verification-only trial-balance/inventory-GL check if needed; the full
-  reporting UI remains Phase 10.
-
-### M6 - Responsive, Bilingual, Permission Acceptance
-
-- Arabic/English and RTL/LTR acceptance.
-- Desktop, narrow desktop/tablet, and current mobile fallback acceptance.
-- Zero-permission, assigned-only, module-view, and Manager scenarios.
-- Keyboard/focus/text-scale/accessibility checks.
-
-### M7 - Phase Close and Phase 8 Handoff
-
-- Automated tests and manual owner acceptance pass.
-- No trusted Phase 5-7 semantics regress.
-- Phase 8 receives the accepted navigation contract, employee/work-profile
-  boundary, request foundation specification, and visit/calendar boundary.
+1. Milestones execute in order. A later milestone may be explored, but it does
+   not close before all of its declared prerequisites.
+2. Each milestone ends with automated checks, a short evidence note, and an
+   explicit `CLOSED / ACCEPTED` status before the next milestone becomes active.
+3. Visual work uses approved reference screens and an acceptance matrix; owner
+   acceptance is required where specified and is not replaced by automated
+   tests.
+4. Existing Phase 5-7 business behavior is preserved. Route regrouping does not
+   authorize backend rewrites.
+5. Refactoring follows touched-code pressure: `app_shell.dart` must be split as
+   part of the new shell; other large controllers/repositories are split only
+   when the milestone changes them or tests show a concrete maintainability
+   need.
+6. Performance baselines are measured before and after. The old 800ms calendar
+   target is an optimization target, not a Phase 7.5 closure blocker; no
+   material regression from the accepted Phase 7 baseline is allowed.
+7. New database behavior, if required, uses forward-only migrations with
+   tenant isolation, RLS/RPC ACLs, audit, idempotency where applicable, and SQL
+   regression coverage.
 
 ---
 
-## 11. Acceptance Gates
+## 11. Milestone Plan
+
+### M0 - Scope, Visual Contract, and Owner Acceptance
+
+**Goal:** remove visual and product ambiguity before code changes.
+
+**State:** `CLOSED / ACCEPTED` on 2026-07-24. The owner accepted Option C —
+Executive Warmth and its complete expanded/collapsed, Dashboard, Inventory,
+Finance, detail, field/admin mobile, and AR/EN reference set. The accepted
+route/module/back-target contract, permission visibility contract, checklist,
+and evidence index are under `docs/phase_7_5/m0/`.
+
+**Work:**
+
+- accept the three-layer navigation model and the locked sidebar order in this
+  plan;
+- prepare comparable low-fidelity references for:
+  1. expanded desktop shell;
+  2. collapsed/narrow shell;
+  3. Dashboard;
+  4. Inventory module;
+  5. Finance module;
+  6. a representative detail page;
+  7. field and administrative mobile direction for the Phase 8 handoff;
+- show both Arabic RTL and English LTR behavior;
+- lock the four Dashboard v1 slots;
+- lock global search and in-app notifications as Phase 7.5 deliverables;
+- confirm that dark mode is deferred to Phase 12;
+- approve semantic color roles and the current bundled-font direction before
+  changing theme assets.
+
+**Closure evidence:**
+
+- owner-approved reference set;
+- `docs/phase_7_5/m0/M0_ROUTE_MODULE_MATRIX.md`;
+- `docs/phase_7_5/m0/M0_PERMISSION_VISIBILITY_MATRIX.md`;
+- `docs/phase_7_5/m0/M0_ACCEPTANCE_RECORD.md`;
+- no unresolved M0 decisions in `PRODUCT_UI_VISION.md`;
+- canonical docs match this plan.
+
+### M0.5 - Regression Baseline and Safety Snapshot
+
+**Goal:** establish what must not regress while the shell is rebuilt.
+
+**State:** `CLOSED / ACCEPTED` on 2026-07-24. The application, SQL,
+integration, data-pollution, route/deep-link, screenshot, performance, and
+migration baselines are recorded under `docs/phase_7_5/m0_5/`. No production
+behavior or migration was added.
+
+**Work:**
+
+- record clean analyzer, Flutter test, SQL/integration, and data-pollution
+  baselines using the repository's accepted runners;
+- inventory every existing route, deep link, parent/back target, visible menu
+  entry, and required permission;
+- capture reference screenshots for representative Phase 5-7 screens in
+  Arabic/English at desktop and narrow widths;
+- record current calendar list performance and other high-use read paths;
+- confirm migration checksums and current database boundary before adding any
+  Phase 7.5 migration.
+
+**Closure evidence:**
+
+- `docs/phase_7_5/m0_5/M0_5_BASELINE_REPORT.md`;
+- `docs/phase_7_5/m0_5/M0_5_ROUTE_BASELINE_AND_ZERO_LOSS_CHECKLIST.md`;
+- `docs/phase_7_5/m0_5/M0_5_SCREENSHOT_MANIFEST.md` and its 12 durable images;
+- `docs/phase_7_5/m0_5/M0_5_MIGRATION_CHECKSUMS.txt`;
+- all accepted runners passed, SQL pollution delta and final domain counts are
+  zero, and all 50 named route paths plus the root resolver are inventoried.
+
+### M1 - Theme Tokens and Shared UI Foundation
+
+**Goal:** create the reusable visual language used by every following
+milestone.
+
+**State:** `NEXT / NOT STARTED`.
+
+**Work:**
+
+- reconcile documentation and code into semantic tokens: brand accent gold,
+  accessible action/focus color, neutrals, and semantic success/warning/error;
+- retain the bundled Noto Sans/Noto Sans Arabic family for Phase 7.5 unless M0
+  visual comparison proves a replacement and its packaging/performance cost is
+  accepted;
+- build focused shared patterns for page header, filter/search bar,
+  loading/error/empty states, status badge, money display, table/list frame,
+  detail header/section, and sensitive-action dialog;
+- implement the accepted Option C warm stone/cream surfaces and calm radii,
+  while using the accepted compact Option B-inspired filter/table density on
+  Finance and Inventory;
+- standardize spacing, focus, disabled, hover, destructive, and validation
+  states;
+- avoid a single configurable “mega table”; feature columns, queries, and
+  business behavior remain feature-owned.
+
+**Acceptance:**
+
+- representative Inventory, Finance, Contracts, and Customers screens can use
+  the same primitives without losing feature-specific behavior;
+- visual states pass light-theme contrast, keyboard focus, RTL/LTR, and text
+  scale checks;
+- no mass font migration or dark-mode implementation is introduced.
+
+### M2 - Desktop Shell and Typed Navigation
+
+**Goal:** replace the flat shell with the accepted product structure.
+
+**Work:**
+
+- split `app_shell.dart` into focused shell, sidebar, top-bar, contextual-nav,
+  and user-card responsibilities;
+- introduce one typed module/route metadata source consumed by navigation and
+  tests;
+- implement expanded/collapsed sidebar, lower Audit/Settings area, and
+  signed-in user identity/profile footer;
+- match the accepted Option C shell hierarchy in expanded, collapsed/narrow,
+  Arabic RTL, and English LTR states;
+- implement title/back/breadcrumb, locale, quick-create anchor, search anchor,
+  and notification anchor in the top bar;
+- implement permission-filtered contextual tabs with scroll/overflow behavior;
+- preserve existing URLs, deep links, unsaved-change guards, and deterministic
+  back targets.
+
+**Acceptance:**
+
+- no action or individual settings page remains a primary sidebar item;
+- every pre-M2 route is reachable and guarded exactly as before;
+- empty modules and unauthorized tabs are omitted without leaking labels or
+  counts;
+- shell behavior matches the M0 reference set in Arabic and English.
+
+### M3 - Module Consolidation and Existing Screen Adoption
+
+**Goal:** place existing functionality inside coherent business modules and
+apply the shared presentation patterns.
+
+**Work:**
+
+- consolidate Customers & Suppliers, Contracts, Appointments & Visits,
+  Inventory, Finance, and Settings surfaces under their module shells;
+- move create/transfer/count/adjust/cancel operations into permission-filtered
+  in-module commands;
+- rename the accounting navigation label to `Journal Entries / القيود
+  اليومية`;
+- apply shared page/list/detail/loading/error/empty patterns to the
+  representative and high-use surfaces agreed in M0;
+- keep unavailable future tabs hidden, while preserving their documented
+  placement for later phases.
+
+**Acceptance:**
+
+- module grouping does not merge distinct entities, permissions, or posting
+  semantics;
+- Calendar remains plan and Visits remains execution evidence;
+- users can complete all accepted Phase 3-7 navigation journeys without using
+  a direct URL.
+
+### M4 - Global Search, Quick Create, and Notification Center
+
+**Goal:** make high-frequency navigation and attention items useful from every
+module.
+
+**Work:**
+
+- implement capped, grouped global search for the scope in section 3.3;
+- define permission-safe server/read contracts and tests for search results;
+- implement keyboard and pointer navigation plus canonical detail deep-links;
+- implement a permission-filtered quick-create menu for existing supported
+  workflows only;
+- implement the in-app notification panel/list, unread badge, read transition,
+  empty/error states, and safe source deep-links;
+- do not display a decorative or non-functional bell/search control.
+
+**Acceptance:**
+
+- zero-permission and restricted users cannot infer hidden records through
+  result text, counts, timing-visible categories, notifications, or errors;
+- unread/read behavior is idempotent and recipient-scoped;
+- stale or unauthorized deep-links fail closed;
+- search and notification UI pass desktop/narrow, keyboard, AR/EN, and RTL/LTR
+  acceptance.
+
+### M5 - Dashboard v1 and Daily Activity
+
+**Goal:** replace the Phase 2 placeholder with useful, trusted operational
+orientation.
+
+**Work:**
+
+- implement the four fixed Dashboard slots from section 3.1;
+- provide source-list drill-down with the same filters represented by each
+  visible number;
+- implement selected-date Daily Activity as a union of authorized existing
+  projections;
+- define stable ordering, pagination, empty/loading/error behavior, and source
+  links;
+- prevent raw audit fields or unauthorized entity labels from entering either
+  surface.
+
+**Acceptance:**
+
+- every number reconciles with its drill-down source under the same permission
+  and date context;
+- financial slot is absent or safely unavailable without financial permission;
+- Dashboard and Daily Activity remain distinct from Journal Entries and the
+  Audit Log;
+- timezone/date boundaries use the tenant's accepted business-date rules.
+
+### M6 - Record Lifecycle Actions and Basic Audit Review
+
+**Goal:** expose correction workflows consistently without weakening backend
+safety.
+
+**Work:**
+
+- standardize draft edit/discard, confirmed cancel/reverse, contract lifecycle,
+  and master-data deactivate presentation;
+- show non-empty reason capture and consequence preview where the trusted
+  backend can determine effects;
+- map backend rejections such as period lock or downstream usage to actionable
+  localized messages without claiming cancellation is always possible;
+- add the permission-gated, redacted Audit Log read contract and basic filters;
+- link safe audit rows back to visible source records.
+
+**Acceptance:**
+
+- no posted financial document or used contract exposes hard delete;
+- actions remain hidden/disabled consistently by state and permission, while
+  the server revalidates every call;
+- protected before/after data stays redacted even for a user who has
+  `audit_log.view` but lacks source-field access;
+- reversal/cancellation tests cover both allowed and deliberately rejected
+  downstream states.
+
+### M7 - Finance, Inventory, and Cross-Module Integrity Gate
+
+**Goal:** prove that the structural/UI changes did not damage trusted business
+invariants.
+
+**Work:**
+
+- verify balanced journal entries and document-to-journal links;
+- verify accepted cancellation/reversal stock, allocation, cash/bank, period,
+  and audit effects;
+- verify inventory movements, balances, transfers, WAC, and serialized-unit
+  guards;
+- verify Dashboard, Daily Activity, search, notification, and audit projections
+  reconcile with their authoritative sources;
+- add verification-only trial-balance/inventory-to-GL queries if needed; full
+  finance reporting remains Phase 10.
+
+**Acceptance:** all Phase 5-7 financial/inventory suites and new Phase 7.5
+projection/integrity cases pass on a clean reset with no pollution.
+
+### M8 - Responsive, Bilingual, Accessibility, and Performance Acceptance
+
+**Goal:** harden the completed experience across supported layouts and access
+profiles.
+
+**Matrix:**
+
+- Arabic RTL and English LTR;
+- expanded desktop, collapsed desktop, narrow desktop/tablet, and current
+  mobile fallback;
+- Manager, zero-permission, assigned-only, single-module, and mixed-permission
+  users;
+- loading, empty, populated, error, overflow, long-label, large-number, and
+  text-scale states.
+
+**Acceptance:**
+
+- keyboard focus/order, tooltips, semantics, contrast, 200% text scale, and
+  no-horizontal-page-overflow checks pass;
+- contextual tabs scroll/collapse rather than wrap into broken rows;
+- no material regression from the M0.5 performance baseline;
+- the 800ms calendar target is reported as a non-blocking optimization result.
+
+### M9 - Visual Regression and Owner Acceptance
+
+**Goal:** prove that the implemented product matches the approved direction.
+
+**Work:**
+
+- capture a durable reference set for the M0 screens in both locales and
+  representative widths;
+- add focused golden/screenshot tests where stable and maintainable;
+- complete owner visual review of shell, Dashboard, Inventory, Finance, detail
+  page, search, notifications, sensitive action dialog, and Audit;
+- correct accepted defects and rerun affected automated/visual gates.
+
+**Closure evidence:** signed owner acceptance note, evidence index/checksums,
+and no unresolved severity-1/2 visual or navigation defects.
+
+### M10 - Phase Close, Migration Rehearsal, and Phase 8 Handoff
+
+**Goal:** close Phase 7.5 cleanly and reduce later migration/field-work risk.
+
+**Work:**
+
+- run final clean-reset, analyzer, full Flutter, SQL/integration, pollution,
+  permission, route, and documentation consistency gates;
+- create a read-only Google Sheets mapping/profile for customers, products,
+  contracts, balances, and identifiers, then run one disposable **local**
+  import rehearsal without changing production/live data;
+- document data-quality findings and forward fixes for the Phase 12 production
+  migration;
+- hand Phase 8 the accepted mobile information architecture,
+  employee/work-profile boundary, request/approval contract, and
+  calendar-plan/visit-execution boundary;
+- preserve the separate pre-production physical Android smoke obligation.
+
+**Acceptance:**
+
+- all Phase 7.5 milestones are `CLOSED / ACCEPTED`;
+- no trusted Phase 5-7 behavior or migration checksum regressed;
+- the local rehearsal is repeatable and leaves the baseline clean;
+- canonical docs, README, and AI memory agree on the next active phase.
+
+---
+
+## 12. Phase-Level Acceptance Gates
 
 Phase 7.5 closes only when:
 
-- the sidebar contains modules rather than a flat list of routes/actions;
-- every existing production route remains reachable through its module;
-- the top bar and contextual navigation do not duplicate one another;
-- Dashboard and Daily Activity have distinct accepted meanings;
-- Inventory and Finance group related screens without merging their entities;
-- appointments and visits appear unified to users but remain plan vs execution;
-- posted financial records cannot be hard-deleted from the UI;
-- cancellation/reversal/deactivation actions match backend safety rules;
-- audit review is permission-gated and immutable;
-- user identity/profile appears in the shell;
-- Arabic/English, RTL/LTR, narrow widths, and permission cases pass;
-- documentation and the Phase 8 handoff are consistent.
+- M0 through M10 are explicitly closed with their required evidence;
+- the sidebar contains the locked modules rather than a flat route/action list;
+- every existing production route remains reachable with reliable back
+  navigation;
+- search, Dashboard, Daily Activity, notifications, badges, Audit, and module
+  tabs are permission-shaped and fail closed;
+- the top bar, sidebar, and contextual navigation have distinct responsibilities;
+- Inventory and Finance group related screens without collapsing entities;
+- appointments and visits appear unified to users but remain plan versus
+  execution internally;
+- lifecycle actions match backend safety and never imply every confirmed
+  document can always be cancelled;
+- Arabic/English, RTL/LTR, widths, accessibility states, performance baseline,
+  and permission matrix pass;
+- finance/inventory integrity and Phase 5-7 regression suites pass cleanly;
+- owner visual acceptance and Phase 8 handoff are recorded.
 
 ---
 
-## 12. Explicit Non-Goals
+## 13. Explicit Non-Goals
 
 Phase 7.5 does not implement:
 
@@ -423,6 +739,11 @@ Phase 7.5 does not implement:
 - full General Ledger/report/financial-close UI;
 - advanced configurable dashboards;
 - route optimization or the Phase 10 Operations Map;
-- new external notification channels.
+- new external notification channels;
+- dark mode implementation;
+- mass font replacement;
+- configurable Dashboard layout;
+- production/live data import;
+- unrelated large-file refactors performed only to reduce line counts.
 
 These scopes are planned now and implemented in their assigned phases.

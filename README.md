@@ -5,9 +5,10 @@ businesses. It is being built first for Hayat Secret and is designed around
 serialized rental assets, recurring consumables, field service, customer debt,
 and double-entry accounting.
 
-> Repository status updated: **2026-07-22**
+> Repository status updated: **2026-07-24**
 >
-> Current milestone: **Phase 7.5 — `PLANNED / NOT STARTED`** after Phase 7
+> Current milestone: **Phase 7.5 M0 and M0.5 — `CLOSED / ACCEPTED`; M1 `NEXT`**
+> after Phase 7
 > **`CLOSED / ACCEPTED`**. Phase 7 M12 Gates D/E/F are **`PASS / OWNER ACCEPTED`**,
 > Gate G is **PASS**, and Final Gate H is **PASS** through migration `104`.
 > Gate F acceptance is based on physical iOS + Android Emulator evidence.
@@ -31,7 +32,7 @@ and double-entry accounting.
 | 5 | Complete | Invoices, returns, vouchers, journal, inventory accounting, PDFs |
 | 6 | Complete | Trial/rental contracts, lifecycle, billing, PDF, calendar handoff |
 | 7 | Complete / accepted | M1–M12 closed/accepted; bilingual calendar, assignments, mobile calendar, route/directions, integration, performance, device acceptance, and final cleanliness gates passed through migration `104` |
-| 7.5 | Planned / not started | Product modules/navigation, Dashboard/Daily Activity, safe record actions, basic Audit, and finance/inventory integrity gate |
+| 7.5 | M0 and M0.5 closed / accepted; M1 next | Option C accepted; regression, SQL/integration, pollution, route/deep-link, screenshot, performance, and migration baselines recorded |
 | 8-12 | Not started | Adaptive mobile/requests/field execution and later HR/POS/finance/reporting/production phases |
 
 Phase 6 closed through M13/migration `092` on 2026-07-12. Phase 7 M1 closed on
@@ -111,9 +112,11 @@ Canonical module tree:
 
 ## Planned, Not Yet Implemented
 
-- Phase 7.5 module-based desktop shell, contextual module navigation, user
-  profile footer, Dashboard v1, Daily Activity, consistent record-action UX,
-  basic Audit review, and integrity gate.
+- Phase 7.5 accepted M0 direction and planned implementation:
+  shared light-theme UI foundation, module-based desktop shell, contextual
+  navigation, user profile footer, bounded global search, quick create,
+  in-app notification center, four-slot Dashboard v1, Daily Activity,
+  consistent record-action UX, basic Audit review, and integrity gate.
 - Pre-production physical Android smoke for Gate F. Phase 7 acceptance used
   physical iOS + Android Emulator; this deferred obligation does not reopen
   Phase 7 unless the smoke exposes a defect.
@@ -262,7 +265,21 @@ Full local SQL regression, concurrency, and pollution gate:
 bash scripts/test/run_sql_suites.sh supabase_db_hs360
 ```
 
-Latest M0.5 baseline on 2026-07-12:
+Latest **Phase 7.5 M0.5** baseline on 2026-07-24:
+
+- Flutter analysis: no issues.
+- Complete Flutter suite: **1424 passed**; focused route/shell suite: **96 passed**.
+- Full SQL, concurrency, performance, and strict pollution runner: passed.
+- Calendar-only live integration: passed on macOS in English and Arabic; all
+  fixture cleanup counters returned to zero after each locale.
+- Calendar event list P95: **1095.42 ms** for the 5,000-event measured data set;
+  other high-use reads remained between **26.12–66.20 ms P95**.
+- Root resolver plus all **50** named paths inventoried; 12 durable Phase 5–7
+  AR/EN desktop/narrow/mobile screenshots recorded.
+- Migration count and applied boundary: **104**; `093`–`104` checksums match the
+  accepted Phase 7 Gate H manifest.
+
+Historical **Phase 7 M0.5** baseline on 2026-07-12:
 
 - Full SQL suite: passed.
 - Flutter analysis: no issues.
@@ -291,6 +308,18 @@ Start with these sources:
 | [PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md](docs/PHASE_5_INVOICES_VOUCHERS_JOURNAL_PLAN.md) | Closed finance execution plan |
 | [PHASE_6_CONTRACTS_PLAN.md](docs/PHASE_6_CONTRACTS_PLAN.md) | Closed contracts execution plan |
 | [PHASE_7_CALENDAR_PLAN.md](docs/PHASE_7_CALENDAR_PLAN.md) | Current calendar execution plan |
+| [PHASE_7_5_PRODUCT_STRUCTURE_AND_STABILIZATION_PLAN.md](docs/PHASE_7_5_PRODUCT_STRUCTURE_AND_STABILIZATION_PLAN.md) | Phase 7.5 M0-M10 execution source of truth |
+| [NAVIGATION_AND_MODULES_BRIEF.md](docs/NAVIGATION_AND_MODULES_BRIEF.md) | Canonical module/navigation contract |
+| [PRODUCT_UI_VISION.md](docs/PRODUCT_UI_VISION.md) | Owner-approved supporting visual direction for M0 |
+| [PROJECT_REVIEW_REPORT_2026-07-24.md](docs/PROJECT_REVIEW_REPORT_2026-07-24.md) | Corrected diagnostic snapshot supporting Phase 7.5 |
+| [M0_DESIGN_OPTIONS.md](docs/phase_7_5/m0/M0_DESIGN_OPTIONS.md) | Three comparable Phase 7.5 desktop visual directions and owner decision |
+| [M0_ACCEPTANCE_CHECKLIST.md](docs/phase_7_5/m0/M0_ACCEPTANCE_CHECKLIST.md) | Closed Selected-C M0 contract checklist |
+| [M0_ROUTE_MODULE_MATRIX.md](docs/phase_7_5/m0/M0_ROUTE_MODULE_MATRIX.md) | Accepted module placement and deterministic back-target contract |
+| [M0_PERMISSION_VISIBILITY_MATRIX.md](docs/phase_7_5/m0/M0_PERMISSION_VISIBILITY_MATRIX.md) | Accepted module, tab, command, search, notification, and data visibility contract |
+| [M0_ACCEPTANCE_RECORD.md](docs/phase_7_5/m0/M0_ACCEPTANCE_RECORD.md) | Owner acceptance record and M0 evidence index |
+| [M0_5_BASELINE_REPORT.md](docs/phase_7_5/m0_5/M0_5_BASELINE_REPORT.md) | Closed Phase 7.5 regression, integration, pollution, performance, and migration baseline |
+| [M0_5_ROUTE_BASELINE_AND_ZERO_LOSS_CHECKLIST.md](docs/phase_7_5/m0_5/M0_5_ROUTE_BASELINE_AND_ZERO_LOSS_CHECKLIST.md) | Exact pre-shell route, deep-link, menu, guard, and back-target inventory |
+| [M0_5_SCREENSHOT_MANIFEST.md](docs/phase_7_5/m0_5/M0_5_SCREENSHOT_MANIFEST.md) | Durable Phase 5–7 AR/EN desktop and narrow visual baseline |
 
 Feature references include `PRODUCTS_DETAIL.md`, `CONTRACTS_LOGIC.md`,
 `PAYMENT_SYSTEM.md`, `CUSTOMER_LEDGER.md`, `FIELD_OPS.md`,

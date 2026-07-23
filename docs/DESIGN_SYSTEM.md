@@ -1,7 +1,9 @@
 # DESIGN_SYSTEM.md — Visual & UX Design
 
 > The brand is **premium, minimal, and refined**. Think luxury fragrance house, not generic SaaS.
-> Updated 2026-05-16 to resolve conflicts: all KWD examples are examples only. Runtime currency labels and decimal places come from `currencies`.
+> Updated 2026-07-24 for the Phase 7.5 semantic color, typography, layout, and
+> dark-mode decisions. All KWD examples are examples only. Runtime currency
+> labels and decimal places come from `currencies`.
 
 ---
 
@@ -22,9 +24,11 @@ The system is white-label-ready. Tenant logo and primary color can be customized
 
 | Name | Hex | Usage |
 |------|-----|-------|
-| **Gold (Brand)** | `#C9A961` | Primary actions, brand accents, links, key icons |
+| **Gold (Brand Accent)** | `#C9A961` | Logo/brand accents and decoration on dark or otherwise contrast-safe surfaces; not normal text on white |
+| **Gold (Action)** | `#A86010` | Primary interactive fill/focus/link treatment where the tested foreground/background pair passes contrast |
+| **Gold (Action Hover)** | `#874A0C` | Hover/pressed interactive fill with white foreground |
 | **Gold Soft** | `#E8D9B0` | Backgrounds for highlighted rows, badges |
-| **Gold Deep** | `#9C8240` | Hover states, pressed states |
+| **Gold Deep Accent** | `#9C8240` | Darker brand accent on contrast-safe surfaces |
 | **Charcoal** | `#1A1A1A` | Logo background, primary text on light surfaces |
 | **Ink** | `#2C2C2C` | Body text on white |
 | **Pure White** | `#FFFFFF` | App background |
@@ -50,8 +54,16 @@ The system is white-label-ready. Tenant logo and primary color can be customized
 | Neutral 600 | `#5E5A4F` | Secondary text |
 | Neutral 800 | `#2C2C2C` | Primary text |
 
-### 2.4 Dark Mode (Optional, Phase 4)
-Reverse the foundation: charcoal background, gold accents, off-white text. Same semantic colors with slight saturation reduction.
+Color names are semantic roles, not a command to use one gold everywhere.
+`#C9A961` on white is not acceptable for normal-size text. Components must test
+the exact foreground/background pair; use dark text on Brand Gold or the darker
+Action Gold with a verified light foreground as appropriate.
+
+### 2.4 Dark Mode (Deferred to Phase 12)
+
+Phase 7.5 implements and accepts the light theme only. Phase 12 owns a fresh
+dark-mode design, contrast matrix, and owner acceptance; do not derive it by
+blindly reversing the light palette.
 
 ---
 
@@ -59,16 +71,16 @@ Reverse the foundation: charcoal background, gold accents, off-white text. Same 
 
 ### 3.1 Font Families
 
-**Arabic:**
-- **Primary:** *Tajawal* (Google Fonts) — modern, clean, excellent for screens
-- **Fallback:** *Cairo*, system Arabic font
+**Phase 7.5 application UI:**
 
-**English:**
-- **Primary:** *Cormorant Garamond* (serif, for headings — premium feel)
-- **Body:** *Inter* (sans-serif, screen-optimized)
+- **Arabic:** bundled *Noto Sans Arabic*, then system Arabic sans-serif.
+- **English:** bundled *Noto Sans*, then system sans-serif.
+- **Numbers:** the selected family with tabular figures where supported.
 
-**Numbers:**
-- *Inter Tabular* (or `font-feature-settings: 'tnum'`) — for tables and financial figures
+Tajawal, Inter, and Cormorant Garamond remain brand-exploration candidates, not
+an implementation requirement. They may replace the bundled family only after
+an M0 Arabic/English prototype comparison, owner acceptance, font licensing and
+packaging verification, and performance review.
 
 ### 3.2 Type Scale
 
@@ -85,7 +97,7 @@ Reverse the foundation: charcoal background, gold accents, off-white text. Same 
 | Number | 16 | 18 | 500 | 1.2 (tabular) |
 
 ### 3.3 Rules
-- Headings: serif (English) / Tajawal 600 (Arabic) for premium feel
+- Headings: Noto Sans/Noto Sans Arabic 600 in the Phase 7.5 application shell
 - Body: sans-serif always
 - Numbers in tables: always tabular figures (`font-feature-settings: 'tnum'`)
 - Avoid all-caps; use sentence case
@@ -119,22 +131,22 @@ Reverse the foundation: charcoal background, gold accents, off-white text. Same 
 ### 5.1 Buttons
 
 **Primary**
-- Background: Gold (`#C9A961`)
-- Text: Charcoal (`#1A1A1A`)
-- Hover: Gold Deep
+- Background: Gold Action (`#A86010`)
+- Text: Pure White (`#FFFFFF`)
+- Hover/pressed: Gold Action Hover (`#874A0C`)
 - Height: 44 (mobile-tappable)
 - Radius: 8
 - Padding: 16 horizontal
 
 **Secondary**
 - Background: transparent
-- Border: 1px Gold
-- Text: Gold Deep
+- Border: 1px Gold Action
+- Text: Gold Action
 - Same height/radius
 
 **Ghost**
 - No background, no border
-- Text: Gold Deep
+- Text: Gold Action
 - Underline on hover
 
 **Destructive**
@@ -148,7 +160,7 @@ Reverse the foundation: charcoal background, gold accents, off-white text. Same 
 
 - Height: 44
 - Border: 1px Neutral 200
-- Focus border: 2px Gold
+- Focus border: 2px Gold Action
 - Radius: 8
 - Padding: 12 horizontal
 - Label above field, 14px, Ink color
@@ -166,7 +178,7 @@ Required indicator: small red dot `•` after label (RTL-aware).
 
 ### 5.4 Tables
 
-- Header row: background Neutral 50, bold, 13px uppercase tracking
+- Header row: background Neutral 50, bold, 13px sentence case
 - Row hover: Neutral 50
 - Border between rows: 1px Neutral 100
 - Money column: right-aligned (LTR) / left-aligned (RTL), tabular figures
@@ -177,7 +189,7 @@ Required indicator: small red dot `•` after label (RTL-aware).
 | Status | Background | Text |
 |--------|------------|------|
 | Active | Success @ 15% | Success |
-| Trial | Gold Soft | Gold Deep |
+| Trial | Gold Soft | Gold Deep Accent |
 | Pending | Warning @ 15% | Warning |
 | Suspended | Neutral 200 | Neutral 800 |
 | Completed | Neutral 100 | Neutral 600 |
@@ -198,7 +210,8 @@ Component: `MoneyDisplay(amount, currency, locale)` — used everywhere money ap
 
 Each list view has an empty state:
 - Icon (line style, gold)
-- Gold filled buttons must use white text/icons (`AppColors.pureWhite`) for contrast and brand consistency.
+- Gold Action filled buttons use white text/icons; Brand Gold accents use a
+  separately verified dark foreground.
 - Headline
 - One-line description
 - Primary action button (where applicable)
@@ -222,11 +235,11 @@ Example for empty contracts list:
 │              │ Contextual module tabs                  │
 │ Dashboard    ├──────────────────────────────────────────┤
 │ Daily        │                                          │
-│ Parties      │ Main content                             │
-│ Contracts    │                                          │
 │ Operations   │                                          │
-│ Inventory    │                                          │
+│ Contracts    │ Main content                             │
+│ Parties      │                                          │
 │ Finance      │                                          │
+│ Inventory    │                                          │
 │ POS / HR     │                                          │
 │              │                                          │
 │ ───────────  │                                          │

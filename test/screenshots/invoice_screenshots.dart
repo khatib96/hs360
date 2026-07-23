@@ -132,10 +132,53 @@ void main() {
     );
     await _capture(tester, 'invoice_detail_narrow_ar');
   });
+
+  testWidgets('invoice list desktop (EN)', (tester) async {
+    await _pump(
+      tester,
+      locale: const Locale('en'),
+      size: const Size(1440, 1000),
+      overrides: [
+        invoiceRepositoryProvider.overrideWith(
+          (ref) => FakeInvoiceRepository(salesInvoices: _sampleSummaries()),
+        ),
+      ],
+      session: _session({
+        'invoices.view_sales',
+        'invoices.create_sales',
+        'invoices.create_purchase',
+        'invoices.create_sales_return',
+        'invoices.create_purchase_return',
+      }),
+      child: const InvoiceListScreen(),
+    );
+    await tester.tap(find.widgetWithIcon(FilledButton, Icons.add));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    await _capture(tester, 'invoice_list_desktop_en');
+  });
+
+  testWidgets('invoice detail narrow (EN)', (tester) async {
+    await _pump(
+      tester,
+      locale: const Locale('en'),
+      size: _narrow,
+      overrides: [
+        invoiceRepositoryProvider.overrideWith(
+          (ref) =>
+              FakeInvoiceRepository(detailById: {'inv-1': _sampleDetail()}),
+        ),
+      ],
+      session: _session({'invoices.view_sales', 'invoices.print'}),
+      child: const InvoiceDetailScreen(invoiceId: 'inv-1'),
+    );
+    await _capture(tester, 'invoice_detail_narrow_en');
+  });
 }
 
 Future<void> _pump(
   WidgetTester tester, {
+  Locale locale = const Locale('ar'),
   required Size size,
   required List<Override> overrides,
   required AppSession session,
@@ -170,7 +213,7 @@ Future<void> _pump(
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          locale: const Locale('ar'),
+          locale: locale,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           theme: theme,

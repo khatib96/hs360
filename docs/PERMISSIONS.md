@@ -2,7 +2,7 @@
 
 > **No roles. No templates. Pure custom permissions per user.**
 > Two account types: Manager (full access, no checks) and User (every permission grant is explicit).
-> Updated 2026-07-22 for the Phase 7.5 module shell, employee/work-profile
+> Updated 2026-07-24 for the Phase 7.5 module shell, employee/work-profile
 > boundary, Requests & Approvals, and lifecycle-specific correction policy.
 
 ---
@@ -210,6 +210,13 @@ these underlying capability permissions. A module shell does not introduce a
 single broad permission that bypasses its children. Dashboard, Daily Activity,
 search, notifications, badges, and drill-down must not reveal counts or labels
 from data the user cannot view.
+
+Global search applies each source module's existing view permission; it does
+not introduce a broad `search_all` permission. Quick create applies the target
+workflow's create permission. The personal notification center reads only the
+signed-in recipient's rows and may mark only those rows read; tenant-wide
+notification review, where separately implemented, still requires
+`notifications.view`.
 
 Planned Requests & Approvals permission families must distinguish at least:
 

@@ -1,0 +1,460 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HS360 Phase 7.5 M0 Shell Directions</title>
+<style>
+  @font-face {
+    font-family: "Noto Sans Arabic";
+    src: url("../../../assets/fonts/noto/NotoSansArabic-Regular.ttf");
+    font-weight: 400;
+  }
+  @font-face {
+    font-family: "Noto Sans Arabic";
+    src: url("../../../assets/fonts/noto/NotoSansArabic-Bold.ttf");
+    font-weight: 700;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-width: 1180px; background: #ddd; }
+  body {
+    font-family: "Noto Sans Arabic", Arial, sans-serif;
+    color: var(--ink);
+  }
+  .mi {
+    font-family: "Noto Sans Arabic", Arial, sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    font-style: normal;
+    line-height: 1;
+  }
+  .app {
+    --brand-gold: #c9a961;
+    --action-gold: #a86010;
+    --action-hover: #874a0c;
+    --ink: #242321;
+    --muted: #6b675f;
+    --line: #e6e1d6;
+    --canvas: #f7f5f0;
+    --surface: #ffffff;
+    --soft: #faf8f3;
+    --sidebar: #1a1a1a;
+    --sidebar-ink: #f7f2e7;
+    --sidebar-muted: #bdb5a5;
+    --radius: 14px;
+    --shadow: 0 8px 28px rgba(35, 29, 18, .07);
+    width: 1440px;
+    height: 900px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 252px;
+    direction: ltr;
+    background: var(--canvas);
+  }
+  .app[data-option="b"] {
+    --ink: #20201f;
+    --muted: #65635f;
+    --line: #dedbd3;
+    --canvas: #f3f3f1;
+    --surface: #ffffff;
+    --soft: #f8f7f4;
+    --sidebar: #ffffff;
+    --sidebar-ink: #292826;
+    --sidebar-muted: #74716b;
+    --radius: 8px;
+    --shadow: 0 2px 8px rgba(35, 31, 23, .05);
+  }
+  .app[data-option="c"] {
+    --ink: #2a251f;
+    --muted: #756d63;
+    --line: #e4d9c9;
+    --canvas: #f3eee6;
+    --surface: #fffdf9;
+    --soft: #f8f2e9;
+    --sidebar: #e7dccd;
+    --sidebar-ink: #2a251f;
+    --sidebar-muted: #756d63;
+    --radius: 20px;
+    --shadow: 0 12px 32px rgba(75, 57, 34, .08);
+  }
+  .main {
+    min-width: 0;
+    display: grid;
+    grid-template-rows: 72px 56px 1fr;
+    direction: rtl;
+  }
+  .topbar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0 28px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+  }
+  .title-block { margin-inline-end: auto; min-width: 250px; }
+  .eyebrow { color: var(--muted); font-size: 12px; margin-bottom: 3px; }
+  .title { font-size: 20px; font-weight: 700; letter-spacing: -.2px; }
+  .search {
+    width: 292px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 0 13px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    color: var(--muted);
+    background: var(--soft);
+    font-size: 13px;
+  }
+  .key {
+    margin-inline-start: auto;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 1px 6px;
+    font-size: 10px;
+  }
+  .quick {
+    height: 42px;
+    border: 0;
+    border-radius: var(--radius);
+    padding: 0 15px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--action-gold);
+    color: #fff;
+    font-family: inherit;
+    font-weight: 700;
+  }
+  .icon-btn {
+    width: 42px;
+    height: 42px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    display: grid;
+    place-items: center;
+    background: var(--surface);
+    color: var(--ink);
+    position: relative;
+  }
+  .dot {
+    position: absolute;
+    top: 8px;
+    inset-inline-start: 8px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #a8362f;
+    outline: 2px solid var(--surface);
+  }
+  .locale { font-weight: 700; font-size: 13px; }
+  .tabs {
+    display: flex;
+    align-items: end;
+    gap: 4px;
+    padding: 0 28px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+  }
+  .tab {
+    height: 55px;
+    padding: 0 15px;
+    display: flex;
+    align-items: center;
+    color: var(--muted);
+    font-size: 13px;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+  }
+  .tab.active { color: var(--action-gold); border-bottom-color: var(--action-gold); font-weight: 700; }
+  .app[data-option="c"] .tabs { align-items: center; }
+  .app[data-option="c"] .tab { height: 36px; border: 0; border-radius: 18px; }
+  .app[data-option="c"] .tab.active { color: #fff; background: var(--action-gold); }
+  .content { padding: 26px 28px 30px; overflow: hidden; }
+  .welcome {
+    display: flex;
+    align-items: end;
+    margin-bottom: 20px;
+  }
+  .welcome h1 { margin: 0 0 5px; font-size: 25px; }
+  .welcome p { margin: 0; color: var(--muted); font-size: 13px; }
+  .updated {
+    margin-inline-start: auto;
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 18px;
+  }
+  .metric, .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .metric { min-height: 154px; padding: 18px; }
+  .metric-top { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; }
+  .metric-icon {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    color: var(--action-gold);
+    background: rgba(201,169,97,.16);
+  }
+  .value { font-size: 29px; font-weight: 700; margin: 13px 0 3px; direction: rtl; }
+  .sub { color: var(--muted); font-size: 12px; }
+  .good { color: #2d7a4f; font-weight: 700; }
+  .warn { color: #a86010; font-weight: 700; }
+  .bad { color: #a8362f; font-weight: 700; }
+  .body-grid { display: grid; grid-template-columns: 1.35fr .9fr; gap: 18px; direction: ltr; }
+  .panel { padding: 19px; direction: rtl; min-height: 375px; box-shadow: none; }
+  .panel-head { display: flex; align-items: center; margin-bottom: 15px; }
+  .panel-title { font-size: 15px; font-weight: 700; }
+  .panel-link { margin-inline-start: auto; color: var(--action-gold); font-size: 12px; font-weight: 700; }
+  .agenda-row {
+    display: grid;
+    grid-template-columns: 48px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .agenda-row:last-child { border-bottom: 0; }
+  .time { font-size: 12px; color: var(--muted); direction: ltr; text-align: right; }
+  .agenda-title { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+  .agenda-meta { font-size: 11px; color: var(--muted); }
+  .badge { padding: 5px 9px; border-radius: 999px; font-size: 10px; font-weight: 700; }
+  .badge.upcoming { color: #3a6f8f; background: rgba(58,111,143,.12); }
+  .badge.done { color: #2d7a4f; background: rgba(45,122,79,.12); }
+  .badge.overdue { color: #a8362f; background: rgba(168,54,47,.11); }
+  .attention {
+    display: grid;
+    grid-template-columns: 34px 1fr auto;
+    gap: 10px;
+    align-items: start;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .attention:last-child { border-bottom: 0; }
+  .attention .mi { color: var(--action-gold); }
+  .attention strong { display: block; font-size: 12px; margin-bottom: 3px; }
+  .attention small { color: var(--muted); font-size: 11px; }
+  .count { min-width: 24px; height: 24px; border-radius: 12px; display: grid; place-items: center; background: var(--soft); font-size: 11px; font-weight: 700; }
+  .sidebar {
+    direction: rtl;
+    background: var(--sidebar);
+    color: var(--sidebar-ink);
+    padding: 20px 14px 16px;
+    display: flex;
+    flex-direction: column;
+    border-inline-start: 1px solid rgba(120,110,94,.22);
+  }
+  .brand {
+    height: 58px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 0 9px 14px;
+    border-bottom: 1px solid rgba(201,169,97,.22);
+    margin-bottom: 14px;
+  }
+  .brand img { width: 40px; height: 40px; object-fit: contain; }
+  .brand-name { font-size: 16px; font-weight: 700; letter-spacing: .3px; }
+  .brand-sub { color: var(--sidebar-muted); font-size: 10px; margin-top: 2px; }
+  .nav { display: flex; flex-direction: column; gap: 4px; }
+  .nav-item {
+    min-height: 43px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 12px;
+    border-radius: calc(var(--radius) - 3px);
+    color: var(--sidebar-muted);
+    font-size: 13px;
+  }
+  .nav-item .mi { font-size: 19px; }
+  .nav-item.active { color: #fff; background: var(--action-gold); font-weight: 700; }
+  .app[data-option="b"] .nav-item.active {
+    color: var(--action-gold);
+    background: #f4eadb;
+    box-shadow: inset -3px 0 var(--action-gold);
+  }
+  .app[data-option="c"] .nav-item.active { color: #fff; }
+  .future { opacity: .46; }
+  .future-label {
+    margin-inline-start: auto;
+    padding: 2px 6px;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    font-size: 8px;
+  }
+  .sidebar-bottom { margin-top: auto; }
+  .divider { height: 1px; background: rgba(201,169,97,.2); margin: 10px 8px; }
+  .profile {
+    display: grid;
+    grid-template-columns: 38px 1fr 20px;
+    gap: 9px;
+    align-items: center;
+    padding: 11px 10px;
+    border-radius: var(--radius);
+    background: rgba(201,169,97,.09);
+  }
+  .avatar {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--brand-gold);
+    color: #1a1a1a;
+    font-weight: 700;
+  }
+  .profile strong { display: block; font-size: 12px; }
+  .profile small { display: block; color: var(--sidebar-muted); font-size: 10px; margin-top: 2px; direction: ltr; text-align: right; }
+  .option-mark {
+    position: absolute;
+    inset: auto auto 16px 18px;
+    direction: ltr;
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: .4px;
+  }
+  .app[data-option="b"] .metric, .app[data-option="b"] .panel { box-shadow: none; }
+  .app[data-option="b"] .content { padding-top: 20px; }
+  .app[data-option="b"] .metric { min-height: 142px; }
+  .app[data-option="c"] .content { padding: 30px 34px; }
+  .app[data-option="c"] .metrics { gap: 18px; }
+  .app[data-option="c"] .metric { min-height: 160px; }
+</style>
+
+<div id="hs360-m0-preview" class="app" data-option="a">
+  <main class="main">
+    <header class="topbar">
+      <div class="title-block">
+        <div class="eyebrow">لوحة التحكم</div>
+        <div class="title">صباح الخير، أحمد</div>
+      </div>
+      <div class="search"><span class="mi">⌕</span><span>ابحث عن عميل، عقد، فاتورة أو منتج</span><span class="key">⌘ K</span></div>
+      <button class="quick"><span class="mi">＋</span><span>إنشاء سريع</span></button>
+      <button class="icon-btn" aria-label="الإشعارات"><span class="dot"></span><span class="mi">◌</span></button>
+      <button class="icon-btn locale" aria-label="تغيير اللغة">EN</button>
+    </header>
+
+    <nav class="tabs" aria-label="سياق لوحة التحكم">
+      <div class="tab active">نظرة عامة</div>
+      <div class="tab">مواعيد اليوم</div>
+      <div class="tab">التنبيهات</div>
+    </nav>
+
+    <section class="content">
+      <div class="welcome">
+        <div>
+          <h1>نظرة العمل اليوم</h1>
+          <p>الخميس، 24 يوليو 2026 · الأرقام حسب صلاحياتك</p>
+        </div>
+        <div class="updated">آخر تحديث قبل دقيقتين</div>
+      </div>
+
+      <div class="metrics">
+        <article class="metric">
+          <div class="metric-top"><span class="metric-icon"><span class="mi">◷</span></span><span>مواعيد وزيارات اليوم</span></div>
+          <div class="value">12</div>
+          <div class="sub"><span class="good">7 منجزة</span> · 5 متبقية</div>
+        </article>
+        <article class="metric">
+          <div class="metric-top"><span class="metric-icon"><span class="mi">△</span></span><span>المتأخرات التشغيلية</span></div>
+          <div class="value">8</div>
+          <div class="sub"><span class="bad">3 عاجلة</span> · 5 للمتابعة</div>
+        </article>
+        <article class="metric">
+          <div class="metric-top"><span class="metric-icon"><span class="mi">▤</span></span><span>العقود والأجهزة</span></div>
+          <div class="value">107</div>
+          <div class="sub">96 نشط · <span class="warn">11 تجريبي</span></div>
+        </article>
+        <article class="metric">
+          <div class="metric-top"><span class="metric-icon"><span class="mi">◈</span></span><span>تحصيل ومستحق الشهر</span></div>
+          <div class="value">2,340 د.ك</div>
+          <div class="sub"><span class="good">+12% محصّل</span> · 680 مستحق</div>
+        </article>
+      </div>
+
+      <div class="body-grid">
+        <section class="panel">
+          <div class="panel-head"><span class="panel-title">أجندة اليوم</span><span class="panel-link">فتح التقويم</span></div>
+          <div class="agenda-row">
+            <div class="time">09:00</div>
+            <div><div class="agenda-title">زيارة تغيير زيت — مقهى بلوم</div><div class="agenda-meta">السالمية · أحمد الخطيب · عقد RNT-0096</div></div>
+            <span class="badge done">منجزة</span>
+          </div>
+          <div class="agenda-row">
+            <div class="time">11:30</div>
+            <div><div class="agenda-title">متابعة عقد تجريبي — شركة النور</div><div class="agenda-meta">الشويخ · محمد سالم · عقد TRY-0011</div></div>
+            <span class="badge upcoming">قادمة</span>
+          </div>
+          <div class="agenda-row">
+            <div class="time">14:00</div>
+            <div><div class="agenda-title">تحصيل فاتورة — مطعم لافندر</div><div class="agenda-meta">حولي · INV-2026-0045 · 180.000 د.ك</div></div>
+            <span class="badge upcoming">قادمة</span>
+          </div>
+          <div class="agenda-row">
+            <div class="time">أمس</div>
+            <div><div class="agenda-title">زيارة دورية لم تُنجز</div><div class="agenda-meta">الفروانية · عقد RNT-0073</div></div>
+            <span class="badge overdue">متأخرة</span>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><span class="panel-title">يتطلب الانتباه</span><span class="panel-link">عرض الكل</span></div>
+          <div class="attention"><span class="mi">◷</span><div><strong>زيارات متأخرة</strong><small>تحتاج إعادة جدولة أو إسناد</small></div><span class="count">3</span></div>
+          <div class="attention"><span class="mi">!</span><div><strong>عقود تنتهي هذا الشهر</strong><small>راجع التجديد أو الإغلاق</small></div><span class="count">8</span></div>
+          <div class="attention"><span class="mi">⌖</span><div><strong>مواقع بلا إحداثيات</strong><small>تؤثر على الاتجاهات</small></div><span class="count">4</span></div>
+          <div class="attention"><span class="mi">▣</span><div><strong>بيانات مخزون ناقصة</strong><small>منتجان بلا تكلفة موثوقة</small></div><span class="count">2</span></div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="../../../assets/brand/hs-logo-gold.png" alt="">
+      <div><div class="brand-name">HS360</div><div class="brand-sub">Hayat Secret ERP</div></div>
+    </div>
+    <nav class="nav" aria-label="الأقسام الرئيسية">
+      <div class="nav-item active"><span class="mi">▦</span><span>لوحة التحكم</span></div>
+      <div class="nav-item"><span class="mi">◷</span><span>ملخص اليوم</span></div>
+      <div class="nav-item"><span class="mi">◉</span><span>المواعيد والزيارات</span></div>
+      <div class="nav-item"><span class="mi">▤</span><span>العقود</span></div>
+      <div class="nav-item"><span class="mi">◎</span><span>العملاء والموردون</span></div>
+      <div class="nav-item"><span class="mi">◈</span><span>المالية</span></div>
+      <div class="nav-item"><span class="mi">▣</span><span>المخزون</span></div>
+      <div class="nav-item future"><span class="mi">▧</span><span>نقطة البيع</span><span class="future-label">لاحقاً</span></div>
+      <div class="nav-item future"><span class="mi">♙</span><span>الموارد البشرية</span><span class="future-label">لاحقاً</span></div>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="divider"></div>
+      <div class="nav-item"><span class="mi">↶</span><span>السجل</span></div>
+      <div class="nav-item"><span class="mi">⚙</span><span>الإعدادات</span></div>
+      <div class="profile">
+        <div class="avatar">أخ</div>
+        <div><strong>أحمد الخطيب</strong><small>EMP-002</small></div>
+        <span class="mi">⌄</span>
+      </div>
+    </div>
+  </aside>
+  <div class="option-mark" id="option-mark">A · QUIET LUXURY</div>
+</div>
+
+<script>
+  const queryOption = new URLSearchParams(location.search).get("option") || "a";
+  const acceptedOption = ["a", "b", "c"].includes(queryOption) ? queryOption : "a";
+  const labels = {
+    a: "A · QUIET LUXURY",
+    b: "B · OPERATIONAL CLARITY",
+    c: "C · EXECUTIVE WARMTH"
+  };
+  document.getElementById("hs360-m0-preview").dataset.option = acceptedOption;
+  document.getElementById("option-mark").textContent = labels[acceptedOption];
+</script>

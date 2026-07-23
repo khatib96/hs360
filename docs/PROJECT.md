@@ -1,6 +1,6 @@
 # PROJECT.md — Vision & Scope
 
-> Updated 2026-07-22 with the owner-approved Phase 7.5 product structure,
+> Updated 2026-07-24 with the owner-approved Phase 7.5 product structure,
 > adaptive mobile, employee/request, and record-correction direction.
 > Operational job names/work profiles are descriptive presentation inputs only.
 > Access control remains Manager/User + explicit permissions.
@@ -64,13 +64,16 @@ explicit permissions remain final.
 - User invitations limited to tenant scope
 
 **Product Structure & Navigation**
-- Module-based desktop shell: Dashboard, Daily Activity, Customers & Suppliers,
-  Contracts, Appointments & Visits, Inventory, Finance, POS, and HR
-- Global top bar for search/quick create/notifications/locale and contextual
-  horizontal navigation inside the active module
+- Module-based desktop shell, in order: Dashboard, Daily Activity,
+  Appointments & Visits, Contracts, Customers & Suppliers, Finance, Inventory,
+  POS, and HR
+- Global top bar with bounded permission-safe search, quick create, functional
+  in-app notifications, locale, and contextual navigation inside the active
+  module
 - Permission-gated Audit, Settings, and signed-in user profile in the lower
   system area
-- Dashboard KPIs/alerts drill into authorized source records
+- Dashboard v1 uses four fixed priority slots whose KPIs drill into authorized
+  source records
 - Daily Activity is a selected-date operational timeline and is distinct from
   accounting journal/day-book views
 

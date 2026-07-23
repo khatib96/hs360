@@ -1,7 +1,8 @@
 # CANONICAL_DECISIONS.md — Source of Truth
 
-> Updated 2026-07-22 with Phase 7.5 product structure, adaptive mobile,
-> employee/request boundaries, and record-correction policy decisions.
+> Updated 2026-07-24 with the accepted Phase 7.5 M0-M10 structure, product
+> navigation, adaptive mobile, employee/request boundaries, and
+> record-correction policy decisions.
 > If this file conflicts with any older document, this file wins.
 
 ---
@@ -294,13 +295,21 @@ The detailed source of truth is `PHASE_7_CALENDAR_PLAN.md`.
 Phase 7.5 is a new stabilization phase between accepted Phase 7 and Phase 8. It
 does not reopen or renumber completed work.
 
-- Desktop primary modules are Dashboard, Daily Activity, Customers & Suppliers,
-  Contracts, Appointments & Visits, Inventory, Finance, POS, and HR.
+- Desktop primary modules, in order, are Dashboard, Daily Activity,
+  Appointments & Visits, Contracts, Customers & Suppliers, Finance, Inventory,
+  POS, and HR.
 - Audit, Settings, and the signed-in user identity/profile belong in the lower
   system area of the sidebar.
 - The global top bar is for title/back/breadcrumb, global search, quick create,
   notifications, locale, and explicitly supported operating context. It does
   not duplicate all modules.
+- Phase 7.5 global search is bounded to customers/suppliers, contracts,
+  invoices, products/serialized units, and stable implemented document
+  identifiers. Results are grouped, capped, permission-shaped, and expose no
+  protected fields.
+- The Phase 7.5 notification bell is functional: it shows existing in-app
+  notifications/calendar reminders with recipient-scoped unread/read state and
+  safe deep-links. External delivery channels remain Phase 11.
 - The active module may own permission-filtered horizontal contextual tabs.
 - Standalone actions such as Add Product, Transfer, Stock Count, and individual
   Settings pages are in-module commands/surfaces, not primary navigation.
@@ -313,11 +322,19 @@ does not reopen or renumber completed work.
 - Appointments and Visits share one user-facing module, but a calendar event is
   a plan and a visit is execution evidence.
 
-`Dashboard / لوحة التحكم` shows permission-shaped current condition, alerts,
-KPIs, and drill-down. `Daily Activity / ملخص اليوم` shows what happened on a
-selected date across authorized operational sources. `Journal Entries / القيود
-اليومية` remains an accounting surface inside Finance. Do not reuse the bare
-Arabic label `اليومية` for both.
+`Dashboard / لوحة التحكم` v1 has four fixed priority slots: today's
+appointments/visits, overdue operational items, contract/asset condition, and
+current-month collections/outstanding when financially authorized. Every
+visible number drills into the matching authorized source. `Daily Activity /
+ملخص اليوم` shows what happened on a selected date across authorized
+operational sources. `Journal Entries / القيود اليومية` remains an accounting
+surface inside Finance. Do not reuse the bare Arabic label `اليومية` for both.
+
+The accepted Phase 7.5 visual foundation uses semantic color roles rather than
+one gold for every purpose: brand accent and accessible interactive action/focus
+colors may be different tokens. Phase 7.5 retains the currently bundled Noto
+Sans/Noto Sans Arabic direction unless owner-approved M0 prototypes justify a
+packaged replacement. Dark mode is deferred to Phase 12.
 
 The detailed source of truth is
 `PHASE_7_5_PRODUCT_STRUCTURE_AND_STABILIZATION_PLAN.md`; the canonical tree is
