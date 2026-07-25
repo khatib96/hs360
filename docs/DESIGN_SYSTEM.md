@@ -255,6 +255,25 @@ Spacing, radii, control heights, and semantic colors are defined in
 `lib/core/theme/app_tokens.dart`; Material component states are centralized in
 `lib/core/theme/app_theme.dart`.
 
+### 5.9 Phase 7.5 Product Shell
+
+M2 implements the accepted Option C application hierarchy:
+
+| Pattern | Implementation |
+|---------|----------------|
+| Responsive shell composition | `AppShell` |
+| Expanded/collapsed module navigation and narrow drawer | `AppSidebar` |
+| Page/module context, locale, and global-action anchors | `AppTopBar` |
+| Permission-shaped module destinations | `AppContextualNavigation` |
+| Signed-in identity and session actions | `AppUserCard` |
+| Canonical module/route metadata and back targets | `app_navigation.dart` |
+
+The sidebar is a module index, not a list of commands or every route. Tabs are
+derived from the same typed metadata and omitted when unauthorized. At narrow
+widths the sidebar becomes a drawer; on desktop it can collapse to icons with
+accessible labels and tooltips. Arabic mirrors the hierarchy through RTL
+rather than maintaining a separate layout.
+
 ---
 
 ## 6. Layout

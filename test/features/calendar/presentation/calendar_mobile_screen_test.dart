@@ -16,7 +16,6 @@ import 'package:hs360/features/calendar/presentation/calendar_desktop_layout.dar
 import 'package:hs360/features/calendar/presentation/calendar_screen.dart';
 import 'package:hs360/features/calendar/domain/calendar_settings.dart';
 import 'package:hs360/l10n/app_localizations.dart';
-import 'package:hs360/shared/widgets/app_shell.dart';
 
 import '../fake_calendar_repository.dart';
 
@@ -218,7 +217,7 @@ void main() {
       await _pump(tester, repo: _repo(), size: const Size(769, 900));
       // Desktop shell (nav rail), but content ≈ 528 → still mobile calendar.
       expect(find.byType(DrawerButton), findsNothing);
-      expect(find.byType(AppBrandMark), findsWidgets);
+      expect(find.byKey(const Key('app-sidebar')), findsOneWidget);
       expect(find.byKey(const Key('calendar-mobile-body')), findsOneWidget);
       expect(find.byKey(const Key('calendar-desktop-body')), findsNothing);
       final narrowContent = await contentWidth();
@@ -422,7 +421,13 @@ void main() {
       session: _session(permissions: const {'calendar.view', 'calendar.edit'}),
       size: const Size(360, 800),
     );
-    await tester.tap(find.byKey(const Key('calendar-event-ink-evt-gen')));
+    final generatedEvent = find.byKey(const Key('calendar-event-ink-evt-gen'));
+    await tester.drag(
+      find.byKey(const Key('calendar-mobile-body')),
+      const Offset(0, -320),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(generatedEvent);
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('calendar-assign-evt-gen')), findsOneWidget);
     expect(

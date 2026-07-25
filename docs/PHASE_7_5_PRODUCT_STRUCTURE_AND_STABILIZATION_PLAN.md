@@ -1,6 +1,6 @@
 # Phase 7.5 - Product Structure, Navigation, and Stabilization Plan
 
-> Status: **IN PROGRESS — M0, M0.5, AND M1 CLOSED / ACCEPTED; M2 NEXT**
+> Status: **IN PROGRESS — M0, M0.5, M1, AND M2 CLOSED / ACCEPTED; M3 NEXT**
 > (started 2026-07-24).
 >
 > Purpose: pause feature expansion after Phase 7, turn the existing collection
@@ -509,7 +509,7 @@ passed. Evidence is under `docs/phase_7_5/m1/`.
 
 **Goal:** replace the flat shell with the accepted product structure.
 
-**State:** `NEXT / NOT STARTED`.
+**State:** `CLOSED / ACCEPTED` on 2026-07-25.
 
 **Work:**
 
@@ -535,10 +535,25 @@ passed. Evidence is under `docs/phase_7_5/m1/`.
   counts;
 - shell behavior matches the M0 reference set in Arabic and English.
 
+**Closure evidence:**
+
+- `docs/phase_7_5/m2/M2_ACCEPTANCE_REPORT.md`;
+- `docs/phase_7_5/m2/M2_SCREENSHOT_MANIFEST.md` and 6 durable AR/EN expanded,
+  collapsed, and narrow images;
+- `flutter analyze` clean and the complete Flutter suite at 1446 passed;
+- 111 focused route, typed-navigation, permission, responsive, and
+  accessibility tests passed;
+- existing URLs, deep links, guards, and deterministic back targets were
+  preserved without introducing RPC, migration, database, or posting changes;
+- unimplemented Daily Activity, Audit, POS, and HR surfaces remain hidden;
+  M4 global-action anchors are permission-shaped but deliberately inactive.
+
 ### M3 - Module Consolidation and Existing Screen Adoption
 
 **Goal:** place existing functionality inside coherent business modules and
 apply the shared presentation patterns.
+
+**State:** `NEXT / NOT STARTED`.
 
 **Work:**
 

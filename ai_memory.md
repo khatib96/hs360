@@ -1,13 +1,44 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-24 (Session: **PHASE 7.5 M0, M0.5, AND M1 CLOSED / ACCEPTED; M2 NEXT**).
+> Updated 2026-07-25 (Session: **PHASE 7.5 M0, M0.5, M1, AND M2 CLOSED / ACCEPTED; M3 NEXT**).
 > Gates D/E/F **`PASS / OWNER ACCEPTED`**; Gate F acceptance uses physical iOS
 > + Android Emulator evidence. Gate G and Final Gate H **PASS** through `104`.
-> M12 and Phase 7 **`CLOSED / ACCEPTED`**. Phase 7.5 **M0, M0.5, AND M1 ARE
-> CLOSED / ACCEPTED; M2 IS NEXT / NOT STARTED**. Phase 8
+> M12 and Phase 7 **`CLOSED / ACCEPTED`**. Phase 7.5 **M0, M0.5, M1, AND M2
+> ARE CLOSED / ACCEPTED; M3 IS NEXT / NOT STARTED**. Phase 8
 > **NOT STARTED**.
 > Permanent pre-production constraint: **physical Android smoke is required**
 > under the owner-approved deferral. No commit/push performed.
+
+---
+
+## Session 2026-07-25 - Phase 7.5 M2 Closed / Accepted
+
+**Decision:** implemented and closed the Desktop Shell and Typed Navigation
+milestone. The accepted Option C shell now provides a module-level
+expanded/collapsed desktop sidebar, narrow drawer, contextual module
+destinations, global context bar, locale control, signed-in identity, settings
+area, and deterministic back behavior in Arabic RTL and English LTR.
+
+**Navigation contract:** module/destination metadata, visibility, active route,
+global-action anchors, and back targets are centralized in typed navigation
+models/catalog/helpers. The shell and tests consume the same source.
+Unauthorized or unimplemented modules/tabs are omitted without leaking labels
+or counts. Daily Activity, Audit, POS, and HR remain hidden until implemented;
+`/field/today` remains Today Agenda under Appointments & Visits.
+
+**Boundary:** M4 search, quick-create, and notification anchors are
+permission-shaped but deliberately inactive. Existing URLs, guards, deep
+links, feature ownership, and business behavior are preserved. No RPC,
+migration, database contract, or posting logic was changed.
+
+**Gates:** `flutter analyze` clean; complete Flutter suite **1446 passed**;
+focused route/navigation/shell/accessibility suite **111 passed**; 6 M2
+expanded/collapsed/narrow AR/EN screenshot cases and the prior 21-image
+regression gate passed. Durable evidence and hashes are under
+`docs/phase_7_5/m2/`.
+
+**Next:** M3 Module Consolidation and Existing Screen Adoption. No commit/push
+performed.
 
 ---
 

@@ -5,7 +5,6 @@ import 'package:hs360/l10n/app_localizations.dart';
 import '../../../core/routing/app_routes.dart';
 import '../../../shared/widgets/app_shell.dart';
 import '../../auth/presentation/widgets/authenticated_user_summary.dart';
-import '../../auth/presentation/widgets/sign_out_icon_button.dart';
 
 class FieldTodayScreen extends ConsumerWidget {
   const FieldTodayScreen({super.key});
@@ -21,7 +20,6 @@ class FieldTodayScreen extends ConsumerWidget {
     return AppShell(
       title: l10n.fieldTodayTitle,
       currentRoute: AppRoutes.fieldToday,
-      actions: const [SignOutIconButton()],
       body: SingleChildScrollView(
         padding: const EdgeInsetsDirectional.all(24),
         child: Center(

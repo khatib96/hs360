@@ -46,7 +46,8 @@ class FinancePlaceholderScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (showBackButton) ...[
+            if (showBackButton &&
+                (currentRoute == null || currentRoute!.isEmpty)) ...[
               BackButton(
                 onPressed: () {
                   if (context.canPop()) {

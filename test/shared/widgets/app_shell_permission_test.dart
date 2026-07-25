@@ -73,8 +73,11 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text(l10n.fieldTodayTitle), findsOneWidget);
+    expect(find.text(l10n.navAppointmentsVisits), findsOneWidget);
     expect(find.text(l10n.dashboard), findsNothing);
+    expect(find.byKey(const Key('shell-search-anchor')), findsNothing);
+    expect(find.byKey(const Key('shell-quick-create-anchor')), findsNothing);
+    expect(find.byKey(const Key('shell-notifications-anchor')), findsNothing);
   });
 
   testWidgets('zero-permission user sees no unauthorized dashboard link', (
@@ -209,8 +212,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text(l10n.customers), findsOneWidget);
-    expect(find.text(l10n.chartOfAccounts), findsNothing);
+    expect(find.text(l10n.navCustomersSuppliers), findsOneWidget);
+    expect(find.text(l10n.navFinance), findsNothing);
   });
 
   testWidgets('suppliers.view shows customers navigation item', (tester) async {
@@ -224,7 +227,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text(l10n.customers), findsOneWidget);
+    expect(find.text(l10n.navCustomersSuppliers), findsOneWidget);
   });
 
   testWidgets('chart_of_accounts.view shows chart of accounts nav item', (
@@ -240,8 +243,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text(l10n.chartOfAccounts), findsOneWidget);
-    expect(find.text(l10n.customers), findsNothing);
+    expect(find.text(l10n.navFinance), findsOneWidget);
+    expect(find.text(l10n.navCustomersSuppliers), findsNothing);
   });
 
   testWidgets('zero-permission user does not see Phase 4 nav items', (
@@ -257,8 +260,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text(l10n.customers), findsNothing);
-    expect(find.text(l10n.chartOfAccounts), findsNothing);
+    expect(find.text(l10n.navCustomersSuppliers), findsNothing);
+    expect(find.text(l10n.navFinance), findsNothing);
   });
 
   testWidgets('products.view only does not show Phase 4 nav items', (
@@ -274,9 +277,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text(l10n.products), findsOneWidget);
-    expect(find.text(l10n.customers), findsNothing);
-    expect(find.text(l10n.chartOfAccounts), findsNothing);
+    expect(find.text(l10n.navInventory), findsOneWidget);
+    expect(find.text(l10n.navCustomersSuppliers), findsNothing);
+    expect(find.text(l10n.navFinance), findsNothing);
   });
 
   testWidgets('invoices.view_sales shows invoices navigation item', (
@@ -292,8 +295,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text(l10n.navInvoices), findsOneWidget);
-    expect(find.text(l10n.navVouchers), findsNothing);
+    expect(find.text(l10n.navFinance), findsOneWidget);
+    expect(find.text(l10n.navInventory), findsNothing);
   });
 
   testWidgets('vouchers.view shows vouchers navigation item', (tester) async {
@@ -307,8 +310,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text(l10n.navVouchers), findsOneWidget);
-    expect(find.text(l10n.navInvoices), findsNothing);
+    expect(find.text(l10n.navFinance), findsOneWidget);
+    expect(find.text(l10n.navInventory), findsNothing);
   });
 
   testWidgets('contracts.view shows contracts navigation item', (tester) async {
@@ -323,7 +326,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text(l10n.navContracts), findsOneWidget);
-    expect(find.text(l10n.navInvoices), findsNothing);
+    expect(find.text(l10n.navFinance), findsNothing);
   });
 
   testWidgets('contracts.create only hides contracts navigation item', (
@@ -354,6 +357,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text(l10n.navContracts), findsOneWidget);
+    expect(find.byKey(const Key('shell-search-anchor')), findsOneWidget);
+    expect(find.byKey(const Key('shell-quick-create-anchor')), findsOneWidget);
+    expect(find.byKey(const Key('shell-notifications-anchor')), findsOneWidget);
   });
 
   testWidgets('journal.view shows journal navigation item', (tester) async {
@@ -367,8 +373,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text(l10n.navJournal), findsOneWidget);
-    expect(find.text(l10n.navCashBank), findsNothing);
+    expect(find.text(l10n.navFinance), findsOneWidget);
+    expect(find.text(l10n.navInventory), findsNothing);
   });
 
   testWidgets('cash_bank.view shows cash and bank navigation item', (
@@ -384,8 +390,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text(l10n.navCashBank), findsOneWidget);
-    expect(find.text(l10n.navJournal), findsNothing);
+    expect(find.text(l10n.navFinance), findsOneWidget);
+    expect(find.text(l10n.navInventory), findsNothing);
   });
 
   testWidgets('finance nav items stay hidden without finance permissions', (
@@ -401,7 +407,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text(l10n.navInvoices), findsNothing);
+    expect(find.text(l10n.navFinance), findsNothing);
     expect(find.text(l10n.navContracts), findsNothing);
     expect(find.text(l10n.navVouchers), findsNothing);
     expect(find.text(l10n.navJournal), findsNothing);
@@ -419,7 +425,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text(l10n.navCalendar), findsOneWidget);
+    expect(find.text(l10n.navAppointmentsVisits), findsOneWidget);
   });
 
   testWidgets('calendar.view_assigned shows navCalendar', (tester) async {
@@ -433,7 +439,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text(l10n.navCalendar), findsOneWidget);
+    expect(find.text(l10n.navAppointmentsVisits), findsOneWidget);
   });
 
   testWidgets(
@@ -449,8 +455,8 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text(l10n.navCalendar), findsNothing);
-      expect(find.text(l10n.navCalendarSettings), findsOneWidget);
+      expect(find.text(l10n.navAppointmentsVisits), findsNothing);
+      expect(find.text(l10n.navSettings), findsOneWidget);
     },
   );
 
@@ -465,7 +471,86 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text(l10n.navCalendar), findsOneWidget);
+    expect(find.text(l10n.navAppointmentsVisits), findsOneWidget);
+  });
+
+  testWidgets('mixed finance permissions expose only authorized context tabs', (
+    tester,
+  ) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+
+    await tester.pumpWidget(
+      buildTestApp(
+        appSession: session(
+          permissions: {'invoices.view_sales', 'journal.view'},
+        ),
+        child: const AppShell(
+          title: 'Finance',
+          currentRoute: AppRoutes.invoices,
+          body: SizedBox.shrink(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const Key('shell-contextual-navigation')),
+      findsOneWidget,
+    );
+    expect(find.text(l10n.navInvoices), findsOneWidget);
+    expect(find.text(l10n.navJournal), findsOneWidget);
+    expect(find.text(l10n.navVouchers), findsNothing);
+    expect(find.text(l10n.navCashBank), findsNothing);
+  });
+
+  testWidgets('desktop sidebar collapses without losing module access', (
+    tester,
+  ) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+    await tester.pumpWidget(
+      buildTestApp(
+        appSession: session(permissions: {'contracts.view', 'products.view'}),
+        child: const AppShell(
+          title: 'Contracts',
+          currentRoute: AppRoutes.contracts,
+          body: SizedBox.shrink(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.navContracts), findsWidgets);
+    expect(find.text(l10n.navInventory), findsOneWidget);
+    await tester.tap(find.byKey(const Key('shell-sidebar-toggle')));
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.navInventory), findsNothing);
+    expect(find.byKey(const Key('shell-module-inventory')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('narrow shell uses a permission-shaped drawer', (tester) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+    await tester.pumpWidget(
+      buildTestApp(
+        appSession: session(permissions: {'contracts.view'}),
+        size: const Size(390, 844),
+        child: const AppShell(
+          title: 'Contracts',
+          currentRoute: AppRoutes.contracts,
+          body: SizedBox.shrink(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('app-navigation-drawer')), findsNothing);
+    await tester.tap(find.byTooltip('Open navigation menu'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('app-navigation-drawer')), findsOneWidget);
+    expect(find.text(l10n.navContracts), findsWidgets);
+    expect(find.text(l10n.navFinance), findsNothing);
+    expect(tester.takeException(), isNull);
   });
 }
 

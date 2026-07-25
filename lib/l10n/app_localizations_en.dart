@@ -2736,10 +2736,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navVouchers => 'Vouchers';
 
   @override
-  String get navJournal => 'Journal';
+  String get navJournal => 'Journal Entries';
 
   @override
   String get navCashBank => 'Cash & Bank';
+
+  @override
+  String get navAppointmentsVisits => 'Appointments & Visits';
+
+  @override
+  String get navCustomersSuppliers => 'Customers & Suppliers';
+
+  @override
+  String get navFinance => 'Finance';
+
+  @override
+  String get navInventory => 'Inventory';
+
+  @override
+  String get navSettings => 'Settings';
+
+  @override
+  String get shellCollapseSidebar => 'Collapse sidebar';
+
+  @override
+  String get shellExpandSidebar => 'Expand sidebar';
+
+  @override
+  String get shellContextNavigation => 'Module navigation';
+
+  @override
+  String get shellGlobalSearch => 'Global search';
+
+  @override
+  String get shellQuickCreate => 'Quick create';
+
+  @override
+  String get shellNotifications => 'Notifications';
+
+  @override
+  String get shellGlobalActions => 'Global actions';
 
   @override
   String get financePlaceholderM9Body =>

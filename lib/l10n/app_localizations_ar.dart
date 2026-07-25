@@ -2714,10 +2714,46 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navVouchers => 'السندات';
 
   @override
-  String get navJournal => 'اليومية';
+  String get navJournal => 'القيود اليومية';
 
   @override
   String get navCashBank => 'النقد والبنوك';
+
+  @override
+  String get navAppointmentsVisits => 'المواعيد والزيارات';
+
+  @override
+  String get navCustomersSuppliers => 'العملاء والموردون';
+
+  @override
+  String get navFinance => 'المالية';
+
+  @override
+  String get navInventory => 'المخزون';
+
+  @override
+  String get navSettings => 'الإعدادات';
+
+  @override
+  String get shellCollapseSidebar => 'طي القائمة الجانبية';
+
+  @override
+  String get shellExpandSidebar => 'توسيع القائمة الجانبية';
+
+  @override
+  String get shellContextNavigation => 'التنقل داخل القسم';
+
+  @override
+  String get shellGlobalSearch => 'البحث العام';
+
+  @override
+  String get shellQuickCreate => 'إنشاء سريع';
+
+  @override
+  String get shellNotifications => 'الإشعارات';
+
+  @override
+  String get shellGlobalActions => 'الإجراءات العامة';
 
   @override
   String get financePlaceholderM9Body =>

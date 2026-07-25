@@ -6,7 +6,6 @@ import '../../../core/routing/app_routes.dart';
 import '../../../shared/widgets/app_shell.dart';
 import '../../../shared/widgets/message_banner.dart';
 import 'widgets/authenticated_user_summary.dart';
-import 'widgets/sign_out_icon_button.dart';
 
 class BlockedScreen extends ConsumerWidget {
   const BlockedScreen({super.key});
@@ -21,7 +20,6 @@ class BlockedScreen extends ConsumerWidget {
     return AppShell(
       title: l10n.blockedTitle,
       currentRoute: AppRoutes.blocked,
-      actions: const [SignOutIconButton()],
       body: SingleChildScrollView(
         padding: const EdgeInsetsDirectional.all(24),
         child: Column(

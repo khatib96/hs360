@@ -5231,7 +5231,7 @@ abstract class AppLocalizations {
   /// No description provided for @navJournal.
   ///
   /// In en, this message translates to:
-  /// **'Journal'**
+  /// **'Journal Entries'**
   String get navJournal;
 
   /// No description provided for @navCashBank.
@@ -5239,6 +5239,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cash & Bank'**
   String get navCashBank;
+
+  /// No description provided for @navAppointmentsVisits.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointments & Visits'**
+  String get navAppointmentsVisits;
+
+  /// No description provided for @navCustomersSuppliers.
+  ///
+  /// In en, this message translates to:
+  /// **'Customers & Suppliers'**
+  String get navCustomersSuppliers;
+
+  /// No description provided for @navFinance.
+  ///
+  /// In en, this message translates to:
+  /// **'Finance'**
+  String get navFinance;
+
+  /// No description provided for @navInventory.
+  ///
+  /// In en, this message translates to:
+  /// **'Inventory'**
+  String get navInventory;
+
+  /// No description provided for @navSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get navSettings;
+
+  /// No description provided for @shellCollapseSidebar.
+  ///
+  /// In en, this message translates to:
+  /// **'Collapse sidebar'**
+  String get shellCollapseSidebar;
+
+  /// No description provided for @shellExpandSidebar.
+  ///
+  /// In en, this message translates to:
+  /// **'Expand sidebar'**
+  String get shellExpandSidebar;
+
+  /// No description provided for @shellContextNavigation.
+  ///
+  /// In en, this message translates to:
+  /// **'Module navigation'**
+  String get shellContextNavigation;
+
+  /// No description provided for @shellGlobalSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Global search'**
+  String get shellGlobalSearch;
+
+  /// No description provided for @shellQuickCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick create'**
+  String get shellQuickCreate;
+
+  /// No description provided for @shellNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get shellNotifications;
+
+  /// No description provided for @shellGlobalActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Global actions'**
+  String get shellGlobalActions;
 
   /// No description provided for @financePlaceholderM9Body.
   ///

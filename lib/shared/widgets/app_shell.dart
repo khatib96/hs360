@@ -1,34 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hs360/l10n/app_localizations.dart';
 
-import '../../core/routing/app_routes.dart';
-import '../../core/routing/route_guards.dart';
+import '../../core/routing/app_navigation.dart';
 import '../../core/theme/app_theme.dart';
-import '../../features/accounting/domain/accounting_permissions.dart';
 import '../../features/auth/domain/app_session.dart';
 import '../../features/auth/presentation/auth_controller.dart';
-import '../../features/customers/domain/customer_permissions.dart'
-    hide canViewVouchers;
-import '../../core/documents/domain/document_permissions.dart';
-import '../../features/calendar/domain/calendar_permissions.dart';
+import 'app_contextual_navigation.dart';
+import 'app_shell_controller.dart';
+import 'app_sidebar.dart';
+import 'app_top_bar.dart';
 
-class _NavItem {
-  const _NavItem({
-    required this.titleGetter,
-    required this.icon,
-    required this.route,
-    required this.isVisible,
-    this.matchChildren = false,
-  });
-
-  final String Function(AppLocalizations) titleGetter;
-  final IconData icon;
-  final String route;
-  final bool Function(AppSession) isVisible;
-  final bool matchChildren;
-}
+export 'app_brand_mark.dart';
 
 class AppShell extends ConsumerWidget {
   const AppShell({
@@ -48,11 +31,7 @@ class AppShell extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    final authState = ref.watch(authControllerProvider);
-    final session = authState.valueOrNull;
-
+    final session = ref.watch(authControllerProvider).valueOrNull;
     if (session == null) {
       return Scaffold(
         appBar: AppBar(title: Text(title), actions: actions),
@@ -61,141 +40,26 @@ class AppShell extends ConsumerWidget {
       );
     }
 
-    var actualPath = '';
-    try {
-      actualPath = GoRouterState.of(context).uri.path;
-    } catch (_) {}
-    final currentPath = currentRoute?.isNotEmpty == true
-        ? currentRoute!
-        : actualPath;
-
-    final allItems = [
-      _NavItem(
-        titleGetter: (l) => l.dashboard,
-        icon: Icons.dashboard_outlined,
-        route: AppRoutes.dashboard,
-        isVisible: canAccessDashboard,
-      ),
-      _NavItem(
-        titleGetter: (l) => l.fieldTodayTitle,
-        icon: Icons.assignment_outlined,
-        route: AppRoutes.fieldToday,
-        isVisible: canAccessField,
-      ),
-      _NavItem(
-        titleGetter: (l) => l.navCalendar,
-        icon: Icons.calendar_today_outlined,
-        route: AppRoutes.calendar,
-        isVisible: canAccessCalendar,
-        matchChildren: true,
-      ),
-      _NavItem(
-        titleGetter: (l) => l.products,
-        icon: Icons.shopping_bag_outlined,
-        route: AppRoutes.products,
-        isVisible: (session) => _can(session, 'products.view'),
-        matchChildren: true,
-      ),
-      _NavItem(
-        titleGetter: (l) => l.productsNew,
-        icon: Icons.add_box_outlined,
-        route: AppRoutes.productsNew,
-        isVisible: (session) => _can(session, 'products.create'),
-      ),
-      _NavItem(
-        titleGetter: (l) => l.customers,
-        icon: Icons.people_outline,
-        route: AppRoutes.customers,
-        isVisible: canViewCustomersArea,
-        matchChildren: true,
-      ),
-      _NavItem(
-        titleGetter: (l) => l.navContracts,
-        icon: Icons.assignment_outlined,
-        route: AppRoutes.contracts,
-        isVisible: canViewContracts,
-        matchChildren: true,
-      ),
-      _NavItem(
-        titleGetter: (l) => l.navInvoices,
-        icon: Icons.receipt_long_outlined,
-        route: AppRoutes.invoices,
-        isVisible: canViewAnyInvoices,
-        matchChildren: true,
-      ),
-      _NavItem(
-        titleGetter: (l) => l.navVouchers,
-        icon: Icons.payments_outlined,
-        route: AppRoutes.vouchers,
-        isVisible: canViewVouchers,
-        matchChildren: true,
-      ),
-      _NavItem(
-        titleGetter: (l) => l.navJournal,
-        icon: Icons.menu_book_outlined,
-        route: AppRoutes.journal,
-        isVisible: canViewJournal,
-        matchChildren: true,
-      ),
-      _NavItem(
-        titleGetter: (l) => l.navCashBank,
-        icon: Icons.account_balance_wallet_outlined,
-        route: AppRoutes.cashBank,
-        isVisible: canViewCashBank,
-      ),
-      _NavItem(
-        titleGetter: (l) => l.chartOfAccounts,
-        icon: Icons.account_tree_outlined,
-        route: AppRoutes.accounts,
-        isVisible: canViewChartOfAccounts,
-      ),
-      _NavItem(
-        titleGetter: (l) => l.warehouses,
-        icon: Icons.warehouse_outlined,
-        route: AppRoutes.warehouses,
-        isVisible: (session) => _can(session, 'warehouses.view'),
-      ),
-      _NavItem(
-        titleGetter: (l) => l.inventory,
-        icon: Icons.assessment_outlined,
-        route: AppRoutes.inventory,
-        isVisible: (session) => _can(session, 'inventory.view'),
-        matchChildren: true,
-      ),
-      _NavItem(
-        titleGetter: (l) => l.inventoryMovements,
-        icon: Icons.history,
-        route: AppRoutes.inventoryMovements,
-        isVisible: (session) => _can(session, 'inventory_movements.view'),
-      ),
-      _NavItem(
-        titleGetter: (l) => l.inventoryTransfers,
-        icon: Icons.swap_horiz,
-        route: AppRoutes.inventoryTransfers,
-        isVisible: (session) => _can(session, 'inventory_movements.create'),
-      ),
-      _NavItem(
-        titleGetter: (l) => l.templateSettingsTitle,
-        icon: Icons.description_outlined,
-        route: AppRoutes.templateSettings,
-        isVisible: canViewTemplateSettings,
-      ),
-      _NavItem(
-        titleGetter: (l) => l.navCalendarSettings,
-        icon: Icons.calendar_month_outlined,
-        route: AppRoutes.calendarSettings,
-        isVisible: canViewCalendarSettings,
-      ),
-    ];
-
-    final authorizedItems = allItems
-        .where((item) => item.isVisible(session))
-        .toList();
-    final activeRoute = _activeNavRoute(currentPath, authorizedItems);
-    final showBackButton = _shouldShowBackButton(actualPath, activeRoute);
-    final backTarget = _backTarget(actualPath, activeRoute, session);
-    final leading = showBackButton
+    final actualUri = _routerUri(context);
+    final navigationUri = actualUri.path.isEmpty
+        ? Uri(path: currentRoute ?? '')
+        : actualUri;
+    final module = resolveNavigationModule(
+      navigationUri,
+      session,
+      hintedPath: currentRoute,
+    );
+    final destination = resolveNavigationDestination(
+      navigationUri,
+      session,
+      module,
+      hintedPath: currentRoute,
+    );
+    final showBack = shouldShowShellBackButton(navigationUri, destination);
+    final backTarget = shellBackTarget(navigationUri, session, module);
+    final leading = showBack
         ? BackButton(
+            key: const Key('shell-back-button'),
             onPressed: () {
               if (context.canPop()) {
                 context.pop();
@@ -205,183 +69,63 @@ class AppShell extends ConsumerWidget {
             },
           )
         : null;
-    // AppShell chrome only — independent of calendar content breakpoints.
     final isDesktop = MediaQuery.sizeOf(context).width > 768;
 
-    if (isDesktop) {
+    if (!isDesktop) {
       return Scaffold(
-        body: Row(
-          children: [
-            _DesktopNavigation(
-              l10n: l10n,
-              theme: theme,
-              activeRoute: activeRoute,
-              items: authorizedItems,
-            ),
-            const VerticalDivider(width: 1, color: AppColors.neutral200),
-            Expanded(
-              child: Scaffold(
-                appBar: AppBar(
-                  leading: leading,
-                  title: Text(title),
-                  actions: actions,
-                ),
-                body: SafeArea(child: body),
-                floatingActionButton: floatingActionButton,
-              ),
-            ),
-          ],
+        appBar: AppTopBar(
+          title: title,
+          module: module,
+          session: session,
+          leading: leading,
+          featureActions: actions,
         ),
+        drawer: showBack
+            ? null
+            : AppNavigationDrawer(session: session, activeModule: module),
+        body: SafeArea(
+          child: _ShellContent(
+            module: module,
+            destination: destination,
+            session: session,
+            body: body,
+          ),
+        ),
+        floatingActionButton: floatingActionButton,
       );
     }
 
+    final collapsed = ref.watch(appSidebarCollapsedProvider);
     return Scaffold(
-      appBar: AppBar(leading: leading, title: Text(title), actions: actions),
-      drawer: showBackButton
-          ? null
-          : _MobileNavigationDrawer(
-              l10n: l10n,
-              theme: theme,
-              session: session,
-              activeRoute: activeRoute,
-              items: authorizedItems,
-            ),
-      body: SafeArea(child: body),
-      floatingActionButton: floatingActionButton,
-    );
-  }
-}
-
-class _DesktopNavigation extends StatelessWidget {
-  const _DesktopNavigation({
-    required this.l10n,
-    required this.theme,
-    required this.items,
-    required this.activeRoute,
-  });
-
-  final AppLocalizations l10n;
-  final ThemeData theme;
-  final List<_NavItem> items;
-  final String? activeRoute;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: const BoxDecoration(color: AppColors.pureWhite),
-      child: Stack(
+      body: Row(
         children: [
-          const Positioned.fill(
-            child: CustomPaint(painter: _ShellNavBackgroundPainter()),
+          AppSidebar(
+            session: session,
+            activeModule: module,
+            collapsed: collapsed,
+            onToggleCollapsed: () {
+              ref.read(appSidebarCollapsedProvider.notifier).state = !collapsed;
+            },
           ),
-          SizedBox(
-            width: 240,
-            child: SafeArea(
-              child: Column(
-                children: [
-                  const Padding(
-                    padding: EdgeInsetsDirectional.symmetric(
-                      vertical: 24,
-                      horizontal: 16,
-                    ),
-                    child: AppBrandMark(title: 'HS360', width: 180),
-                  ),
-                  const Divider(color: AppColors.neutral100, height: 1),
-                  Expanded(
-                    child: ListView.builder(
-                      padding: const EdgeInsetsDirectional.symmetric(
-                        vertical: 12,
-                      ),
-                      itemCount: items.length,
-                      itemBuilder: (context, index) {
-                        final item = items[index];
-                        final isActive = activeRoute == item.route;
-
-                        return _NavigationTile(
-                          item: item,
-                          l10n: l10n,
-                          theme: theme,
-                          isActive: isActive,
-                          onTap: () => context.go(item.route),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _MobileNavigationDrawer extends StatelessWidget {
-  const _MobileNavigationDrawer({
-    required this.l10n,
-    required this.theme,
-    required this.session,
-    required this.items,
-    required this.activeRoute,
-  });
-
-  final AppLocalizations l10n;
-  final ThemeData theme;
-  final AppSession session;
-  final List<_NavItem> items;
-  final String? activeRoute;
-
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      backgroundColor: AppColors.pureWhite,
-      child: Column(
-        children: [
-          DrawerHeader(
-            decoration: const BoxDecoration(color: AppColors.pureWhite),
-            child: Stack(
-              children: [
-                const Positioned.fill(
-                  child: CustomPaint(painter: _ShellNavBackgroundPainter()),
-                ),
-                Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const AppBrandMark(title: 'HS360', width: 180),
-                      const SizedBox(height: 8),
-                      Text(
-                        session.displayName,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: AppColors.charcoal,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+          const VerticalDivider(width: 1, color: AppColors.neutral200),
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsetsDirectional.symmetric(vertical: 8),
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                final item = items[index];
-                final isActive = activeRoute == item.route;
-
-                return _NavigationTile(
-                  item: item,
-                  l10n: l10n,
-                  theme: theme,
-                  isActive: isActive,
-                  onTap: () {
-                    Navigator.pop(context);
-                    context.go(item.route);
-                  },
-                );
-              },
+            child: Scaffold(
+              appBar: AppTopBar(
+                title: title,
+                module: module,
+                session: session,
+                leading: leading,
+                featureActions: actions,
+              ),
+              body: SafeArea(
+                child: _ShellContent(
+                  module: module,
+                  destination: destination,
+                  session: session,
+                  body: body,
+                ),
+              ),
+              floatingActionButton: floatingActionButton,
             ),
           ),
         ],
@@ -390,214 +134,40 @@ class _MobileNavigationDrawer extends StatelessWidget {
   }
 }
 
-class _NavigationTile extends StatelessWidget {
-  const _NavigationTile({
-    required this.item,
-    required this.l10n,
-    required this.theme,
-    required this.isActive,
-    required this.onTap,
+class _ShellContent extends StatelessWidget {
+  const _ShellContent({
+    required this.module,
+    required this.destination,
+    required this.session,
+    required this.body,
   });
 
-  final _NavItem item;
-  final AppLocalizations l10n;
-  final ThemeData theme;
-  final bool isActive;
-  final VoidCallback onTap;
+  final AppNavigationModule? module;
+  final AppNavigationDestination? destination;
+  final AppSession session;
+  final Widget body;
 
   @override
   Widget build(BuildContext context) {
-    final foreground = isActive ? AppColors.pureWhite : AppColors.charcoal;
-
-    final borderRadius = BorderRadius.circular(8);
-
-    return Padding(
-      padding: const EdgeInsetsDirectional.symmetric(
-        horizontal: 12,
-        vertical: 4,
-      ),
-      child: Material(
-        color: isActive ? AppColors.gold : Colors.transparent,
-        borderRadius: borderRadius,
-        clipBehavior: Clip.antiAlias,
-        child: ListTile(
-          contentPadding: const EdgeInsetsDirectional.symmetric(horizontal: 16),
-          leading: Icon(item.icon, color: foreground),
-          title: Text(
-            item.titleGetter(l10n),
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: foreground,
-              fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (module != null)
+          AppContextualNavigation(
+            module: module!,
+            activeDestination: destination,
+            session: session,
           ),
-          shape: RoundedRectangleBorder(borderRadius: borderRadius),
-          tileColor: Colors.transparent,
-          selected: isActive,
-          selectedTileColor: Colors.transparent,
-          onTap: onTap,
-        ),
-      ),
+        Expanded(child: body),
+      ],
     );
   }
 }
 
-bool _can(AppSession session, String permissionId) =>
-    session.isManager || session.permissions.can(permissionId);
-
-String? _activeNavRoute(String currentPath, List<_NavItem> items) {
-  _NavItem? bestMatch;
-
-  for (final item in items) {
-    if (!_matchesNavItem(currentPath, item)) continue;
-    if (bestMatch == null || item.route.length > bestMatch.route.length) {
-      bestMatch = item;
-    }
-  }
-
-  return bestMatch?.route;
-}
-
-bool _matchesNavItem(String currentPath, _NavItem item) {
-  if (currentPath == item.route) return true;
-  return item.matchChildren && currentPath.startsWith('${item.route}/');
-}
-
-bool _shouldShowBackButton(String actualPath, String? activeRoute) {
-  if (actualPath.isEmpty) return false;
-  if (actualPath == AppRoutes.productsNew ||
-      actualPath == AppRoutes.inventoryTransfers ||
-      actualPath == AppRoutes.documentPreview) {
-    return true;
-  }
-  return activeRoute == null || actualPath != activeRoute;
-}
-
-String _backTarget(String actualPath, String? activeRoute, AppSession session) {
-  if (actualPath == AppRoutes.productsNew ||
-      actualPath.startsWith('/products/')) {
-    return AppRoutes.products;
-  }
-  if (actualPath.startsWith('/product-units/')) return AppRoutes.products;
-  if (actualPath.startsWith('/customers/')) return AppRoutes.customers;
-  if (actualPath.startsWith('/suppliers/')) return AppRoutes.suppliers;
-  if (actualPath.startsWith('/contracts/')) return AppRoutes.contracts;
-  if (actualPath.startsWith('/invoices/')) return AppRoutes.invoices;
-  if (actualPath.startsWith('/vouchers/')) return AppRoutes.vouchers;
-  if (actualPath.startsWith('/journal/')) return AppRoutes.journal;
-  if (actualPath == AppRoutes.inventoryTransfers ||
-      actualPath.startsWith('/inventory/documents/')) {
-    return AppRoutes.inventory;
-  }
-  if (activeRoute != null && activeRoute.isNotEmpty) return activeRoute;
-  return resolveHomeRoute(session);
-}
-
-class _ShellNavBackgroundPainter extends CustomPainter {
-  const _ShellNavBackgroundPainter();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final ribbonPaint = Paint()
-      ..color = AppColors.gold.withValues(alpha: 0.08)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 28
-      ..strokeCap = StrokeCap.round;
-
-    final finePaint = Paint()
-      ..color = AppColors.gold.withValues(alpha: 0.06)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
-
-    final accentPaint = Paint()
-      ..color = AppColors.gold.withValues(alpha: 0.12)
-      ..style = PaintingStyle.fill;
-
-    final mainCurve = Path()
-      ..moveTo(size.width * 0.08, size.height * 0.14)
-      ..cubicTo(
-        size.width * 0.46,
-        size.height * 0.02,
-        size.width * 0.56,
-        size.height * 0.36,
-        size.width * 1.04,
-        size.height * 0.18,
-      );
-    canvas.drawPath(mainCurve, ribbonPaint);
-
-    final lowerCurve = Path()
-      ..moveTo(size.width * 0.04, size.height * 0.9)
-      ..cubicTo(
-        size.width * 0.36,
-        size.height * 0.76,
-        size.width * 0.7,
-        size.height * 1.04,
-        size.width * 1.08,
-        size.height * 0.78,
-      );
-    canvas.drawPath(lowerCurve, finePaint);
-
-    final corner = Path()
-      ..moveTo(size.width, 0)
-      ..lineTo(size.width, size.height * 0.18)
-      ..lineTo(size.width * 0.84, size.height * 0.06)
-      ..close();
-    canvas.drawPath(corner, accentPaint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-class AppBrandMark extends StatelessWidget {
-  static const logoAssetPath = 'assets/brand/hs-logo-gold.png';
-
-  const AppBrandMark({required this.title, this.width = 220, super.key});
-
-  final String title;
-  final double width;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      image: true,
-      label: title,
-      child: ExcludeSemantics(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final maxW = constraints.maxWidth.isFinite
-                ? constraints.maxWidth.clamp(0.0, width).toDouble()
-                : width;
-            return SizedBox(
-              width: maxW > 0 ? maxW : width,
-              child: AspectRatio(
-                aspectRatio: 220 / 88,
-                child: FittedBox(
-                  fit: BoxFit.contain,
-                  child: SizedBox(
-                    width: width,
-                    height: width * 88 / 220,
-                    child: Image.asset(
-                      logoAssetPath,
-                      fit: BoxFit.contain,
-                      filterQuality: FilterQuality.high,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Text(
-                          title,
-                          style: const TextStyle(
-                            color: AppColors.gold,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-    );
+Uri _routerUri(BuildContext context) {
+  try {
+    return GoRouterState.of(context).uri;
+  } catch (_) {
+    return Uri();
   }
 }
