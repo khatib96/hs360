@@ -95,12 +95,13 @@ class ProductListScreen extends ConsumerWidget {
     return AppShell(
       title: l10n.products,
       currentRoute: AppRoutes.products,
-      actions: [
+      moduleActions: [
         if (showNewProductAction)
-          IconButton(
-            icon: const Icon(Icons.add),
-            tooltip: l10n.productsNew,
+          FilledButton.icon(
+            key: const Key('product-create-command'),
             onPressed: () => context.go(AppRoutes.productsNew),
+            icon: const Icon(Icons.add),
+            label: Text(l10n.productsNew),
           ),
       ],
       body: SizedBox.expand(

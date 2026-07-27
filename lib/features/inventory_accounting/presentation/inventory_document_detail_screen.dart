@@ -41,6 +41,7 @@ class InventoryDocumentDetailScreen extends ConsumerWidget {
       );
     }
 
+    final moduleActions = <Widget>[];
     Widget body;
     if (state.isLoading && state.detail == null) {
       body = Center(
@@ -64,6 +65,18 @@ class InventoryDocumentDetailScreen extends ConsumerWidget {
       final detail = state.detail!;
       final summary = detail.summary;
       final isWide = MediaQuery.sizeOf(context).width > 768;
+      if (session != null && controller.canShowCancelButton(session)) {
+        moduleActions.add(
+          OutlinedButton.icon(
+            key: const Key('inventory-document-cancel-command'),
+            onPressed: state.isSubmitting
+                ? null
+                : () => _showCancelDialog(context, controller, l10n),
+            icon: const Icon(Icons.block_outlined),
+            label: Text(l10n.inventoryDocumentCancelAction),
+          ),
+        );
+      }
 
       body = Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -149,16 +162,6 @@ class InventoryDocumentDetailScreen extends ConsumerWidget {
               child: Text(l10n.inventoryDocumentReversalJournal),
             ),
           ],
-          if (session != null && controller.canShowCancelButton(session))
-            Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: OutlinedButton(
-                onPressed: state.isSubmitting
-                    ? null
-                    : () => _showCancelDialog(context, controller, l10n),
-                child: Text(l10n.inventoryDocumentCancelAction),
-              ),
-            ),
         ],
       );
     }
@@ -166,6 +169,7 @@ class InventoryDocumentDetailScreen extends ConsumerWidget {
     return AppShell(
       title: l10n.inventoryDocumentsTitle,
       currentRoute: AppRoutes.inventoryDocumentDetailPath(documentId),
+      moduleActions: moduleActions,
       body: Padding(padding: const EdgeInsetsDirectional.all(24), child: body),
     );
   }

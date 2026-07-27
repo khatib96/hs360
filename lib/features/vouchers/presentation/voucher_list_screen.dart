@@ -5,7 +5,10 @@ import 'package:hs360/l10n/app_localizations.dart';
 
 import '../../../core/localization/locale_controller.dart';
 import '../../../core/routing/app_routes.dart';
+import '../../../shared/widgets/app_filter_bar.dart';
 import '../../../shared/widgets/app_shell.dart';
+import '../../../shared/widgets/app_state_view.dart';
+import '../../../shared/widgets/app_table_frame.dart';
 import '../../auth/domain/app_session.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../../finance_shared/presentation/finance_placeholder_screen.dart';
@@ -15,7 +18,6 @@ import '../domain/voucher_type.dart';
 import 'voucher_display_helpers.dart';
 import 'voucher_list_controller.dart';
 import 'widgets/voucher_filters_bar.dart';
-import 'widgets/voucher_shared_widgets.dart';
 import 'widgets/voucher_table.dart';
 
 class VoucherListScreen extends ConsumerWidget {
@@ -41,36 +43,28 @@ class VoucherListScreen extends ConsumerWidget {
     final availableTypes = session == null
         ? const <VoucherType>[]
         : voucherListTypeOptions();
+    final canCreateVoucher =
+        session != null &&
+        (canCreateReceiptVoucher(session) || canCreatePaymentVoucher(session));
 
     final isWide = InvoiceDesign.isDesktop(context);
     Widget tableArea;
     if (state.isLoading && state.vouchers.isEmpty) {
-      tableArea = _InTableMessage(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const CircularProgressIndicator(),
-            const SizedBox(height: 16),
-            Text(l10n.loading),
-          ],
-        ),
-      );
+      tableArea = AppStateView.loading(message: l10n.loading);
     } else if (state.hasError && state.vouchers.isEmpty) {
-      tableArea = _InTableMessage(
-        child: VoucherErrorState(
-          message: voucherErrorMessage(l10n, state.errorCode!),
-          onRetry: controller.refresh,
+      tableArea = AppStateView.error(
+        message: voucherErrorMessage(l10n, state.errorCode!),
+        action: FilledButton(
+          onPressed: controller.refresh,
+          child: Text(l10n.retry),
         ),
       );
     } else if (!state.isLoading && state.vouchers.isEmpty) {
-      tableArea = _InTableMessage(
-        child: Text(
-          state.filters.hasActiveFilters
-              ? l10n.voucherListEmptyFiltered
-              : l10n.voucherListEmpty,
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodyLarge,
-        ),
+      tableArea = AppStateView.empty(
+        icon: Icons.payments_outlined,
+        message: state.filters.hasActiveFilters
+            ? l10n.voucherListEmptyFiltered
+            : l10n.voucherListEmpty,
       );
     } else {
       tableArea = isWide
@@ -84,35 +78,26 @@ class VoucherListScreen extends ConsumerWidget {
             );
     }
 
-    final tableContainer = DecoratedBox(
-      decoration: InvoiceDesign.panel,
-      child: ClipRRect(borderRadius: InvoiceDesign.radius, child: tableArea),
-    );
-
     final body = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (session != null) ...[
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: _VoucherCreateMenu(session: session),
-          ),
-          const SizedBox(height: 12),
-        ],
         if (availableTypes.isNotEmpty) ...[
-          VoucherFiltersBar(
-            key: const Key('voucher-filters-bar'),
-            filters: state.filters,
-            availableTypes: availableTypes,
-            onTypeChanged: controller.setType,
-            onStatusChanged: controller.setStatus,
-            onSearchChanged: controller.setSearch,
-            onDateFromChanged: controller.setDateFrom,
-            onDateToChanged: controller.setDateTo,
+          AppFilterBar(
+            compact: true,
+            child: VoucherFiltersBar(
+              key: const Key('voucher-filters-bar'),
+              filters: state.filters,
+              availableTypes: availableTypes,
+              onTypeChanged: controller.setType,
+              onStatusChanged: controller.setStatus,
+              onSearchChanged: controller.setSearch,
+              onDateFromChanged: controller.setDateFrom,
+              onDateToChanged: controller.setDateTo,
+            ),
           ),
           const SizedBox(height: 12),
         ],
-        Expanded(child: tableContainer),
+        Expanded(child: AppTableFrame(child: tableArea)),
         if (state.hasMore)
           Padding(
             padding: const EdgeInsets.only(top: 10),
@@ -131,6 +116,9 @@ class VoucherListScreen extends ConsumerWidget {
     return AppShell(
       title: l10n.voucherTitle,
       currentRoute: AppRoutes.vouchers,
+      moduleActions: canCreateVoucher
+          ? [_VoucherCreateMenu(session: session)]
+          : null,
       body: Stack(
         children: [
           Padding(padding: InvoiceDesign.pagePadding, child: body),
@@ -180,22 +168,6 @@ class _VoucherCreateMenu extends StatelessWidget {
             controller.isOpen ? controller.close() : controller.open(),
         icon: const Icon(Icons.add, size: 18),
         label: Text(l10n.invoiceCreateNew),
-      ),
-    );
-  }
-}
-
-class _InTableMessage extends StatelessWidget {
-  const _InTableMessage({required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsetsDirectional.all(32),
-        child: child,
       ),
     );
   }

@@ -25,59 +25,29 @@ class CustomersHubScreen extends ConsumerWidget {
     final showCustomers = session != null && canViewCustomers(session);
     final showSuppliers = session != null && canViewSuppliers(session);
 
-    final visibleTabCount = (showCustomers ? 1 : 0) + (showSuppliers ? 1 : 0);
-
+    final selectedTab =
+        initialTab == CustomersHubTab.suppliers && showSuppliers ||
+            !showCustomers && showSuppliers
+        ? CustomersHubTab.suppliers
+        : CustomersHubTab.customers;
     Widget body;
-    if (visibleTabCount == 0) {
+    if (!showCustomers && !showSuppliers) {
       body = _PlaceholderBody(message: l10n.moduleAccessUnavailable);
-    } else if (visibleTabCount == 1) {
-      body = showCustomers
-          ? const CustomersTabBody()
-          : const SuppliersTabBody();
     } else {
-      final initialIndex = _resolveInitialIndex(
-        showCustomers: showCustomers,
-        showSuppliers: showSuppliers,
-        initialTab: initialTab,
-      );
-      body = DefaultTabController(
-        length: 2,
-        initialIndex: initialIndex,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TabBar(
-              tabs: [
-                Tab(key: const Key('customers-tab'), text: l10n.customers),
-                Tab(key: const Key('suppliers-tab'), text: l10n.suppliers),
-              ],
-            ),
-            const Expanded(
-              child: TabBarView(
-                children: [CustomersTabBody(), SuppliersTabBody()],
-              ),
-            ),
-          ],
-        ),
-      );
+      body = selectedTab == CustomersHubTab.suppliers
+          ? const SuppliersTabBody()
+          : const CustomersTabBody();
     }
 
     return AppShell(
-      title: l10n.customers,
-      currentRoute: AppRoutes.customers,
+      title: selectedTab == CustomersHubTab.suppliers
+          ? l10n.suppliers
+          : l10n.customers,
+      currentRoute: selectedTab == CustomersHubTab.suppliers
+          ? AppRoutes.suppliers
+          : AppRoutes.customers,
       body: body,
     );
-  }
-
-  int _resolveInitialIndex({
-    required bool showCustomers,
-    required bool showSuppliers,
-    required CustomersHubTab? initialTab,
-  }) {
-    if (initialTab == CustomersHubTab.suppliers && showSuppliers) {
-      return 1;
-    }
-    return 0;
   }
 }
 

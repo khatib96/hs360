@@ -175,7 +175,7 @@ class InventoryDocumentListScreen extends ConsumerWidget {
     return AppShell(
       title: l10n.inventoryDocumentsTitle,
       currentRoute: AppRoutes.inventoryDocuments,
-      actions: actions.isEmpty ? null : actions,
+      moduleActions: actions.isEmpty ? null : actions,
       body: Stack(
         children: [
           Padding(padding: const EdgeInsetsDirectional.all(24), child: body),

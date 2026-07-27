@@ -123,7 +123,7 @@ class ContractListScreen extends ConsumerWidget {
     return AppShell(
       title: l10n.contractTitle,
       currentRoute: AppRoutes.contracts,
-      actions: actions,
+      moduleActions: actions,
       body: Padding(padding: InvoiceDesign.pagePadding, child: body),
     );
   }

@@ -7,6 +7,8 @@ import '../../../core/errors/products_exception.dart';
 import '../../../core/localization/locale_controller.dart';
 import '../../../core/routing/app_routes.dart';
 import '../../../shared/widgets/app_shell.dart';
+import '../../../shared/widgets/app_state_view.dart';
+import '../../../shared/widgets/app_table_frame.dart';
 import '../../../shared/widgets/message_banner.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../domain/inventory_permissions.dart';
@@ -37,23 +39,20 @@ class WarehousesScreen extends ConsumerWidget {
 
     Widget body;
     if (state.isLoading && state.warehouses.isEmpty) {
-      body = Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const CircularProgressIndicator(),
-            const SizedBox(height: 16),
-            Text(l10n.loading),
-          ],
+      body = AppStateView.loading(message: l10n.loading);
+    } else if (state.hasError && state.warehouses.isEmpty) {
+      body = AppStateView.error(
+        message: _errorMessage(l10n, state.errorCode),
+        action: FilledButton(
+          onPressed: controller.refresh,
+          child: Text(l10n.retry),
         ),
       );
-    } else if (state.hasError && state.warehouses.isEmpty) {
-      body = _WarehousesErrorState(
-        message: _errorMessage(l10n, state.errorCode),
-        onRetry: controller.refresh,
-      );
     } else if (!state.isLoading && state.warehouses.isEmpty) {
-      body = _WarehousesEmptyState(canCreate: canCreate);
+      body = AppStateView.empty(
+        icon: Icons.warehouse_outlined,
+        message: l10n.warehouseListEmpty,
+      );
     } else {
       body = Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -76,25 +75,27 @@ class WarehousesScreen extends ConsumerWidget {
             const SizedBox(height: 16),
           ],
           Expanded(
-            child: WarehouseTable(
-              warehouses: state.warehouses,
-              languageCode: languageCode,
-              employeesById: state.employeesById,
-              inactiveEmployeeHint: l10n.warehouseEmployeeInactiveHint,
-              canEdit: canEdit,
-              canViewStock: canViewStock,
-              onViewStock: (warehouse) => context.go(
-                '${AppRoutes.inventory}?warehouseId=${Uri.encodeComponent(warehouse.id)}',
+            child: AppTableFrame(
+              child: WarehouseTable(
+                warehouses: state.warehouses,
+                languageCode: languageCode,
+                employeesById: state.employeesById,
+                inactiveEmployeeHint: l10n.warehouseEmployeeInactiveHint,
+                canEdit: canEdit,
+                canViewStock: canViewStock,
+                onViewStock: (warehouse) => context.go(
+                  '${AppRoutes.inventory}?warehouseId=${Uri.encodeComponent(warehouse.id)}',
+                ),
+                onEdit: (warehouse) => _showFormDialog(
+                  context,
+                  ref,
+                  languageCode,
+                  state: state,
+                  initial: warehouse,
+                ),
+                onDeactivate: (warehouse) =>
+                    _confirmDeactivate(context, ref, warehouse),
               ),
-              onEdit: (warehouse) => _showFormDialog(
-                context,
-                ref,
-                languageCode,
-                state: state,
-                initial: warehouse,
-              ),
-              onDeactivate: (warehouse) =>
-                  _confirmDeactivate(context, ref, warehouse),
             ),
           ),
         ],
@@ -104,13 +105,14 @@ class WarehousesScreen extends ConsumerWidget {
     return AppShell(
       title: l10n.warehouses,
       currentRoute: AppRoutes.warehouses,
-      actions: [
+      moduleActions: [
         if (canCreate)
-          IconButton(
-            icon: const Icon(Icons.add),
-            tooltip: l10n.warehouseAdd,
+          FilledButton.icon(
+            key: const Key('warehouse-create-command'),
             onPressed: () =>
                 _showFormDialog(context, ref, languageCode, state: state),
+            icon: const Icon(Icons.add),
+            label: Text(l10n.warehouseAdd),
           ),
       ],
       body: SizedBox.expand(
@@ -218,59 +220,5 @@ class WarehousesScreen extends ConsumerWidget {
         SnackBar(content: Text(warehouseErrorMessage(l10n, errorCode))),
       );
     }
-  }
-}
-
-class _WarehousesEmptyState extends StatelessWidget {
-  const _WarehousesEmptyState({required this.canCreate});
-
-  final bool canCreate;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.warehouse_outlined,
-            size: 48,
-            color: Theme.of(context).colorScheme.outline,
-          ),
-          const SizedBox(height: 16),
-          Text(l10n.warehouseListEmpty),
-          if (canCreate) ...[
-            const SizedBox(height: 8),
-            Text(
-              l10n.warehouseAdd,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class _WarehousesErrorState extends StatelessWidget {
-  const _WarehousesErrorState({required this.message, required this.onRetry});
-
-  final String message;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(message, textAlign: TextAlign.center),
-          const SizedBox(height: 16),
-          FilledButton(onPressed: onRetry, child: Text(l10n.retry)),
-        ],
-      ),
-    );
   }
 }

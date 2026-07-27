@@ -5288,6 +5288,12 @@ abstract class AppLocalizations {
   /// **'Module navigation'**
   String get shellContextNavigation;
 
+  /// No description provided for @shellModuleActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Module actions'**
+  String get shellModuleActions;
+
   /// No description provided for @shellGlobalSearch.
   ///
   /// In en, this message translates to:

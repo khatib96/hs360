@@ -2744,6 +2744,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get shellContextNavigation => 'التنقل داخل القسم';
 
   @override
+  String get shellModuleActions => 'إجراءات الوحدة';
+
+  @override
   String get shellGlobalSearch => 'البحث العام';
 
   @override

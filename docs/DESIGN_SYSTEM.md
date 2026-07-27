@@ -265,6 +265,7 @@ M2 implements the accepted Option C application hierarchy:
 | Expanded/collapsed module navigation and narrow drawer | `AppSidebar` |
 | Page/module context, locale, and global-action anchors | `AppTopBar` |
 | Permission-shaped module destinations | `AppContextualNavigation` |
+| Permission-shaped feature commands inside a module | `AppModuleCommandBar` |
 | Signed-in identity and session actions | `AppUserCard` |
 | Canonical module/route metadata and back targets | `app_navigation.dart` |
 
@@ -273,6 +274,12 @@ derived from the same typed metadata and omitted when unauthorized. At narrow
 widths the sidebar becomes a drawer; on desktop it can collapse to icons with
 accessible labels and tooltips. Arabic mirrors the hierarchy through RTL
 rather than maintaining a separate layout.
+
+M3 places create, transfer, adjustment, count, and other feature-owned commands
+below contextual navigation rather than mixing them into the global utility
+bar or list content. The command bar scrolls horizontally at narrow widths;
+each feature remains responsible for exact permission, record-state, and
+confirmation behavior.
 
 ---
 

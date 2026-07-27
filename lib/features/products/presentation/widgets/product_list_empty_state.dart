@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hs360/l10n/app_localizations.dart';
-
-import '../../../../core/routing/app_routes.dart';
 
 class ProductListEmptyState extends StatelessWidget {
   const ProductListEmptyState({
@@ -37,12 +34,8 @@ class ProductListEmptyState extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             if (canCreateProduct) ...[
-              const SizedBox(height: 24),
-              FilledButton.icon(
-                onPressed: () => context.go(AppRoutes.productsNew),
-                icon: const Icon(Icons.add),
-                label: Text(l10n.productsNew),
-              ),
+              const SizedBox(height: 8),
+              Text(l10n.productsNew, style: theme.textTheme.bodySmall),
             ],
             if (onClearFilters != null) ...[
               const SizedBox(height: 24),

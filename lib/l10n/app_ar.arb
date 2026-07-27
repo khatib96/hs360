@@ -903,6 +903,7 @@
   "shellCollapseSidebar": "طي القائمة الجانبية",
   "shellExpandSidebar": "توسيع القائمة الجانبية",
   "shellContextNavigation": "التنقل داخل القسم",
+  "shellModuleActions": "إجراءات الوحدة",
   "shellGlobalSearch": "البحث العام",
   "shellQuickCreate": "إنشاء سريع",
   "shellNotifications": "الإشعارات",

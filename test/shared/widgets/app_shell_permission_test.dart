@@ -132,6 +132,41 @@ void main() {
     },
   );
 
+  testWidgets('products list exposes create as an in-module command', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          authControllerProvider.overrideWith(
+            () => TestAuthController(
+              session(permissions: {'products.view', 'products.create'}),
+            ),
+          ),
+          productRepositoryProvider.overrideWith(
+            (ref) => FakeProductRepository(),
+          ),
+          productGroupRepositoryProvider.overrideWith(
+            (ref) => FakeProductGroupRepository(),
+          ),
+        ],
+        child: MaterialApp(
+          locale: const Locale('en'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const MediaQuery(
+            data: MediaQueryData(size: Size(1024, 768)),
+            child: ProductListScreen(),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('shell-module-command-bar')), findsOneWidget);
+    expect(find.byKey(const Key('product-create-command')), findsOneWidget);
+  });
+
   testWidgets('inventory page hides movement actions without movement grants', (
     tester,
   ) async {

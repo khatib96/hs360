@@ -2766,6 +2766,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get shellContextNavigation => 'Module navigation';
 
   @override
+  String get shellModuleActions => 'Module actions';
+
+  @override
   String get shellGlobalSearch => 'Global search';
 
   @override

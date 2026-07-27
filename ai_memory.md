@@ -1,13 +1,46 @@
 # ai_memory.md - AI Collaboration Memory
 
-> Updated 2026-07-25 (Session: **PHASE 7.5 M0, M0.5, M1, AND M2 CLOSED / ACCEPTED; M3 NEXT**).
+> Updated 2026-07-27 (Session: **PHASE 7.5 M0–M3 CLOSED / ACCEPTED; M4 NEXT**).
 > Gates D/E/F **`PASS / OWNER ACCEPTED`**; Gate F acceptance uses physical iOS
 > + Android Emulator evidence. Gate G and Final Gate H **PASS** through `104`.
-> M12 and Phase 7 **`CLOSED / ACCEPTED`**. Phase 7.5 **M0, M0.5, M1, AND M2
-> ARE CLOSED / ACCEPTED; M3 IS NEXT / NOT STARTED**. Phase 8
+> M12 and Phase 7 **`CLOSED / ACCEPTED`**. Phase 7.5 **M0–M3 ARE CLOSED /
+> ACCEPTED; M4 IS NEXT / NOT STARTED**. Phase 8
 > **NOT STARTED**.
 > Permanent pre-production constraint: **physical Android smoke is required**
 > under the owner-approved deferral. No commit/push performed.
+
+---
+
+## Session 2026-07-27 - Phase 7.5 M3 Closed / Accepted
+
+**Decision:** implemented and closed Module Consolidation and Existing Screen
+Adoption. Feature-owned, permission-shaped commands now use a consistent
+`AppModuleCommandBar` beneath contextual navigation. It supports narrow
+horizontal overflow without moving business behavior out of feature owners.
+
+**Consolidation:** Products, Warehouses, Inventory Balances/Documents,
+Invoices, Vouchers, Contracts, and Calendar moved relevant create/transfer/
+adjustment/count actions from the global top bar or list body into the module
+command area. Inventory-document cancel is state/permission-filtered there and
+keeps its reason dialog. Customers/Suppliers no longer render a second internal
+tab bar; `/customers` and `/suppliers` select their body under the canonical
+shell context.
+
+**Shared adoption:** Voucher, Supplier, and Warehouse lists now consume the
+shared filter, loading/error/empty, and table boundaries. Existing record
+detail command patterns and all unavailable future tabs remain intact/hidden.
+
+**Boundary:** existing URLs, deep links, route guards, permissions, RPCs,
+repositories, posting semantics, and business workflows are unchanged. No
+migration or database contract was added.
+
+**Gates:** `flutter analyze` clean; complete Flutter suite **1450 passed**;
+expanded affected-module regression **156 passed**; 4 deterministic Finance/
+Inventory AR/EN desktop/narrow captures passed. Durable evidence and hashes are
+under `docs/phase_7_5/m3/`.
+
+**Next:** M4 Global Search, Quick Create, and Notification Center. No
+commit/push performed.
 
 ---
 

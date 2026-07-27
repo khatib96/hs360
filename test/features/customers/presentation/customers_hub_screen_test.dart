@@ -34,6 +34,7 @@ void main() {
     Size size = const Size(1024, 768),
     FakeCustomerRepository? customerRepo,
     FakeSupplierRepository? supplierRepo,
+    CustomersHubTab? initialTab,
   }) {
     return ProviderScope(
       overrides: [
@@ -53,7 +54,7 @@ void main() {
         supportedLocales: AppLocalizations.supportedLocales,
         home: MediaQuery(
           data: MediaQueryData(size: size),
-          child: const CustomersHubScreen(),
+          child: CustomersHubScreen(initialTab: initialTab),
         ),
       ),
     );
@@ -73,25 +74,38 @@ void main() {
     expect(find.byKey(const Key('suppliers-tab')), findsNothing);
   });
 
-  testWidgets('both grants show tab keys and customer list body', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      buildHub(
-        appSession: session(permissions: {'customers.view', 'suppliers.view'}),
-      ),
-    );
-    await tester.pumpAndSettle();
+  testWidgets(
+    'both grants use shell context navigation without duplicate tabs',
+    (tester) async {
+      await tester.pumpWidget(
+        buildHub(
+          appSession: session(
+            permissions: {'customers.view', 'suppliers.view'},
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
 
-    expect(find.byKey(const Key('customers-tab')), findsOneWidget);
-    expect(find.byKey(const Key('suppliers-tab')), findsOneWidget);
-    expect(find.byKey(const Key('customers-tab-body')), findsOneWidget);
+      expect(find.byKey(const Key('customers-tab')), findsNothing);
+      expect(find.byKey(const Key('suppliers-tab')), findsNothing);
+      expect(find.byKey(const Key('shell-context-customers')), findsOneWidget);
+      expect(find.byKey(const Key('shell-context-suppliers')), findsOneWidget);
+      expect(find.byKey(const Key('customers-tab-body')), findsOneWidget);
 
-    await tester.tap(find.byKey(const Key('suppliers-tab')));
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(
+        buildHub(
+          appSession: session(
+            permissions: {'customers.view', 'suppliers.view'},
+          ),
+          initialTab: CustomersHubTab.suppliers,
+        ),
+      );
+      await tester.pumpAndSettle();
 
-    expect(find.byKey(const Key('suppliers-tab-body')), findsOneWidget);
-  });
+      expect(find.byKey(const Key('suppliers-tab-body')), findsOneWidget);
+      expect(find.byKey(const Key('customers-tab-body')), findsNothing);
+    },
+  );
 
   testWidgets('no tab grants shows module access unavailable', (tester) async {
     final l10n = lookupAppLocalizations(const Locale('en'));
@@ -141,7 +155,31 @@ void main() {
       findsOneWidget,
     );
 
-    await tester.tap(find.byKey(const Key('suppliers-tab')));
+    await tester.pumpWidget(
+      buildHub(
+        appSession: session(
+          permissions: {
+            'customers.view',
+            'customers.create',
+            'customers.edit',
+            'customers.delete',
+            'suppliers.view',
+            'suppliers.create',
+            'suppliers.edit',
+            'suppliers.delete',
+          },
+        ),
+        locale: const Locale('ar'),
+        size: const Size(360, 800),
+        customerRepo: FakeCustomerRepository(
+          customers: [sampleCustomer(nameAr: 'عميل باسم طويل للاختبار')],
+        ),
+        supplierRepo: FakeSupplierRepository(
+          suppliers: [sampleSupplier(nameAr: 'مورد باسم طويل للاختبار')],
+        ),
+        initialTab: CustomersHubTab.suppliers,
+      ),
+    );
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);

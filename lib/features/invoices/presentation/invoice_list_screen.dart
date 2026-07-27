@@ -124,7 +124,7 @@ class InvoiceListScreen extends ConsumerWidget {
     return AppShell(
       title: l10n.invoiceTitle,
       currentRoute: AppRoutes.invoices,
-      actions: actions.isEmpty ? null : actions,
+      moduleActions: actions.isEmpty ? null : actions,
       body: Stack(
         children: [
           Padding(padding: InvoiceDesign.pagePadding, child: body),

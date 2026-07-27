@@ -1239,6 +1239,7 @@
   "shellCollapseSidebar": "Collapse sidebar",
   "shellExpandSidebar": "Expand sidebar",
   "shellContextNavigation": "Module navigation",
+  "shellModuleActions": "Module actions",
   "shellGlobalSearch": "Global search",
   "shellQuickCreate": "Quick create",
   "shellNotifications": "Notifications",

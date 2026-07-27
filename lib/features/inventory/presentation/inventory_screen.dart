@@ -14,7 +14,6 @@ import '../../../shared/widgets/app_table_frame.dart';
 import '../../../shared/widgets/message_banner.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../domain/inventory_balance_row.dart';
-import '../../inventory_accounting/domain/inventory_document_permissions.dart';
 import '../domain/inventory_permissions.dart';
 import 'inventory_balances_controller.dart';
 import 'inventory_error_messages.dart';
@@ -36,12 +35,8 @@ class InventoryScreen extends ConsumerWidget {
     final state = ref.watch(inventoryBalancesControllerProvider);
     final controller = ref.read(inventoryBalancesControllerProvider.notifier);
 
-    final canViewMovements =
-        session != null && canViewInventoryMovements(session);
     final canCreateMovements =
         session != null && canCreateInventoryMovements(session);
-    final canViewFinancialDocuments =
-        session != null && canViewInventoryDocuments(session);
 
     final filtered = state.filteredRows;
     final initialFilter = initialWarehouseId;
@@ -120,47 +115,6 @@ class InventoryScreen extends ConsumerWidget {
               ),
             ),
           ],
-          if (canCreateMovements ||
-              canViewMovements ||
-              canViewFinancialDocuments) ...[
-            const SizedBox(height: 16),
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                if (canViewFinancialDocuments)
-                  OutlinedButton.icon(
-                    onPressed: () => context.go(AppRoutes.inventoryDocuments),
-                    icon: const Icon(Icons.receipt_long_outlined),
-                    label: Text(l10n.inventoryDocumentsLink),
-                  ),
-                if (canCreateMovements)
-                  FilledButton.icon(
-                    onPressed: () => _openManualAdjustment(
-                      context,
-                      ref,
-                      languageCode,
-                      warehouseId: state.warehouseId,
-                    ),
-                    icon: const Icon(Icons.tune),
-                    label: Text(l10n.inventoryManualAdjustment),
-                  ),
-                if (canCreateMovements)
-                  TextButton.icon(
-                    onPressed: () => context.go(AppRoutes.inventoryTransfers),
-                    icon: const Icon(Icons.swap_horiz),
-                    label: Text(l10n.inventoryTransfers),
-                  ),
-                if (canViewMovements)
-                  OutlinedButton.icon(
-                    onPressed: () => context.go(AppRoutes.inventoryMovements),
-                    icon: const Icon(Icons.history),
-                    label: Text(l10n.inventoryMovements),
-                  ),
-              ],
-            ),
-          ],
         ],
       );
     }
@@ -168,6 +122,27 @@ class InventoryScreen extends ConsumerWidget {
     return AppShell(
       title: l10n.inventory,
       currentRoute: AppRoutes.inventory,
+      moduleActions: canCreateMovements
+          ? [
+              FilledButton.icon(
+                key: const Key('inventory-adjustment-command'),
+                onPressed: () => _openManualAdjustment(
+                  context,
+                  ref,
+                  languageCode,
+                  warehouseId: state.warehouseId,
+                ),
+                icon: const Icon(Icons.tune),
+                label: Text(l10n.inventoryManualAdjustment),
+              ),
+              OutlinedButton.icon(
+                key: const Key('inventory-transfer-command'),
+                onPressed: () => context.go(AppRoutes.inventoryTransfers),
+                icon: const Icon(Icons.swap_horiz),
+                label: Text(l10n.inventoryTransfers),
+              ),
+            ]
+          : null,
       body: SizedBox.expand(
         child: Stack(
           children: [

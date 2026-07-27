@@ -5,9 +5,9 @@ businesses. It is being built first for Hayat Secret and is designed around
 serialized rental assets, recurring consumables, field service, customer debt,
 and double-entry accounting.
 
-> Repository status updated: **2026-07-25**
+> Repository status updated: **2026-07-27**
 >
-> Current milestone: **Phase 7.5 M0, M0.5, M1, and M2 — `CLOSED / ACCEPTED`; M3 `NEXT`**
+> Current milestone: **Phase 7.5 M0–M3 — `CLOSED / ACCEPTED`; M4 `NEXT`**
 > after Phase 7
 > **`CLOSED / ACCEPTED`**. Phase 7 M12 Gates D/E/F are **`PASS / OWNER ACCEPTED`**,
 > Gate G is **PASS**, and Final Gate H is **PASS** through migration `104`.
@@ -32,7 +32,7 @@ and double-entry accounting.
 | 5 | Complete | Invoices, returns, vouchers, journal, inventory accounting, PDFs |
 | 6 | Complete | Trial/rental contracts, lifecycle, billing, PDF, calendar handoff |
 | 7 | Complete / accepted | M1–M12 closed/accepted; bilingual calendar, assignments, mobile calendar, route/directions, integration, performance, device acceptance, and final cleanliness gates passed through migration `104` |
-| 7.5 | M0, M0.5, M1, and M2 closed / accepted; M3 next | Option C foundation and typed permission-shaped responsive shell accepted; regression, route/deep-link, screenshot, performance, and migration baselines preserved |
+| 7.5 | M0–M3 closed / accepted; M4 next | Option C foundation, typed responsive shell, consolidated module commands, and shared existing-screen adoption accepted; regression and zero-lost-route baselines preserved |
 | 8-12 | Not started | Adaptive mobile/requests/field execution and later HR/POS/finance/reporting/production phases |
 
 Phase 6 closed through M13/migration `092` on 2026-07-12. Phase 7 M1 closed on
@@ -99,6 +99,9 @@ Canonical module tree:
 - Phase 7.5 typed module navigation with expanded/collapsed desktop sidebar,
   narrow drawer, contextual module tabs, global context bar, user identity,
   deterministic back targets, and permission-shaped visibility.
+- Phase 7.5 consolidated module command area and shared filter/state/table
+  adoption across high-use Finance, Inventory, Customers/Suppliers, Contracts,
+  Calendar, and Settings journeys.
 - Products, groups, dual units, serialized assets, barcode/QR resolution, and
   product-unit timeline foundation.
 - Warehouses, van-warehouse rules, stock balances, adjustments, transfers, and
@@ -117,10 +120,10 @@ Canonical module tree:
 
 ## Planned, Not Yet Implemented
 
-- Remaining Phase 7.5 implementation: existing-screen module consolidation,
-  bounded global search, quick create, in-app notification center, four-slot
-  Dashboard v1, Daily Activity, consistent record-action UX, basic Audit
-  review, integrity gate, and closure/handoff work.
+- Remaining Phase 7.5 implementation: bounded global search, quick create,
+  in-app notification center, four-slot Dashboard v1, Daily Activity,
+  consistent record-action UX, basic Audit review, integrity gate, and
+  closure/handoff work.
 - Pre-production physical Android smoke for Gate F. Phase 7 acceptance used
   physical iOS + Android Emulator; this deferred obligation does not reopen
   Phase 7 unless the smoke exposes a defect.
@@ -311,6 +314,20 @@ Latest **Phase 7.5 M2** acceptance on 2026-07-25:
   Existing URLs, deep links, guards, and business behavior remain unchanged.
 - No RPC, migration, database contract, or posting change was introduced.
 
+Latest **Phase 7.5 M3** acceptance on 2026-07-27:
+
+- Permission-filtered create, transfer, adjustment, count, and related
+  feature commands now have a consistent in-module command area.
+- Duplicate Customers/Suppliers tabs were removed; the shell contextual
+  destinations and existing `/customers` and `/suppliers` routes own
+  navigation.
+- Voucher, Supplier, and Warehouse lists adopted the shared filter,
+  loading/error/empty, and table patterns.
+- Flutter analysis: no issues; complete Flutter suite: **1450 passed**;
+  affected-module regression suite: **156 passed**.
+- Four deterministic Finance/Inventory AR/EN desktop/narrow captures passed.
+  No RPC, migration, posting rule, permission, or business workflow changed.
+
 Historical **Phase 7 M0.5** baseline on 2026-07-12:
 
 - Full SQL suite: passed.
@@ -356,6 +373,8 @@ Start with these sources:
 | [M1_SCREENSHOT_MANIFEST.md](docs/phase_7_5/m1/M1_SCREENSHOT_MANIFEST.md) | Durable M1 foundation and representative feature screenshot evidence |
 | [M2_ACCEPTANCE_REPORT.md](docs/phase_7_5/m2/M2_ACCEPTANCE_REPORT.md) | Closed Phase 7.5 typed navigation, responsive shell, permissions, and verification record |
 | [M2_SCREENSHOT_MANIFEST.md](docs/phase_7_5/m2/M2_SCREENSHOT_MANIFEST.md) | Durable M2 expanded, collapsed, and narrow AR/EN shell evidence |
+| [M3_ACCEPTANCE_REPORT.md](docs/phase_7_5/m3/M3_ACCEPTANCE_REPORT.md) | Closed Phase 7.5 module consolidation, command placement, shared-screen adoption, and verification record |
+| [M3_SCREENSHOT_MANIFEST.md](docs/phase_7_5/m3/M3_SCREENSHOT_MANIFEST.md) | Durable M3 Finance/Inventory desktop and narrow AR/EN evidence |
 
 Feature references include `PRODUCTS_DETAIL.md`, `CONTRACTS_LOGIC.md`,
 `PAYMENT_SYSTEM.md`, `CUSTOMER_LEDGER.md`, `FIELD_OPS.md`,

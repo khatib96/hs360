@@ -20,7 +20,7 @@
 | **5 - Invoices, Vouchers & Journal** | Done | M1–M10 closed through migration `076` |
 | **6 - Contracts** | Complete | M0–M13 closed (2026-07-12) |
 | **7 - Calendar & Company Appointments** | **Complete / accepted** | M1–M12 CLOSED/ACCEPTED; Gates D/E/F owner-accepted, G/H passed through migration `104`; physical Android smoke deferred but required before production |
-| **7.5 - Product Structure & Stabilization** | M0, M0.5, M1, and M2 closed / accepted; M3 next | Option C semantic foundation plus typed, permission-shaped responsive shell accepted through 2026-07-25; full regression and zero-lost-route baseline preserved |
+| **7.5 - Product Structure & Stabilization** | M0, M0.5, M1, M2, and M3 closed / accepted; M4 next | Option C foundation, typed responsive shell, module commands, and existing-screen adoption accepted through 2026-07-27; full regression and zero-lost-route baseline preserved |
 | **8 - Adaptive Mobile, Requests & Field Ops** | Not started | - |
 | **9 - POS, Maintenance & Full HR** | Not started | - |
 | **10 - Finance, Reports, Dashboards & Close** | Not started | - |

@@ -1,6 +1,6 @@
 # Phase 7.5 - Product Structure, Navigation, and Stabilization Plan
 
-> Status: **IN PROGRESS — M0, M0.5, M1, AND M2 CLOSED / ACCEPTED; M3 NEXT**
+> Status: **IN PROGRESS — M0, M0.5, M1, M2, AND M3 CLOSED / ACCEPTED; M4 NEXT**
 > (started 2026-07-24).
 >
 > Purpose: pause feature expansion after Phase 7, turn the existing collection
@@ -553,7 +553,7 @@ passed. Evidence is under `docs/phase_7_5/m1/`.
 **Goal:** place existing functionality inside coherent business modules and
 apply the shared presentation patterns.
 
-**State:** `NEXT / NOT STARTED`.
+**State:** `CLOSED / ACCEPTED` on 2026-07-27.
 
 **Work:**
 
@@ -576,10 +576,28 @@ apply the shared presentation patterns.
 - users can complete all accepted Phase 3-7 navigation journeys without using
   a direct URL.
 
+**Closure evidence:**
+
+- `docs/phase_7_5/m3/M3_ACCEPTANCE_REPORT.md`;
+- `docs/phase_7_5/m3/M3_SCREENSHOT_MANIFEST.md` and 4 durable AR/EN desktop
+  and narrow images;
+- `AppModuleCommandBar` consistently hosts permission-filtered feature
+  commands with narrow horizontal overflow;
+- duplicate Customers/Suppliers tabs were removed in favor of the canonical
+  shell contextual destinations and existing routes;
+- Voucher, Supplier, and Warehouse lists adopted the shared filter/state/table
+  presentation boundaries;
+- `flutter analyze` clean, the complete Flutter suite at 1450 passed, and 156
+  affected-module regression tests passed;
+- no RPC, migration, data contract, posting rule, or feature permission was
+  changed.
+
 ### M4 - Global Search, Quick Create, and Notification Center
 
 **Goal:** make high-frequency navigation and attention items useful from every
 module.
+
+**State:** `NEXT / NOT STARTED`.
 
 **Work:**
 

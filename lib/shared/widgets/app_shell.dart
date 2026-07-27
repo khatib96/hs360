@@ -7,6 +7,7 @@ import '../../core/theme/app_theme.dart';
 import '../../features/auth/domain/app_session.dart';
 import '../../features/auth/presentation/auth_controller.dart';
 import 'app_contextual_navigation.dart';
+import 'app_module_command_bar.dart';
 import 'app_shell_controller.dart';
 import 'app_sidebar.dart';
 import 'app_top_bar.dart';
@@ -18,6 +19,7 @@ class AppShell extends ConsumerWidget {
     required this.title,
     required this.body,
     this.actions,
+    this.moduleActions,
     this.currentRoute,
     this.floatingActionButton,
     super.key,
@@ -26,6 +28,7 @@ class AppShell extends ConsumerWidget {
   final String title;
   final Widget body;
   final List<Widget>? actions;
+  final List<Widget>? moduleActions;
   final String? currentRoute;
   final Widget? floatingActionButton;
 
@@ -88,6 +91,7 @@ class AppShell extends ConsumerWidget {
             module: module,
             destination: destination,
             session: session,
+            moduleActions: moduleActions,
             body: body,
           ),
         ),
@@ -122,6 +126,7 @@ class AppShell extends ConsumerWidget {
                   module: module,
                   destination: destination,
                   session: session,
+                  moduleActions: moduleActions,
                   body: body,
                 ),
               ),
@@ -139,12 +144,14 @@ class _ShellContent extends StatelessWidget {
     required this.module,
     required this.destination,
     required this.session,
+    required this.moduleActions,
     required this.body,
   });
 
   final AppNavigationModule? module;
   final AppNavigationDestination? destination;
   final AppSession session;
+  final List<Widget>? moduleActions;
   final Widget body;
 
   @override
@@ -158,6 +165,8 @@ class _ShellContent extends StatelessWidget {
             activeDestination: destination,
             session: session,
           ),
+        if (moduleActions case final actions? when actions.isNotEmpty)
+          AppModuleCommandBar(actions: actions),
         Expanded(child: body),
       ],
     );

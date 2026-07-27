@@ -148,10 +148,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     return AppShell(
       title: l10n.calendarTitle,
       currentRoute: AppRoutes.calendar,
-      // Desktop create only in AppBar. Mobile create lives in the non-scrolling
-      // clearance slot below (not Scaffold.floatingActionButton), so it cannot
-      // paint over the list viewport.
-      actions: [
+      // Desktop commands live in the module command bar. Mobile create remains
+      // in the non-scrolling clearance slot below so it cannot cover the list.
+      moduleActions: [
         if (!contentMobile)
           TextButton.icon(
             key: const Key('calendar-open-route-view'),
