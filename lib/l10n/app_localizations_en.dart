@@ -4766,4 +4766,121 @@ class AppLocalizationsEn extends AppLocalizations {
   String calendarRouteMarkerGroupCount(int count) {
     return '$count events at this location';
   }
+
+  @override
+  String get globalSearchHint => 'Search by name, number, SKU, or serial';
+
+  @override
+  String get globalSearchMinimum => 'Enter at least 2 characters';
+
+  @override
+  String get globalSearchEmpty => 'No accessible results found';
+
+  @override
+  String get globalSearchError => 'Search is unavailable right now.';
+
+  @override
+  String get globalSearchKeyboardHint =>
+      'Use arrow keys to move and Enter to open';
+
+  @override
+  String get globalSearchCategoryCustomers => 'Customers';
+
+  @override
+  String get globalSearchCategorySuppliers => 'Suppliers';
+
+  @override
+  String get globalSearchCategoryContracts => 'Contracts';
+
+  @override
+  String get globalSearchCategoryInvoices => 'Invoices';
+
+  @override
+  String get globalSearchCategoryVouchers => 'Vouchers';
+
+  @override
+  String get globalSearchCategoryProducts => 'Products';
+
+  @override
+  String get globalSearchCategoryProductUnits => 'Serialized units';
+
+  @override
+  String get globalSearchCategoryInventoryDocuments => 'Inventory documents';
+
+  @override
+  String get quickCreateTitle => 'Quick create';
+
+  @override
+  String get quickCreateCustomer => 'Customer';
+
+  @override
+  String get quickCreateSupplier => 'Supplier';
+
+  @override
+  String get quickCreateProduct => 'Product';
+
+  @override
+  String get quickCreateWarehouse => 'Warehouse';
+
+  @override
+  String get quickCreateSalesInvoice => 'Sales invoice';
+
+  @override
+  String get quickCreatePurchaseInvoice => 'Purchase invoice';
+
+  @override
+  String get quickCreateSalesReturn => 'Sales return';
+
+  @override
+  String get quickCreatePurchaseReturn => 'Purchase return';
+
+  @override
+  String get quickCreateReceiptVoucher => 'Receipt voucher';
+
+  @override
+  String get quickCreatePaymentVoucher => 'Payment voucher';
+
+  @override
+  String get quickCreateContract => 'Contract';
+
+  @override
+  String get quickCreateCalendarEvent => 'Calendar event';
+
+  @override
+  String get quickCreateInventoryTransfer => 'Inventory transfer';
+
+  @override
+  String get quickCreateOpeningStock => 'Opening stock';
+
+  @override
+  String get quickCreateInventoryAdjustment => 'Stock adjustment';
+
+  @override
+  String get quickCreateStockCount => 'Stock count';
+
+  @override
+  String get notificationCenterTitle => 'Notifications';
+
+  @override
+  String get notificationCenterEmpty => 'You have no notifications.';
+
+  @override
+  String get notificationCenterError => 'Notifications could not be loaded.';
+
+  @override
+  String get notificationCenterRefresh => 'Refresh';
+
+  @override
+  String get notificationCenterMarkRead => 'Mark as read';
+
+  @override
+  String get notificationCenterMarkUnread => 'Mark as unread';
+
+  @override
+  String get notificationCenterOpenSource => 'Open';
+
+  @override
+  String notificationCenterUnreadCount(int count) {
+    return '$count unread';
+  }
 }

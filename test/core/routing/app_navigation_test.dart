@@ -39,6 +39,10 @@ void main() {
       expect(canShowQuickCreateAnchor(searchOnly), isFalse);
       expect(canShowNotificationsAnchor(searchOnly), isFalse);
 
+      final documentSearchOnly = session(permissions: {'vouchers.view'});
+      expect(canShowGlobalSearchAnchor(documentSearchOnly), isTrue);
+      expect(canShowQuickCreateAnchor(documentSearchOnly), isFalse);
+
       final createOnly = session(permissions: {'contracts.create'});
       expect(canShowGlobalSearchAnchor(createOnly), isFalse);
       expect(canShowQuickCreateAnchor(createOnly), isTrue);

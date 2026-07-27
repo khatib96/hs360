@@ -22,6 +22,7 @@ class CalendarScreen extends ConsumerStatefulWidget {
     this.customerIdQueryParam,
     this.contractIdQueryParam,
     this.dateQueryParam,
+    this.createQueryParam,
     super.key,
   });
 
@@ -29,6 +30,7 @@ class CalendarScreen extends ConsumerStatefulWidget {
   final String? customerIdQueryParam;
   final String? contractIdQueryParam;
   final String? dateQueryParam;
+  final String? createQueryParam;
 
   @override
   ConsumerState<CalendarScreen> createState() => _CalendarScreenState();
@@ -37,6 +39,7 @@ class CalendarScreen extends ConsumerStatefulWidget {
 class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   int? _scheduledWeekStart;
   int? _appliedWeekStart;
+  bool _handledCreateQuery = false;
 
   /// Latest AppShell body width; drives AppBar create after first layout.
   /// Defaults to mobile-safe until measured.
@@ -45,7 +48,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _applyRouteScope());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _applyRouteScope();
+      _applyCreateQuery();
+    });
   }
 
   @override
@@ -55,6 +61,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         oldWidget.contractIdQueryParam != widget.contractIdQueryParam ||
         oldWidget.dateQueryParam != widget.dateQueryParam) {
       _applyRouteScope();
+    }
+    if (oldWidget.createQueryParam != widget.createQueryParam) {
+      _handledCreateQuery = false;
+      _applyCreateQuery();
     }
   }
 
@@ -73,6 +83,18 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   void _clearRouteScope() {
     ref.read(calendarControllerProvider.notifier).clearRouteScope();
     context.replace(AppRoutes.calendar);
+  }
+
+  Future<void> _applyCreateQuery() async {
+    if (!mounted || _handledCreateQuery || widget.createQueryParam != '1') {
+      return;
+    }
+    _handledCreateQuery = true;
+    final session = ref.read(authControllerProvider).valueOrNull;
+    if (session != null && canCreateCalendarEvent(session)) {
+      await _createEvent();
+    }
+    if (mounted) context.replace(AppRoutes.calendar);
   }
 
   @override
@@ -137,7 +159,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         final q = uri.queryParameters;
         if (q.containsKey('customerId') ||
             q.containsKey('contractId') ||
-            q.containsKey('date')) {
+            q.containsKey('date') ||
+            q.containsKey('create')) {
           context.replace(AppRoutes.calendar);
         }
       } on GoError {

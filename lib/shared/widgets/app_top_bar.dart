@@ -7,6 +7,10 @@ import '../../core/routing/app_navigation.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/app_tokens.dart';
 import '../../features/auth/domain/app_session.dart';
+import '../../features/global_tools/presentation/global_search_palette.dart';
+import '../../features/global_tools/presentation/notification_center_controller.dart';
+import '../../features/global_tools/presentation/notification_center_dialog.dart';
+import '../../features/global_tools/presentation/quick_create_dialog.dart';
 
 class AppTopBar extends ConsumerWidget implements PreferredSizeWidget {
   const AppTopBar({
@@ -36,6 +40,20 @@ class AppTopBar extends ConsumerWidget implements PreferredSizeWidget {
     final showQuickCreate = canShowQuickCreateAnchor(session);
     final showNotifications = canShowNotificationsAnchor(session);
     final hasGlobalActions = showSearch || showQuickCreate || showNotifications;
+    final unreadCount = showNotifications
+        ? ref
+                  .watch(notificationCenterControllerProvider(session))
+                  .valueOrNull
+                  ?.unreadCount ??
+              0
+        : 0;
+
+    void openSearch() =>
+        showGlobalSearchPalette(context: context, session: session);
+    void openQuickCreate() =>
+        showQuickCreateDialog(context: context, ref: ref, session: session);
+    void openNotifications() =>
+        showNotificationCenter(context: context, session: session);
 
     return AppBar(
       toolbarHeight: preferredSize.height,
@@ -69,28 +87,36 @@ class AppTopBar extends ConsumerWidget implements PreferredSizeWidget {
             showSearch: showSearch,
             showQuickCreate: showQuickCreate,
             showNotifications: showNotifications,
+            unreadCount: unreadCount,
+            onSearch: openSearch,
+            onQuickCreate: openQuickCreate,
+            onNotifications: openNotifications,
           )
         else ...[
           if (showSearch)
             IconButton(
               key: const Key('shell-search-anchor'),
               tooltip: l10n.shellGlobalSearch,
-              onPressed: null,
+              onPressed: openSearch,
               icon: const Icon(Icons.search),
             ),
           if (showQuickCreate)
             IconButton(
               key: const Key('shell-quick-create-anchor'),
               tooltip: l10n.shellQuickCreate,
-              onPressed: null,
+              onPressed: openQuickCreate,
               icon: const Icon(Icons.add_circle_outline),
             ),
           if (showNotifications)
-            IconButton(
-              key: const Key('shell-notifications-anchor'),
-              tooltip: l10n.shellNotifications,
-              onPressed: null,
-              icon: const Icon(Icons.notifications_none),
+            Badge.count(
+              count: unreadCount,
+              isLabelVisible: unreadCount > 0,
+              child: IconButton(
+                key: const Key('shell-notifications-anchor'),
+                tooltip: l10n.shellNotifications,
+                onPressed: openNotifications,
+                icon: const Icon(Icons.notifications_none),
+              ),
             ),
         ],
         PopupMenuButton<Locale>(
@@ -122,48 +148,79 @@ class _GlobalActionsMenu extends StatelessWidget {
     required this.showSearch,
     required this.showQuickCreate,
     required this.showNotifications,
+    required this.unreadCount,
+    required this.onSearch,
+    required this.onQuickCreate,
+    required this.onNotifications,
   });
 
   final bool showSearch;
   final bool showQuickCreate;
   final bool showNotifications;
+  final int unreadCount;
+  final VoidCallback onSearch;
+  final VoidCallback onQuickCreate;
+  final VoidCallback onNotifications;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return PopupMenuButton<void>(
-      key: const Key('shell-global-actions-menu'),
-      tooltip: l10n.shellGlobalActions,
-      itemBuilder: (context) => [
-        if (showSearch)
-          PopupMenuItem(
-            enabled: false,
-            child: ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.search),
-              title: Text(l10n.shellGlobalSearch),
+    return Badge.count(
+      count: unreadCount,
+      isLabelVisible: unreadCount > 0,
+      child: PopupMenuButton<_GlobalAction>(
+        key: const Key('shell-global-actions-menu'),
+        tooltip: l10n.shellGlobalActions,
+        onSelected: (action) {
+          switch (action) {
+            case _GlobalAction.search:
+              onSearch();
+              break;
+            case _GlobalAction.quickCreate:
+              onQuickCreate();
+              break;
+            case _GlobalAction.notifications:
+              onNotifications();
+              break;
+          }
+        },
+        itemBuilder: (context) => [
+          if (showSearch)
+            PopupMenuItem(
+              value: _GlobalAction.search,
+              child: ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.search),
+                title: Text(l10n.shellGlobalSearch),
+              ),
             ),
-          ),
-        if (showQuickCreate)
-          PopupMenuItem(
-            enabled: false,
-            child: ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.add_circle_outline),
-              title: Text(l10n.shellQuickCreate),
+          if (showQuickCreate)
+            PopupMenuItem(
+              value: _GlobalAction.quickCreate,
+              child: ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.add_circle_outline),
+                title: Text(l10n.shellQuickCreate),
+              ),
             ),
-          ),
-        if (showNotifications)
-          PopupMenuItem(
-            enabled: false,
-            child: ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.notifications_none),
-              title: Text(l10n.shellNotifications),
+          if (showNotifications)
+            PopupMenuItem(
+              value: _GlobalAction.notifications,
+              child: ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Badge.count(
+                  count: unreadCount,
+                  isLabelVisible: unreadCount > 0,
+                  child: const Icon(Icons.notifications_none),
+                ),
+                title: Text(l10n.shellNotifications),
+              ),
             ),
-          ),
-      ],
-      icon: const Icon(Icons.more_vert),
+        ],
+        icon: const Icon(Icons.more_vert),
+      ),
     );
   }
 }
+
+enum _GlobalAction { search, quickCreate, notifications }

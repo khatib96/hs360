@@ -1651,12 +1651,20 @@ create table notifications (
   error_message text,
   related_entity_table text,
   related_entity_id uuid,
+  read_at timestamptz,                            -- Phase 7.5 M4
   created_at timestamptz default now()
 );
 
 create index idx_notifs_tenant on notifications(tenant_id);
 create index idx_notifs_status on notifications(status);
 ```
+
+**Phase 7.5 M4 (`105`):** in-app notification reads use
+`list_my_in_app_notifications`, which requires `notifications.view`, restricts
+rows to the current authenticated recipient, and rechecks visibility for
+calendar event/reminder sources. Unknown, stale, or unauthorized related
+sources are omitted. `set_my_in_app_notification_read` changes only that
+recipient's row and is idempotent for both read and unread transitions.
 
 ---
 
@@ -1808,6 +1816,8 @@ Full implementations in `BUILD_PLAN.md`. Names and signatures:
 074_phase_5_direct_account_receipt_vouchers.sql -- M9 direct-account receipt vouchers
 075_phase_5_voucher_source_account_generalization.sql -- M9 generalized voucher source accounts
 076_phase_5_voucher_protected_account_guard.sql -- M10 protected-account guard for direct vouchers
+093-104_phase_7_*.sql -- accepted Phase 7 calendar through final route contract fix
+105_phase_7_5_m4_global_tools.sql -- capped global search + recipient notification center
 ```
 
 Add FKs that were forward-references (e.g. `product_units.current_contract_id -> contracts.id`, `product_units.current_service_location_id -> customer_service_locations.id`) at the end of each table's migration once both exist, or in the later feature migration that introduces the referenced table.

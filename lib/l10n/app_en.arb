@@ -1987,5 +1987,48 @@
     "placeholders": {
       "count": {"type": "int"}
     }
+  },
+  "globalSearchHint": "Search by name, number, SKU, or serial",
+  "globalSearchMinimum": "Enter at least 2 characters",
+  "globalSearchEmpty": "No accessible results found",
+  "globalSearchError": "Search is unavailable right now.",
+  "globalSearchKeyboardHint": "Use arrow keys to move and Enter to open",
+  "globalSearchCategoryCustomers": "Customers",
+  "globalSearchCategorySuppliers": "Suppliers",
+  "globalSearchCategoryContracts": "Contracts",
+  "globalSearchCategoryInvoices": "Invoices",
+  "globalSearchCategoryVouchers": "Vouchers",
+  "globalSearchCategoryProducts": "Products",
+  "globalSearchCategoryProductUnits": "Serialized units",
+  "globalSearchCategoryInventoryDocuments": "Inventory documents",
+  "quickCreateTitle": "Quick create",
+  "quickCreateCustomer": "Customer",
+  "quickCreateSupplier": "Supplier",
+  "quickCreateProduct": "Product",
+  "quickCreateWarehouse": "Warehouse",
+  "quickCreateSalesInvoice": "Sales invoice",
+  "quickCreatePurchaseInvoice": "Purchase invoice",
+  "quickCreateSalesReturn": "Sales return",
+  "quickCreatePurchaseReturn": "Purchase return",
+  "quickCreateReceiptVoucher": "Receipt voucher",
+  "quickCreatePaymentVoucher": "Payment voucher",
+  "quickCreateContract": "Contract",
+  "quickCreateCalendarEvent": "Calendar event",
+  "quickCreateInventoryTransfer": "Inventory transfer",
+  "quickCreateOpeningStock": "Opening stock",
+  "quickCreateInventoryAdjustment": "Stock adjustment",
+  "quickCreateStockCount": "Stock count",
+  "notificationCenterTitle": "Notifications",
+  "notificationCenterEmpty": "You have no notifications.",
+  "notificationCenterError": "Notifications could not be loaded.",
+  "notificationCenterRefresh": "Refresh",
+  "notificationCenterMarkRead": "Mark as read",
+  "notificationCenterMarkUnread": "Mark as unread",
+  "notificationCenterOpenSource": "Open",
+  "notificationCenterUnreadCount": "{count} unread",
+  "@notificationCenterUnreadCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
   }
 }

@@ -190,6 +190,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           customerIdQueryParam: state.uri.queryParameters['customerId'],
           contractIdQueryParam: state.uri.queryParameters['contractId'],
           dateQueryParam: state.uri.queryParameters['date'],
+          createQueryParam: state.uri.queryParameters['create'],
         ),
       ),
       GoRoute(

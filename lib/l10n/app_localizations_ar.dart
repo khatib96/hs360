@@ -4712,4 +4712,121 @@ class AppLocalizationsAr extends AppLocalizations {
   String calendarRouteMarkerGroupCount(int count) {
     return '$count أحداث في هذا الموقع';
   }
+
+  @override
+  String get globalSearchHint =>
+      'ابحث بالاسم أو الرقم أو الرمز أو الرقم التسلسلي';
+
+  @override
+  String get globalSearchMinimum => 'أدخل حرفين على الأقل';
+
+  @override
+  String get globalSearchEmpty => 'لا توجد نتائج متاحة لك';
+
+  @override
+  String get globalSearchError => 'البحث غير متوفر حالياً.';
+
+  @override
+  String get globalSearchKeyboardHint => 'استخدم الأسهم للتنقل وEnter للفتح';
+
+  @override
+  String get globalSearchCategoryCustomers => 'العملاء';
+
+  @override
+  String get globalSearchCategorySuppliers => 'الموردون';
+
+  @override
+  String get globalSearchCategoryContracts => 'العقود';
+
+  @override
+  String get globalSearchCategoryInvoices => 'الفواتير';
+
+  @override
+  String get globalSearchCategoryVouchers => 'السندات';
+
+  @override
+  String get globalSearchCategoryProducts => 'المنتجات';
+
+  @override
+  String get globalSearchCategoryProductUnits => 'الوحدات المتسلسلة';
+
+  @override
+  String get globalSearchCategoryInventoryDocuments => 'مستندات المخزون';
+
+  @override
+  String get quickCreateTitle => 'إنشاء سريع';
+
+  @override
+  String get quickCreateCustomer => 'عميل';
+
+  @override
+  String get quickCreateSupplier => 'مورد';
+
+  @override
+  String get quickCreateProduct => 'منتج';
+
+  @override
+  String get quickCreateWarehouse => 'مستودع';
+
+  @override
+  String get quickCreateSalesInvoice => 'فاتورة مبيعات';
+
+  @override
+  String get quickCreatePurchaseInvoice => 'فاتورة مشتريات';
+
+  @override
+  String get quickCreateSalesReturn => 'مرتجع مبيعات';
+
+  @override
+  String get quickCreatePurchaseReturn => 'مرتجع مشتريات';
+
+  @override
+  String get quickCreateReceiptVoucher => 'سند قبض';
+
+  @override
+  String get quickCreatePaymentVoucher => 'سند صرف';
+
+  @override
+  String get quickCreateContract => 'عقد';
+
+  @override
+  String get quickCreateCalendarEvent => 'حدث تقويم';
+
+  @override
+  String get quickCreateInventoryTransfer => 'تحويل مخزون';
+
+  @override
+  String get quickCreateOpeningStock => 'رصيد افتتاحي';
+
+  @override
+  String get quickCreateInventoryAdjustment => 'تسوية مخزون';
+
+  @override
+  String get quickCreateStockCount => 'جرد مخزون';
+
+  @override
+  String get notificationCenterTitle => 'الإشعارات';
+
+  @override
+  String get notificationCenterEmpty => 'لا توجد إشعارات.';
+
+  @override
+  String get notificationCenterError => 'تعذر تحميل الإشعارات.';
+
+  @override
+  String get notificationCenterRefresh => 'تحديث';
+
+  @override
+  String get notificationCenterMarkRead => 'تحديد كمقروء';
+
+  @override
+  String get notificationCenterMarkUnread => 'تحديد كغير مقروء';
+
+  @override
+  String get notificationCenterOpenSource => 'فتح';
+
+  @override
+  String notificationCenterUnreadCount(int count) {
+    return '$count غير مقروء';
+  }
 }

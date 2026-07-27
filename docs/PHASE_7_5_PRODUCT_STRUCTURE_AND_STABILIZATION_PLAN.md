@@ -1,6 +1,6 @@
 # Phase 7.5 - Product Structure, Navigation, and Stabilization Plan
 
-> Status: **IN PROGRESS — M0, M0.5, M1, M2, AND M3 CLOSED / ACCEPTED; M4 NEXT**
+> Status: **IN PROGRESS — M0 THROUGH M4 CLOSED / ACCEPTED; M5 NEXT**
 > (started 2026-07-24).
 >
 > Purpose: pause feature expansion after Phase 7, turn the existing collection
@@ -597,7 +597,7 @@ apply the shared presentation patterns.
 **Goal:** make high-frequency navigation and attention items useful from every
 module.
 
-**State:** `NEXT / NOT STARTED`.
+**State:** `CLOSED / ACCEPTED` on 2026-07-27.
 
 **Work:**
 
@@ -618,6 +618,19 @@ module.
 - stale or unauthorized deep-links fail closed;
 - search and notification UI pass desktop/narrow, keyboard, AR/EN, and RTL/LTR
   acceptance.
+
+**Closure evidence:**
+
+- `docs/phase_7_5/m4/M4_ACCEPTANCE_REPORT.md`;
+- migration `105_phase_7_5_m4_global_tools.sql` and its locked checksum;
+- permission-shaped, capped search RPC with no hidden-category counts or
+  protected values;
+- recipient-only in-app notification list and idempotent read/unread RPCs,
+  including current calendar-source visibility rechecks;
+- permission-filtered quick create reusing accepted Phase 3–7 forms/routes;
+- `flutter analyze` clean, complete Flutter suite at 1455 passed, five focused
+  M4 interaction tests passed, and the full SQL/concurrency/performance and
+  final pollution gates passed.
 
 ### M5 - Dashboard v1 and Daily Activity
 

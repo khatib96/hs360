@@ -7,7 +7,7 @@ and double-entry accounting.
 
 > Repository status updated: **2026-07-27**
 >
-> Current milestone: **Phase 7.5 M0–M3 — `CLOSED / ACCEPTED`; M4 `NEXT`**
+> Current milestone: **Phase 7.5 M0–M4 — `CLOSED / ACCEPTED`; M5 `NEXT`**
 > after Phase 7
 > **`CLOSED / ACCEPTED`**. Phase 7 M12 Gates D/E/F are **`PASS / OWNER ACCEPTED`**,
 > Gate G is **PASS**, and Final Gate H is **PASS** through migration `104`.
@@ -15,8 +15,8 @@ and double-entry accounting.
 > **Physical Android smoke remains required before production** as an
 > owner-approved deferred obligation. Phase 8 has not started.
 >
-> Latest migrations on disk: **`104`** (M12 route event contract fix);
-> `093`–`103` checksum-locked / unchanged.
+> Latest migrations on disk: **`105`** (Phase 7.5 M4 global tools);
+> `093`–`104` remain checksum-locked / unchanged.
 
 ---
 
@@ -32,7 +32,7 @@ and double-entry accounting.
 | 5 | Complete | Invoices, returns, vouchers, journal, inventory accounting, PDFs |
 | 6 | Complete | Trial/rental contracts, lifecycle, billing, PDF, calendar handoff |
 | 7 | Complete / accepted | M1–M12 closed/accepted; bilingual calendar, assignments, mobile calendar, route/directions, integration, performance, device acceptance, and final cleanliness gates passed through migration `104` |
-| 7.5 | M0–M3 closed / accepted; M4 next | Option C foundation, typed responsive shell, consolidated module commands, and shared existing-screen adoption accepted; regression and zero-lost-route baselines preserved |
+| 7.5 | M0–M4 closed / accepted; M5 next | Option C shell, module commands, permission-safe global search, quick create, and recipient-scoped notifications accepted |
 | 8-12 | Not started | Adaptive mobile/requests/field execution and later HR/POS/finance/reporting/production phases |
 
 Phase 6 closed through M13/migration `092` on 2026-07-12. Phase 7 M1 closed on
@@ -327,6 +327,20 @@ Latest **Phase 7.5 M3** acceptance on 2026-07-27:
   affected-module regression suite: **156 passed**.
 - Four deterministic Finance/Inventory AR/EN desktop/narrow captures passed.
   No RPC, migration, posting rule, permission, or business workflow changed.
+
+Latest **Phase 7.5 M4** acceptance on 2026-07-27:
+
+- Global search is capped, grouped, server-shaped by permission, keyboard and
+  pointer accessible, and opens canonical record routes.
+- Quick create exposes only authorized existing Phase 3–7 workflows.
+- The notification center shows only the current recipient's visible in-app
+  notifications, includes an unread badge, and persists idempotent read/unread
+  transitions. Stale or unauthorized sources are omitted.
+- Migration `105` adds the three authenticated-only RPC contracts and
+  `notifications.read_at`; its SHA-256 is locked in the M4 evidence folder.
+- Flutter analysis: no issues; complete Flutter suite: **1455 passed**;
+  focused M4 suite: **5 passed**; full SQL/concurrency/performance and final
+  pollution gates: **PASS**.
 
 Historical **Phase 7 M0.5** baseline on 2026-07-12:
 

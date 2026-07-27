@@ -172,12 +172,13 @@ revalidates the current assignment, active employee/user mapping, tenant
 membership, and `calendar.view_assigned` visibility immediately before the
 system notification insert.
 
-The Phase 7.5 notification center may list and mark read only the current
-recipient's in-app notifications. Source labels and deep-links are returned
-only after rechecking current source visibility; stale or unauthorized targets
-fail closed. Global search uses capped permission-shaped source RPCs/views and
-must not return protected fields, hidden category counts, or raw cross-module
-errors.
+**Phase 7.5 M4 (`105`):** the notification center lists and marks read only the
+current recipient's in-app notifications through authenticated-only
+security-definer RPCs. Calendar source deep-links are returned only after
+rechecking current source visibility; stale, unknown, or unauthorized targets
+fail closed. Global search is capped per group, checks every source permission
+server-side, and returns no protected fields, hidden category counts, or raw
+cross-module errors.
 
 **Phase 7 M4 (`097`):** `calendar_events` is RPC-only for API roles.
 `get_calendar_range_summary` and `list_calendar_events` enforce

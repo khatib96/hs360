@@ -8905,6 +8905,234 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} events at this location'**
   String calendarRouteMarkerGroupCount(int count);
+
+  /// No description provided for @globalSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name, number, SKU, or serial'**
+  String get globalSearchHint;
+
+  /// No description provided for @globalSearchMinimum.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter at least 2 characters'**
+  String get globalSearchMinimum;
+
+  /// No description provided for @globalSearchEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No accessible results found'**
+  String get globalSearchEmpty;
+
+  /// No description provided for @globalSearchError.
+  ///
+  /// In en, this message translates to:
+  /// **'Search is unavailable right now.'**
+  String get globalSearchError;
+
+  /// No description provided for @globalSearchKeyboardHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Use arrow keys to move and Enter to open'**
+  String get globalSearchKeyboardHint;
+
+  /// No description provided for @globalSearchCategoryCustomers.
+  ///
+  /// In en, this message translates to:
+  /// **'Customers'**
+  String get globalSearchCategoryCustomers;
+
+  /// No description provided for @globalSearchCategorySuppliers.
+  ///
+  /// In en, this message translates to:
+  /// **'Suppliers'**
+  String get globalSearchCategorySuppliers;
+
+  /// No description provided for @globalSearchCategoryContracts.
+  ///
+  /// In en, this message translates to:
+  /// **'Contracts'**
+  String get globalSearchCategoryContracts;
+
+  /// No description provided for @globalSearchCategoryInvoices.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoices'**
+  String get globalSearchCategoryInvoices;
+
+  /// No description provided for @globalSearchCategoryVouchers.
+  ///
+  /// In en, this message translates to:
+  /// **'Vouchers'**
+  String get globalSearchCategoryVouchers;
+
+  /// No description provided for @globalSearchCategoryProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'Products'**
+  String get globalSearchCategoryProducts;
+
+  /// No description provided for @globalSearchCategoryProductUnits.
+  ///
+  /// In en, this message translates to:
+  /// **'Serialized units'**
+  String get globalSearchCategoryProductUnits;
+
+  /// No description provided for @globalSearchCategoryInventoryDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Inventory documents'**
+  String get globalSearchCategoryInventoryDocuments;
+
+  /// No description provided for @quickCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick create'**
+  String get quickCreateTitle;
+
+  /// No description provided for @quickCreateCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer'**
+  String get quickCreateCustomer;
+
+  /// No description provided for @quickCreateSupplier.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplier'**
+  String get quickCreateSupplier;
+
+  /// No description provided for @quickCreateProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Product'**
+  String get quickCreateProduct;
+
+  /// No description provided for @quickCreateWarehouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse'**
+  String get quickCreateWarehouse;
+
+  /// No description provided for @quickCreateSalesInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Sales invoice'**
+  String get quickCreateSalesInvoice;
+
+  /// No description provided for @quickCreatePurchaseInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase invoice'**
+  String get quickCreatePurchaseInvoice;
+
+  /// No description provided for @quickCreateSalesReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sales return'**
+  String get quickCreateSalesReturn;
+
+  /// No description provided for @quickCreatePurchaseReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase return'**
+  String get quickCreatePurchaseReturn;
+
+  /// No description provided for @quickCreateReceiptVoucher.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt voucher'**
+  String get quickCreateReceiptVoucher;
+
+  /// No description provided for @quickCreatePaymentVoucher.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment voucher'**
+  String get quickCreatePaymentVoucher;
+
+  /// No description provided for @quickCreateContract.
+  ///
+  /// In en, this message translates to:
+  /// **'Contract'**
+  String get quickCreateContract;
+
+  /// No description provided for @quickCreateCalendarEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar event'**
+  String get quickCreateCalendarEvent;
+
+  /// No description provided for @quickCreateInventoryTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Inventory transfer'**
+  String get quickCreateInventoryTransfer;
+
+  /// No description provided for @quickCreateOpeningStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening stock'**
+  String get quickCreateOpeningStock;
+
+  /// No description provided for @quickCreateInventoryAdjustment.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock adjustment'**
+  String get quickCreateInventoryAdjustment;
+
+  /// No description provided for @quickCreateStockCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock count'**
+  String get quickCreateStockCount;
+
+  /// No description provided for @notificationCenterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationCenterTitle;
+
+  /// No description provided for @notificationCenterEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no notifications.'**
+  String get notificationCenterEmpty;
+
+  /// No description provided for @notificationCenterError.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications could not be loaded.'**
+  String get notificationCenterError;
+
+  /// No description provided for @notificationCenterRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get notificationCenterRefresh;
+
+  /// No description provided for @notificationCenterMarkRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as read'**
+  String get notificationCenterMarkRead;
+
+  /// No description provided for @notificationCenterMarkUnread.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as unread'**
+  String get notificationCenterMarkUnread;
+
+  /// No description provided for @notificationCenterOpenSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get notificationCenterOpenSource;
+
+  /// No description provided for @notificationCenterUnreadCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} unread'**
+  String notificationCenterUnreadCount(int count);
 }
 
 class _AppLocalizationsDelegate

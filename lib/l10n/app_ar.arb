@@ -1628,5 +1628,48 @@
     "placeholders": {
       "count": {"type": "int"}
     }
+  },
+  "globalSearchHint": "ابحث بالاسم أو الرقم أو الرمز أو الرقم التسلسلي",
+  "globalSearchMinimum": "أدخل حرفين على الأقل",
+  "globalSearchEmpty": "لا توجد نتائج متاحة لك",
+  "globalSearchError": "البحث غير متوفر حالياً.",
+  "globalSearchKeyboardHint": "استخدم الأسهم للتنقل وEnter للفتح",
+  "globalSearchCategoryCustomers": "العملاء",
+  "globalSearchCategorySuppliers": "الموردون",
+  "globalSearchCategoryContracts": "العقود",
+  "globalSearchCategoryInvoices": "الفواتير",
+  "globalSearchCategoryVouchers": "السندات",
+  "globalSearchCategoryProducts": "المنتجات",
+  "globalSearchCategoryProductUnits": "الوحدات المتسلسلة",
+  "globalSearchCategoryInventoryDocuments": "مستندات المخزون",
+  "quickCreateTitle": "إنشاء سريع",
+  "quickCreateCustomer": "عميل",
+  "quickCreateSupplier": "مورد",
+  "quickCreateProduct": "منتج",
+  "quickCreateWarehouse": "مستودع",
+  "quickCreateSalesInvoice": "فاتورة مبيعات",
+  "quickCreatePurchaseInvoice": "فاتورة مشتريات",
+  "quickCreateSalesReturn": "مرتجع مبيعات",
+  "quickCreatePurchaseReturn": "مرتجع مشتريات",
+  "quickCreateReceiptVoucher": "سند قبض",
+  "quickCreatePaymentVoucher": "سند صرف",
+  "quickCreateContract": "عقد",
+  "quickCreateCalendarEvent": "حدث تقويم",
+  "quickCreateInventoryTransfer": "تحويل مخزون",
+  "quickCreateOpeningStock": "رصيد افتتاحي",
+  "quickCreateInventoryAdjustment": "تسوية مخزون",
+  "quickCreateStockCount": "جرد مخزون",
+  "notificationCenterTitle": "الإشعارات",
+  "notificationCenterEmpty": "لا توجد إشعارات.",
+  "notificationCenterError": "تعذر تحميل الإشعارات.",
+  "notificationCenterRefresh": "تحديث",
+  "notificationCenterMarkRead": "تحديد كمقروء",
+  "notificationCenterMarkUnread": "تحديد كغير مقروء",
+  "notificationCenterOpenSource": "فتح",
+  "notificationCenterUnreadCount": "{count} غير مقروء",
+  "@notificationCenterUnreadCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
   }
 }

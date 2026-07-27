@@ -198,6 +198,9 @@ run_suite "supabase/tests/phase_7_m12_trusted_handoff_acceptance.sql"
 printf 'Phase W.5: Phase 7 M11 Phase 6/7 audit-journal reclaim (pre pollution gate)\n'
 run_suite "supabase/tests/phase_7_m11_phase67_audit_reclaim.sql"
 
+printf 'Phase W.6: Phase 7.5 M4 global tools\n'
+run_suite "supabase/tests/phase_7_5_m4_global_tools.sql"
+
 printf 'Phase C: baseline pollution gate\n'
 for suite in "${phase_a_suites[@]}"; do
   run_suite "$suite"

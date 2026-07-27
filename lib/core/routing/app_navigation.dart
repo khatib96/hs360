@@ -18,8 +18,10 @@ bool canShowGlobalSearchAnchor(AppSession session) {
     'invoices.view_sales',
     'invoices.view_purchase',
     'invoices.view_returns',
+    'vouchers.view',
     'products.view',
     'product_units.view',
+    'inventory_documents.view',
   ]);
 }
 

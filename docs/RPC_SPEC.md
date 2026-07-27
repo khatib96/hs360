@@ -298,6 +298,27 @@ encode_calendar_list_cursor(jsonb) returns text
 roles); hardened to use `tenant_local_today` and return `[]` when unconfigured.
 Contract detail still embeds upcoming schedule via `build_contract_detail_json`.
 
+**Phase 7.5 M4 global tools (`105`):**
+
+```sql
+global_navigation_search(p_query text, p_limit_per_group integer default 5) returns jsonb
+list_my_in_app_notifications(p_limit integer default 30, p_before timestamptz default null) returns jsonb
+set_my_in_app_notification_read(p_notification_id uuid, p_read boolean default true) returns boolean
+```
+
+- All three functions derive tenant/user identity from the authenticated
+  session, are executable only by `authenticated`, and expose stable safe
+  response shapes.
+- Search requires two characters, caps each visible group at 1–10 rows, and
+  evaluates each source permission server-side. It returns safe identifiers,
+  localized titles, category, entity ID, and canonical route only.
+- Notification listing requires `notifications.view`, returns only the current
+  recipient's `in_app` rows, and excludes stale or currently unauthorized
+  calendar sources. It returns an own-recipient unread count, not tenant totals.
+- Read/unread updates require the same permission and match tenant, channel,
+  recipient type, recipient ID, and notification ID. Repeating either target
+  state is safe and returns `true`; a foreign/missing target returns `false`.
+
 **Phase 7 M0 supersession (remaining planned work):**
 
 - Phase 7 calendar event read/reschedule RPCs are date-only and do not accept a
