@@ -201,6 +201,9 @@ run_suite "supabase/tests/phase_7_m11_phase67_audit_reclaim.sql"
 printf 'Phase W.6: Phase 7.5 M4 global tools\n'
 run_suite "supabase/tests/phase_7_5_m4_global_tools.sql"
 
+printf 'Phase W.7: Phase 7.5 M5 dashboard and daily activity\n'
+run_suite "supabase/tests/phase_7_5_m5_dashboard_daily_activity.sql"
+
 printf 'Phase C: baseline pollution gate\n'
 for suite in "${phase_a_suites[@]}"; do
   run_suite "$suite"

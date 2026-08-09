@@ -23,6 +23,21 @@ final List<AppNavigationModule> appNavigationModules = [
         icon: Icons.dashboard_outlined,
         route: AppRoutes.dashboard,
         isVisible: canAccessDashboard,
+        matchChildren: true,
+      ),
+    ],
+  ),
+  AppNavigationModule(
+    id: AppModuleId.dailyActivity,
+    label: (l10n) => l10n.dailyActivityTitle,
+    icon: Icons.history_rounded,
+    destinations: [
+      AppNavigationDestination(
+        id: 'daily-activity',
+        label: (l10n) => l10n.dailyActivityTitle,
+        icon: Icons.history_rounded,
+        route: AppRoutes.dailyActivity,
+        isVisible: canAccessDailyActivity,
       ),
     ],
   ),

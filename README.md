@@ -5,9 +5,9 @@ businesses. It is being built first for Hayat Secret and is designed around
 serialized rental assets, recurring consumables, field service, customer debt,
 and double-entry accounting.
 
-> Repository status updated: **2026-07-27**
+> Repository status updated: **2026-08-05**
 >
-> Current milestone: **Phase 7.5 M0–M4 — `CLOSED / ACCEPTED`; M5 `NEXT`**
+> Current milestone: **Phase 7.5 M0–M5 — `CLOSED / ACCEPTED`; M6 `NEXT`**
 > after Phase 7
 > **`CLOSED / ACCEPTED`**. Phase 7 M12 Gates D/E/F are **`PASS / OWNER ACCEPTED`**,
 > Gate G is **PASS**, and Final Gate H is **PASS** through migration `104`.
@@ -15,7 +15,7 @@ and double-entry accounting.
 > **Physical Android smoke remains required before production** as an
 > owner-approved deferred obligation. Phase 8 has not started.
 >
-> Latest migrations on disk: **`105`** (Phase 7.5 M4 global tools);
+> Latest migrations on disk: **`106`** (Phase 7.5 M5 Dashboard and Daily Activity);
 > `093`–`104` remain checksum-locked / unchanged.
 
 ---
@@ -32,7 +32,7 @@ and double-entry accounting.
 | 5 | Complete | Invoices, returns, vouchers, journal, inventory accounting, PDFs |
 | 6 | Complete | Trial/rental contracts, lifecycle, billing, PDF, calendar handoff |
 | 7 | Complete / accepted | M1–M12 closed/accepted; bilingual calendar, assignments, mobile calendar, route/directions, integration, performance, device acceptance, and final cleanliness gates passed through migration `104` |
-| 7.5 | M0–M4 closed / accepted; M5 next | Option C shell, module commands, permission-safe global search, quick create, and recipient-scoped notifications accepted |
+| 7.5 | M0–M5 closed / accepted; M6 next | Option C shell, module commands, global tools, Dashboard v1, and Daily Activity accepted |
 | 8-12 | Not started | Adaptive mobile/requests/field execution and later HR/POS/finance/reporting/production phases |
 
 Phase 6 closed through M13/migration `092` on 2026-07-12. Phase 7 M1 closed on
@@ -342,6 +342,22 @@ Latest **Phase 7.5 M4** acceptance on 2026-07-27:
   focused M4 suite: **5 passed**; full SQL/concurrency/performance and final
   pollution gates: **PASS**.
 
+Latest **Phase 7.5 M5** acceptance on 2026-08-05:
+
+- Dashboard v1 now uses four fixed operational slots: today's schedule,
+  overdue work, active contracts/assets, and financial attention.
+- Every visible KPI opens the exact permission/date-shaped records behind it;
+  summary and drill-down share one canonical server source.
+- Daily Activity is a separate primary module for a selected business date and
+  combines only authorized calendar, visit, contract, invoice/return, voucher,
+  cash/bank, and inventory projections.
+- Tenant-local date/time, stable pagination, safe source routes, restricted
+  user scopes, and tenant isolation are enforced server-side.
+- Migration `106` and its SHA-256 are locked in the M5 evidence folder.
+- Flutter analysis: no issues; complete Flutter suite: **1461 passed**;
+  focused M5/navigation/shell suite: **40 passed**; focused M5 SQL and the full
+  SQL/concurrency/performance/pollution runner: **PASS**.
+
 Historical **Phase 7 M0.5** baseline on 2026-07-12:
 
 - Full SQL suite: passed.
@@ -389,6 +405,8 @@ Start with these sources:
 | [M2_SCREENSHOT_MANIFEST.md](docs/phase_7_5/m2/M2_SCREENSHOT_MANIFEST.md) | Durable M2 expanded, collapsed, and narrow AR/EN shell evidence |
 | [M3_ACCEPTANCE_REPORT.md](docs/phase_7_5/m3/M3_ACCEPTANCE_REPORT.md) | Closed Phase 7.5 module consolidation, command placement, shared-screen adoption, and verification record |
 | [M3_SCREENSHOT_MANIFEST.md](docs/phase_7_5/m3/M3_SCREENSHOT_MANIFEST.md) | Durable M3 Finance/Inventory desktop and narrow AR/EN evidence |
+| [M4_ACCEPTANCE_REPORT.md](docs/phase_7_5/m4/M4_ACCEPTANCE_REPORT.md) | Closed Phase 7.5 global search, quick create, and notification-center verification record |
+| [M5_ACCEPTANCE_REPORT.md](docs/phase_7_5/m5/M5_ACCEPTANCE_REPORT.md) | Closed Phase 7.5 Dashboard v1 and Daily Activity verification record |
 
 Feature references include `PRODUCTS_DETAIL.md`, `CONTRACTS_LOGIC.md`,
 `PAYMENT_SYSTEM.md`, `CUSTOMER_LEDGER.md`, `FIELD_OPS.md`,

@@ -5,6 +5,8 @@ abstract final class AppRoutes {
   static const login = '/login';
   static const forgotPassword = '/forgot-password';
   static const dashboard = '/dashboard';
+  static const dashboardDrilldown = '/dashboard/details/:kind';
+  static const dailyActivity = '/daily-activity';
   static const fieldToday = '/field/today';
   static const calendar = '/calendar';
   static const calendarRoute = '/calendar/route';
@@ -58,6 +60,8 @@ abstract final class AppRoutes {
   static const loginName = 'login';
   static const forgotPasswordName = 'forgotPassword';
   static const dashboardName = 'dashboard';
+  static const dashboardDrilldownName = 'dashboardDrilldown';
+  static const dailyActivityName = 'dailyActivity';
   static const fieldTodayName = 'fieldToday';
   static const calendarName = 'calendar';
   static const calendarRouteName = 'calendarRoute';
@@ -110,6 +114,20 @@ abstract final class AppRoutes {
 
   static String customerDetailPath(String id) =>
       '/customers/${Uri.encodeComponent(id)}';
+
+  static String dashboardDrilldownPath(String kind, {required DateTime date}) {
+    return Uri(
+      path: '/dashboard/details/${Uri.encodeComponent(kind)}',
+      queryParameters: {'date': _dateOnly(date)},
+    ).toString();
+  }
+
+  static String dailyActivityPath({required DateTime date}) {
+    return Uri(
+      path: dailyActivity,
+      queryParameters: {'date': _dateOnly(date)},
+    ).toString();
+  }
 
   static String customerEditPath(String id) =>
       '/customers/${Uri.encodeComponent(id)}/edit';

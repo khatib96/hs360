@@ -2030,5 +2030,53 @@
     "placeholders": {
       "count": {"type": "int"}
     }
-  }
+  },
+  "dashboardM5Subtitle": "A trusted operational view shaped by your access.",
+  "dashboardBusinessDate": "Business date",
+  "dashboardTodaySchedule": "Today's appointments and visits",
+  "dashboardOverdue": "Overdue operational items",
+  "dashboardContractsAssets": "Contracts and asset condition",
+  "dashboardFinancial": "Current-month finance",
+  "dashboardUnavailable": "This information is unavailable with your current access.",
+  "dashboardMetricTotal": "Total",
+  "dashboardMetricCompleted": "Completed",
+  "dashboardMetricRemaining": "Remaining",
+  "dashboardMetricOverdue": "Overdue",
+  "dashboardMetricActiveContracts": "Active contracts",
+  "dashboardMetricActiveTrials": "Active trials",
+  "dashboardMetricActiveRentals": "Active rentals",
+  "dashboardMetricRentedAssets": "Rented assets",
+  "dashboardMetricTrialAssets": "Trial assets",
+  "dashboardMetricAssetsAttention": "Assets needing attention",
+  "dashboardMetricCollections": "Collections this month",
+  "dashboardMetricOutstanding": "Outstanding amount",
+  "dashboardOpenRecords": "Open matching records",
+  "dashboardRefresh": "Refresh dashboard",
+  "dashboardLoadError": "The dashboard could not be loaded.",
+  "dashboardRecordCount": "{count} records",
+  "@dashboardRecordCount": {
+    "placeholders": {"count": {"type": "int"}}
+  },
+  "dailyActivityTitle": "Daily Activity",
+  "dailyActivitySubtitle": "What happened on the selected business date",
+  "dailyActivityEmpty": "No authorized activity was recorded on this date.",
+  "dailyActivityLoadError": "Daily activity could not be loaded.",
+  "dailyActivityToday": "Today",
+  "dailyActivityPreviousDay": "Previous day",
+  "dailyActivityNextDay": "Next day",
+  "dailyActivitySelectDate": "Select date",
+  "dailyActivityTimezone": "Business timezone: {timezone}",
+  "@dailyActivityTimezone": {
+    "placeholders": {"timezone": {"type": "String"}}
+  },
+  "activityKindCalendarEvent": "Appointment / event",
+  "activityKindVisitOutcome": "Visit outcome",
+  "activityKindContractCreated": "Contract created",
+  "activityKindContractLifecycle": "Contract lifecycle",
+  "activityKindInvoice": "Invoice / return",
+  "activityKindVoucher": "Receipt / payment",
+  "activityKindCashBankMovement": "Cash / bank movement",
+  "activityKindInventoryDocument": "Inventory document",
+  "activityOpenSource": "Open source record",
+  "activityNoSourceRoute": "No accepted detail screen is available for this record yet."
 }

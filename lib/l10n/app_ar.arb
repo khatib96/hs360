@@ -1671,5 +1671,53 @@
     "placeholders": {
       "count": {"type": "int"}
     }
-  }
+  },
+  "dashboardM5Subtitle": "نظرة تشغيلية موثوقة تتشكل حسب صلاحياتك.",
+  "dashboardBusinessDate": "تاريخ العمل",
+  "dashboardTodaySchedule": "مواعيد وزيارات اليوم",
+  "dashboardOverdue": "العناصر التشغيلية المتأخرة",
+  "dashboardContractsAssets": "العقود وحالة الأجهزة",
+  "dashboardFinancial": "مالية الشهر الحالي",
+  "dashboardUnavailable": "هذه المعلومات غير متاحة ضمن صلاحياتك الحالية.",
+  "dashboardMetricTotal": "الإجمالي",
+  "dashboardMetricCompleted": "المنجز",
+  "dashboardMetricRemaining": "المتبقي",
+  "dashboardMetricOverdue": "المتأخر",
+  "dashboardMetricActiveContracts": "العقود النشطة",
+  "dashboardMetricActiveTrials": "العقود التجريبية",
+  "dashboardMetricActiveRentals": "عقود الإيجار النشطة",
+  "dashboardMetricRentedAssets": "الأجهزة المؤجرة",
+  "dashboardMetricTrialAssets": "أجهزة التجربة",
+  "dashboardMetricAssetsAttention": "أجهزة تحتاج متابعة",
+  "dashboardMetricCollections": "تحصيلات هذا الشهر",
+  "dashboardMetricOutstanding": "المبلغ المستحق",
+  "dashboardOpenRecords": "فتح السجلات المطابقة",
+  "dashboardRefresh": "تحديث لوحة التحكم",
+  "dashboardLoadError": "تعذر تحميل لوحة التحكم.",
+  "dashboardRecordCount": "{count} سجل",
+  "@dashboardRecordCount": {
+    "placeholders": {"count": {"type": "int"}}
+  },
+  "dailyActivityTitle": "ملخص اليوم",
+  "dailyActivitySubtitle": "كل ما حدث في تاريخ العمل المحدد",
+  "dailyActivityEmpty": "لم يُسجل نشاط مسموح بعرضه في هذا التاريخ.",
+  "dailyActivityLoadError": "تعذر تحميل ملخص اليوم.",
+  "dailyActivityToday": "اليوم",
+  "dailyActivityPreviousDay": "اليوم السابق",
+  "dailyActivityNextDay": "اليوم التالي",
+  "dailyActivitySelectDate": "اختيار التاريخ",
+  "dailyActivityTimezone": "منطقة العمل الزمنية: {timezone}",
+  "@dailyActivityTimezone": {
+    "placeholders": {"timezone": {"type": "String"}}
+  },
+  "activityKindCalendarEvent": "موعد / حدث",
+  "activityKindVisitOutcome": "نتيجة زيارة",
+  "activityKindContractCreated": "إنشاء عقد",
+  "activityKindContractLifecycle": "إجراء على عقد",
+  "activityKindInvoice": "فاتورة / مرتجع",
+  "activityKindVoucher": "سند قبض / صرف",
+  "activityKindCashBankMovement": "حركة نقدية / بنكية",
+  "activityKindInventoryDocument": "مستند مخزون",
+  "activityOpenSource": "فتح السجل الأصلي",
+  "activityNoSourceRoute": "لا توجد شاشة تفاصيل معتمدة لهذا السجل حالياً."
 }

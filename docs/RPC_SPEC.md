@@ -319,6 +319,39 @@ set_my_in_app_notification_read(p_notification_id uuid, p_read boolean default t
   recipient type, recipient ID, and notification ID. Repeating either target
   state is safe and returns `true`; a foreign/missing target returns `false`.
 
+**Phase 7.5 M5 Dashboard and Daily Activity (`106`):**
+
+```sql
+get_phase_7_5_dashboard(p_business_date date default null) returns jsonb
+list_phase_7_5_dashboard_drilldown(
+  p_kind text,
+  p_business_date date default null,
+  p_limit integer default 40,
+  p_offset integer default 0
+) returns jsonb
+list_phase_7_5_daily_activity(
+  p_business_date date default null,
+  p_limit integer default 40,
+  p_offset integer default 0
+) returns jsonb
+```
+
+- All three RPCs derive tenant/user identity from the authenticated session;
+  `PUBLIC`/`anon` execution is revoked.
+- Dashboard exposes four fixed slots. Hidden sub-sources return visibility
+  flags and zero values; they never leak labels or counts.
+- Summary and drill-down use the same internal canonical row function, so each
+  visible count/amount reconciles under the same permission and business date.
+- Drill-down kinds are allowlisted, offsets/limits are bounded, and source
+  links use existing guarded application routes.
+- Daily Activity unions authorized projections only: calendar events, visit
+  outcomes, contract creation/lifecycle, invoices/returns, vouchers, posted
+  cash/bank movement, and inventory documents. It does not expose raw audit
+  rows.
+- Responses include `business_date`, `timezone_name`, `currency_code`, stable
+  paging metadata, absolute `occurred_at`, and validated tenant-local
+  `local_time` (`HH24:MI`).
+
 **Phase 7 M0 supersession (remaining planned work):**
 
 - Phase 7 calendar event read/reschedule RPCs are date-only and do not accept a

@@ -108,6 +108,21 @@ void main() {
       );
     });
 
+    test('Daily Activity is a primary module shaped by source permission', () {
+      final field = session(permissions: {'visits.view_assigned'});
+      final dailyActivity = visibleNavigationModules(
+        field,
+      ).singleWhere((module) => module.id == AppModuleId.dailyActivity);
+
+      expect(
+        dailyActivity
+            .visibleDestinations(field)
+            .map((destination) => destination.route),
+        [AppRoutes.dailyActivity],
+      );
+      expect(dailyActivity.landingRoute(field), AppRoutes.dailyActivity);
+    });
+
     test('document preview inherits its authorized source module', () {
       final appSession = session(permissions: {'contracts.view'});
       final uri = Uri(

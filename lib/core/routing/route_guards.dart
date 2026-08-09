@@ -69,6 +69,25 @@ String resolveHomeRoute(AppSession session) {
 bool canAccessDashboard(AppSession session) =>
     session.isManager || session.permissions.hasAny(_officePermissionIds);
 
+const _dailyActivityPermissionIds = [
+  'calendar.view',
+  'calendar.view_assigned',
+  'visits.view',
+  'visits.view_assigned',
+  'contracts.view',
+  'invoices.view',
+  'invoices.view_sales',
+  'invoices.view_purchase',
+  'invoices.view_returns',
+  'vouchers.view',
+  'cash_bank.view',
+  'inventory_documents.view',
+];
+
+bool canAccessDailyActivity(AppSession session) =>
+    session.isManager ||
+    session.permissions.hasAny(_dailyActivityPermissionIds);
+
 bool canAccessField(AppSession session) =>
     session.isManager || session.permissions.hasAny(_fieldPermissionIds);
 
@@ -350,6 +369,12 @@ bool _isPathAllowed(
   // Dashboard and Field specific permissions
   if (path == AppRoutes.dashboard) {
     return canAccessDashboard(session);
+  }
+  if (path.startsWith('/dashboard/details/')) {
+    return canAccessDashboard(session);
+  }
+  if (path == AppRoutes.dailyActivity) {
+    return canAccessDailyActivity(session);
   }
   if (path == AppRoutes.fieldToday) {
     return canAccessField(session);

@@ -1738,6 +1738,9 @@ Full implementations in `BUILD_PLAN.md`. Names and signatures:
 | `customer_balance(customer_id)` | Live A/R balance |
 | `aged_receivables(tenant_id)` | Debt aging breakdown |
 | `contract_profitability(contract_id)` | Per-contract P&L using snapshots |
+| `get_phase_7_5_dashboard(date)` | M5: permission-shaped four-slot operational summary for a tenant business date |
+| `list_phase_7_5_dashboard_drilldown(text, date, integer, integer)` | M5: exact paginated source rows behind a Dashboard metric |
+| `list_phase_7_5_daily_activity(date, integer, integer)` | M5: permission-shaped selected-date activity projections with tenant-local time |
 
 ---
 
@@ -1818,6 +1821,7 @@ Full implementations in `BUILD_PLAN.md`. Names and signatures:
 076_phase_5_voucher_protected_account_guard.sql -- M10 protected-account guard for direct vouchers
 093-104_phase_7_*.sql -- accepted Phase 7 calendar through final route contract fix
 105_phase_7_5_m4_global_tools.sql -- capped global search + recipient notification center
+106_phase_7_5_m5_dashboard_daily_activity.sql -- Dashboard v1 + selected-date authorized activity
 ```
 
 Add FKs that were forward-references (e.g. `product_units.current_contract_id -> contracts.id`, `product_units.current_service_location_id -> customer_service_locations.id`) at the end of each table's migration once both exist, or in the later feature migration that introduces the referenced table.

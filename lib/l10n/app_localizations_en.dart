@@ -4883,4 +4883,139 @@ class AppLocalizationsEn extends AppLocalizations {
   String notificationCenterUnreadCount(int count) {
     return '$count unread';
   }
+
+  @override
+  String get dashboardM5Subtitle =>
+      'A trusted operational view shaped by your access.';
+
+  @override
+  String get dashboardBusinessDate => 'Business date';
+
+  @override
+  String get dashboardTodaySchedule => 'Today\'s appointments and visits';
+
+  @override
+  String get dashboardOverdue => 'Overdue operational items';
+
+  @override
+  String get dashboardContractsAssets => 'Contracts and asset condition';
+
+  @override
+  String get dashboardFinancial => 'Current-month finance';
+
+  @override
+  String get dashboardUnavailable =>
+      'This information is unavailable with your current access.';
+
+  @override
+  String get dashboardMetricTotal => 'Total';
+
+  @override
+  String get dashboardMetricCompleted => 'Completed';
+
+  @override
+  String get dashboardMetricRemaining => 'Remaining';
+
+  @override
+  String get dashboardMetricOverdue => 'Overdue';
+
+  @override
+  String get dashboardMetricActiveContracts => 'Active contracts';
+
+  @override
+  String get dashboardMetricActiveTrials => 'Active trials';
+
+  @override
+  String get dashboardMetricActiveRentals => 'Active rentals';
+
+  @override
+  String get dashboardMetricRentedAssets => 'Rented assets';
+
+  @override
+  String get dashboardMetricTrialAssets => 'Trial assets';
+
+  @override
+  String get dashboardMetricAssetsAttention => 'Assets needing attention';
+
+  @override
+  String get dashboardMetricCollections => 'Collections this month';
+
+  @override
+  String get dashboardMetricOutstanding => 'Outstanding amount';
+
+  @override
+  String get dashboardOpenRecords => 'Open matching records';
+
+  @override
+  String get dashboardRefresh => 'Refresh dashboard';
+
+  @override
+  String get dashboardLoadError => 'The dashboard could not be loaded.';
+
+  @override
+  String dashboardRecordCount(int count) {
+    return '$count records';
+  }
+
+  @override
+  String get dailyActivityTitle => 'Daily Activity';
+
+  @override
+  String get dailyActivitySubtitle =>
+      'What happened on the selected business date';
+
+  @override
+  String get dailyActivityEmpty =>
+      'No authorized activity was recorded on this date.';
+
+  @override
+  String get dailyActivityLoadError => 'Daily activity could not be loaded.';
+
+  @override
+  String get dailyActivityToday => 'Today';
+
+  @override
+  String get dailyActivityPreviousDay => 'Previous day';
+
+  @override
+  String get dailyActivityNextDay => 'Next day';
+
+  @override
+  String get dailyActivitySelectDate => 'Select date';
+
+  @override
+  String dailyActivityTimezone(String timezone) {
+    return 'Business timezone: $timezone';
+  }
+
+  @override
+  String get activityKindCalendarEvent => 'Appointment / event';
+
+  @override
+  String get activityKindVisitOutcome => 'Visit outcome';
+
+  @override
+  String get activityKindContractCreated => 'Contract created';
+
+  @override
+  String get activityKindContractLifecycle => 'Contract lifecycle';
+
+  @override
+  String get activityKindInvoice => 'Invoice / return';
+
+  @override
+  String get activityKindVoucher => 'Receipt / payment';
+
+  @override
+  String get activityKindCashBankMovement => 'Cash / bank movement';
+
+  @override
+  String get activityKindInventoryDocument => 'Inventory document';
+
+  @override
+  String get activityOpenSource => 'Open source record';
+
+  @override
+  String get activityNoSourceRoute =>
+      'No accepted detail screen is available for this record yet.';
 }

@@ -8,6 +8,7 @@ typedef NavigationVisibility = bool Function(AppSession session);
 
 enum AppModuleId {
   dashboard,
+  dailyActivity,
   appointments,
   contracts,
   parties,

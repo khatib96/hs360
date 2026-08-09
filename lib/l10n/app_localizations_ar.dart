@@ -4829,4 +4829,136 @@ class AppLocalizationsAr extends AppLocalizations {
   String notificationCenterUnreadCount(int count) {
     return '$count غير مقروء';
   }
+
+  @override
+  String get dashboardM5Subtitle => 'نظرة تشغيلية موثوقة تتشكل حسب صلاحياتك.';
+
+  @override
+  String get dashboardBusinessDate => 'تاريخ العمل';
+
+  @override
+  String get dashboardTodaySchedule => 'مواعيد وزيارات اليوم';
+
+  @override
+  String get dashboardOverdue => 'العناصر التشغيلية المتأخرة';
+
+  @override
+  String get dashboardContractsAssets => 'العقود وحالة الأجهزة';
+
+  @override
+  String get dashboardFinancial => 'مالية الشهر الحالي';
+
+  @override
+  String get dashboardUnavailable =>
+      'هذه المعلومات غير متاحة ضمن صلاحياتك الحالية.';
+
+  @override
+  String get dashboardMetricTotal => 'الإجمالي';
+
+  @override
+  String get dashboardMetricCompleted => 'المنجز';
+
+  @override
+  String get dashboardMetricRemaining => 'المتبقي';
+
+  @override
+  String get dashboardMetricOverdue => 'المتأخر';
+
+  @override
+  String get dashboardMetricActiveContracts => 'العقود النشطة';
+
+  @override
+  String get dashboardMetricActiveTrials => 'العقود التجريبية';
+
+  @override
+  String get dashboardMetricActiveRentals => 'عقود الإيجار النشطة';
+
+  @override
+  String get dashboardMetricRentedAssets => 'الأجهزة المؤجرة';
+
+  @override
+  String get dashboardMetricTrialAssets => 'أجهزة التجربة';
+
+  @override
+  String get dashboardMetricAssetsAttention => 'أجهزة تحتاج متابعة';
+
+  @override
+  String get dashboardMetricCollections => 'تحصيلات هذا الشهر';
+
+  @override
+  String get dashboardMetricOutstanding => 'المبلغ المستحق';
+
+  @override
+  String get dashboardOpenRecords => 'فتح السجلات المطابقة';
+
+  @override
+  String get dashboardRefresh => 'تحديث لوحة التحكم';
+
+  @override
+  String get dashboardLoadError => 'تعذر تحميل لوحة التحكم.';
+
+  @override
+  String dashboardRecordCount(int count) {
+    return '$count سجل';
+  }
+
+  @override
+  String get dailyActivityTitle => 'ملخص اليوم';
+
+  @override
+  String get dailyActivitySubtitle => 'كل ما حدث في تاريخ العمل المحدد';
+
+  @override
+  String get dailyActivityEmpty => 'لم يُسجل نشاط مسموح بعرضه في هذا التاريخ.';
+
+  @override
+  String get dailyActivityLoadError => 'تعذر تحميل ملخص اليوم.';
+
+  @override
+  String get dailyActivityToday => 'اليوم';
+
+  @override
+  String get dailyActivityPreviousDay => 'اليوم السابق';
+
+  @override
+  String get dailyActivityNextDay => 'اليوم التالي';
+
+  @override
+  String get dailyActivitySelectDate => 'اختيار التاريخ';
+
+  @override
+  String dailyActivityTimezone(String timezone) {
+    return 'منطقة العمل الزمنية: $timezone';
+  }
+
+  @override
+  String get activityKindCalendarEvent => 'موعد / حدث';
+
+  @override
+  String get activityKindVisitOutcome => 'نتيجة زيارة';
+
+  @override
+  String get activityKindContractCreated => 'إنشاء عقد';
+
+  @override
+  String get activityKindContractLifecycle => 'إجراء على عقد';
+
+  @override
+  String get activityKindInvoice => 'فاتورة / مرتجع';
+
+  @override
+  String get activityKindVoucher => 'سند قبض / صرف';
+
+  @override
+  String get activityKindCashBankMovement => 'حركة نقدية / بنكية';
+
+  @override
+  String get activityKindInventoryDocument => 'مستند مخزون';
+
+  @override
+  String get activityOpenSource => 'فتح السجل الأصلي';
+
+  @override
+  String get activityNoSourceRoute =>
+      'لا توجد شاشة تفاصيل معتمدة لهذا السجل حالياً.';
 }

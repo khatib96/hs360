@@ -9133,6 +9133,258 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} unread'**
   String notificationCenterUnreadCount(int count);
+
+  /// No description provided for @dashboardM5Subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A trusted operational view shaped by your access.'**
+  String get dashboardM5Subtitle;
+
+  /// No description provided for @dashboardBusinessDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Business date'**
+  String get dashboardBusinessDate;
+
+  /// No description provided for @dashboardTodaySchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s appointments and visits'**
+  String get dashboardTodaySchedule;
+
+  /// No description provided for @dashboardOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue operational items'**
+  String get dashboardOverdue;
+
+  /// No description provided for @dashboardContractsAssets.
+  ///
+  /// In en, this message translates to:
+  /// **'Contracts and asset condition'**
+  String get dashboardContractsAssets;
+
+  /// No description provided for @dashboardFinancial.
+  ///
+  /// In en, this message translates to:
+  /// **'Current-month finance'**
+  String get dashboardFinancial;
+
+  /// No description provided for @dashboardUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This information is unavailable with your current access.'**
+  String get dashboardUnavailable;
+
+  /// No description provided for @dashboardMetricTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get dashboardMetricTotal;
+
+  /// No description provided for @dashboardMetricCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get dashboardMetricCompleted;
+
+  /// No description provided for @dashboardMetricRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining'**
+  String get dashboardMetricRemaining;
+
+  /// No description provided for @dashboardMetricOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get dashboardMetricOverdue;
+
+  /// No description provided for @dashboardMetricActiveContracts.
+  ///
+  /// In en, this message translates to:
+  /// **'Active contracts'**
+  String get dashboardMetricActiveContracts;
+
+  /// No description provided for @dashboardMetricActiveTrials.
+  ///
+  /// In en, this message translates to:
+  /// **'Active trials'**
+  String get dashboardMetricActiveTrials;
+
+  /// No description provided for @dashboardMetricActiveRentals.
+  ///
+  /// In en, this message translates to:
+  /// **'Active rentals'**
+  String get dashboardMetricActiveRentals;
+
+  /// No description provided for @dashboardMetricRentedAssets.
+  ///
+  /// In en, this message translates to:
+  /// **'Rented assets'**
+  String get dashboardMetricRentedAssets;
+
+  /// No description provided for @dashboardMetricTrialAssets.
+  ///
+  /// In en, this message translates to:
+  /// **'Trial assets'**
+  String get dashboardMetricTrialAssets;
+
+  /// No description provided for @dashboardMetricAssetsAttention.
+  ///
+  /// In en, this message translates to:
+  /// **'Assets needing attention'**
+  String get dashboardMetricAssetsAttention;
+
+  /// No description provided for @dashboardMetricCollections.
+  ///
+  /// In en, this message translates to:
+  /// **'Collections this month'**
+  String get dashboardMetricCollections;
+
+  /// No description provided for @dashboardMetricOutstanding.
+  ///
+  /// In en, this message translates to:
+  /// **'Outstanding amount'**
+  String get dashboardMetricOutstanding;
+
+  /// No description provided for @dashboardOpenRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'Open matching records'**
+  String get dashboardOpenRecords;
+
+  /// No description provided for @dashboardRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh dashboard'**
+  String get dashboardRefresh;
+
+  /// No description provided for @dashboardLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'The dashboard could not be loaded.'**
+  String get dashboardLoadError;
+
+  /// No description provided for @dashboardRecordCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} records'**
+  String dashboardRecordCount(int count);
+
+  /// No description provided for @dailyActivityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Activity'**
+  String get dailyActivityTitle;
+
+  /// No description provided for @dailyActivitySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What happened on the selected business date'**
+  String get dailyActivitySubtitle;
+
+  /// No description provided for @dailyActivityEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No authorized activity was recorded on this date.'**
+  String get dailyActivityEmpty;
+
+  /// No description provided for @dailyActivityLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily activity could not be loaded.'**
+  String get dailyActivityLoadError;
+
+  /// No description provided for @dailyActivityToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get dailyActivityToday;
+
+  /// No description provided for @dailyActivityPreviousDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous day'**
+  String get dailyActivityPreviousDay;
+
+  /// No description provided for @dailyActivityNextDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Next day'**
+  String get dailyActivityNextDay;
+
+  /// No description provided for @dailyActivitySelectDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select date'**
+  String get dailyActivitySelectDate;
+
+  /// No description provided for @dailyActivityTimezone.
+  ///
+  /// In en, this message translates to:
+  /// **'Business timezone: {timezone}'**
+  String dailyActivityTimezone(String timezone);
+
+  /// No description provided for @activityKindCalendarEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment / event'**
+  String get activityKindCalendarEvent;
+
+  /// No description provided for @activityKindVisitOutcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit outcome'**
+  String get activityKindVisitOutcome;
+
+  /// No description provided for @activityKindContractCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Contract created'**
+  String get activityKindContractCreated;
+
+  /// No description provided for @activityKindContractLifecycle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contract lifecycle'**
+  String get activityKindContractLifecycle;
+
+  /// No description provided for @activityKindInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice / return'**
+  String get activityKindInvoice;
+
+  /// No description provided for @activityKindVoucher.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt / payment'**
+  String get activityKindVoucher;
+
+  /// No description provided for @activityKindCashBankMovement.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash / bank movement'**
+  String get activityKindCashBankMovement;
+
+  /// No description provided for @activityKindInventoryDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Inventory document'**
+  String get activityKindInventoryDocument;
+
+  /// No description provided for @activityOpenSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Open source record'**
+  String get activityOpenSource;
+
+  /// No description provided for @activityNoSourceRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'No accepted detail screen is available for this record yet.'**
+  String get activityNoSourceRoute;
 }
 
 class _AppLocalizationsDelegate

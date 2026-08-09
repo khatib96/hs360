@@ -180,6 +180,16 @@ fail closed. Global search is capped per group, checks every source permission
 server-side, and returns no protected fields, hidden category counts, or raw
 cross-module errors.
 
+**Phase 7.5 M5 (`106`):** Dashboard and Daily Activity reads are available only
+through authenticated security-definer RPCs that derive tenant/user identity,
+recheck each source permission, and preserve assigned-only calendar/visit
+scope. Summary and drill-down share one revoked internal row function, hidden
+sources return no labels or counts, paging is bounded, and all emitted routes
+target existing guarded screens. Daily Activity projects safe operational
+fields only; it never reads or returns raw audit before/after data. Business
+date and displayed time are resolved with the tenant's configured IANA
+timezone.
+
 **Phase 7 M4 (`097`):** `calendar_events` is RPC-only for API roles.
 `get_calendar_range_summary` and `list_calendar_events` enforce
 `calendar.view` vs `calendar.view_assigned` server-side via

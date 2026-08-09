@@ -1,6 +1,6 @@
 # Phase 7.5 - Product Structure, Navigation, and Stabilization Plan
 
-> Status: **IN PROGRESS — M0 THROUGH M4 CLOSED / ACCEPTED; M5 NEXT**
+> Status: **IN PROGRESS — M0 THROUGH M5 CLOSED / ACCEPTED; M6 NEXT**
 > (started 2026-07-24).
 >
 > Purpose: pause feature expansion after Phase 7, turn the existing collection
@@ -637,6 +637,8 @@ module.
 **Goal:** replace the Phase 2 placeholder with useful, trusted operational
 orientation.
 
+**State:** `CLOSED / ACCEPTED` on 2026-08-05.
+
 **Work:**
 
 - implement the four fixed Dashboard slots from section 3.1;
@@ -657,6 +659,22 @@ orientation.
 - Dashboard and Daily Activity remain distinct from Journal Entries and the
   Audit Log;
 - timezone/date boundaries use the tenant's accepted business-date rules.
+
+**Closure evidence:**
+
+- `docs/phase_7_5/m5/M5_ACCEPTANCE_REPORT.md`;
+- migration `106_phase_7_5_m5_dashboard_daily_activity.sql` and its locked
+  checksum;
+- four fixed, responsive Dashboard slots with exact paginated source
+  drill-downs and permission-shaped visibility;
+- selected-business-date Daily Activity spanning visible calendar events,
+  visit outcomes, contract lifecycle, invoices/returns, vouchers, cash/bank
+  movements, and inventory documents;
+- tenant-local dates and displayed times, stable paging/order, canonical safe
+  routes, and no raw audit projection;
+- `flutter analyze` clean, complete Flutter suite at 1461 passed, 40 focused
+  M5/navigation/shell tests passed, the focused M5 SQL suite passed, and the
+  full SQL/concurrency/performance/pollution runner passed.
 
 ### M6 - Record Lifecycle Actions and Basic Audit Review
 

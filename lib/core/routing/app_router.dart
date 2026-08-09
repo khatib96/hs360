@@ -6,6 +6,8 @@ import '../../features/auth/presentation/blocked_screen.dart';
 import '../../features/auth/presentation/forgot_password_screen.dart';
 import '../../features/auth/presentation/login_screen.dart';
 import '../../features/dashboard/presentation/dashboard_screen.dart';
+import '../../features/dashboard/presentation/dashboard_drilldown_screen.dart';
+import '../../features/dashboard/presentation/daily_activity_screen.dart';
 import '../../features/field_ops/presentation/field_today_screen.dart';
 import '../../features/products/presentation/product_detail_screen.dart';
 import '../../features/products/presentation/product_unit_detail_screen.dart';
@@ -78,6 +80,21 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.dashboard,
         name: AppRoutes.dashboardName,
         builder: (context, state) => const DashboardScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.dashboardDrilldown,
+        name: AppRoutes.dashboardDrilldownName,
+        builder: (context, state) => DashboardDrilldownScreen(
+          kind: state.pathParameters['kind']!,
+          dateQueryParam: state.uri.queryParameters['date'],
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.dailyActivity,
+        name: AppRoutes.dailyActivityName,
+        builder: (context, state) => DailyActivityScreen(
+          dateQueryParam: state.uri.queryParameters['date'],
+        ),
       ),
       GoRoute(
         path: AppRoutes.fieldToday,
