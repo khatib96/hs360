@@ -6,6 +6,7 @@ import 'package:hs360/l10n/app_localizations.dart';
 import '../../../core/localization/locale_controller.dart';
 import '../../../core/routing/app_routes.dart';
 import '../../../shared/widgets/app_shell.dart';
+import '../../../shared/widgets/app_lifecycle_action_dialog.dart';
 import '../../../shared/widgets/message_banner.dart';
 import '../../auth/domain/app_session.dart';
 import '../../auth/presentation/auth_controller.dart';
@@ -288,7 +289,9 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
       if (state.invoiceId != null) {
         actions.add(
           TextButton(
-            onPressed: state.isSavingDraft ? null : controller.discardDraft,
+            onPressed: state.isSavingDraft
+                ? null
+                : () => _confirmDiscardDraft(context, controller),
             child: Text(l10n.invoiceFormDiscardDraft),
           ),
         );
@@ -308,6 +311,21 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
       );
     }
     return actions;
+  }
+
+  Future<void> _confirmDiscardDraft(
+    BuildContext context,
+    InvoiceFormController controller,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await showAppLifecycleActionDialog(
+      context: context,
+      title: l10n.invoiceFormDiscardDraft,
+      consequence: l10n.invoiceDiscardDraftConsequence,
+      confirmLabel: l10n.invoiceFormDiscardDraft,
+    );
+    if (confirmed == null || !context.mounted) return;
+    await controller.discardDraft();
   }
 
   Future<void> _confirmSubmit(

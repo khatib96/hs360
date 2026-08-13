@@ -9385,6 +9385,252 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No accepted detail screen is available for this record yet.'**
   String get activityNoSourceRoute;
+
+  /// No description provided for @lifecycleConsequencesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What will happen'**
+  String get lifecycleConsequencesTitle;
+
+  /// No description provided for @lifecycleReasonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get lifecycleReasonLabel;
+
+  /// No description provided for @lifecycleReasonRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a reason before continuing.'**
+  String get lifecycleReasonRequired;
+
+  /// No description provided for @invoiceCancelConsequence.
+  ///
+  /// In en, this message translates to:
+  /// **'This invoice will remain in the records as cancelled. Its posted accounting effect will be reversed and the action will be recorded for audit.'**
+  String get invoiceCancelConsequence;
+
+  /// No description provided for @voucherCancelConsequence.
+  ///
+  /// In en, this message translates to:
+  /// **'This voucher will remain in the records as cancelled. Its posted accounting effect and allocations will be reversed and the action will be recorded for audit.'**
+  String get voucherCancelConsequence;
+
+  /// No description provided for @inventoryDocumentCancelConsequence.
+  ///
+  /// In en, this message translates to:
+  /// **'This document will remain in the records as cancelled. Its stock and accounting effects will be reversed and the action will be recorded for audit.'**
+  String get inventoryDocumentCancelConsequence;
+
+  /// No description provided for @invoiceDiscardDraftConsequence.
+  ///
+  /// In en, this message translates to:
+  /// **'This unposted draft will be permanently removed. Posted invoices cannot be deleted.'**
+  String get invoiceDiscardDraftConsequence;
+
+  /// No description provided for @serviceLocationDeactivateConsequence.
+  ///
+  /// In en, this message translates to:
+  /// **'This location will be hidden from active choices. Existing records will remain unchanged.'**
+  String get serviceLocationDeactivateConsequence;
+
+  /// No description provided for @auditLogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Audit Log'**
+  String get auditLogTitle;
+
+  /// No description provided for @auditLogSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A protected history of important changes and lifecycle actions'**
+  String get auditLogSubtitle;
+
+  /// No description provided for @auditRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh audit log'**
+  String get auditRefresh;
+
+  /// No description provided for @auditTimezone.
+  ///
+  /// In en, this message translates to:
+  /// **'Business timezone: {timezone}'**
+  String auditTimezone(String timezone);
+
+  /// No description provided for @auditSearchLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Search records'**
+  String get auditSearchLabel;
+
+  /// No description provided for @auditModuleFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Module'**
+  String get auditModuleFilter;
+
+  /// No description provided for @auditActionFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Action'**
+  String get auditActionFilter;
+
+  /// No description provided for @auditApplyFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply filters'**
+  String get auditApplyFilters;
+
+  /// No description provided for @auditClearFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get auditClearFilters;
+
+  /// No description provided for @auditPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have permission to view the audit log.'**
+  String get auditPermissionDenied;
+
+  /// No description provided for @auditLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'The audit log could not be loaded.'**
+  String get auditLoadError;
+
+  /// No description provided for @auditEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching audit entries were found.'**
+  String get auditEmpty;
+
+  /// No description provided for @auditAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get auditAll;
+
+  /// No description provided for @auditSystemActor.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get auditSystemActor;
+
+  /// No description provided for @auditOpenSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Open source record'**
+  String get auditOpenSource;
+
+  /// No description provided for @auditReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get auditReason;
+
+  /// No description provided for @auditSourceRedacted.
+  ///
+  /// In en, this message translates to:
+  /// **'Record details are hidden because you do not have permission to view the source.'**
+  String get auditSourceRedacted;
+
+  /// No description provided for @auditBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'Before'**
+  String get auditBefore;
+
+  /// No description provided for @auditAfter.
+  ///
+  /// In en, this message translates to:
+  /// **'After'**
+  String get auditAfter;
+
+  /// No description provided for @auditChangedFields.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} changed fields'**
+  String auditChangedFields(int count);
+
+  /// No description provided for @auditModuleSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get auditModuleSecurity;
+
+  /// No description provided for @auditModuleSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get auditModuleSystem;
+
+  /// No description provided for @auditActionCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Created'**
+  String get auditActionCreate;
+
+  /// No description provided for @auditActionUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated'**
+  String get auditActionUpdate;
+
+  /// No description provided for @auditActionDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted'**
+  String get auditActionDelete;
+
+  /// No description provided for @auditActionCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get auditActionCancel;
+
+  /// No description provided for @auditActionAssign.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned'**
+  String get auditActionAssign;
+
+  /// No description provided for @auditActionOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Changed'**
+  String get auditActionOther;
+
+  /// No description provided for @auditEntityUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Users and permissions'**
+  String get auditEntityUsers;
+
+  /// No description provided for @auditEntitySettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get auditEntitySettings;
+
+  /// No description provided for @auditEntityProductUnits.
+  ///
+  /// In en, this message translates to:
+  /// **'Product units'**
+  String get auditEntityProductUnits;
+
+  /// No description provided for @auditValueYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get auditValueYes;
+
+  /// No description provided for @auditValueNo.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get auditValueNo;
 }
 
 class _AppLocalizationsDelegate

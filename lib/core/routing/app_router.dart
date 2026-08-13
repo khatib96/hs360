@@ -14,6 +14,7 @@ import '../../features/products/presentation/product_unit_detail_screen.dart';
 import '../../features/products/presentation/product_list_screen.dart';
 import '../../features/products/presentation/product_wizard_screen.dart';
 import '../../features/accounting/presentation/chart_of_accounts_screen.dart';
+import '../../features/audit/presentation/audit_log_screen.dart';
 import '../../features/customers/presentation/customer_detail_screen.dart';
 import '../../features/customers/presentation/customer_edit_screen.dart';
 import '../../features/customers/presentation/customers_hub_screen.dart';
@@ -371,6 +372,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.inventoryDocuments,
         name: AppRoutes.inventoryDocumentsName,
         builder: (context, state) => const InventoryDocumentListScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.auditLog,
+        name: AppRoutes.auditLogName,
+        builder: (context, state) => const AuditLogScreen(),
       ),
       GoRoute(
         path: AppRoutes.documentPreview,

@@ -56,6 +56,7 @@ abstract final class AppRoutes {
   static const inventoryDocumentsStockCount =
       '/inventory/documents/stock-count';
   static const inventoryDocumentsDetail = '/inventory/documents/:id';
+  static const auditLog = '/audit';
 
   static const loginName = 'login';
   static const forgotPasswordName = 'forgotPassword';
@@ -111,6 +112,7 @@ abstract final class AppRoutes {
   static const inventoryDocumentsStockCountName =
       'inventoryDocumentsStockCount';
   static const inventoryDocumentsDetailName = 'inventoryDocumentsDetail';
+  static const auditLogName = 'auditLog';
 
   static String customerDetailPath(String id) =>
       '/customers/${Uri.encodeComponent(id)}';

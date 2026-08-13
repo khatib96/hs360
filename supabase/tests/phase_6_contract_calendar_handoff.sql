@@ -2093,7 +2093,7 @@ set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
 do $$
 declare
   v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
-  v_start date := date '2026-07-01';
+  v_start date := (date_trunc('month', current_date) - interval '1 month')::date;
   v_refill_day int := 5;
   v_contract_f1 uuid;
   v_contract_f3 uuid;
@@ -2160,6 +2160,16 @@ declare
   v_contract_f3 uuid := current_setting('test.p6m12.contract_f3')::uuid;
   v_first_f1 date;
   v_first_f3 date;
+  v_expected_f1 date := (
+    date_trunc('month', current_date)
+    + case when extract(day from current_date) <= 5
+        then interval '4 days'
+        else interval '1 month 4 days'
+      end
+  )::date;
+  v_expected_f3 date := (
+    date_trunc('month', current_date) + interval '2 months 4 days'
+  )::date;
 begin
   select min(ce.scheduled_date) into v_first_f1
   from public.calendar_events ce
@@ -2173,8 +2183,9 @@ begin
     and ce.type = 'refill_due'::public.calendar_event_type
     and ce.status = 'pending'::public.calendar_event_status;
 
-  if v_first_f1 <> date '2026-08-05' or v_first_f3 <> date '2026-10-05' then
-    raise exception 'case21 failed: f1=% f3=%', v_first_f1, v_first_f3;
+  if v_first_f1 <> v_expected_f1 or v_first_f3 <> v_expected_f3 then
+    raise exception 'case21 failed: f1=% expected_f1=% f3=% expected_f3=%',
+      v_first_f1, v_expected_f1, v_first_f3, v_expected_f3;
   end if;
 end $$;
 rollback;

@@ -20,7 +20,7 @@
 | **5 - Invoices, Vouchers & Journal** | Done | M1–M10 closed through migration `076` |
 | **6 - Contracts** | Complete | M0–M13 closed (2026-07-12) |
 | **7 - Calendar & Company Appointments** | **Complete / accepted** | M1–M12 CLOSED/ACCEPTED; Gates D/E/F owner-accepted, G/H passed through migration `104`; physical Android smoke deferred but required before production |
-| **7.5 - Product Structure & Stabilization** | M0 through M5 closed / accepted; M6 next | Dashboard v1 and selected-date Daily Activity accepted through migration `106` on 2026-08-05 |
+| **7.5 - Product Structure & Stabilization** | M0 through M6 closed / accepted; M7 next | Lifecycle UX and permission-shaped basic Audit review accepted through migration `107` on 2026-08-09 |
 | **8 - Adaptive Mobile, Requests & Field Ops** | Not started | - |
 | **9 - POS, Maintenance & Full HR** | Not started | - |
 | **10 - Finance, Reports, Dashboards & Close** | Not started | - |

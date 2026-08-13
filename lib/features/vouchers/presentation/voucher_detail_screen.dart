@@ -7,6 +7,7 @@ import '../../../core/documents/domain/document_kind.dart';
 import '../../../core/localization/locale_controller.dart';
 import '../../../core/routing/app_routes.dart';
 import '../../../shared/widgets/app_shell.dart';
+import '../../../shared/widgets/app_lifecycle_action_dialog.dart';
 import '../../../shared/widgets/message_banner.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../../finance_shared/domain/finance_permissions.dart';
@@ -215,44 +216,15 @@ class VoucherDetailScreen extends ConsumerWidget {
     VoucherDetailController controller,
   ) async {
     final l10n = AppLocalizations.of(context)!;
-    final material = MaterialLocalizations.of(context);
-    final reasonController = TextEditingController();
-    final confirmed = await showDialog<bool>(
+    final reason = await showAppLifecycleActionDialog(
       context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            final hasReason = reasonController.text.trim().isNotEmpty;
-            return AlertDialog(
-              title: Text(l10n.voucherConfirmCancel),
-              content: TextField(
-                controller: reasonController,
-                decoration: InputDecoration(
-                  labelText: l10n.voucherCancelReason,
-                  helperText: l10n.financeValidationCancellationReasonRequired,
-                ),
-                maxLength: 500,
-                maxLines: 3,
-                onChanged: (_) => setState(() {}),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: Text(material.cancelButtonLabel),
-                ),
-                FilledButton(
-                  onPressed: hasReason
-                      ? () => Navigator.pop(context, true)
-                      : null,
-                  child: Text(l10n.voucherCancelAction),
-                ),
-              ],
-            );
-          },
-        );
-      },
+      title: l10n.voucherConfirmCancel,
+      consequence: l10n.voucherCancelConsequence,
+      confirmLabel: l10n.voucherCancelAction,
+      reasonLabel: l10n.voucherCancelReason,
+      reasonRequired: true,
     );
-    if (confirmed != true || !context.mounted) return;
-    await controller.cancel(reasonController.text);
+    if (reason == null || !context.mounted) return;
+    await controller.cancel(reason);
   }
 }

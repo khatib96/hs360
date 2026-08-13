@@ -5,6 +5,7 @@ import 'package:hs360/l10n/app_localizations.dart';
 import '../../../core/localization/locale_controller.dart';
 import '../../../core/routing/app_routes.dart';
 import '../../../shared/widgets/app_shell.dart';
+import '../../../shared/widgets/app_lifecycle_action_dialog.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../domain/accounting_permissions.dart';
 import '../domain/chart_account.dart';
@@ -220,24 +221,13 @@ class ChartOfAccountsScreen extends ConsumerWidget {
     ChartAccountTreeNode node,
   ) async {
     final l10n = AppLocalizations.of(context)!;
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppLifecycleActionDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.chartAccountDeactivateConfirmTitle),
-        content: Text(l10n.chartAccountDeactivateConfirmBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(MaterialLocalizations.of(ctx).cancelButtonLabel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(l10n.chartAccountDeactivate),
-          ),
-        ],
-      ),
+      title: l10n.chartAccountDeactivateConfirmTitle,
+      consequence: l10n.chartAccountDeactivateConfirmBody,
+      confirmLabel: l10n.chartAccountDeactivate,
     );
-    if (confirmed != true || !context.mounted) return;
+    if (confirmed == null || !context.mounted) return;
 
     final errorCode = await ref
         .read(chartAccountListControllerProvider.notifier)

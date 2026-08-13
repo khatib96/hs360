@@ -63,6 +63,7 @@ String resolveHomeRoute(AppSession session) {
   if (session.permissions.hasAny(_officePermissionIds)) {
     return AppRoutes.dashboard;
   }
+  if (canViewAuditLog(session)) return AppRoutes.auditLog;
   return AppRoutes.blocked;
 }
 
@@ -90,6 +91,9 @@ bool canAccessDailyActivity(AppSession session) =>
 
 bool canAccessField(AppSession session) =>
     session.isManager || session.permissions.hasAny(_fieldPermissionIds);
+
+bool canViewAuditLog(AppSession session) =>
+    session.isManager || session.permissions.can('audit_log.view');
 
 /// True for `/products/{segment}/edit` where segment is not `new`.
 bool isProductEditPath(String path) {
@@ -364,6 +368,9 @@ bool _isPathAllowed(
   }
   if (path == AppRoutes.inventoryDocumentsStockCount) {
     return canCreateStockCount(session);
+  }
+  if (path == AppRoutes.auditLog) {
+    return canViewAuditLog(session);
   }
 
   // Dashboard and Field specific permissions

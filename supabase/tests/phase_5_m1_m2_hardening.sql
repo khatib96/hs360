@@ -666,6 +666,24 @@ end $$;
 rollback;
 
 -- Audit: tenant_settings update succeeds and writes audit row.
+-- Protected snapshots are inspected through an ephemeral postgres-owned test
+-- helper. Application roles intentionally have no direct column access after
+-- Phase 7.5 M6.
+create or replace function pg_temp.latest_tenant_settings_audit(p_tenant_id uuid)
+returns table(entity_id uuid, before_json jsonb, after_json jsonb)
+language sql
+stable
+security definer
+set search_path = public, pg_temp
+as $$
+  select a.entity_id, a.before_json, a.after_json
+  from public.audit_log a
+  where a.tenant_id = p_tenant_id
+    and a.entity_type = 'tenant_settings'
+  order by a.at desc, a.id desc
+  limit 1
+$$;
+
 begin;
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000201';
@@ -719,11 +737,7 @@ begin
 
   select entity_id, before_json, after_json
   into v_entity_id, v_before_json, v_after_json
-  from audit_log
-  where tenant_id = v_tenant_a
-    and entity_type = 'tenant_settings'
-  order by at desc
-  limit 1;
+  from pg_temp.latest_tenant_settings_audit(v_tenant_a);
 
   if v_entity_id <> v_tenant_a then
     raise exception 'audit_tenant_settings entity_id wrong: %', v_entity_id;

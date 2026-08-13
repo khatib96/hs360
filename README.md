@@ -5,9 +5,9 @@ businesses. It is being built first for Hayat Secret and is designed around
 serialized rental assets, recurring consumables, field service, customer debt,
 and double-entry accounting.
 
-> Repository status updated: **2026-08-05**
+> Repository status updated: **2026-08-09**
 >
-> Current milestone: **Phase 7.5 M0–M5 — `CLOSED / ACCEPTED`; M6 `NEXT`**
+> Current milestone: **Phase 7.5 M0–M6 — `CLOSED / ACCEPTED`; M7 `NEXT`**
 > after Phase 7
 > **`CLOSED / ACCEPTED`**. Phase 7 M12 Gates D/E/F are **`PASS / OWNER ACCEPTED`**,
 > Gate G is **PASS**, and Final Gate H is **PASS** through migration `104`.
@@ -15,7 +15,7 @@ and double-entry accounting.
 > **Physical Android smoke remains required before production** as an
 > owner-approved deferred obligation. Phase 8 has not started.
 >
-> Latest migrations on disk: **`106`** (Phase 7.5 M5 Dashboard and Daily Activity);
+> Latest migrations on disk: **`107`** (Phase 7.5 M6 basic Audit review);
 > `093`–`104` remain checksum-locked / unchanged.
 
 ---
@@ -32,7 +32,7 @@ and double-entry accounting.
 | 5 | Complete | Invoices, returns, vouchers, journal, inventory accounting, PDFs |
 | 6 | Complete | Trial/rental contracts, lifecycle, billing, PDF, calendar handoff |
 | 7 | Complete / accepted | M1–M12 closed/accepted; bilingual calendar, assignments, mobile calendar, route/directions, integration, performance, device acceptance, and final cleanliness gates passed through migration `104` |
-| 7.5 | M0–M5 closed / accepted; M6 next | Option C shell, module commands, global tools, Dashboard v1, and Daily Activity accepted |
+| 7.5 | M0–M6 closed / accepted; M7 next | Option C shell, module commands, global tools, Dashboard/Daily Activity, lifecycle UX, and basic Audit review accepted |
 | 8-12 | Not started | Adaptive mobile/requests/field execution and later HR/POS/finance/reporting/production phases |
 
 Phase 6 closed through M13/migration `092` on 2026-07-12. Phase 7 M1 closed on
@@ -102,6 +102,8 @@ Canonical module tree:
 - Phase 7.5 consolidated module command area and shared filter/state/table
   adoption across high-use Finance, Inventory, Customers/Suppliers, Contracts,
   Calendar, and Settings journeys.
+- Phase 7.5 shared lifecycle confirmation/consequence pattern and a
+  permission-gated, redacted, filterable Audit Log with safe source links.
 - Products, groups, dual units, serialized assets, barcode/QR resolution, and
   product-unit timeline foundation.
 - Warehouses, van-warehouse rules, stock balances, adjustments, transfers, and
@@ -120,10 +122,9 @@ Canonical module tree:
 
 ## Planned, Not Yet Implemented
 
-- Remaining Phase 7.5 implementation: bounded global search, quick create,
-  in-app notification center, four-slot Dashboard v1, Daily Activity,
-  consistent record-action UX, basic Audit review, integrity gate, and
-  closure/handoff work.
+- Remaining Phase 7.5 implementation: finance/inventory/cross-module integrity
+  gate, responsive/bilingual/accessibility/performance acceptance, visual owner
+  acceptance, and final closure/handoff work.
 - Pre-production physical Android smoke for Gate F. Phase 7 acceptance used
   physical iOS + Android Emulator; this deferred obligation does not reopen
   Phase 7 unless the smoke exposes a defect.
@@ -200,7 +201,7 @@ lib/
   shared/        Shared application widgets
 
 supabase/
-  migrations/    Ordered PostgreSQL migrations (currently 001-092)
+  migrations/    Ordered PostgreSQL migrations (currently through 107)
   tests/         SQL regression and concurrency suites
   functions/     Edge Functions
   .temp/         Ignored local credentials and safety artifacts
@@ -358,6 +359,23 @@ Latest **Phase 7.5 M5** acceptance on 2026-08-05:
   focused M5/navigation/shell suite: **40 passed**; focused M5 SQL and the full
   SQL/concurrency/performance/pollution runner: **PASS**.
 
+Latest **Phase 7.5 M6** acceptance on 2026-08-09:
+
+- Lifecycle confirmations now use one responsive, bilingual consequence and
+  reason pattern across financial cancellations, invoice draft discard, and
+  supported master-data deactivation flows.
+- Audit Log is a permission-gated system destination with tenant-local date,
+  module, action, and search filters plus stable cursor paging.
+- Source details and links appear only after the corresponding source
+  permission succeeds; before/after values use a strict safe-field whitelist.
+- Raw snapshots, reasons, network address, and user agent are not directly
+  readable by API users. Audit-only users receive redacted snapshots, reasons,
+  and source links.
+- Migration `107` and its SHA-256 are locked in the M6 evidence folder.
+- Flutter analysis: no issues; complete Flutter suite: **1469 passed**;
+  focused lifecycle/audit/navigation suite: **96 passed**; focused M6 SQL and
+  the full SQL/concurrency/performance/pollution runner: **PASS**.
+
 Historical **Phase 7 M0.5** baseline on 2026-07-12:
 
 - Full SQL suite: passed.
@@ -407,6 +425,7 @@ Start with these sources:
 | [M3_SCREENSHOT_MANIFEST.md](docs/phase_7_5/m3/M3_SCREENSHOT_MANIFEST.md) | Durable M3 Finance/Inventory desktop and narrow AR/EN evidence |
 | [M4_ACCEPTANCE_REPORT.md](docs/phase_7_5/m4/M4_ACCEPTANCE_REPORT.md) | Closed Phase 7.5 global search, quick create, and notification-center verification record |
 | [M5_ACCEPTANCE_REPORT.md](docs/phase_7_5/m5/M5_ACCEPTANCE_REPORT.md) | Closed Phase 7.5 Dashboard v1 and Daily Activity verification record |
+| [M6_ACCEPTANCE_REPORT.md](docs/phase_7_5/m6/M6_ACCEPTANCE_REPORT.md) | Closed Phase 7.5 lifecycle-action and basic Audit review verification record |
 
 Feature references include `PRODUCTS_DETAIL.md`, `CONTRACTS_LOGIC.md`,
 `PAYMENT_SYSTEM.md`, `CUSTOMER_LEDGER.md`, `FIELD_OPS.md`,

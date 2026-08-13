@@ -5018,4 +5018,139 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get activityNoSourceRoute =>
       'No accepted detail screen is available for this record yet.';
+
+  @override
+  String get lifecycleConsequencesTitle => 'What will happen';
+
+  @override
+  String get lifecycleReasonLabel => 'Reason';
+
+  @override
+  String get lifecycleReasonRequired => 'Enter a reason before continuing.';
+
+  @override
+  String get invoiceCancelConsequence =>
+      'This invoice will remain in the records as cancelled. Its posted accounting effect will be reversed and the action will be recorded for audit.';
+
+  @override
+  String get voucherCancelConsequence =>
+      'This voucher will remain in the records as cancelled. Its posted accounting effect and allocations will be reversed and the action will be recorded for audit.';
+
+  @override
+  String get inventoryDocumentCancelConsequence =>
+      'This document will remain in the records as cancelled. Its stock and accounting effects will be reversed and the action will be recorded for audit.';
+
+  @override
+  String get invoiceDiscardDraftConsequence =>
+      'This unposted draft will be permanently removed. Posted invoices cannot be deleted.';
+
+  @override
+  String get serviceLocationDeactivateConsequence =>
+      'This location will be hidden from active choices. Existing records will remain unchanged.';
+
+  @override
+  String get auditLogTitle => 'Audit Log';
+
+  @override
+  String get auditLogSubtitle =>
+      'A protected history of important changes and lifecycle actions';
+
+  @override
+  String get auditRefresh => 'Refresh audit log';
+
+  @override
+  String auditTimezone(String timezone) {
+    return 'Business timezone: $timezone';
+  }
+
+  @override
+  String get auditSearchLabel => 'Search records';
+
+  @override
+  String get auditModuleFilter => 'Module';
+
+  @override
+  String get auditActionFilter => 'Action';
+
+  @override
+  String get auditApplyFilters => 'Apply filters';
+
+  @override
+  String get auditClearFilters => 'Clear';
+
+  @override
+  String get auditPermissionDenied =>
+      'You do not have permission to view the audit log.';
+
+  @override
+  String get auditLoadError => 'The audit log could not be loaded.';
+
+  @override
+  String get auditEmpty => 'No matching audit entries were found.';
+
+  @override
+  String get auditAll => 'All';
+
+  @override
+  String get auditSystemActor => 'System';
+
+  @override
+  String get auditOpenSource => 'Open source record';
+
+  @override
+  String get auditReason => 'Reason';
+
+  @override
+  String get auditSourceRedacted =>
+      'Record details are hidden because you do not have permission to view the source.';
+
+  @override
+  String get auditBefore => 'Before';
+
+  @override
+  String get auditAfter => 'After';
+
+  @override
+  String auditChangedFields(int count) {
+    return '$count changed fields';
+  }
+
+  @override
+  String get auditModuleSecurity => 'Security';
+
+  @override
+  String get auditModuleSystem => 'System';
+
+  @override
+  String get auditActionCreate => 'Created';
+
+  @override
+  String get auditActionUpdate => 'Updated';
+
+  @override
+  String get auditActionDelete => 'Deleted';
+
+  @override
+  String get auditActionCancel => 'Cancelled';
+
+  @override
+  String get auditActionAssign => 'Assigned';
+
+  @override
+  String get auditActionOther => 'Changed';
+
+  @override
+  String get auditEntityUsers => 'Users and permissions';
+
+  @override
+  String get auditEntitySettings => 'Settings';
+
+  @override
+  String get auditEntityProductUnits => 'Product units';
+
+  @override
+  String get auditValueYes => 'Yes';
+
+  @override
+  String get auditValueNo => 'No';
 }

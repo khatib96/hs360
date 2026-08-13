@@ -8,6 +8,7 @@ import '../../../core/routing/app_routes.dart';
 import '../../../shared/widgets/app_filter_bar.dart';
 import '../../../shared/widgets/app_state_view.dart';
 import '../../../shared/widgets/app_table_frame.dart';
+import '../../../shared/widgets/app_lifecycle_action_dialog.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../domain/supplier.dart';
 import '../domain/supplier_permissions.dart';
@@ -174,24 +175,13 @@ class SuppliersTabBody extends ConsumerWidget {
     if (session == null || !canDeactivateSupplier(session)) return;
 
     final l10n = AppLocalizations.of(context)!;
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppLifecycleActionDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.supplierDeactivateConfirmTitle),
-        content: Text(l10n.supplierDeactivateConfirmBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.supplierActionDeactivate),
-          ),
-        ],
-      ),
+      title: l10n.supplierDeactivateConfirmTitle,
+      consequence: l10n.supplierDeactivateConfirmBody,
+      confirmLabel: l10n.supplierActionDeactivate,
     );
-    if (confirmed != true || !context.mounted) return;
+    if (confirmed == null || !context.mounted) return;
 
     final errorCode = await ref
         .read(supplierListControllerProvider.notifier)

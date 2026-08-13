@@ -4961,4 +4961,138 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get activityNoSourceRoute =>
       'لا توجد شاشة تفاصيل معتمدة لهذا السجل حالياً.';
+
+  @override
+  String get lifecycleConsequencesTitle => 'ما الذي سيحدث';
+
+  @override
+  String get lifecycleReasonLabel => 'السبب';
+
+  @override
+  String get lifecycleReasonRequired => 'أدخل السبب قبل المتابعة.';
+
+  @override
+  String get invoiceCancelConsequence =>
+      'ستبقى الفاتورة في السجلات بحالة ملغاة، وسيُعكس أثرها المحاسبي المرحّل ويُحفظ الإجراء في سجل التدقيق.';
+
+  @override
+  String get voucherCancelConsequence =>
+      'سيبقى السند في السجلات بحالة ملغاة، وسيُعكس أثره المحاسبي المرحّل وتخصيصاته ويُحفظ الإجراء في سجل التدقيق.';
+
+  @override
+  String get inventoryDocumentCancelConsequence =>
+      'سيبقى المستند في السجلات بحالة ملغاة، وستُعكس آثاره المخزنية والمحاسبية ويُحفظ الإجراء في سجل التدقيق.';
+
+  @override
+  String get invoiceDiscardDraftConsequence =>
+      'ستُحذف هذه المسودة غير المرحلة نهائياً. لا يمكن حذف الفواتير المرحلة.';
+
+  @override
+  String get serviceLocationDeactivateConsequence =>
+      'سيُخفى هذا الموقع من الاختيارات النشطة، وستبقى السجلات السابقة دون تغيير.';
+
+  @override
+  String get auditLogTitle => 'سجل التدقيق';
+
+  @override
+  String get auditLogSubtitle =>
+      'سجل محمي للتغييرات المهمة وإجراءات دورة الحياة';
+
+  @override
+  String get auditRefresh => 'تحديث سجل التدقيق';
+
+  @override
+  String auditTimezone(String timezone) {
+    return 'منطقة العمل الزمنية: $timezone';
+  }
+
+  @override
+  String get auditSearchLabel => 'البحث في السجلات';
+
+  @override
+  String get auditModuleFilter => 'القسم';
+
+  @override
+  String get auditActionFilter => 'الإجراء';
+
+  @override
+  String get auditApplyFilters => 'تطبيق عوامل التصفية';
+
+  @override
+  String get auditClearFilters => 'مسح';
+
+  @override
+  String get auditPermissionDenied => 'ليس لديك صلاحية عرض سجل التدقيق.';
+
+  @override
+  String get auditLoadError => 'تعذر تحميل سجل التدقيق.';
+
+  @override
+  String get auditEmpty => 'لا توجد سجلات تدقيق مطابقة.';
+
+  @override
+  String get auditAll => 'الكل';
+
+  @override
+  String get auditSystemActor => 'النظام';
+
+  @override
+  String get auditOpenSource => 'فتح السجل الأصلي';
+
+  @override
+  String get auditReason => 'السبب';
+
+  @override
+  String get auditSourceRedacted =>
+      'تفاصيل السجل مخفية لعدم امتلاكك صلاحية عرض المصدر.';
+
+  @override
+  String get auditBefore => 'قبل';
+
+  @override
+  String get auditAfter => 'بعد';
+
+  @override
+  String auditChangedFields(int count) {
+    return '$count حقول متغيرة';
+  }
+
+  @override
+  String get auditModuleSecurity => 'الأمان';
+
+  @override
+  String get auditModuleSystem => 'النظام';
+
+  @override
+  String get auditActionCreate => 'إنشاء';
+
+  @override
+  String get auditActionUpdate => 'تحديث';
+
+  @override
+  String get auditActionDelete => 'حذف';
+
+  @override
+  String get auditActionCancel => 'إلغاء';
+
+  @override
+  String get auditActionAssign => 'إسناد';
+
+  @override
+  String get auditActionOther => 'تغيير';
+
+  @override
+  String get auditEntityUsers => 'المستخدمون والصلاحيات';
+
+  @override
+  String get auditEntitySettings => 'الإعدادات';
+
+  @override
+  String get auditEntityProductUnits => 'وحدات المنتجات';
+
+  @override
+  String get auditValueYes => 'نعم';
+
+  @override
+  String get auditValueNo => 'لا';
 }

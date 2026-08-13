@@ -218,6 +218,14 @@ signed-in recipient's rows and may mark only those rows read; tenant-wide
 notification review, where separately implemented, still requires
 `notifications.view`.
 
+Phase 7.5 M6 Audit rule: the lower system destination and `/audit` route appear
+only with `audit_log.view`. That permission allows basic audit metadata but does
+not inherit any source-module permission. Safe before/after summaries, reasons,
+changed field names, and source links are returned only when the current user
+can also view that source; otherwise the row remains explicitly redacted and
+its reason is not searchable. The Audit-only landing route is `/audit`, not
+Dashboard, so it does not broaden dashboard access.
+
 Planned Requests & Approvals permission families must distinguish at least:
 
 - submit/view/cancel own request;

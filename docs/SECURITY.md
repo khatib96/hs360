@@ -190,6 +190,17 @@ fields only; it never reads or returns raw audit before/after data. Business
 date and displayed time are resolved with the tenant's configured IANA
 timezone.
 
+**Phase 7.5 M6 (`107`):** basic Audit review requires `audit_log.view` through
+one authenticated-only security-definer RPC. It derives the tenant from the
+session, uses tenant-local date boundaries, and rechecks the corresponding
+source permission per row. Audit-only viewers receive redacted metadata;
+source-visible before/after summaries and reasons require the source permission;
+summaries are reconstructed from a strict safe whitelist and source routes are
+allowlisted. Redacted reasons are neither searchable nor directly selectable.
+API roles cannot select raw `before_json`, `after_json`, `reason`, `ip_address`,
+or `user_agent` columns, and internal projection helpers are not executable by
+API roles.
+
 **Phase 7 M4 (`097`):** `calendar_events` is RPC-only for API roles.
 `get_calendar_range_summary` and `list_calendar_events` enforce
 `calendar.view` vs `calendar.view_assigned` server-side via
@@ -426,7 +437,7 @@ Triggers on these tables write to `audit_log`:
 | `employee_requests` / decisions | submit, review, approve, reject, cancel, apply |
 
 Audit log entries are immutable. There is no UPDATE or DELETE policy on `audit_log`.
-The Phase 7.5 audit-review RPC must redact protected before/after fields when the
+The Phase 7.5 M6 audit-review RPC redacts protected before/after fields when the
 viewer lacks the corresponding source permission; `audit_log.view` does not
 automatically grant all sensitive business fields.
 

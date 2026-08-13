@@ -9,6 +9,7 @@ import '../../../core/routing/app_routes.dart';
 import '../../../shared/widgets/app_shell.dart';
 import '../../../shared/widgets/app_state_view.dart';
 import '../../../shared/widgets/app_table_frame.dart';
+import '../../../shared/widgets/app_lifecycle_action_dialog.dart';
 import '../../../shared/widgets/message_banner.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../domain/inventory_permissions.dart';
@@ -191,25 +192,14 @@ class WarehousesScreen extends ConsumerWidget {
     if (session == null || !canDeactivateWarehouse(session)) return;
 
     final l10n = AppLocalizations.of(context)!;
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppLifecycleActionDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.warehouseDeactivate),
-        content: Text(l10n.warehouseDeactivateConfirm),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.warehouseDeactivate),
-          ),
-        ],
-      ),
+      title: l10n.warehouseDeactivate,
+      consequence: l10n.warehouseDeactivateConfirm,
+      confirmLabel: l10n.warehouseDeactivate,
     );
 
-    if (confirmed != true || !context.mounted) return;
+    if (confirmed == null || !context.mounted) return;
 
     final errorCode = await ref
         .read(warehousesControllerProvider.notifier)

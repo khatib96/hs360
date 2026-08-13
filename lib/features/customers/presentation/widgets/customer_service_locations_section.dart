@@ -5,6 +5,7 @@ import 'package:hs360/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../shared/widgets/message_banner.dart';
+import '../../../../shared/widgets/app_lifecycle_action_dialog.dart';
 import '../../../auth/presentation/auth_controller.dart';
 import '../../domain/customer_permissions.dart';
 import '../../domain/customer_service_location.dart';
@@ -136,24 +137,13 @@ class CustomerServiceLocationsSection extends ConsumerWidget {
     CustomerServiceLocation location,
   ) async {
     final l10n = AppLocalizations.of(context)!;
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppLifecycleActionDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.serviceLocationDeactivate),
-        content: Text('${location.name} (${location.code})'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(l10n.serviceLocationDeactivate),
-          ),
-        ],
-      ),
+      title: '${l10n.serviceLocationDeactivate}: ${location.name}',
+      consequence: l10n.serviceLocationDeactivateConsequence,
+      confirmLabel: l10n.serviceLocationDeactivate,
     );
-    if (confirmed != true || !context.mounted) return;
+    if (confirmed == null || !context.mounted) return;
     final code = await notifier.deactivateLocation(location.id);
     if (code != null && context.mounted) {
       showServiceLocationErrorSnackBar(context, code);

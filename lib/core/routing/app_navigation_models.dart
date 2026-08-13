@@ -14,6 +14,7 @@ enum AppModuleId {
   parties,
   finance,
   inventory,
+  audit,
   settings,
 }
 

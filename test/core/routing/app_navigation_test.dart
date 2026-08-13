@@ -123,6 +123,21 @@ void main() {
       expect(dailyActivity.landingRoute(field), AppRoutes.dailyActivity);
     });
 
+    test(
+      'audit is an independent system module shaped by audit permission',
+      () {
+        final auditViewer = session(permissions: {'audit_log.view'});
+        final modules = visibleNavigationModules(auditViewer);
+        final audit = modules.singleWhere(
+          (module) => module.id == AppModuleId.audit,
+        );
+
+        expect(modules.map((module) => module.id), [AppModuleId.audit]);
+        expect(audit.area, AppNavigationArea.system);
+        expect(audit.landingRoute(auditViewer), AppRoutes.auditLog);
+      },
+    );
+
     test('document preview inherits its authorized source module', () {
       final appSession = session(permissions: {'contracts.view'});
       final uri = Uri(

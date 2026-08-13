@@ -44,6 +44,7 @@ void main() {
 
     expect(find.byKey(const Key('shell-module-dashboard')), findsNothing);
     expect(find.byKey(const Key('shell-module-settings')), findsNothing);
+    expect(find.byKey(const Key('shell-module-audit')), findsOneWidget);
     expect(find.byKey(const Key('shell-user-card')), findsOneWidget);
   });
 

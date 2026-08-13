@@ -6,6 +6,7 @@ import 'package:hs360/l10n/app_localizations.dart';
 import '../../../core/localization/locale_controller.dart';
 import '../../../core/routing/app_routes.dart';
 import '../../../shared/widgets/app_shell.dart';
+import '../../../shared/widgets/app_lifecycle_action_dialog.dart';
 import '../../../shared/widgets/message_banner.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../../finance_shared/domain/finance_permissions.dart';
@@ -187,30 +188,15 @@ class InvoiceDetailScreen extends ConsumerWidget {
     InvoiceDetailController controller,
   ) async {
     final l10n = AppLocalizations.of(context)!;
-    final material = MaterialLocalizations.of(context);
-    final reasonController = TextEditingController();
-    final confirmed = await showDialog<bool>(
+    final reason = await showAppLifecycleActionDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.invoiceConfirmCancel),
-        content: TextField(
-          controller: reasonController,
-          decoration: InputDecoration(labelText: l10n.invoiceCancelReason),
-          maxLines: 3,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(material.cancelButtonLabel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(l10n.invoiceActionCancel),
-          ),
-        ],
-      ),
+      title: l10n.invoiceConfirmCancel,
+      consequence: l10n.invoiceCancelConsequence,
+      confirmLabel: l10n.invoiceActionCancel,
+      reasonLabel: l10n.invoiceCancelReason,
+      reasonRequired: true,
     );
-    if (confirmed != true || !context.mounted) return;
-    await controller.cancel(reasonController.text);
+    if (reason == null || !context.mounted) return;
+    await controller.cancel(reason);
   }
 }

@@ -206,6 +206,21 @@ final List<AppNavigationModule> appNavigationModules = [
     ],
   ),
   AppNavigationModule(
+    id: AppModuleId.audit,
+    label: (l10n) => l10n.auditLogTitle,
+    icon: Icons.fact_check_outlined,
+    area: AppNavigationArea.system,
+    destinations: [
+      AppNavigationDestination(
+        id: 'audit-log',
+        label: (l10n) => l10n.auditLogTitle,
+        icon: Icons.fact_check_outlined,
+        route: AppRoutes.auditLog,
+        isVisible: canViewAuditLog,
+      ),
+    ],
+  ),
+  AppNavigationModule(
     id: AppModuleId.settings,
     label: (l10n) => l10n.navSettings,
     icon: Icons.settings_outlined,

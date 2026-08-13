@@ -1692,10 +1692,14 @@ create index idx_audit_at on audit_log(at desc);
 create index idx_audit_entity on audit_log(entity_type, entity_id);
 ```
 
-Audit rows are immutable. Phase 7.5 exposes them through a permission-shaped
-read contract that can redact protected before/after fields; direct raw table
-visibility must not bypass source-record permissions. Phase 10 adds advanced
-audit review and anomaly dashboards.
+Audit rows are immutable. Phase 7.5 M6 (`107`) exposes them through
+`list_phase_7_5_audit_log`. The contract requires `audit_log.view`, scopes by
+the current tenant, applies tenant-local date boundaries and bounded cursor
+paging, and rechecks the source module permission before returning a safe
+summary, reason, or source route. Before/after snapshots use a strict
+non-sensitive field whitelist; raw snapshots, reason, IP address, and user
+agent are revoked from direct API reads. Phase 10 adds advanced audit review
+and anomaly dashboards.
 
 ---
 
@@ -1741,6 +1745,7 @@ Full implementations in `BUILD_PLAN.md`. Names and signatures:
 | `get_phase_7_5_dashboard(date)` | M5: permission-shaped four-slot operational summary for a tenant business date |
 | `list_phase_7_5_dashboard_drilldown(text, date, integer, integer)` | M5: exact paginated source rows behind a Dashboard metric |
 | `list_phase_7_5_daily_activity(date, integer, integer)` | M5: permission-shaped selected-date activity projections with tenant-local time |
+| `list_phase_7_5_audit_log(...)` | M6: tenant-scoped basic Audit review with filters, cursor paging, safe summaries, per-source visibility, and redaction |
 
 ---
 
@@ -1822,6 +1827,7 @@ Full implementations in `BUILD_PLAN.md`. Names and signatures:
 093-104_phase_7_*.sql -- accepted Phase 7 calendar through final route contract fix
 105_phase_7_5_m4_global_tools.sql -- capped global search + recipient notification center
 106_phase_7_5_m5_dashboard_daily_activity.sql -- Dashboard v1 + selected-date authorized activity
+107_phase_7_5_m6_audit_review.sql -- redacted permission-shaped basic Audit Log review
 ```
 
 Add FKs that were forward-references (e.g. `product_units.current_contract_id -> contracts.id`, `product_units.current_service_location_id -> customer_service_locations.id`) at the end of each table's migration once both exist, or in the later feature migration that introduces the referenced table.

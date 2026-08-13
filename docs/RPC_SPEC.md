@@ -352,6 +352,34 @@ list_phase_7_5_daily_activity(
   paging metadata, absolute `occurred_at`, and validated tenant-local
   `local_time` (`HH24:MI`).
 
+**Phase 7.5 M6 basic Audit review (`107`):**
+
+```sql
+list_phase_7_5_audit_log(
+  p_module text default null,
+  p_action text default null,
+  p_actor_id uuid default null,
+  p_date_from date default null,
+  p_date_to date default null,
+  p_search text default null,
+  p_limit integer default 50,
+  p_before_at timestamptz default null,
+  p_before_id bigint default null
+) returns jsonb
+```
+
+- The RPC is executable only by `authenticated`, derives tenant/user identity
+  server-side, and requires `audit_log.view`.
+- Date bounds use the accepted tenant business timezone. Module/action/actor/
+  search filters and tuple cursor paging are validated and capped at 100 rows.
+- Every row rechecks its source permission. Audit-only viewers receive metadata
+  with `source_visible = false`, no snapshots, reason, changed-field names, or
+  source route; protected reasons are not searchable.
+- Source-visible snapshots are rebuilt from a strict safe-field whitelist;
+  direct raw before/after, reason, IP address, and user-agent access is revoked
+  from API roles. Returned source routes are allowlisted application-local
+  routes.
+
 **Phase 7 M0 supersession (remaining planned work):**
 
 - Phase 7 calendar event read/reschedule RPCs are date-only and do not accept a

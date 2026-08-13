@@ -6,6 +6,7 @@ import 'package:hs360/l10n/app_localizations.dart';
 import '../../../core/routing/app_routes.dart';
 import '../../../core/utils/quantity_formatter.dart';
 import '../../../shared/widgets/app_shell.dart';
+import '../../../shared/widgets/app_lifecycle_action_dialog.dart';
 import '../../../shared/widgets/message_banner.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../../finance_shared/domain/finance_permissions.dart';
@@ -179,34 +180,16 @@ class InventoryDocumentDetailScreen extends ConsumerWidget {
     InventoryDocumentDetailController controller,
     AppLocalizations l10n,
   ) async {
-    final reasonController = TextEditingController();
-    final material = MaterialLocalizations.of(context);
-    final confirmed = await showDialog<bool>(
+    final reason = await showAppLifecycleActionDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.inventoryDocumentCancelAction),
-        content: TextField(
-          controller: reasonController,
-          decoration: InputDecoration(
-            labelText: l10n.inventoryDocumentCancelReason,
-          ),
-          maxLines: 3,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(material.cancelButtonLabel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(l10n.inventoryDocumentCancelAction),
-          ),
-        ],
-      ),
+      title: l10n.inventoryDocumentCancelAction,
+      consequence: l10n.inventoryDocumentCancelConsequence,
+      confirmLabel: l10n.inventoryDocumentCancelAction,
+      reasonLabel: l10n.inventoryDocumentCancelReason,
+      reasonRequired: true,
     );
-    if (confirmed != true || !context.mounted) return;
-    await controller.cancel(reasonController.text);
-    reasonController.dispose();
+    if (reason == null || !context.mounted) return;
+    await controller.cancel(reason);
   }
 }
 

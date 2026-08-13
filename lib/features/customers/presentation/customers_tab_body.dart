@@ -8,6 +8,7 @@ import '../../../core/routing/app_routes.dart';
 import '../../../shared/widgets/app_filter_bar.dart';
 import '../../../shared/widgets/app_state_view.dart';
 import '../../../shared/widgets/app_table_frame.dart';
+import '../../../shared/widgets/app_lifecycle_action_dialog.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../domain/customer.dart';
 import '../domain/customer_permissions.dart';
@@ -177,24 +178,13 @@ class CustomersTabBody extends ConsumerWidget {
     if (session == null || !canDeactivateCustomer(session)) return;
 
     final l10n = AppLocalizations.of(context)!;
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppLifecycleActionDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.customerDeactivateConfirmTitle),
-        content: Text(l10n.customerDeactivateConfirmBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.customerActionDeactivate),
-          ),
-        ],
-      ),
+      title: l10n.customerDeactivateConfirmTitle,
+      consequence: l10n.customerDeactivateConfirmBody,
+      confirmLabel: l10n.customerActionDeactivate,
     );
-    if (confirmed != true || !context.mounted) return;
+    if (confirmed == null || !context.mounted) return;
 
     final errorCode = await ref
         .read(customerListControllerProvider.notifier)

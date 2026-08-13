@@ -1,6 +1,6 @@
 # Phase 7.5 - Product Structure, Navigation, and Stabilization Plan
 
-> Status: **IN PROGRESS — M0 THROUGH M5 CLOSED / ACCEPTED; M6 NEXT**
+> Status: **IN PROGRESS — M0 THROUGH M6 CLOSED / ACCEPTED; M7 NEXT**
 > (started 2026-07-24).
 >
 > Purpose: pause feature expansion after Phase 7, turn the existing collection
@@ -681,6 +681,8 @@ orientation.
 **Goal:** expose correction workflows consistently without weakening backend
 safety.
 
+**State:** `CLOSED / ACCEPTED` on 2026-08-09.
+
 **Work:**
 
 - standardize draft edit/discard, confirmed cancel/reverse, contract lifecycle,
@@ -701,6 +703,23 @@ safety.
   `audit_log.view` but lacks source-field access;
 - reversal/cancellation tests cover both allowed and deliberately rejected
   downstream states.
+
+**Closure evidence:**
+
+- `docs/phase_7_5/m6/M6_ACCEPTANCE_REPORT.md`;
+- migration `107_phase_7_5_m6_audit_review.sql` and its locked checksum;
+- one shared responsive lifecycle-action dialog adopted by invoice, voucher,
+  inventory-document, draft-discard, and supported master-data deactivation
+  flows while existing structured contract lifecycle dialogs remain intact;
+- permission-gated Audit system destination with tenant-local date/module/
+  action/search filters, stable cursor paging, safe source links, and localized
+  responsive states;
+- authenticated-only Audit RPC, protected raw-column revocation, strict safe
+  snapshot whitelist, per-source permission rechecks, and audit-only snapshot/
+  reason redaction;
+- `flutter analyze` clean, complete Flutter suite at 1469 passed, 96 focused
+  lifecycle/audit/navigation tests passed, the focused M6 SQL suite passed,
+  and the full SQL/concurrency/performance/pollution runner passed.
 
 ### M7 - Finance, Inventory, and Cross-Module Integrity Gate
 

@@ -53,6 +53,30 @@ void main() {
       );
     });
 
+    test('audit permission resolves home and guards audit route', () {
+      final auditViewer = session(
+        accountType: 'user',
+        permissions: {'audit_log.view'},
+      );
+      expect(resolveHomeRoute(auditViewer), AppRoutes.auditLog);
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.auditLog,
+          hasSupabaseSession: true,
+          authState: loaded(auditViewer),
+        ),
+        isNull,
+      );
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.auditLog,
+          hasSupabaseSession: true,
+          authState: loaded(session(accountType: 'user')),
+        ),
+        AppRoutes.blocked,
+      );
+    });
+
     test('zero permissions -> blocked', () {
       expect(resolveHomeRoute(session(accountType: 'user')), AppRoutes.blocked);
     });

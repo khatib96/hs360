@@ -7,6 +7,7 @@ import '../../../core/errors/products_exception.dart';
 import '../../../core/localization/locale_controller.dart';
 import '../../../core/routing/app_routes.dart';
 import '../../../shared/widgets/app_shell.dart';
+import '../../../shared/widgets/app_lifecycle_action_dialog.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../domain/product_cost_access.dart';
 import '../domain/product_group.dart';
@@ -172,25 +173,14 @@ class ProductListScreen extends ConsumerWidget {
     if (session == null || !canEditProductGroup(session)) return;
 
     final l10n = AppLocalizations.of(context)!;
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppLifecycleActionDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.productGroupDeactivate),
-        content: Text(l10n.productGroupDeactivateConfirm),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.productGroupDeactivate),
-          ),
-        ],
-      ),
+      title: l10n.productGroupDeactivate,
+      consequence: l10n.productGroupDeactivateConfirm,
+      confirmLabel: l10n.productGroupDeactivate,
     );
 
-    if (confirmed == true && context.mounted) {
+    if (confirmed != null && context.mounted) {
       await ref
           .read(productListControllerProvider.notifier)
           .deactivateGroup(group.id);
