@@ -1,0 +1,22 @@
+{
+  "name_ar": "حياة سكرت",
+  "name_en": "Hayat Secret",
+  "slug": "hayat-secret-kw",
+  "country_code": "KW",
+  "timezone": "Asia/Kuwait",
+  "default_locale": "ar",
+  "currency": {
+    "iso_code": "KWD",
+    "major_name_ar": "دينار",
+    "major_name_en": "Kuwaiti dinar",
+    "major_symbol_ar": "د.ك",
+    "major_symbol_en": "KWD",
+    "minor_name_ar": "فلس",
+    "minor_name_en": "fils",
+    "minor_symbol_ar": "فلس",
+    "minor_symbol_en": "fils",
+    "decimal_places": 3,
+    "minor_units_per_major": 1000,
+    "symbol_position": "after"
+  }
+}

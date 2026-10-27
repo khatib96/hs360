@@ -197,7 +197,8 @@ begin
   select coalesce(sum(jl.credit), 0) into v_cr_gain
   from public.journal_lines jl
   join public.chart_of_accounts c on c.id = jl.account_id
-  where jl.journal_entry_id = v_je_id and c.code = '4102';
+  -- Migration 109: inventory gains use 4901; 4102 is reserved for sales returns.
+  where jl.journal_entry_id = v_je_id and c.code = '4901';
 
   if v_cr_gain <> 12.000 then raise exception 'case3 failed: cr gain %', v_cr_gain; end if;
 end $$;

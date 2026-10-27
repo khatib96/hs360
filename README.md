@@ -15,8 +15,10 @@ and double-entry accounting.
 > **Physical Android smoke remains required before production** as an
 > owner-approved deferred obligation. Phase 8 has not started.
 >
-> Latest migrations on disk: **`107`** (Phase 7.5 M6 basic Audit review);
-> `093`–`104` remain checksum-locked / unchanged.
+> Latest migrations on disk: **`111`** (`111` Users & Permissions management;
+> `110` Arabic permission labels; `109` company provisioning and inventory-gain
+> account `4901`; `108` anon routine EXECUTE hardening); `093`–`104` remain
+> checksum-locked / unchanged.
 
 ---
 
@@ -201,7 +203,7 @@ lib/
   shared/        Shared application widgets
 
 supabase/
-  migrations/    Ordered PostgreSQL migrations (currently through 107)
+  migrations/    Ordered PostgreSQL migrations (currently through 111)
   tests/         SQL regression and concurrency suites
   functions/     Edge Functions
   .temp/         Ignored local credentials and safety artifacts
@@ -254,6 +256,27 @@ Windows PowerShell:
 
 The scripts read local Supabase credentials and cache them under the ignored
 `supabase/.temp/` directory. Never commit real keys.
+
+### Create a company
+
+A company (tenant) is created from zero with its own currency, settings, base
+chart of accounts, tax/inventory accounts, adjustment reasons, main
+warehouse, and an owner login with manager access. Copy
+`scripts/companies/kuwait.example.json`, adjust names/slug/currency, then:
+
+```bash
+SUPABASE_URL=<api-url> SUPABASE_SERVICE_ROLE_KEY=<service-role-key> ./scripts/provision_company.sh scripts/companies/kuwait.example.json owner@example.com "Owner Name"
+```
+
+The owner password is prompted and never stored. One login belongs to one
+company until company switching is implemented. The database function is
+`provision_company` (migration `109`, `service_role` only).
+
+Employee logins are then created in the app under **Settings → Users &
+Permissions** with an initial password that the employee must change at first
+sign-in; admins can reset passwords there. No e-mail is sent. This needs the
+`admin-users` Edge Function: `npx supabase start` serves it locally, and it
+must be deployed with the database on any server.
 
 ---
 

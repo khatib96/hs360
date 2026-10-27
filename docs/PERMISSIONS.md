@@ -447,6 +447,16 @@ If the field is hidden, the row is not rendered at all (not even greyed out — 
 
 This is the most important admin screen. Managers spend real time here.
 
+> Implemented 2026-10-27 (migrations `110`/`111`, `lib/features/users/`):
+> Settings → Users & Permissions lists logins with type, status, a
+> must-change-password badge, a no-permissions warning, and last sign-in. The
+> per-user editor groups permissions by category with Arabic labels, search,
+> a sensitive-only filter, select/clear per section, a granted count, and one
+> atomic save. Permissions of unbuilt modules (HR, maintenance, quotations,
+> field visits) are hidden but kept unchanged. Admins create logins with an
+> initial password and reset passwords; no invitation e-mails are sent. The
+> sketches below remain the original design reference.
+
 ### 8.1 User List (Manager view)
 
 ```

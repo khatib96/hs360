@@ -1,15 +1,19 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/documents/domain/document_money_formatter.dart';
+import '../../../core/documents/domain/tenant_currency_format.dart';
 import '../../../core/routing/app_routes.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../shared/widgets/app_page_header.dart';
 import '../../../shared/widgets/app_shell.dart';
 import '../../../shared/widgets/app_state_view.dart';
 import '../../auth/presentation/auth_controller.dart';
+import '../../finance_shared/presentation/tenant_currency_provider.dart';
 import '../domain/dashboard_summary.dart';
 import 'dashboard_providers.dart';
 
@@ -60,7 +64,7 @@ class DashboardScreen extends ConsumerWidget {
   }
 }
 
-class _DashboardContent extends StatelessWidget {
+class _DashboardContent extends ConsumerWidget {
   const _DashboardContent({required this.summary});
 
   final DashboardSummary summary;
@@ -72,10 +76,16 @@ class _DashboardContent extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final locale = Localizations.localeOf(context).toLanguageTag();
     final date = DateFormat.yMMMMEEEEd(locale).format(summary.businessDate);
+    final currencyFormat =
+        ref.watch(tenantCurrencyFormatProvider).valueOrNull ??
+        TenantCurrencyFormat.defaults();
+    String money(Decimal amount) =>
+        '${formatDocumentMoney(amount, currencyFormat, includeSymbol: false)} '
+        '${summary.currencyCode}';
 
     return SingleChildScrollView(
       padding: AppSpacing.pageWide,
@@ -204,15 +214,13 @@ class _DashboardContent extends StatelessWidget {
                             if (summary.financial.collectionsVisible)
                               _DashboardMetric(
                                 label: l10n.dashboardMetricCollections,
-                                value:
-                                    '${NumberFormat.decimalPattern(locale).format(summary.financial.collections)} ${summary.currencyCode}',
+                                value: money(summary.financial.collections),
                                 onTap: () => _open(context, 'collections'),
                               ),
                             if (summary.financial.outstandingVisible)
                               _DashboardMetric(
                                 label: l10n.dashboardMetricOutstanding,
-                                value:
-                                    '${NumberFormat.decimalPattern(locale).format(summary.financial.outstanding)} ${summary.currencyCode}',
+                                value: money(summary.financial.outstanding),
                                 onTap: () => _open(context, 'outstanding'),
                               ),
                           ],

@@ -335,7 +335,7 @@ abstract class AppLocalizations {
   /// Forgot password screen subtitle
   ///
   /// In en, this message translates to:
-  /// **'Enter your email and we will send reset instructions if the account exists'**
+  /// **'Password reset e-mails are not used. Ask your administrator to reset your password; you will choose a new one at your next sign-in.'**
   String get forgotPasswordSubtitle;
 
   /// Field today screen title
@@ -9631,6 +9631,492 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No'**
   String get auditValueNo;
+
+  /// No description provided for @navUsersSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Users & permissions'**
+  String get navUsersSettings;
+
+  /// No description provided for @usersAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add user'**
+  String get usersAdd;
+
+  /// No description provided for @usersEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No users yet'**
+  String get usersEmpty;
+
+  /// No description provided for @usersLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load users'**
+  String get usersLoadError;
+
+  /// No description provided for @usersColumnName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get usersColumnName;
+
+  /// No description provided for @usersColumnLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get usersColumnLogin;
+
+  /// No description provided for @usersColumnType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get usersColumnType;
+
+  /// No description provided for @usersColumnStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get usersColumnStatus;
+
+  /// No description provided for @usersColumnPermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Permissions'**
+  String get usersColumnPermissions;
+
+  /// No description provided for @usersColumnLastSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Last sign-in'**
+  String get usersColumnLastSignIn;
+
+  /// No description provided for @usersTypeManager.
+  ///
+  /// In en, this message translates to:
+  /// **'Manager'**
+  String get usersTypeManager;
+
+  /// No description provided for @usersTypeUser.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get usersTypeUser;
+
+  /// No description provided for @usersStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get usersStatusActive;
+
+  /// No description provided for @usersStatusInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get usersStatusInactive;
+
+  /// No description provided for @usersMustChangePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Must change password'**
+  String get usersMustChangePassword;
+
+  /// No description provided for @usersYou.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get usersYou;
+
+  /// No description provided for @usersNeverSignedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Never'**
+  String get usersNeverSignedIn;
+
+  /// No description provided for @usersFullAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Full access'**
+  String get usersFullAccess;
+
+  /// No description provided for @usersPermissionCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} permissions'**
+  String usersPermissionCount(int count);
+
+  /// No description provided for @usersManagerFullAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Managers have every permission automatically.'**
+  String get usersManagerFullAccess;
+
+  /// No description provided for @usersSelfNote.
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot change your own account or permissions.'**
+  String get usersSelfNote;
+
+  /// No description provided for @usersSavePermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Save permissions'**
+  String get usersSavePermissions;
+
+  /// No description provided for @usersPendingChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} unsaved changes'**
+  String usersPendingChanges(int count);
+
+  /// No description provided for @usersNoPendingChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'No unsaved changes'**
+  String get usersNoPendingChanges;
+
+  /// No description provided for @usersPermissionsSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Permissions saved'**
+  String get usersPermissionsSaved;
+
+  /// No description provided for @usersSelectAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Select all'**
+  String get usersSelectAll;
+
+  /// No description provided for @usersClearAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear all'**
+  String get usersClearAll;
+
+  /// No description provided for @usersSensitive.
+  ///
+  /// In en, this message translates to:
+  /// **'Sensitive'**
+  String get usersSensitive;
+
+  /// No description provided for @usersNotHeldHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot grant a permission you do not hold'**
+  String get usersNotHeldHint;
+
+  /// No description provided for @usersResetPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset password'**
+  String get usersResetPassword;
+
+  /// No description provided for @usersResetPasswordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The user must choose a new password at their next sign-in.'**
+  String get usersResetPasswordHint;
+
+  /// No description provided for @usersResetPasswordDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Password set. The user must change it at their next sign-in.'**
+  String get usersResetPasswordDone;
+
+  /// No description provided for @usersDeactivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate user'**
+  String get usersDeactivate;
+
+  /// No description provided for @usersActivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate user'**
+  String get usersActivate;
+
+  /// No description provided for @usersDeactivateConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} loses access to the system immediately. You can activate the account again later.'**
+  String usersDeactivateConfirm(String name);
+
+  /// No description provided for @usersActivated.
+  ///
+  /// In en, this message translates to:
+  /// **'User activated'**
+  String get usersActivated;
+
+  /// No description provided for @usersDeactivated.
+  ///
+  /// In en, this message translates to:
+  /// **'User deactivated'**
+  String get usersDeactivated;
+
+  /// No description provided for @usersCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New user'**
+  String get usersCreateTitle;
+
+  /// No description provided for @usersDisplayName.
+  ///
+  /// In en, this message translates to:
+  /// **'Display name'**
+  String get usersDisplayName;
+
+  /// No description provided for @usersLoginLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Login (e-mail format)'**
+  String get usersLoginLabel;
+
+  /// No description provided for @usersLoginHint.
+  ///
+  /// In en, this message translates to:
+  /// **'No messages are sent to this address.'**
+  String get usersLoginHint;
+
+  /// No description provided for @usersInitialPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Initial password'**
+  String get usersInitialPassword;
+
+  /// No description provided for @usersNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get usersNewPassword;
+
+  /// No description provided for @usersConfirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password'**
+  String get usersConfirmPassword;
+
+  /// No description provided for @usersPasswordTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Use at least 10 characters'**
+  String get usersPasswordTooShort;
+
+  /// No description provided for @usersPasswordMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get usersPasswordMismatch;
+
+  /// No description provided for @usersGeneratePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate password'**
+  String get usersGeneratePassword;
+
+  /// No description provided for @usersAccountTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Account type'**
+  String get usersAccountTypeLabel;
+
+  /// No description provided for @usersCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get usersCreate;
+
+  /// No description provided for @usersCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'User created. Give them the initial password; they must change it at first sign-in.'**
+  String get usersCreated;
+
+  /// No description provided for @usersFieldRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get usersFieldRequired;
+
+  /// No description provided for @usersLoginInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a login in e-mail format, for example ahmad@company.local'**
+  String get usersLoginInvalid;
+
+  /// No description provided for @usersErrorPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have permission for this action.'**
+  String get usersErrorPermissionDenied;
+
+  /// No description provided for @usersErrorLoginTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'This login is already used.'**
+  String get usersErrorLoginTaken;
+
+  /// No description provided for @usersErrorWeakPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'The password must be at least 10 characters.'**
+  String get usersErrorWeakPassword;
+
+  /// No description provided for @usersErrorManagerRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Only a manager can do this to a manager account.'**
+  String get usersErrorManagerRequired;
+
+  /// No description provided for @usersErrorNotHeld.
+  ///
+  /// In en, this message translates to:
+  /// **'You can only grant or remove permissions you hold yourself.'**
+  String get usersErrorNotHeld;
+
+  /// No description provided for @usersErrorSelf.
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot change your own account.'**
+  String get usersErrorSelf;
+
+  /// No description provided for @usersErrorUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The account service is not available right now.'**
+  String get usersErrorUnavailable;
+
+  /// No description provided for @usersErrorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'The action could not be completed. Try again.'**
+  String get usersErrorGeneric;
+
+  /// No description provided for @permCategoryCore.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get permCategoryCore;
+
+  /// No description provided for @permCategorySales.
+  ///
+  /// In en, this message translates to:
+  /// **'Sales, customers and contracts'**
+  String get permCategorySales;
+
+  /// No description provided for @permCategoryPurchasing.
+  ///
+  /// In en, this message translates to:
+  /// **'Suppliers'**
+  String get permCategoryPurchasing;
+
+  /// No description provided for @permCategoryFinance.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoices and vouchers'**
+  String get permCategoryFinance;
+
+  /// No description provided for @permCategoryAccounting.
+  ///
+  /// In en, this message translates to:
+  /// **'Accounting'**
+  String get permCategoryAccounting;
+
+  /// No description provided for @permCategoryInventory.
+  ///
+  /// In en, this message translates to:
+  /// **'Products and inventory'**
+  String get permCategoryInventory;
+
+  /// No description provided for @permCategoryCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointments'**
+  String get permCategoryCalendar;
+
+  /// No description provided for @permCategoryCommunications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get permCategoryCommunications;
+
+  /// No description provided for @permCategorySettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get permCategorySettings;
+
+  /// No description provided for @permCategorySecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Audit'**
+  String get permCategorySecurity;
+
+  /// No description provided for @permCategoryOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get permCategoryOther;
+
+  /// No description provided for @changePasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change password'**
+  String get changePasswordTitle;
+
+  /// No description provided for @changePasswordForcedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'For your account\'s security, choose a new password before you continue.'**
+  String get changePasswordForcedSubtitle;
+
+  /// No description provided for @changePasswordSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a new password for your account.'**
+  String get changePasswordSubtitle;
+
+  /// No description provided for @changePasswordSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save password'**
+  String get changePasswordSave;
+
+  /// No description provided for @changePasswordDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed'**
+  String get changePasswordDone;
+
+  /// No description provided for @usersSearchPermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Search permissions'**
+  String get usersSearchPermissions;
+
+  /// No description provided for @usersSensitiveOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Sensitive only'**
+  String get usersSensitiveOnly;
+
+  /// No description provided for @usersNoPermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'No permissions'**
+  String get usersNoPermissions;
+
+  /// No description provided for @usersGrantedOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{granted} of {total} granted'**
+  String usersGrantedOf(int granted, int total);
+
+  /// No description provided for @usersNoMatchingPermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'No permissions match the search'**
+  String get usersNoMatchingPermissions;
 }
 
 class _AppLocalizationsDelegate

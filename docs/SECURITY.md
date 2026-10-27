@@ -286,6 +286,36 @@ end;
 $$ language plpgsql stable security definer;
 ```
 
+### 3.3.1 Routine EXECUTE Boundary (migration `108`)
+
+- No project routine in `public` is executable by `anon` or `PUBLIC`.
+  The only exceptions are the five row-policy helpers
+  (`current_tenant_id`, `current_tenant_user_id`, `current_employee_id`,
+  `is_manager`, `user_has_permission`), so anonymous table reads still
+  evaluate policies and return zero rows.
+- PostgreSQL still grants `PUBLIC` EXECUTE to newly created routines (a global
+  default the SQL suites rely on for `pg_temp` helpers). Every new routine
+  must therefore `revoke execute ... from public, anon` and
+  `grant execute ... to authenticated` explicitly.
+- `supabase/tests/phase_7_5_anon_routine_acl.sql` fails and names the routine
+  if any other project routine becomes anon-executable.
+
+### 3.3.2 Logins, Passwords, and Membership Writes (migration `111`)
+
+- Admins create employee logins with an initial password through the
+  `admin-users` Edge Function; no e-mail is sent. The employee must choose a
+  new password before using the app (`tenant_users.must_change_password`,
+  enforced by the router). Admins can reset a password, which forces another
+  change and writes a `password_reset` audit row.
+- The function uses the service-role key only for Auth admin calls. Every
+  permission decision runs in the database with the caller's JWT, so audit
+  rows name the real actor.
+- Direct writes to `tenant_users` and `user_permissions` are manager-only;
+  delegated (non-manager) administrators must use the RPCs. Before `111`, a
+  non-manager holding `settings.users.edit` could promote any account to
+  manager through the REST API.
+- Non-managers may only grant or remove permissions they hold themselves.
+
 ### 3.4 Service Role Key
 
 The Supabase service-role key bypasses RLS. It is **never** exposed to the client.

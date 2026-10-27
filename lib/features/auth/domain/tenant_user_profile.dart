@@ -6,6 +6,7 @@ class TenantUserProfile {
     required this.accountType,
     required this.displayName,
     required this.preferredLocale,
+    this.mustChangePassword = false,
   });
 
   final String tenantUserId;
@@ -13,6 +14,7 @@ class TenantUserProfile {
   final String accountType;
   final String displayName;
   final String preferredLocale;
+  final bool mustChangePassword;
 
   factory TenantUserProfile.fromRow(Map<String, dynamic> row) {
     return TenantUserProfile(
@@ -21,6 +23,7 @@ class TenantUserProfile {
       accountType: row['account_type'] as String,
       displayName: (row['display_name'] as String?) ?? '',
       preferredLocale: (row['preferred_locale'] as String?) ?? 'ar',
+      mustChangePassword: row['must_change_password'] == true,
     );
   }
 }

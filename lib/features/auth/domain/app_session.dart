@@ -11,6 +11,7 @@ class AppSession {
     required this.displayName,
     required this.preferredLocale,
     required this.permissions,
+    this.mustChangePassword = false,
   });
 
   final String userId;
@@ -21,6 +22,9 @@ class AppSession {
   final String displayName;
   final String preferredLocale;
   final AppPermissions permissions;
+
+  /// Set after an admin created the login or reset its password.
+  final bool mustChangePassword;
 
   bool get isManager => accountType == 'manager';
 }

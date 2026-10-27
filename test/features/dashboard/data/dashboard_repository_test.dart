@@ -1,7 +1,9 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hs360/features/auth/domain/app_permissions.dart';
 import 'package:hs360/features/auth/domain/app_session.dart';
 import 'package:hs360/features/dashboard/data/dashboard_repository.dart';
+import 'package:hs360/features/dashboard/domain/dashboard_summary.dart';
 
 void main() {
   final session = AppSession(
@@ -40,7 +42,7 @@ void main() {
     expect(result.businessDate, DateTime(2026, 8, 5));
     expect(result.todaySchedule.total, 7);
     expect(result.contracts.assetsAttention, 2);
-    expect(result.financial.outstanding, 75);
+    expect(result.financial.outstanding, Decimal.fromInt(75));
     expect(result.currencyCode, 'KWD');
   });
 
@@ -83,7 +85,7 @@ void main() {
     final page = await repository.listDailyActivity(session);
 
     expect(page.items, hasLength(2));
-    expect(page.items.first.amount, 25.5);
+    expect(page.items.first.amount, Decimal.parse('25.500'));
     expect(page.items.first.localTime, '11:00');
     expect(page.items.first.sourceRoute, startsWith('/invoices/'));
     expect(page.items.last.sourceRoute, isNull);
@@ -107,6 +109,25 @@ void main() {
           DashboardException.timezoneUnconfigured,
         ),
       ),
+    );
+  });
+
+  test('parses financial amounts exactly and rejects malformed values', () {
+    final summary = DashboardFinancialSummary.fromJson(const {
+      'collections_visible': true,
+      'collections': '123456789012.345',
+      'outstanding_visible': true,
+      'month_start': '2026-08-01',
+    });
+
+    expect(summary.collections, Decimal.parse('123456789012.345'));
+    expect(summary.outstanding, Decimal.zero);
+    expect(
+      () => DashboardFinancialSummary.fromJson(const {
+        'collections': 'not-a-number',
+        'month_start': '2026-08-01',
+      }),
+      throwsFormatException,
     );
   });
 }

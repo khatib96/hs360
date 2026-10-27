@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/errors/customer_exception.dart';
+import '../../../core/network/postgrest_search_filter.dart';
 import '../../../core/network/supabase_providers.dart';
 import '../../../domain/validators/customer_validator.dart';
 import '../../auth/domain/app_session.dart';
@@ -65,11 +66,14 @@ class CustomerRepository {
 
       final search = filters.search?.trim();
       if (search != null && search.isNotEmpty) {
-        final pattern = '%$search%';
         query = query.or(
-          'code.ilike.$pattern,name_ar.ilike.$pattern,'
-          'name_en.ilike.$pattern,phone_primary.ilike.$pattern,'
-          'email.ilike.$pattern',
+          ilikeAnyColumnFilter([
+            'code',
+            'name_ar',
+            'name_en',
+            'phone_primary',
+            'email',
+          ], search),
         );
       }
       if (filters.isActive != null) {

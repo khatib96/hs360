@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/errors/finance_exception.dart';
+import '../../../core/network/postgrest_search_filter.dart';
 import '../../../core/network/supabase_providers.dart';
 import '../../auth/domain/app_session.dart';
 import '../../finance_shared/domain/date_range.dart';
@@ -64,7 +65,11 @@ class JournalRepository {
       final search = filters.search?.trim();
       if (search != null && search.isNotEmpty) {
         query = query.or(
-          'entry_number.ilike.%$search%,description_ar.ilike.%$search%,description_en.ilike.%$search%',
+          ilikeAnyColumnFilter([
+            'entry_number',
+            'description_ar',
+            'description_en',
+          ], search),
         );
       }
 

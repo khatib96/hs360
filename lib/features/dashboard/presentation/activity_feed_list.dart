@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hs360/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/documents/domain/document_money_formatter.dart';
+import '../../../core/documents/domain/tenant_currency_format.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../shared/widgets/app_status_badge.dart';
+import '../../finance_shared/presentation/tenant_currency_provider.dart';
 import '../domain/activity_feed.dart';
 
-class ActivityFeedList extends StatelessWidget {
+class ActivityFeedList extends ConsumerWidget {
   const ActivityFeedList({
     required this.items,
     required this.onOpen,
@@ -19,12 +23,14 @@ class ActivityFeedList extends StatelessWidget {
   final String currencyCode;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final locale = Localizations.localeOf(context).toLanguageTag();
     final languageCode = Localizations.localeOf(context).languageCode;
     final timeFormat = DateFormat.jm(locale);
-    final amountFormat = NumberFormat.decimalPattern(locale);
+    final currencyFormat =
+        ref.watch(tenantCurrencyFormatProvider).valueOrNull ??
+        TenantCurrencyFormat.defaults();
 
     return ListView.separated(
       key: const Key('activity-feed-list'),
@@ -106,7 +112,7 @@ class ActivityFeedList extends StatelessWidget {
                         if (item.amount != null) ...[
                           const SizedBox(height: AppSpacing.xs),
                           Text(
-                            '${amountFormat.format(item.amount)}${currencyCode.isEmpty ? '' : ' $currencyCode'}',
+                            '${formatDocumentMoney(item.amount!, currencyFormat, includeSymbol: false)}${currencyCode.isEmpty ? '' : ' $currencyCode'}',
                             style: Theme.of(context).textTheme.titleSmall
                                 ?.copyWith(fontWeight: FontWeight.w700),
                           ),

@@ -7,6 +7,7 @@ import '../../features/calendar/domain/calendar_permissions.dart';
 import '../../features/contracts/domain/contract_permissions.dart';
 import '../../features/finance_shared/domain/finance_permissions.dart';
 import '../../features/invoices/domain/invoice_type.dart';
+import '../../features/users/domain/users_permissions.dart';
 import '../network/supabase_providers.dart';
 import '../documents/domain/document_kind.dart';
 import '../documents/domain/document_permissions.dart';
@@ -181,6 +182,9 @@ bool isContractDetailPath(String path) {
   return match.group(1)! != 'new';
 }
 
+bool isUsersSettingsDetailPath(String path) =>
+    RegExp(r'^/settings/users/[^/]+$').hasMatch(_normalizePath(path));
+
 bool isJournalDetailPath(String path) {
   final match = RegExp(r'^/journal/([^/]+)$').firstMatch(_normalizePath(path));
   return match != null;
@@ -287,6 +291,9 @@ bool _isPathAllowed(
   }
   if (path == AppRoutes.calendar || path == AppRoutes.calendarRoute) {
     return canAccessCalendar(session);
+  }
+  if (path == AppRoutes.usersSettings || isUsersSettingsDetailPath(path)) {
+    return canViewUsers(session);
   }
   if (path == AppRoutes.calendarSettings) {
     return canViewCalendarSettings(session);
@@ -414,6 +421,14 @@ String? guardRedirectForPath({
   }
 
   final session = authState.valueOrNull!;
+
+  // A login created or reset by an admin must choose its own password first.
+  if (session.mustChangePassword) {
+    return normalized == AppRoutes.changePassword
+        ? null
+        : AppRoutes.changePassword;
+  }
+
   final home = resolveHomeRoute(session);
 
   if (isPublicRoute(normalized)) {

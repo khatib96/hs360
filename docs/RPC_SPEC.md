@@ -32,6 +32,67 @@ Standard errors:
 
 ---
 
+## `provision_company(p_data jsonb) returns uuid` (migration `109`)
+
+`service_role` only; executed by `scripts/provision_company.sh`, never by the
+app. Creates a complete company from zero and returns the new tenant id:
+tenant, default currency, `tenant_settings`, base chart of accounts
+(`1000`–`6101`, including `4102` Sales returns), tax accounts, inventory
+accounts (`3101`, `3102`, `3201`, `4901` Inventory Gain, `5152`, `5901`),
+the eight inventory adjustment reasons, a main warehouse, and the owner as
+`manager`. Document sequences/templates and calendar settings come from the
+`tenants` insert triggers.
+
+Payload: `name_ar`, `name_en`, `slug` (`a-z0-9` with single hyphens),
+`country_code` (2 letters, default `KW`), `timezone` (IANA, default
+`Asia/Kuwait`), `default_locale` (`ar`/`en`), `owner_user_id` (existing auth
+user), `owner_display_name`, and `currency` (`iso_code`, Arabic/English major
+names and symbols, optional minor names/symbols, `decimal_places` 0–3,
+`minor_units_per_major`, `symbol_position`).
+
+Errors: `validation_failed`, `company_slug_taken`, `owner_user_not_found`,
+`owner_already_member` (one login belongs to one company until company
+switching exists).
+
+---
+
+## Users & Permissions (migration `111`)
+
+Direct INSERT/UPDATE/DELETE on `tenant_users` and `user_permissions` is
+manager-only; delegated (non-manager) administrators go through these RPCs.
+The app always uses the RPCs. Nobody can
+change their own membership or permissions, only managers act on manager
+accounts, and non-managers may only grant or remove permissions they hold.
+
+| RPC | Permission | Notes |
+|-----|------------|-------|
+| `list_tenant_users() → jsonb` | `settings.users.view` | Company logins with login, type, status, `must_change_password`, last sign-in, granted permission ids |
+| `set_tenant_user_permissions(p_tenant_user_id, p_permission_ids text[]) → jsonb` | `settings.users.edit` | Replaces the set atomically; returns `added`/`removed`; managers rejected with `target_is_manager` |
+| `set_tenant_user_active(p_tenant_user_id, p_is_active)` | `settings.users.deactivate` | Deactivation removes access immediately (`current_tenant_id()` stops resolving) |
+| `register_tenant_user(p_user_id, p_display_name, p_account_type)` | `settings.users.invite` | Called by `admin-users` with the caller's JWT; only a login created in the last 15 minutes, never signed in, with no membership |
+| `prepare_tenant_user_password_reset(p_tenant_user_id) → uuid` | `settings.users.edit` | Sets `must_change_password`, writes a `password_reset` audit row, returns the auth user id |
+| `complete_own_password_change(p_user_id)` | `service_role` only | Clears `must_change_password` after `admin-users` stored the new password |
+
+Errors: `permission_denied`, `tenant_not_found`, `user_not_found`,
+`cannot_modify_self`, `manager_required`, `target_is_manager`,
+`permission_not_held`, `validation_failed`, `login_not_fresh`,
+`login_already_member`.
+
+### Edge Function `admin-users`
+
+`POST /functions/v1/admin-users` with the caller's JWT. No e-mail is sent.
+
+| `action` | Body | Effect |
+|----------|------|--------|
+| `create_user` | `login` (e-mail format), `password` (≥ 10), `display_name`, `account_type` | Creates the auth login, then `register_tenant_user`; the login is deleted again if registration fails |
+| `reset_password` | `tenant_user_id`, `password` (≥ 10) | `prepare_tenant_user_password_reset`, then sets the password |
+| `change_own_password` | `password` (≥ 10) | Sets the caller's password, then `complete_own_password_change` |
+
+Errors are returned as `{ "error": code }`: the RPC codes above plus
+`login_taken`, `weak_password`, `invalid_login`, `not_authenticated`.
+
+---
+
 ## Phase 6 Contract RPCs
 
 > Phase 6 update: the older positional `create_rental_contract(...)` signature

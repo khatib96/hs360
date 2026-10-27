@@ -6,6 +6,7 @@ import '../../features/calendar/domain/calendar_permissions.dart';
 import '../../features/customers/domain/customer_permissions.dart'
     hide canViewVouchers;
 import '../../features/suppliers/domain/supplier_permissions.dart';
+import '../../features/users/domain/users_permissions.dart';
 import '../documents/domain/document_permissions.dart';
 import 'app_navigation_models.dart';
 import 'app_routes.dart';
@@ -226,6 +227,14 @@ final List<AppNavigationModule> appNavigationModules = [
     icon: Icons.settings_outlined,
     area: AppNavigationArea.system,
     destinations: [
+      AppNavigationDestination(
+        id: 'users-settings',
+        label: (l10n) => l10n.navUsersSettings,
+        icon: Icons.manage_accounts_outlined,
+        route: AppRoutes.usersSettings,
+        isVisible: canViewUsers,
+        matchChildren: true,
+      ),
       AppNavigationDestination(
         id: 'template-settings',
         label: (l10n) => l10n.templateSettingsTitle,

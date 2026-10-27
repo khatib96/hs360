@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/blocked_screen.dart';
+import '../../features/auth/presentation/change_password_screen.dart';
+import '../../features/users/presentation/user_detail_screen.dart';
+import '../../features/users/presentation/users_screen.dart';
 import '../../features/auth/presentation/forgot_password_screen.dart';
 import '../../features/auth/presentation/login_screen.dart';
 import '../../features/dashboard/presentation/dashboard_screen.dart';
@@ -101,6 +104,22 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.fieldToday,
         name: AppRoutes.fieldTodayName,
         builder: (context, state) => const FieldTodayScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.changePassword,
+        name: AppRoutes.changePasswordName,
+        builder: (context, state) => const ChangePasswordScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.usersSettings,
+        name: AppRoutes.usersSettingsName,
+        builder: (context, state) => const UsersScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.usersSettingsDetail,
+        name: AppRoutes.usersSettingsDetailName,
+        builder: (context, state) =>
+            UserDetailScreen(tenantUserId: state.pathParameters['id']!),
       ),
       GoRoute(
         path: AppRoutes.blocked,

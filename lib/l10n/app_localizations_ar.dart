@@ -134,7 +134,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get forgotPasswordSubtitle =>
-      'أدخل بريدك الإلكتروني وسنرسل تعليمات إعادة التعيين إن وُجد الحساب';
+      'لا تُرسل رسائل لاستعادة كلمة السر. اطلب من مدير النظام إعادة تعيينها، وسيطلب منك البرنامج اختيار كلمة جديدة عند دخولك التالي.';
 
   @override
   String get fieldTodayTitle => 'اليوم';
@@ -5095,4 +5095,263 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get auditValueNo => 'لا';
+
+  @override
+  String get navUsersSettings => 'المستخدمون والصلاحيات';
+
+  @override
+  String get usersAdd => 'إضافة مستخدم';
+
+  @override
+  String get usersEmpty => 'لا يوجد مستخدمون بعد';
+
+  @override
+  String get usersLoadError => 'تعذّر تحميل المستخدمين';
+
+  @override
+  String get usersColumnName => 'الاسم';
+
+  @override
+  String get usersColumnLogin => 'اسم الدخول';
+
+  @override
+  String get usersColumnType => 'النوع';
+
+  @override
+  String get usersColumnStatus => 'الحالة';
+
+  @override
+  String get usersColumnPermissions => 'الصلاحيات';
+
+  @override
+  String get usersColumnLastSignIn => 'آخر دخول';
+
+  @override
+  String get usersTypeManager => 'مدير';
+
+  @override
+  String get usersTypeUser => 'مستخدم';
+
+  @override
+  String get usersStatusActive => 'نشط';
+
+  @override
+  String get usersStatusInactive => 'موقوف';
+
+  @override
+  String get usersMustChangePassword => 'يجب تغيير كلمة السر';
+
+  @override
+  String get usersYou => 'أنت';
+
+  @override
+  String get usersNeverSignedIn => 'لم يدخل بعد';
+
+  @override
+  String get usersFullAccess => 'صلاحية كاملة';
+
+  @override
+  String usersPermissionCount(int count) {
+    return '$count صلاحية';
+  }
+
+  @override
+  String get usersManagerFullAccess => 'المدير يملك كل الصلاحيات تلقائياً.';
+
+  @override
+  String get usersSelfNote => 'لا يمكنك تعديل حسابك أو صلاحياتك بنفسك.';
+
+  @override
+  String get usersSavePermissions => 'حفظ الصلاحيات';
+
+  @override
+  String usersPendingChanges(int count) {
+    return '$count تغيير غير محفوظ';
+  }
+
+  @override
+  String get usersNoPendingChanges => 'لا توجد تغييرات غير محفوظة';
+
+  @override
+  String get usersPermissionsSaved => 'تم حفظ الصلاحيات';
+
+  @override
+  String get usersSelectAll => 'تحديد الكل';
+
+  @override
+  String get usersClearAll => 'إلغاء الكل';
+
+  @override
+  String get usersSensitive => 'حساسة';
+
+  @override
+  String get usersNotHeldHint => 'لا يمكنك منح صلاحية لا تملكها';
+
+  @override
+  String get usersResetPassword => 'إعادة تعيين كلمة السر';
+
+  @override
+  String get usersResetPasswordHint =>
+      'سيُطلب من المستخدم اختيار كلمة سر جديدة عند دخوله التالي.';
+
+  @override
+  String get usersResetPasswordDone =>
+      'تم تعيين كلمة السر. سيُطلب من المستخدم تغييرها عند دخوله التالي.';
+
+  @override
+  String get usersDeactivate => 'إيقاف المستخدم';
+
+  @override
+  String get usersActivate => 'تفعيل المستخدم';
+
+  @override
+  String usersDeactivateConfirm(String name) {
+    return 'سيفقد $name الوصول إلى البرنامج فوراً. يمكنك إعادة تفعيل الحساب لاحقاً.';
+  }
+
+  @override
+  String get usersActivated => 'تم تفعيل المستخدم';
+
+  @override
+  String get usersDeactivated => 'تم إيقاف المستخدم';
+
+  @override
+  String get usersCreateTitle => 'مستخدم جديد';
+
+  @override
+  String get usersDisplayName => 'الاسم الظاهر';
+
+  @override
+  String get usersLoginLabel => 'اسم الدخول (بصيغة بريد)';
+
+  @override
+  String get usersLoginHint => 'لا تُرسل أي رسائل إلى هذا العنوان.';
+
+  @override
+  String get usersInitialPassword => 'كلمة السر الأولية';
+
+  @override
+  String get usersNewPassword => 'كلمة السر الجديدة';
+
+  @override
+  String get usersConfirmPassword => 'تأكيد كلمة السر';
+
+  @override
+  String get usersPasswordTooShort => 'استخدم 10 أحرف على الأقل';
+
+  @override
+  String get usersPasswordMismatch => 'كلمتا السر غير متطابقتين';
+
+  @override
+  String get usersGeneratePassword => 'توليد كلمة سر';
+
+  @override
+  String get usersAccountTypeLabel => 'نوع الحساب';
+
+  @override
+  String get usersCreate => 'إنشاء';
+
+  @override
+  String get usersCreated =>
+      'تم إنشاء المستخدم. أعطه كلمة السر الأولية، وسيُطلب منه تغييرها عند أول دخول.';
+
+  @override
+  String get usersFieldRequired => 'مطلوب';
+
+  @override
+  String get usersLoginInvalid =>
+      'اكتب اسم دخول بصيغة بريد، مثل ahmad@company.local';
+
+  @override
+  String get usersErrorPermissionDenied => 'ليست لديك صلاحية لهذا الإجراء.';
+
+  @override
+  String get usersErrorLoginTaken => 'اسم الدخول مستخدم مسبقاً.';
+
+  @override
+  String get usersErrorWeakPassword =>
+      'كلمة السر يجب أن تكون 10 أحرف على الأقل.';
+
+  @override
+  String get usersErrorManagerRequired =>
+      'هذا الإجراء على حساب مدير يتطلب مديراً.';
+
+  @override
+  String get usersErrorNotHeld =>
+      'يمكنك منح أو سحب الصلاحيات التي تملكها أنت فقط.';
+
+  @override
+  String get usersErrorSelf => 'لا يمكنك تعديل حسابك بنفسك.';
+
+  @override
+  String get usersErrorUnavailable => 'خدمة الحسابات غير متاحة حالياً.';
+
+  @override
+  String get usersErrorGeneric => 'تعذّر تنفيذ العملية. حاول مرة أخرى.';
+
+  @override
+  String get permCategoryCore => 'عام';
+
+  @override
+  String get permCategorySales => 'المبيعات والعملاء والعقود';
+
+  @override
+  String get permCategoryPurchasing => 'الموردون';
+
+  @override
+  String get permCategoryFinance => 'الفواتير والسندات';
+
+  @override
+  String get permCategoryAccounting => 'المحاسبة';
+
+  @override
+  String get permCategoryInventory => 'المنتجات والمخزون';
+
+  @override
+  String get permCategoryCalendar => 'المواعيد';
+
+  @override
+  String get permCategoryCommunications => 'الإشعارات';
+
+  @override
+  String get permCategorySettings => 'الإعدادات';
+
+  @override
+  String get permCategorySecurity => 'التدقيق';
+
+  @override
+  String get permCategoryOther => 'أخرى';
+
+  @override
+  String get changePasswordTitle => 'تغيير كلمة السر';
+
+  @override
+  String get changePasswordForcedSubtitle =>
+      'لأمان حسابك، اختر كلمة سر جديدة قبل المتابعة.';
+
+  @override
+  String get changePasswordSubtitle => 'اختر كلمة سر جديدة لحسابك.';
+
+  @override
+  String get changePasswordSave => 'حفظ كلمة السر';
+
+  @override
+  String get changePasswordDone => 'تم تغيير كلمة السر';
+
+  @override
+  String get usersSearchPermissions => 'ابحث في الصلاحيات';
+
+  @override
+  String get usersSensitiveOnly => 'الحساسة فقط';
+
+  @override
+  String get usersNoPermissions => 'بدون صلاحيات';
+
+  @override
+  String usersGrantedOf(int granted, int total) {
+    return '$granted من $total ممنوحة';
+  }
+
+  @override
+  String get usersNoMatchingPermissions => 'لا توجد صلاحيات مطابقة للبحث';
 }

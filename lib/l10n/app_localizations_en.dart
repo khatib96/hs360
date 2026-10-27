@@ -134,7 +134,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get forgotPasswordSubtitle =>
-      'Enter your email and we will send reset instructions if the account exists';
+      'Password reset e-mails are not used. Ask your administrator to reset your password; you will choose a new one at your next sign-in.';
 
   @override
   String get fieldTodayTitle => 'Today';
@@ -5153,4 +5153,270 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get auditValueNo => 'No';
+
+  @override
+  String get navUsersSettings => 'Users & permissions';
+
+  @override
+  String get usersAdd => 'Add user';
+
+  @override
+  String get usersEmpty => 'No users yet';
+
+  @override
+  String get usersLoadError => 'Could not load users';
+
+  @override
+  String get usersColumnName => 'Name';
+
+  @override
+  String get usersColumnLogin => 'Login';
+
+  @override
+  String get usersColumnType => 'Type';
+
+  @override
+  String get usersColumnStatus => 'Status';
+
+  @override
+  String get usersColumnPermissions => 'Permissions';
+
+  @override
+  String get usersColumnLastSignIn => 'Last sign-in';
+
+  @override
+  String get usersTypeManager => 'Manager';
+
+  @override
+  String get usersTypeUser => 'User';
+
+  @override
+  String get usersStatusActive => 'Active';
+
+  @override
+  String get usersStatusInactive => 'Inactive';
+
+  @override
+  String get usersMustChangePassword => 'Must change password';
+
+  @override
+  String get usersYou => 'You';
+
+  @override
+  String get usersNeverSignedIn => 'Never';
+
+  @override
+  String get usersFullAccess => 'Full access';
+
+  @override
+  String usersPermissionCount(int count) {
+    return '$count permissions';
+  }
+
+  @override
+  String get usersManagerFullAccess =>
+      'Managers have every permission automatically.';
+
+  @override
+  String get usersSelfNote =>
+      'You cannot change your own account or permissions.';
+
+  @override
+  String get usersSavePermissions => 'Save permissions';
+
+  @override
+  String usersPendingChanges(int count) {
+    return '$count unsaved changes';
+  }
+
+  @override
+  String get usersNoPendingChanges => 'No unsaved changes';
+
+  @override
+  String get usersPermissionsSaved => 'Permissions saved';
+
+  @override
+  String get usersSelectAll => 'Select all';
+
+  @override
+  String get usersClearAll => 'Clear all';
+
+  @override
+  String get usersSensitive => 'Sensitive';
+
+  @override
+  String get usersNotHeldHint =>
+      'You cannot grant a permission you do not hold';
+
+  @override
+  String get usersResetPassword => 'Reset password';
+
+  @override
+  String get usersResetPasswordHint =>
+      'The user must choose a new password at their next sign-in.';
+
+  @override
+  String get usersResetPasswordDone =>
+      'Password set. The user must change it at their next sign-in.';
+
+  @override
+  String get usersDeactivate => 'Deactivate user';
+
+  @override
+  String get usersActivate => 'Activate user';
+
+  @override
+  String usersDeactivateConfirm(String name) {
+    return '$name loses access to the system immediately. You can activate the account again later.';
+  }
+
+  @override
+  String get usersActivated => 'User activated';
+
+  @override
+  String get usersDeactivated => 'User deactivated';
+
+  @override
+  String get usersCreateTitle => 'New user';
+
+  @override
+  String get usersDisplayName => 'Display name';
+
+  @override
+  String get usersLoginLabel => 'Login (e-mail format)';
+
+  @override
+  String get usersLoginHint => 'No messages are sent to this address.';
+
+  @override
+  String get usersInitialPassword => 'Initial password';
+
+  @override
+  String get usersNewPassword => 'New password';
+
+  @override
+  String get usersConfirmPassword => 'Confirm password';
+
+  @override
+  String get usersPasswordTooShort => 'Use at least 10 characters';
+
+  @override
+  String get usersPasswordMismatch => 'Passwords do not match';
+
+  @override
+  String get usersGeneratePassword => 'Generate password';
+
+  @override
+  String get usersAccountTypeLabel => 'Account type';
+
+  @override
+  String get usersCreate => 'Create';
+
+  @override
+  String get usersCreated =>
+      'User created. Give them the initial password; they must change it at first sign-in.';
+
+  @override
+  String get usersFieldRequired => 'Required';
+
+  @override
+  String get usersLoginInvalid =>
+      'Enter a login in e-mail format, for example ahmad@company.local';
+
+  @override
+  String get usersErrorPermissionDenied =>
+      'You do not have permission for this action.';
+
+  @override
+  String get usersErrorLoginTaken => 'This login is already used.';
+
+  @override
+  String get usersErrorWeakPassword =>
+      'The password must be at least 10 characters.';
+
+  @override
+  String get usersErrorManagerRequired =>
+      'Only a manager can do this to a manager account.';
+
+  @override
+  String get usersErrorNotHeld =>
+      'You can only grant or remove permissions you hold yourself.';
+
+  @override
+  String get usersErrorSelf => 'You cannot change your own account.';
+
+  @override
+  String get usersErrorUnavailable =>
+      'The account service is not available right now.';
+
+  @override
+  String get usersErrorGeneric =>
+      'The action could not be completed. Try again.';
+
+  @override
+  String get permCategoryCore => 'General';
+
+  @override
+  String get permCategorySales => 'Sales, customers and contracts';
+
+  @override
+  String get permCategoryPurchasing => 'Suppliers';
+
+  @override
+  String get permCategoryFinance => 'Invoices and vouchers';
+
+  @override
+  String get permCategoryAccounting => 'Accounting';
+
+  @override
+  String get permCategoryInventory => 'Products and inventory';
+
+  @override
+  String get permCategoryCalendar => 'Appointments';
+
+  @override
+  String get permCategoryCommunications => 'Notifications';
+
+  @override
+  String get permCategorySettings => 'Settings';
+
+  @override
+  String get permCategorySecurity => 'Audit';
+
+  @override
+  String get permCategoryOther => 'Other';
+
+  @override
+  String get changePasswordTitle => 'Change password';
+
+  @override
+  String get changePasswordForcedSubtitle =>
+      'For your account\'s security, choose a new password before you continue.';
+
+  @override
+  String get changePasswordSubtitle =>
+      'Choose a new password for your account.';
+
+  @override
+  String get changePasswordSave => 'Save password';
+
+  @override
+  String get changePasswordDone => 'Password changed';
+
+  @override
+  String get usersSearchPermissions => 'Search permissions';
+
+  @override
+  String get usersSensitiveOnly => 'Sensitive only';
+
+  @override
+  String get usersNoPermissions => 'No permissions';
+
+  @override
+  String usersGrantedOf(int granted, int total) {
+    return '$granted of $total granted';
+  }
+
+  @override
+  String get usersNoMatchingPermissions => 'No permissions match the search';
 }

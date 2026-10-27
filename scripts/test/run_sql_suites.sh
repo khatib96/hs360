@@ -207,6 +207,15 @@ run_suite "supabase/tests/phase_7_5_m5_dashboard_daily_activity.sql"
 printf 'Phase W.8: Phase 7.5 M6 lifecycle actions and audit review\n'
 run_suite "supabase/tests/phase_7_5_m6_audit_review.sql"
 
+printf 'Phase W.9: Phase 7.5 anon routine ACL hardening\n'
+run_suite "supabase/tests/phase_7_5_anon_routine_acl.sql"
+
+printf 'Phase W.10: company provisioning from zero\n'
+run_suite "supabase/tests/company_provisioning.sql"
+
+printf 'Phase W.11: users and permissions management\n'
+run_suite "supabase/tests/user_management.sql"
+
 printf 'Phase C: baseline pollution gate\n'
 for suite in "${phase_a_suites[@]}"; do
   run_suite "$suite"

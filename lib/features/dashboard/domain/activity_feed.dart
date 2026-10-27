@@ -1,3 +1,7 @@
+import 'package:decimal/decimal.dart';
+
+import '../../../core/utils/decimal_parser.dart';
+
 class ActivityFeedItem {
   const ActivityFeedItem({
     required this.kind,
@@ -20,7 +24,7 @@ class ActivityFeedItem {
   final String titleEn;
   final String identifier;
   final String status;
-  final double? amount;
+  final Decimal? amount;
   final String? sourceRoute;
 
   String localizedTitle(String languageCode) {
@@ -42,11 +46,7 @@ class ActivityFeedItem {
       titleEn: json['title_en'] as String? ?? '',
       identifier: json['identifier'] as String? ?? '',
       status: json['status'] as String? ?? '',
-      amount: amountRaw == null
-          ? null
-          : (amountRaw is num
-                ? amountRaw.toDouble()
-                : double.tryParse(amountRaw.toString())),
+      amount: amountRaw == null ? null : parseDecimal(amountRaw),
       sourceRoute: _safeRoute(json['source_route']),
     );
   }

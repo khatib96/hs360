@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -96,9 +97,9 @@ DashboardSummary _summary() => DashboardSummary(
   ),
   financial: DashboardFinancialSummary(
     collectionsVisible: true,
-    collections: 25.5,
+    collections: Decimal.parse('25.5'),
     outstandingVisible: true,
-    outstanding: 75,
+    outstanding: Decimal.fromInt(75),
     monthStart: DateTime(2026, 8),
   ),
 );
@@ -118,7 +119,7 @@ ActivityFeedPage _activity() => ActivityFeedPage(
       titleEn: 'Invoice SI-1',
       identifier: 'sales',
       status: 'confirmed',
-      amount: 25.5,
+      amount: Decimal.parse('25.5'),
       sourceRoute: '/invoices/invoice-1?type=sales',
     ),
   ],
@@ -161,6 +162,9 @@ void main() {
     expect(find.byKey(const Key('dashboard-finance-card')), findsOneWidget);
     expect(find.text('8'), findsOneWidget);
     expect(find.textContaining('KWD'), findsNWidgets(2));
+    // Money keeps the currency's fixed decimal places.
+    expect(find.text('25.500 KWD'), findsOneWidget);
+    expect(find.text('75.000 KWD'), findsOneWidget);
     expect(repository.dashboardCalls, 1);
     expect(tester.takeException(), isNull);
   });

@@ -1385,4 +1385,95 @@ void main() {
       );
     });
   });
+
+  group('Users & Permissions and forced password change', () {
+    AppSession mustChange() => AppSession(
+      userId: 'user-2',
+      email: 'new@company.local',
+      tenantId: 'tenant-1',
+      tenantUserId: 'tu-2',
+      accountType: 'user',
+      displayName: 'New User',
+      preferredLocale: 'ar',
+      permissions: AppPermissions(
+        isManager: false,
+        permissions: {'products.view'},
+      ),
+      mustChangePassword: true,
+    );
+
+    test('a login that must change its password is kept on that screen', () {
+      for (final path in [
+        AppRoutes.dashboard,
+        AppRoutes.products,
+        AppRoutes.login,
+        '/',
+      ]) {
+        expect(
+          guardRedirectForPath(
+            path: path,
+            hasSupabaseSession: true,
+            authState: loaded(mustChange()),
+          ),
+          AppRoutes.changePassword,
+          reason: path,
+        );
+      }
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.changePassword,
+          hasSupabaseSession: true,
+          authState: loaded(mustChange()),
+        ),
+        isNull,
+      );
+    });
+
+    test('the change-password screen stays open to any signed-in user', () {
+      expect(
+        guardRedirectForPath(
+          path: AppRoutes.changePassword,
+          hasSupabaseSession: true,
+          authState: loaded(
+            session(accountType: 'user', permissions: {'products.view'}),
+          ),
+        ),
+        isNull,
+      );
+    });
+
+    test('users pages require settings.users.view', () {
+      final viewer = session(
+        accountType: 'user',
+        permissions: {'products.view', 'settings.users.view'},
+      );
+      final other = session(
+        accountType: 'user',
+        permissions: {'products.view'},
+      );
+      for (final path in [
+        AppRoutes.usersSettings,
+        AppRoutes.usersSettingsDetailPath('tu-9'),
+      ]) {
+        expect(
+          guardRedirectForPath(
+            path: path,
+            hasSupabaseSession: true,
+            authState: loaded(viewer),
+          ),
+          isNull,
+          reason: path,
+        );
+        expect(
+          guardRedirectForPath(
+            path: path,
+            hasSupabaseSession: true,
+            authState: loaded(other),
+          ),
+          resolveHomeRoute(other),
+          reason: path,
+        );
+      }
+    });
+  });
 }

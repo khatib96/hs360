@@ -12,7 +12,8 @@ import 'jwt_claims.dart';
 part 'auth_repository.g.dart';
 
 const _tenantUserColumns =
-    'id, tenant_id, account_type, display_name, preferred_locale, is_active';
+    'id, tenant_id, account_type, display_name, preferred_locale, is_active, '
+    'must_change_password';
 
 @Riverpod(keepAlive: true)
 AuthRepository authRepository(Ref ref) {
@@ -48,14 +49,6 @@ class AuthRepository {
   Future<void> signOut() async {
     try {
       await _requireClient.auth.signOut();
-    } catch (e, st) {
-      throw AuthException.fromSupabase(e, st);
-    }
-  }
-
-  Future<void> requestPasswordReset({required String email}) async {
-    try {
-      await _requireClient.auth.resetPasswordForEmail(email);
     } catch (e, st) {
       throw AuthException.fromSupabase(e, st);
     }
@@ -134,6 +127,7 @@ class AuthRepository {
       displayName: profile.displayName,
       preferredLocale: profile.preferredLocale,
       permissions: permissions,
+      mustChangePassword: profile.mustChangePassword,
     );
   }
 }

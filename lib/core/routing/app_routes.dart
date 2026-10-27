@@ -29,6 +29,9 @@ abstract final class AppRoutes {
   static const templateSettings = '/settings/templates';
   static const taxSettings = '/settings/tax';
   static const calendarSettings = '/settings/calendar';
+  static const usersSettings = '/settings/users';
+  static const usersSettingsDetail = '/settings/users/:id';
+  static const changePassword = '/account/password';
   static const documentPreview = '/documents/preview';
   static const invoices = '/invoices';
   static const invoicesNewSales = '/invoices/new/sales';
@@ -85,6 +88,9 @@ abstract final class AppRoutes {
   static const templateSettingsName = 'templateSettings';
   static const taxSettingsName = 'taxSettings';
   static const calendarSettingsName = 'calendarSettings';
+  static const usersSettingsName = 'usersSettings';
+  static const usersSettingsDetailName = 'usersSettingsDetail';
+  static const changePasswordName = 'changePassword';
   static const documentPreviewName = 'documentPreview';
   static const invoicesName = 'invoices';
   static const invoicesNewSalesName = 'invoicesNewSales';
@@ -113,6 +119,9 @@ abstract final class AppRoutes {
       'inventoryDocumentsStockCount';
   static const inventoryDocumentsDetailName = 'inventoryDocumentsDetail';
   static const auditLogName = 'auditLog';
+
+  static String usersSettingsDetailPath(String tenantUserId) =>
+      '/settings/users/${Uri.encodeComponent(tenantUserId)}';
 
   static String customerDetailPath(String id) =>
       '/customers/${Uri.encodeComponent(id)}';

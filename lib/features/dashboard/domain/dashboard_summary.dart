@@ -1,3 +1,7 @@
+import 'package:decimal/decimal.dart';
+
+import '../../../core/utils/decimal_parser.dart';
+
 class DashboardScheduleSummary {
   const DashboardScheduleSummary({
     required this.visible,
@@ -80,9 +84,9 @@ class DashboardFinancialSummary {
   });
 
   final bool collectionsVisible;
-  final double collections;
+  final Decimal collections;
   final bool outstandingVisible;
-  final double outstanding;
+  final Decimal outstanding;
   final DateTime monthStart;
 
   bool get visible => collectionsVisible || outstandingVisible;
@@ -90,9 +94,9 @@ class DashboardFinancialSummary {
   factory DashboardFinancialSummary.fromJson(Map<String, dynamic> json) {
     return DashboardFinancialSummary(
       collectionsVisible: json['collections_visible'] == true,
-      collections: _asDouble(json['collections']),
+      collections: _asMoney(json['collections']),
       outstandingVisible: json['outstanding_visible'] == true,
-      outstanding: _asDouble(json['outstanding']),
+      outstanding: _asMoney(json['outstanding']),
       monthStart: _asDate(json['month_start']),
     );
   }
@@ -144,10 +148,9 @@ int _asInt(Object? value) {
   return int.tryParse(value?.toString() ?? '') ?? 0;
 }
 
-double _asDouble(Object? value) {
-  if (value is num) return value.toDouble();
-  return double.tryParse(value?.toString() ?? '') ?? 0;
-}
+/// Missing amounts are zero; malformed amounts fail instead of showing 0.
+Decimal _asMoney(Object? value) =>
+    value == null ? Decimal.zero : parseDecimal(value);
 
 DateTime _asDate(Object? value) {
   final parsed = DateTime.tryParse(value?.toString() ?? '');

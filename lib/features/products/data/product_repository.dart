@@ -6,6 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/errors/products_exception.dart';
+import '../../../core/network/postgrest_search_filter.dart';
 import '../../../core/network/supabase_providers.dart';
 import '../../../domain/validators/product_validator.dart';
 import '../../auth/domain/app_session.dart';
@@ -49,10 +50,13 @@ class ProductRepository {
 
       final search = filters.search?.trim();
       if (search != null && search.isNotEmpty) {
-        final pattern = '%$search%';
         query = query.or(
-          'sku.ilike.$pattern,name_ar.ilike.$pattern,'
-          'name_en.ilike.$pattern,barcode.ilike.$pattern',
+          ilikeAnyColumnFilter([
+            'sku',
+            'name_ar',
+            'name_en',
+            'barcode',
+          ], search),
         );
       }
       if (filters.groupId != null) {
@@ -216,14 +220,10 @@ class ProductRepository {
 
     try {
       final table = productReadTableForSession(session);
-      final pattern = '%$trimmed%';
       final rows = await _requireClient
           .from(table)
           .select('id')
-          .or(
-            'sku.ilike.$pattern,name_ar.ilike.$pattern,'
-            'name_en.ilike.$pattern',
-          );
+          .or(ilikeAnyColumnFilter(['sku', 'name_ar', 'name_en'], trimmed));
 
       return {
         for (final row in rows as List)

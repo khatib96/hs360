@@ -25,13 +25,24 @@ class AppUserCard extends ConsumerWidget {
         tooltip: session.displayName,
         position: PopupMenuPosition.over,
         onSelected: (action) {
-          if (action == _UserAction.signOut) {
-            _signOut(context, ref, l10n);
+          switch (action) {
+            case _UserAction.changePassword:
+              context.go(AppRoutes.changePassword);
+            case _UserAction.signOut:
+              _signOut(context, ref, l10n);
           }
         },
         itemBuilder: (context) => [
           PopupMenuItem(enabled: false, child: _Identity(session: session)),
           const PopupMenuDivider(),
+          PopupMenuItem(
+            value: _UserAction.changePassword,
+            child: ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.key_outlined),
+              title: Text(l10n.changePasswordTitle),
+            ),
+          ),
           PopupMenuItem(
             value: _UserAction.signOut,
             child: ListTile(
@@ -62,6 +73,12 @@ class AppUserCard extends ConsumerWidget {
           _Avatar(name: session.displayName),
           const SizedBox(width: AppSpacing.xs),
           Expanded(child: _Identity(session: session)),
+          IconButton(
+            key: const Key('shell-change-password'),
+            tooltip: l10n.changePasswordTitle,
+            onPressed: () => context.go(AppRoutes.changePassword),
+            icon: const Icon(Icons.key_outlined, size: AppSizes.icon),
+          ),
           IconButton(
             key: const Key('shell-sign-out'),
             tooltip: l10n.logout,
@@ -94,7 +111,7 @@ class AppUserCard extends ConsumerWidget {
   }
 }
 
-enum _UserAction { signOut }
+enum _UserAction { changePassword, signOut }
 
 class _Avatar extends StatelessWidget {
   const _Avatar({required this.name});

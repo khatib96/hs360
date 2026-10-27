@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../core/errors/auth_exception.dart';
 import '../../../core/network/supabase_providers.dart';
 import '../data/auth_repository.dart';
 import '../domain/app_permissions.dart';
@@ -33,17 +32,6 @@ class AuthController extends _$AuthController {
       await ref.read(authRepositoryProvider).signOut();
       return null;
     });
-  }
-
-  Future<void> requestPasswordReset({required String email}) async {
-    try {
-      await ref.read(authRepositoryProvider).requestPasswordReset(email: email);
-    } catch (e, st) {
-      Error.throwWithStackTrace(
-        e is AuthException ? e : AuthException.fromSupabase(e, st),
-        st,
-      );
-    }
   }
 
   Future<void> refreshSession() async {
