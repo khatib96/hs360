@@ -6,6 +6,7 @@ import '../../features/auth/presentation/auth_controller.dart';
 import '../../features/calendar/domain/calendar_permissions.dart';
 import '../../features/contracts/domain/contract_permissions.dart';
 import '../../features/finance_shared/domain/finance_permissions.dart';
+import '../../features/contracts/domain/rental_billing.dart';
 import '../../features/invoices/domain/invoice_type.dart';
 import '../../features/users/domain/users_permissions.dart';
 import '../network/supabase_providers.dart';
@@ -291,6 +292,9 @@ bool _isPathAllowed(
   }
   if (path == AppRoutes.calendar || path == AppRoutes.calendarRoute) {
     return canAccessCalendar(session);
+  }
+  if (path == AppRoutes.rentalArrears) {
+    return canViewRentalArrears(session);
   }
   if (path == AppRoutes.usersSettings || isUsersSettingsDetailPath(path)) {
     return canViewUsers(session);

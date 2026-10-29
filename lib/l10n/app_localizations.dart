@@ -10117,6 +10117,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No permissions match the search'**
   String get usersNoMatchingPermissions;
+
+  /// No description provided for @rentalCollectionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rental collections'**
+  String get rentalCollectionsTitle;
+
+  /// No description provided for @rentalCollectionsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No rental collections yet'**
+  String get rentalCollectionsEmpty;
+
+  /// No description provided for @rentalCollectionsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load rental collections'**
+  String get rentalCollectionsLoadError;
+
+  /// No description provided for @rentalCollectionMonthsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Months'**
+  String get rentalCollectionMonthsLabel;
+
+  /// No description provided for @rentalCollectionVoucherLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt'**
+  String get rentalCollectionVoucherLabel;
+
+  /// No description provided for @rentalCollectionStatusCollected.
+  ///
+  /// In en, this message translates to:
+  /// **'Collected'**
+  String get rentalCollectionStatusCollected;
+
+  /// No description provided for @rentalCollectionStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get rentalCollectionStatusCancelled;
+
+  /// No description provided for @rentalCollectionCancelAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel collection'**
+  String get rentalCollectionCancelAction;
+
+  /// No description provided for @rentalCollectionCancelConsequence.
+  ///
+  /// In en, this message translates to:
+  /// **'The receipt voucher and the rental invoice are cancelled and their journal entries reversed. The months return to unpaid so the correct payment can be collected. Everything stays in the audit log.'**
+  String get rentalCollectionCancelConsequence;
+
+  /// No description provided for @rentalCollectionCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Collection cancelled; its months are unpaid again'**
+  String get rentalCollectionCancelled;
+
+  /// No description provided for @rentalCollectionHasOtherPayments.
+  ///
+  /// In en, this message translates to:
+  /// **'Another receipt is allocated to this invoice. Cancel that receipt first.'**
+  String get rentalCollectionHasOtherPayments;
+
+  /// No description provided for @rentalArrearsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rental arrears'**
+  String get rentalArrearsTitle;
+
+  /// No description provided for @rentalArrearsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No rental arrears'**
+  String get rentalArrearsEmpty;
+
+  /// No description provided for @rentalArrearsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load rental arrears'**
+  String get rentalArrearsLoadError;
+
+  /// No description provided for @rentalArrearsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Rental months whose billing day has passed and that are not collected yet. No invoice is created until payment is collected.'**
+  String get rentalArrearsHint;
+
+  /// No description provided for @rentalArrearsSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{contracts} contracts · {months} months'**
+  String rentalArrearsSummary(int contracts, int months);
+
+  /// No description provided for @rentalArrearsMonthsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} months'**
+  String rentalArrearsMonthsCount(int count);
+
+  /// No description provided for @rentalArrearsOldestDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Oldest due'**
+  String get rentalArrearsOldestDue;
+
+  /// No description provided for @rentalArrearsTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total arrears'**
+  String get rentalArrearsTotal;
 }
 
 class _AppLocalizationsDelegate

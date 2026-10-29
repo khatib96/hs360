@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../features/accounting/domain/accounting_permissions.dart';
 import '../../features/auth/domain/app_session.dart';
 import '../../features/calendar/domain/calendar_permissions.dart';
+import '../../features/contracts/domain/rental_billing.dart';
 import '../../features/customers/domain/customer_permissions.dart'
     hide canViewVouchers;
 import '../../features/suppliers/domain/supplier_permissions.dart';
@@ -83,6 +84,13 @@ final List<AppNavigationModule> appNavigationModules = [
         route: AppRoutes.contracts,
         isVisible: canViewContracts,
         matchChildren: true,
+      ),
+      AppNavigationDestination(
+        id: 'rental-arrears',
+        label: (l10n) => l10n.rentalArrearsTitle,
+        icon: Icons.pending_actions_outlined,
+        route: AppRoutes.rentalArrears,
+        isVisible: canViewRentalArrears,
       ),
     ],
   ),

@@ -78,6 +78,17 @@ Errors: `permission_denied`, `tenant_not_found`, `user_not_found`,
 `permission_not_held`, `validation_failed`, `login_not_fresh`,
 `login_already_member`.
 
+## Rental collection correction and arrears (migration `112`)
+
+Rental billing stays payment-confirmed (`collect_rental_payment` creates the
+invoice, receipt voucher, journals, and covered months together).
+
+| RPC | Permission | Notes |
+|-----|------------|-------|
+| `cancel_rental_collection(p_invoice_id, p_reason, p_idempotency_key) → jsonb` | `invoices.cancel` and `vouchers.cancel` | Cancels the receipt voucher, posts a `rental_invoice_reversal` journal, cancels the invoice, releases the covered months (collectable again), reopens their billing calendar events, audits `rental_collection_cancel` with the reason. Errors: `validation_failed`, `books_locked`, `invoice_has_payments`, `idempotency_payload_mismatch` |
+| `list_contract_rental_collections(p_contract_id) → jsonb` | `invoices.view`, `invoices.view_sales`, or `vouchers.view` | Collections of one contract with months, voucher, status, cancellation reason |
+| `list_rental_arrears(p_as_of date default null) → jsonb` | `contracts.view` and an invoice view | Uncovered rental months whose billing day (clamped to month length) is on or before the tenant-local date, per contract, with totals. No invoices are created |
+
 ### Edge Function `admin-users`
 
 `POST /functions/v1/admin-users` with the caller's JWT. No e-mail is sent.

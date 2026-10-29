@@ -216,6 +216,9 @@ run_suite "supabase/tests/company_provisioning.sql"
 printf 'Phase W.11: users and permissions management\n'
 run_suite "supabase/tests/user_management.sql"
 
+printf 'Phase W.12: rental collection cancel and arrears\n'
+run_suite "supabase/tests/rental_collection_cancel_and_arrears.sql"
+
 printf 'Phase C: baseline pollution gate\n'
 for suite in "${phase_a_suites[@]}"; do
   run_suite "$suite"

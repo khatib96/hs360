@@ -641,7 +641,9 @@ do $$
 declare
   v_fixture jsonb := current_setting('test.p6m12.fixture')::jsonb;
   v_contract_id uuid;
-  v_billing_day int := least(extract(day from current_date)::int + 5, 28);
+  -- Day of (today + 5) wraps into next month late in the month, so a billing
+  -- day always falls inside the 25-day contract (day + 5 failed after the 28th).
+  v_billing_day int := least(extract(day from current_date + 5)::int, 28);
 begin
   v_contract_id := pg_temp.p6m12_create_rental(
     v_fixture,

@@ -16,6 +16,8 @@ import '../domain/contract_detail.dart';
 import '../domain/contract_lifecycle_actions.dart';
 import '../domain/contract_permissions.dart';
 import '../domain/contract_print_support.dart';
+import '../domain/rental_billing.dart';
+import '../data/rental_billing_repository.dart';
 import 'contract_detail_controller.dart';
 import 'contract_list_controller.dart';
 import 'contract_display_helpers.dart';
@@ -23,6 +25,7 @@ import 'widgets/contract_closure_dialog.dart';
 import 'widgets/contract_consumable_change_dialog.dart';
 import 'widgets/contract_detail_sections.dart';
 import 'widgets/contract_rental_collection_dialog.dart';
+import 'widgets/contract_rental_collections_section.dart';
 import 'widgets/contract_trial_extension_dialog.dart';
 import 'widgets/contract_trial_return_dialog.dart';
 import 'widgets/contract_upcoming_schedule_section.dart';
@@ -168,6 +171,18 @@ class ContractDetailScreen extends ConsumerWidget {
               languageCode: locale.languageCode,
               session: session,
             ),
+            if (detail.type.isRental &&
+                session != null &&
+                canViewRentalCollections(session)) ...[
+              const SizedBox(height: 12),
+              ContractRentalCollectionsSection(
+                contractId: contractId,
+                session: session,
+                onChanged: () => ref
+                    .read(contractDetailControllerProvider(contractId).notifier)
+                    .load(contractId),
+              ),
+            ],
             const SizedBox(height: 12),
             ContractHistorySection(detail: detail),
           ],
@@ -247,6 +262,8 @@ class ContractDetailScreen extends ConsumerWidget {
       detail: detail,
     );
     if (changed == true) {
+      ref.invalidate(contractRentalCollectionsProvider(contractId));
+      ref.invalidate(rentalArrearsProvider);
       await ref
           .read(contractDetailControllerProvider(contractId).notifier)
           .load(contractId);

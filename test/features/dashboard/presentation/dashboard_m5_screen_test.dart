@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hs360/features/auth/domain/app_permissions.dart';
 import 'package:hs360/features/auth/domain/app_session.dart';
 import 'package:hs360/features/auth/presentation/auth_controller.dart';
+import 'package:hs360/features/contracts/data/rental_billing_repository.dart';
 import 'package:hs360/features/dashboard/data/dashboard_repository.dart';
 import 'package:hs360/features/dashboard/domain/activity_feed.dart';
 import 'package:hs360/features/dashboard/domain/dashboard_summary.dart';
@@ -125,11 +126,16 @@ ActivityFeedPage _activity() => ActivityFeedPage(
   ],
 );
 
-Widget _app({required Widget home, required DashboardRepository repository}) {
+Widget _app({
+  required Widget home,
+  required DashboardRepository repository,
+  List<Override> overrides = const [],
+}) {
   return ProviderScope(
     overrides: [
       authControllerProvider.overrideWith(() => _TestAuth(_session())),
       dashboardRepositoryProvider.overrideWithValue(repository),
+      ...overrides,
     ],
     child: MaterialApp(
       locale: const Locale('en'),
@@ -167,6 +173,38 @@ void main() {
     expect(find.text('75.000 KWD'), findsOneWidget);
     expect(repository.dashboardCalls, 1);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Dashboard shows rental arrears separately from outstanding', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(1280, 1000));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    final arrears = RentalBillingRepository(
+      null,
+      rpcInvoker: (_, _) async => {
+        'as_of': '2026-08-05',
+        'currency_code': 'KWD',
+        'total_amount': '50.000',
+        'total_months': 2,
+        'items': [],
+      },
+    );
+
+    await tester.pumpWidget(
+      _app(
+        home: const DashboardScreen(),
+        repository: _FakeDashboardRepository(
+          summary: _summary(),
+          activity: _activity(),
+        ),
+        overrides: [rentalBillingRepositoryProvider.overrideWithValue(arrears)],
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Rental arrears'), findsOneWidget);
+    expect(find.text('50.000 KWD'), findsOneWidget);
   });
 
   testWidgets('Daily Activity renders a dated, permission-shaped timeline', (

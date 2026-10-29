@@ -32,6 +32,7 @@ abstract final class AppRoutes {
   static const usersSettings = '/settings/users';
   static const usersSettingsDetail = '/settings/users/:id';
   static const changePassword = '/account/password';
+  static const rentalArrears = '/rental-arrears';
   static const documentPreview = '/documents/preview';
   static const invoices = '/invoices';
   static const invoicesNewSales = '/invoices/new/sales';
@@ -91,6 +92,7 @@ abstract final class AppRoutes {
   static const usersSettingsName = 'usersSettings';
   static const usersSettingsDetailName = 'usersSettingsDetail';
   static const changePasswordName = 'changePassword';
+  static const rentalArrearsName = 'rentalArrears';
   static const documentPreviewName = 'documentPreview';
   static const invoicesName = 'invoices';
   static const invoicesNewSalesName = 'invoicesNewSales';

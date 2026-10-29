@@ -15,7 +15,8 @@ and double-entry accounting.
 > **Physical Android smoke remains required before production** as an
 > owner-approved deferred obligation. Phase 8 has not started.
 >
-> Latest migrations on disk: **`111`** (`111` Users & Permissions management;
+> Latest migrations on disk: **`112`** (`112` rental collection cancel and
+> rental arrears; `111` Users & Permissions management;
 > `110` Arabic permission labels; `109` company provisioning and inventory-gain
 > account `4901`; `108` anon routine EXECUTE hardening); `093`–`104` remain
 > checksum-locked / unchanged.
@@ -203,7 +204,7 @@ lib/
   shared/        Shared application widgets
 
 supabase/
-  migrations/    Ordered PostgreSQL migrations (currently through 111)
+  migrations/    Ordered PostgreSQL migrations (currently through 112)
   tests/         SQL regression and concurrency suites
   functions/     Edge Functions
   .temp/         Ignored local credentials and safety artifacts

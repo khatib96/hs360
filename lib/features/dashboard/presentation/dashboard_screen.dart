@@ -13,6 +13,8 @@ import '../../../shared/widgets/app_page_header.dart';
 import '../../../shared/widgets/app_shell.dart';
 import '../../../shared/widgets/app_state_view.dart';
 import '../../auth/presentation/auth_controller.dart';
+import '../../contracts/data/rental_billing_repository.dart';
+import '../../contracts/domain/rental_billing.dart';
 import '../../finance_shared/presentation/tenant_currency_provider.dart';
 import '../domain/dashboard_summary.dart';
 import 'dashboard_providers.dart';
@@ -83,6 +85,12 @@ class _DashboardContent extends ConsumerWidget {
     final currencyFormat =
         ref.watch(tenantCurrencyFormatProvider).valueOrNull ??
         TenantCurrencyFormat.defaults();
+    final session = ref.watch(authControllerProvider).valueOrNull;
+    // Payment-confirmed rental billing: unpaid months are not invoices, so
+    // they are not part of "outstanding" and are shown separately.
+    final arrears = session != null && canViewRentalArrears(session)
+        ? ref.watch(rentalArrearsProvider).valueOrNull
+        : null;
     String money(Decimal amount) =>
         '${formatDocumentMoney(amount, currencyFormat, includeSymbol: false)} '
         '${summary.currencyCode}';
@@ -222,6 +230,13 @@ class _DashboardContent extends ConsumerWidget {
                                 label: l10n.dashboardMetricOutstanding,
                                 value: money(summary.financial.outstanding),
                                 onTap: () => _open(context, 'outstanding'),
+                              ),
+                            if (arrears != null)
+                              _DashboardMetric(
+                                label: l10n.rentalArrearsTitle,
+                                value: money(arrears.totalAmount),
+                                onTap: () =>
+                                    context.push(AppRoutes.rentalArrears),
                               ),
                           ],
                         ),

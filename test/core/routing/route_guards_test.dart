@@ -1476,4 +1476,31 @@ void main() {
       }
     });
   });
+
+  test('rental arrears needs contracts.view and an invoice view', () {
+    final allowed = session(
+      accountType: 'user',
+      permissions: {'contracts.view', 'invoices.view_sales'},
+    );
+    final contractsOnly = session(
+      accountType: 'user',
+      permissions: {'contracts.view'},
+    );
+    expect(
+      guardRedirectForPath(
+        path: AppRoutes.rentalArrears,
+        hasSupabaseSession: true,
+        authState: loaded(allowed),
+      ),
+      isNull,
+    );
+    expect(
+      guardRedirectForPath(
+        path: AppRoutes.rentalArrears,
+        hasSupabaseSession: true,
+        authState: loaded(contractsOnly),
+      ),
+      resolveHomeRoute(contractsOnly),
+    );
+  });
 }

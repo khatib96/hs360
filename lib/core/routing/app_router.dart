@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/blocked_screen.dart';
 import '../../features/auth/presentation/change_password_screen.dart';
+import '../../features/contracts/presentation/rental_arrears_screen.dart';
 import '../../features/users/presentation/user_detail_screen.dart';
 import '../../features/users/presentation/users_screen.dart';
 import '../../features/auth/presentation/forgot_password_screen.dart';
@@ -109,6 +110,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.changePassword,
         name: AppRoutes.changePasswordName,
         builder: (context, state) => const ChangePasswordScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.rentalArrears,
+        name: AppRoutes.rentalArrearsName,
+        builder: (context, state) => const RentalArrearsScreen(),
       ),
       GoRoute(
         path: AppRoutes.usersSettings,

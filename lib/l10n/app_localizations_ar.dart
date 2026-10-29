@@ -5354,4 +5354,69 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get usersNoMatchingPermissions => 'لا توجد صلاحيات مطابقة للبحث';
+
+  @override
+  String get rentalCollectionsTitle => 'تحصيلات الإيجار';
+
+  @override
+  String get rentalCollectionsEmpty => 'لا توجد تحصيلات إيجار بعد';
+
+  @override
+  String get rentalCollectionsLoadError => 'تعذّر تحميل تحصيلات الإيجار';
+
+  @override
+  String get rentalCollectionMonthsLabel => 'الأشهر';
+
+  @override
+  String get rentalCollectionVoucherLabel => 'سند القبض';
+
+  @override
+  String get rentalCollectionStatusCollected => 'مُحصَّل';
+
+  @override
+  String get rentalCollectionStatusCancelled => 'ملغى';
+
+  @override
+  String get rentalCollectionCancelAction => 'إلغاء التحصيل';
+
+  @override
+  String get rentalCollectionCancelConsequence =>
+      'سيُلغى سند القبض وفاتورة الإيجار وتُعكس قيودهما، وتعود الأشهر غير مدفوعة ليمكن تحصيلها بشكل صحيح. يبقى كل شيء في سجل التدقيق.';
+
+  @override
+  String get rentalCollectionCancelled =>
+      'تم إلغاء التحصيل وعادت أشهره غير مدفوعة';
+
+  @override
+  String get rentalCollectionHasOtherPayments =>
+      'يوجد سند قبض آخر مخصص لهذه الفاتورة. ألغِه أولاً.';
+
+  @override
+  String get rentalArrearsTitle => 'متأخرات الإيجار';
+
+  @override
+  String get rentalArrearsEmpty => 'لا توجد متأخرات إيجار';
+
+  @override
+  String get rentalArrearsLoadError => 'تعذّر تحميل متأخرات الإيجار';
+
+  @override
+  String get rentalArrearsHint =>
+      'أشهر الإيجار التي حلّ يوم فوترتها ولم تُحصَّل بعد. لا تُنشأ فاتورة لها حتى يتم التحصيل.';
+
+  @override
+  String rentalArrearsSummary(int contracts, int months) {
+    return '$contracts عقد · $months شهر';
+  }
+
+  @override
+  String rentalArrearsMonthsCount(int count) {
+    return '$count شهر';
+  }
+
+  @override
+  String get rentalArrearsOldestDue => 'أقدم استحقاق';
+
+  @override
+  String get rentalArrearsTotal => 'إجمالي المتأخرات';
 }

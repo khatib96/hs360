@@ -5419,4 +5419,69 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get usersNoMatchingPermissions => 'No permissions match the search';
+
+  @override
+  String get rentalCollectionsTitle => 'Rental collections';
+
+  @override
+  String get rentalCollectionsEmpty => 'No rental collections yet';
+
+  @override
+  String get rentalCollectionsLoadError => 'Could not load rental collections';
+
+  @override
+  String get rentalCollectionMonthsLabel => 'Months';
+
+  @override
+  String get rentalCollectionVoucherLabel => 'Receipt';
+
+  @override
+  String get rentalCollectionStatusCollected => 'Collected';
+
+  @override
+  String get rentalCollectionStatusCancelled => 'Cancelled';
+
+  @override
+  String get rentalCollectionCancelAction => 'Cancel collection';
+
+  @override
+  String get rentalCollectionCancelConsequence =>
+      'The receipt voucher and the rental invoice are cancelled and their journal entries reversed. The months return to unpaid so the correct payment can be collected. Everything stays in the audit log.';
+
+  @override
+  String get rentalCollectionCancelled =>
+      'Collection cancelled; its months are unpaid again';
+
+  @override
+  String get rentalCollectionHasOtherPayments =>
+      'Another receipt is allocated to this invoice. Cancel that receipt first.';
+
+  @override
+  String get rentalArrearsTitle => 'Rental arrears';
+
+  @override
+  String get rentalArrearsEmpty => 'No rental arrears';
+
+  @override
+  String get rentalArrearsLoadError => 'Could not load rental arrears';
+
+  @override
+  String get rentalArrearsHint =>
+      'Rental months whose billing day has passed and that are not collected yet. No invoice is created until payment is collected.';
+
+  @override
+  String rentalArrearsSummary(int contracts, int months) {
+    return '$contracts contracts · $months months';
+  }
+
+  @override
+  String rentalArrearsMonthsCount(int count) {
+    return '$count months';
+  }
+
+  @override
+  String get rentalArrearsOldestDue => 'Oldest due';
+
+  @override
+  String get rentalArrearsTotal => 'Total arrears';
 }
